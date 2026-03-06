@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autonovations — Hack it. Learn it. Build it.</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #050810;
+  --bg2:     #080d1a;
+  --card:    #0d1528;
+  --card2:   #111d35;
+  --cyan:    #00d4ff;
+  --cyan2:   #00a8cc;
+  --purple:  #7c3aed;
+  --green:   #10b981;
+  --amber:   #f59e0b;
+  --red:     #ef4444;
+  --blue:    #3b82f6;
+  --white:   #ffffff;
+  --light:   #e2e8f0;
+  --mid:     #94a3b8;
+  --dim:     #475569;
+  --border:  rgba(255,255,255,.07);
+  --glow:    rgba(0,212,255,.15);
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--light);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ═══════════════════════════════════════════════
+   CUSTOM CURSOR
+═══════════════════════════════════════════════ */
+#cursor {
+  position: fixed;
+  width: 10px; height: 10px;
+  background: var(--cyan);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform .1s, width .2s, height .2s, background .2s;
+  mix-blend-mode: screen;
+}
+#cursor-ring {
+  position: fixed;
+  width: 36px; height: 36px;
+  border: 1.5px solid rgba(0,212,255,.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: all .12s ease;
+}
+body:has(a:hover) #cursor, body:has(button:hover) #cursor { width: 20px; height: 20px; background: var(--purple); }
+body:has(a:hover) #cursor-ring, body:has(button:hover) #cursor-ring { width: 52px; height: 52px; border-color: rgba(124,58,237,.6); }
+
+/* ═══════════════════════════════════════════════
+   NOISE OVERLAY
+═══════════════════════════════════════════════ */
+#noise {
+  position: fixed; inset: 0; z-index: 1;
+  pointer-events: none;
+  opacity: .03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* ═══════════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1.25rem 2.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background .3s, backdrop-filter .3s, border-bottom .3s;
+}
+nav.scrolled {
+  background: rgba(5,8,16,.88);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--white);
+  letter-spacing: -.02em;
+  display: flex; align-items: center; gap: .5rem;
+  text-decoration: none;
+}
+.nav-logo .logo-dot {
+  width: 8px; height: 8px;
+  background: var(--cyan);
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { box-shadow: 0 0 0 0 rgba(0,212,255,.5); }
+  50% { box-shadow: 0 0 0 6px rgba(0,212,255,0); }
+}
+.nav-links {
+  display: flex; align-items: center; gap: 2rem;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--mid);
+  text-decoration: none;
+  font-size: .85rem;
+  font-weight: 400;
+  letter-spacing: .03em;
+  transition: color .2s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute; bottom: -.3rem; left: 0; right: 100%;
+  height: 1px; background: var(--cyan);
+  transition: right .25s ease;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-links a:hover::after { right: 0; }
+.nav-cta {
+  background: var(--cyan);
+  color: var(--bg) !important;
+  font-weight: 600 !important;
+  padding: .5rem 1.25rem;
+  border-radius: 2px;
+  letter-spacing: .05em;
+  transition: background .2s, transform .2s !important;
+}
+.nav-cta:hover { background: #33dcff !important; transform: translateY(-1px); }
+.nav-cta::after { display: none !important; }
+
+/* ═══════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════ */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: flex-start; justify-content: center;
+  padding: 8rem 2.5rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,212,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+}
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.orb-a {
+  width: 700px; height: 700px;
+  right: -200px; top: -200px;
+  background: radial-gradient(circle, rgba(124,58,237,.12) 0%, transparent 65%);
+  animation: orb-drift 8s ease-in-out infinite alternate;
+}
+.orb-b {
+  width: 500px; height: 500px;
+  right: 100px; top: 50px;
+  background: radial-gradient(circle, rgba(0,212,255,.07) 0%, transparent 65%);
+  animation: orb-drift 10s ease-in-out infinite alternate-reverse;
+}
+.orb-c {
+  width: 300px; height: 300px;
+  left: 30%; bottom: 5%;
+  background: radial-gradient(circle, rgba(16,185,129,.08) 0%, transparent 65%);
+}
+@keyframes orb-drift {
+  from { transform: translate(0,0) scale(1); }
+  to   { transform: translate(30px, 20px) scale(1.05); }
+}
+
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem;
+  color: var(--cyan);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fade-up .8s .2s forwards;
+}
+.hero-eyebrow span { color: var(--mid); }
+
+.hero-h1 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(3.5rem, 9vw, 8.5rem);
+  line-height: .95;
+  letter-spacing: -.04em;
+  color: var(--white);
+  max-width: 14ch;
+  opacity: 0;
+  animation: fade-up .9s .35s forwards;
+}
+.hero-h1 em {
+  font-style: normal;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--cyan);
+}
+.hero-h1 .accent-word { color: var(--cyan); }
+
+.hero-sub {
+  margin-top: 1.75rem;
+  font-size: clamp(.9rem, 1.5vw, 1.1rem);
+  color: var(--mid);
+  max-width: 48ch;
+  line-height: 1.7;
+  opacity: 0;
+  animation: fade-up .9s .5s forwards;
+}
+
+.hero-actions {
+  margin-top: 2.5rem;
+  display: flex; gap: 1rem; flex-wrap: wrap;
+  opacity: 0;
+  animation: fade-up .9s .65s forwards;
+}
+.btn-primary {
+  background: var(--cyan);
+  color: var(--bg);
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: .9rem;
+  letter-spacing: .06em;
+  padding: .85rem 2rem;
+  border: none; border-radius: 2px;
+  cursor: none;
+  text-decoration: none;
+  display: inline-flex; align-items: center; gap: .5rem;
+  transition: background .2s, transform .2s, box-shadow .2s;
+  text-transform: uppercase;
+}
+.btn-primary:hover {
+  background: #33dcff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,212,255,.3);
+}
+.btn-outline {
+  background: transparent;
+  color: var(--light);
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  font-size: .9rem;
+  letter-spacing: .06em;
+  padding: .85rem 2rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  cursor: none;
+  text-decoration: none;
+  display: inline-flex; align-items: center; gap: .5rem;
+  transition: border-color .2s, color .2s, transform .2s;
+  text-transform: uppercase;
+}
+.btn-outline:hover { border-color: var(--cyan); color: var(--cyan); transform: translateY(-2px); }
+
+.hero-stats {
+  margin-top: 4rem;
+  display: flex; gap: 2.5rem;
+  opacity: 0;
+  animation: fade-up .9s .8s forwards;
+}
+.stat { border-left: 2px solid var(--border); padding-left: 1rem; }
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.8rem;
+  color: var(--white);
+  line-height: 1;
+}
+.stat-num span { color: var(--cyan); }
+.stat-label { font-size: .75rem; color: var(--mid); margin-top: .2rem; letter-spacing: .05em; }
+
+/* Floating drone */
+.hero-drone {
+  position: absolute;
+  right: 6%;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: clamp(6rem, 16vw, 14rem);
+  animation: hero-float 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 60px rgba(0,212,255,.2));
+  opacity: 0;
+  animation: hero-appear .8s 1s forwards, hero-float 4s 1.8s ease-in-out infinite;
+}
+@keyframes hero-appear { to { opacity: 1; } }
+@keyframes hero-float {
+  0%,100% { transform: translateY(-50%) rotate(-4deg); }
+  50% { transform: translateY(calc(-50% - 20px)) rotate(4deg); }
+}
+.hero-scan {
+  position: absolute;
+  right: 6%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(200px, 25vw, 420px);
+  height: clamp(200px, 25vw, 420px);
+  border: 1px solid rgba(0,212,255,.15);
+  border-radius: 50%;
+  animation: scan-pulse 3s ease-in-out infinite;
+}
+.hero-scan::before, .hero-scan::after {
+  content: '';
+  position: absolute; inset: -20px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,212,255,.08);
+}
+.hero-scan::after { inset: -40px; border-color: rgba(0,212,255,.04); }
+@keyframes scan-pulse {
+  0%,100% { transform: translateY(-50%) scale(1); opacity: .6; }
+  50% { transform: translateY(-50%) scale(1.04); opacity: 1; }
+}
+
+/* Scroll indicator */
+.scroll-hint {
+  position: absolute;
+  bottom: 2rem; left: 2.5rem;
+  display: flex; align-items: center; gap: .75rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  color: var(--dim);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: fade-up .9s 1.2s forwards;
+}
+.scroll-line {
+  width: 40px; height: 1px;
+  background: linear-gradient(90deg, var(--cyan), transparent);
+  position: relative;
+  overflow: hidden;
+}
+.scroll-line::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--cyan);
+  animation: scan 2s ease-in-out infinite;
+}
+@keyframes scan {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════
+   MARQUEE TICKER
+═══════════════════════════════════════════════ */
+.ticker {
+  background: var(--cyan);
+  padding: .65rem 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+.ticker-track {
+  display: flex;
+  white-space: nowrap;
+  animation: ticker 25s linear infinite;
+}
+.ticker-track span {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: .8rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--bg);
+  padding: 0 2rem;
+}
+.ticker-track .sep { color: rgba(5,8,16,.4); }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ═══════════════════════════════════════════════
+   SECTION SHARED
+═══════════════════════════════════════════════ */
+section { position: relative; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 2.5rem; }
+.section-pad { padding: 7rem 0; }
+
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .7rem;
+  color: var(--cyan);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  display: flex; align-items: center; gap: .75rem;
+}
+.section-label::before {
+  content: '';
+  width: 24px; height: 1px;
+  background: var(--cyan);
+  flex-shrink: 0;
+}
+.section-h2 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -.03em;
+  color: var(--white);
+  margin-bottom: 1.25rem;
+}
+.section-h2 em { font-style: normal; color: var(--cyan); }
+.section-p {
+  font-size: 1rem;
+  color: var(--mid);
+  line-height: 1.75;
+  max-width: 50ch;
+}
+
+/* Reveal on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-delay-1 { transition-delay: .1s; }
+.reveal-delay-2 { transition-delay: .2s; }
+.reveal-delay-3 { transition-delay: .3s; }
+.reveal-delay-4 { transition-delay: .4s; }
+.reveal-delay-5 { transition-delay: .5s; }
+
+/* ═══════════════════════════════════════════════
+   ABOUT / WHY SECTION
+═══════════════════════════════════════════════ */
+#about { background: var(--bg2); }
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: center;
+}
+.about-visual {
+  position: relative;
+  aspect-ratio: 1;
+  max-width: 480px;
+}
+.about-hex-bg {
+  position: absolute; inset: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8rem;
+}
+.about-drone-wrap {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 7rem;
+  animation: hero-float 4s ease-in-out infinite;
+}
+.about-badge {
+  position: absolute;
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: .65rem 1rem;
+  font-size: .78rem;
+  display: flex; align-items: center; gap: .5rem;
+}
+.about-badge .b-icon { font-size: 1.1rem; }
+.about-badge .b-text { color: var(--mid); }
+.about-badge .b-val { color: var(--white); font-weight: 600; }
+.badge-1 { bottom: 10%; right: -10%; }
+.badge-2 { top: 10%; left: -10%; }
+.about-pills {
+  display: flex; flex-wrap: wrap; gap: .5rem;
+  margin-top: 2rem;
+}
+.pill {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: .4rem .9rem;
+  font-size: .78rem;
+  color: var(--mid);
+  border-radius: 100px;
+  transition: border-color .2s, color .2s;
+}
+.pill:hover { border-color: var(--cyan); color: var(--cyan); }
+
+/* ═══════════════════════════════════════════════
+   STEAM SECTION
+═══════════════════════════════════════════════ */
+#steam { background: var(--bg); }
+.steam-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: .75rem;
+  margin-top: 3.5rem;
+}
+.steam-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 1.5rem 1.25rem;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  transition: transform .3s, border-color .3s, box-shadow .3s;
+}
+.steam-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+}
+.steam-card:hover { transform: translateY(-6px); }
+.steam-s::before { background: #3b82f6; }
+.steam-t::before { background: #06b6d4; }
+.steam-e::before { background: #10b981; }
+.steam-a::before { background: #a855f7; }
+.steam-m::before { background: #f59e0b; }
+.steam-card:hover.steam-s { border-color: #3b82f640; box-shadow: 0 20px 60px rgba(59,130,246,.1); }
+.steam-card:hover.steam-t { border-color: #06b6d440; box-shadow: 0 20px 60px rgba(6,182,212,.1); }
+.steam-card:hover.steam-e { border-color: #10b98140; box-shadow: 0 20px 60px rgba(16,185,129,.1); }
+.steam-card:hover.steam-a { border-color: #a855f740; box-shadow: 0 20px 60px rgba(168,85,247,.1); }
+.steam-card:hover.steam-m { border-color: #f59e0b40; box-shadow: 0 20px 60px rgba(245,158,11,.1); }
+
+.steam-letter {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: .5rem;
+}
+.steam-s .steam-letter { color: #3b82f6; }
+.steam-t .steam-letter { color: #06b6d4; }
+.steam-e .steam-letter { color: #10b981; }
+.steam-a .steam-letter { color: #a855f7; }
+.steam-m .steam-letter { color: #f59e0b; }
+
+.steam-word {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: .8rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 1rem;
+}
+.steam-topics {
+  list-style: none;
+  display: flex; flex-direction: column; gap: .4rem;
+}
+.steam-topics li {
+  font-size: .75rem;
+  color: var(--mid);
+  padding-left: .75rem;
+  position: relative;
+  line-height: 1.4;
+}
+.steam-topics li::before {
+  content: '';
+  position: absolute; left: 0; top: .45em;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+}
+.steam-s .steam-topics li::before { background: #3b82f6; }
+.steam-t .steam-topics li::before { background: #06b6d4; }
+.steam-e .steam-topics li::before { background: #10b981; }
+.steam-a .steam-topics li::before { background: #a855f7; }
+.steam-m .steam-topics li::before { background: #f59e0b; }
+
+/* ═══════════════════════════════════════════════
+   LEVELS SECTION
+═══════════════════════════════════════════════ */
+#levels { background: var(--bg2); overflow: hidden; }
+.levels-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: end;
+  margin-bottom: 3.5rem;
+}
+.levels-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+.level-card {
+  background: var(--card);
+  padding: 2rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: background .3s;
+}
+.level-card:hover { background: var(--card2); }
+.level-num-big {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 4rem;
+  line-height: 1;
+  color: var(--border);
+  position: absolute;
+  top: 1rem; right: 1rem;
+  letter-spacing: -.05em;
+  transition: color .3s;
+}
+.level-card:hover .level-num-big { color: rgba(255,255,255,.08); }
+.level-tag {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  padding: .25rem .6rem;
+  margin-bottom: 1rem;
+}
+.l1 .level-tag { background: rgba(59,130,246,.15); color: #3b82f6; }
+.l2 .level-tag { background: rgba(16,185,129,.15); color: #10b981; }
+.l3 .level-tag { background: rgba(168,85,247,.15); color: #a855f7; }
+.l4 .level-tag { background: rgba(245,158,11,.15); color: #f59e0b; }
+.level-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--white);
+  margin-bottom: .25rem;
+}
+.level-age {
+  font-size: .75rem;
+  color: var(--dim);
+  margin-bottom: 1.25rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+.level-items { list-style: none; display: flex; flex-direction: column; gap: .5rem; }
+.level-items li {
+  font-size: .8rem;
+  color: var(--mid);
+  display: flex; gap: .5rem; align-items: flex-start;
+  line-height: 1.4;
+}
+.level-items li::before {
+  content: '▸';
+  flex-shrink: 0;
+  margin-top: .05em;
+  font-size: .7rem;
+}
+.l1 .level-items li::before { color: #3b82f6; }
+.l2 .level-items li::before { color: #10b981; }
+.l3 .level-items li::before { color: #a855f7; }
+.l4 .level-items li::before { color: #f59e0b; }
+
+/* ═══════════════════════════════════════════════
+   HOW IT WORKS
+═══════════════════════════════════════════════ */
+#how { background: var(--bg); }
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  margin-top: 3.5rem;
+  position: relative;
+}
+.how-grid::before {
+  content: '';
+  position: absolute;
+  top: 26px; left: 5%; right: 5%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), var(--border), transparent);
+}
+.how-step {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  position: relative;
+}
+.how-num {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--white);
+  margin: 0 auto 1.25rem;
+  position: relative; z-index: 1;
+  transition: background .3s, border-color .3s, box-shadow .3s;
+}
+.how-step:hover .how-num {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  color: var(--bg);
+  box-shadow: 0 0 24px rgba(0,212,255,.4);
+}
+.how-icon { font-size: 1.5rem; margin-bottom: .75rem; }
+.how-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--white);
+  margin-bottom: .5rem;
+}
+.how-desc { font-size: .78rem; color: var(--mid); line-height: 1.5; }
+
+/* ═══════════════════════════════════════════════
+   MARKETS
+═══════════════════════════════════════════════ */
+#markets { background: var(--bg2); }
+.markets-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 3.5rem;
+}
+.market-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 2rem;
+  display: flex; gap: 1.5rem;
+  transition: border-color .3s, transform .3s, box-shadow .3s;
+  position: relative;
+  overflow: hidden;
+}
+.market-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .35s ease;
+}
+.market-card:hover { transform: translateY(-4px); }
+.market-card:hover::after { transform: scaleX(1); }
+.mk-1::after { background: var(--blue); }
+.mk-2::after { background: var(--green); }
+.mk-3::after { background: var(--purple); }
+.mk-4::after { background: var(--amber); }
+.market-card:hover.mk-1 { border-color: rgba(59,130,246,.3); box-shadow: 0 20px 60px rgba(59,130,246,.08); }
+.market-card:hover.mk-2 { border-color: rgba(16,185,129,.3); box-shadow: 0 20px 60px rgba(16,185,129,.08); }
+.market-card:hover.mk-3 { border-color: rgba(168,85,247,.3); box-shadow: 0 20px 60px rgba(168,85,247,.08); }
+.market-card:hover.mk-4 { border-color: rgba(245,158,11,.3); box-shadow: 0 20px 60px rgba(245,158,11,.08); }
+.market-icon-wrap {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+  width: 64px; height: 64px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 2px;
+}
+.market-content h3 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--white);
+  margin-bottom: .4rem;
+}
+.market-content p { font-size: .82rem; color: var(--mid); line-height: 1.6; margin-bottom: .75rem; }
+.market-kit {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .7rem;
+  color: var(--dim);
+  padding: .3rem .65rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  display: inline-block;
+}
+
+/* ═══════════════════════════════════════════════
+   ROADMAP
+═══════════════════════════════════════════════ */
+#roadmap { background: var(--bg); }
+.roadmap-wrap {
+  margin-top: 3.5rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+.phase-card {
+  background: var(--card);
+  padding: 2rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: background .3s;
+}
+.phase-card:hover { background: var(--card2); }
+.phase-bar {
+  height: 3px;
+  margin-bottom: 1.5rem;
+}
+.p1 .phase-bar { background: #3b82f6; }
+.p2 .phase-bar { background: #10b981; }
+.p3 .phase-bar { background: #a855f7; }
+.p4 .phase-bar { background: #f59e0b; }
+.phase-quarter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .7rem;
+  letter-spacing: .15em;
+  margin-bottom: .4rem;
+}
+.p1 .phase-quarter { color: #3b82f6; }
+.p2 .phase-quarter { color: #10b981; }
+.p3 .phase-quarter { color: #a855f7; }
+.p4 .phase-quarter { color: #f59e0b; }
+.phase-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--white);
+  margin-bottom: 1.25rem;
+}
+.phase-items { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
+.phase-items li {
+  font-size: .8rem;
+  color: var(--mid);
+  display: flex; gap: .5rem;
+  line-height: 1.4;
+}
+.phase-items li .tick { flex-shrink: 0; font-size: .7rem; margin-top: .15em; }
+.p1 .phase-items li .tick { color: #3b82f6; }
+.p2 .phase-items li .tick { color: #10b981; }
+.p3 .phase-items li .tick { color: #a855f7; }
+.p4 .phase-items li .tick { color: #f59e0b; }
+
+/* ═══════════════════════════════════════════════
+   TECH STRIP (PCB aesthetic)
+═══════════════════════════════════════════════ */
+#tech {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.tech-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: center;
+  padding: 6rem 0;
+}
+.tech-code {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.code-bar {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: .65rem 1rem;
+  display: flex; align-items: center; gap: .5rem;
+}
+.code-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+.cd-r { background: #ef4444; }
+.cd-y { background: #f59e0b; }
+.cd-g { background: #10b981; }
+.code-filename {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .72rem;
+  color: var(--dim);
+  margin-left: .5rem;
+}
+pre {
+  padding: 1.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.8;
+  overflow-x: auto;
+}
+.kw { color: #a855f7; }
+.fn { color: #06b6d4; }
+.str { color: #10b981; }
+.num { color: #f59e0b; }
+.cm { color: var(--dim); }
+.tech-features { display: flex; flex-direction: column; gap: 1.5rem; }
+.tech-feat {
+  display: flex; gap: 1rem; align-items: flex-start;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.tech-feat:last-child { border-bottom: none; padding-bottom: 0; }
+.feat-icon-wrap {
+  width: 44px; height: 44px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+.feat-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  font-size: .95rem;
+  color: var(--white);
+  margin-bottom: .3rem;
+}
+.feat-desc { font-size: .8rem; color: var(--mid); line-height: 1.5; }
+
+/* ═══════════════════════════════════════════════
+   TESTIMONIALS / IMPACT
+═══════════════════════════════════════════════ */
+#impact { background: var(--bg); }
+.impact-numbers {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin: 3.5rem 0;
+}
+.impact-num-card {
+  background: var(--card);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  transition: background .3s;
+}
+.impact-num-card:hover { background: var(--card2); }
+.impact-big {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 3rem;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: .4rem;
+}
+.impact-big em { font-style: normal; color: var(--cyan); }
+.impact-label { font-size: .8rem; color: var(--mid); letter-spacing: .03em; }
+
+.quote-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+.quote-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 1.75rem;
+  position: relative;
+  transition: border-color .3s;
+}
+.quote-card:hover { border-color: rgba(0,212,255,.25); }
+.quote-mark {
+  font-family: 'Syne', sans-serif;
+  font-size: 3rem;
+  color: var(--cyan);
+  line-height: .8;
+  margin-bottom: .75rem;
+  opacity: .4;
+}
+.quote-text {
+  font-size: .88rem;
+  color: var(--light);
+  line-height: 1.65;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+.quote-author {
+  display: flex; align-items: center; gap: .75rem;
+}
+.author-avatar {
+  width: 36px; height: 36px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+}
+.author-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  font-size: .83rem;
+  color: var(--white);
+}
+.author-role { font-size: .72rem; color: var(--dim); }
+
+/* ═══════════════════════════════════════════════
+   CTA / CONTACT
+═══════════════════════════════════════════════ */
+#contact {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+}
+.cta-inner {
+  text-align: center;
+  padding: 7rem 0;
+  position: relative;
+}
+.cta-glow {
+  position: absolute;
+  width: 600px; height: 300px;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  background: radial-gradient(ellipse, rgba(0,212,255,.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-inner .section-label { justify-content: center; }
+.cta-inner .section-label::before { display: none; }
+.cta-h2 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  letter-spacing: -.04em;
+  color: var(--white);
+  margin: 1rem 0 1.5rem;
+  line-height: 1;
+}
+.cta-h2 em { font-style: normal; color: var(--cyan); }
+.cta-sub { font-size: 1rem; color: var(--mid); line-height: 1.7; max-width: 42ch; margin: 0 auto 2.5rem; }
+.cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+/* ═══════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════ */
+footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.footer-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -.02em;
+  display: flex; align-items: center; gap: .5rem;
+}
+.footer-links { display: flex; gap: 1.75rem; }
+.footer-links a {
+  font-size: .8rem;
+  color: var(--dim);
+  text-decoration: none;
+  transition: color .2s;
+}
+.footer-links a:hover { color: var(--cyan); }
+.footer-copy { font-size: .75rem; color: var(--dim); }
+
+/* ═══════════════════════════════════════════════
+   MOBILE
+═══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .about-grid,
+  .levels-intro,
+  .tech-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+  .steam-grid { grid-template-columns: repeat(3, 1fr); }
+  .levels-cards { grid-template-columns: repeat(2, 1fr); }
+  .markets-grid { grid-template-columns: 1fr; }
+  .impact-numbers { grid-template-columns: repeat(2, 1fr); }
+  .quote-grid { grid-template-columns: 1fr; }
+  .how-grid { grid-template-columns: repeat(3, 1fr); }
+  .roadmap-wrap { grid-template-columns: repeat(2, 1fr); }
+  .hero-drone { display: none; }
+  .hero-scan { display: none; }
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  .about-visual { max-width: 280px; margin: 0 auto; }
+}
+@media (max-width: 600px) {
+  .steam-grid { grid-template-columns: repeat(2, 1fr); }
+  .how-grid { grid-template-columns: repeat(2, 1fr); }
+  .levels-cards { grid-template-columns: 1fr; }
+  .roadmap-wrap { grid-template-columns: 1fr; }
+  .impact-numbers { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<div id="noise"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- ════════════════════════════════════════
+     NAV
+════════════════════════════════════════ -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    <div class="logo-dot"></div>
+    Autonovations
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">Nosotros</a></li>
+    <li><a href="#steam">STEAM</a></li>
+    <li><a href="#levels">Niveles</a></li>
+    <li><a href="#markets">Mercados</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contact" class="nav-cta">Únete →</a></li>
+  </ul>
+</nav>
+
+<!-- ════════════════════════════════════════
+     HERO
+════════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-orb orb-a"></div>
+  <div class="hero-orb orb-b"></div>
+  <div class="hero-orb orb-c"></div>
+
+  <div class="container" style="position:relative;z-index:2;">
+    <p class="hero-eyebrow">// startup educativa &nbsp;<span>·</span>&nbsp; Colombia &nbsp;<span>·</span>&nbsp; 2025</p>
+    <h1 class="hero-h1">
+      Hack it.<br>
+      <em>Learn</em> it.<br>
+      <span class="accent-word">Build it.</span>
+    </h1>
+    <p class="hero-sub">
+      Hackeamos un dron de Temu de $10 para enseñar ciencia, tecnología,
+      ingeniería, arte y matemáticas de forma interactiva y memorable.
+    </p>
+    <div class="hero-actions">
+      <a href="#levels" class="btn-primary">Ver currículo ↓</a>
+      <a href="#contact" class="btn-outline">Únete a la misión</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">5<span>×</span></div>
+        <div class="stat-label">Áreas STEAM</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Niveles de aprendizaje</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">$<span>10</span></div>
+        <div class="stat-label">Costo del dron</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Posibilidades</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scan"></div>
+  <div class="hero-drone">🚁</div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    scroll
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     TICKER
+════════════════════════════════════════ -->
+<div class="ticker">
+  <div class="ticker-track" id="ticker-track">
+    <span>Hack it</span><span class="sep">///</span>
+    <span>Learn it</span><span class="sep">///</span>
+    <span>Build it</span><span class="sep">///</span>
+    <span>PID Control</span><span class="sep">///</span>
+    <span>PCB Design</span><span class="sep">///</span>
+    <span>ESP32</span><span class="sep">///</span>
+    <span>Android App</span><span class="sep">///</span>
+    <span>KiCad</span><span class="sep">///</span>
+    <span>Ingeniería Real</span><span class="sep">///</span>
+    <span>STEAM Interactivo</span><span class="sep">///</span>
+    <span>Hack it</span><span class="sep">///</span>
+    <span>Learn it</span><span class="sep">///</span>
+    <span>Build it</span><span class="sep">///</span>
+    <span>PID Control</span><span class="sep">///</span>
+    <span>PCB Design</span><span class="sep">///</span>
+    <span>ESP32</span><span class="sep">///</span>
+    <span>Android App</span><span class="sep">///</span>
+    <span>KiCad</span><span class="sep">///</span>
+    <span>Ingeniería Real</span><span class="sep">///</span>
+    <span>STEAM Interactivo</span><span class="sep">///</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ABOUT
+════════════════════════════════════════ -->
+<section id="about" class="section-pad">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <p class="section-label reveal">Nuestra Misión</p>
+        <h2 class="section-h2 reveal reveal-delay-1">Convertimos curiosidad en <em>ingeniería real</em></h2>
+        <p class="section-p reveal reveal-delay-2">
+          Autonovations nació de una pregunta simple: ¿qué pasa si en vez de enseñar
+          conceptos abstractos, le damos a los estudiantes un dron barato y les decimos
+          <strong style="color:var(--white)">"desármalo, entiéndelo y mejóralo"</strong>?
+        </p>
+        <p class="section-p reveal reveal-delay-3" style="margin-top:1rem;">
+          El resultado es un currículo STEAM que conecta física, programación, electrónica,
+          diseño y matemáticas en un solo proyecto tangible. Nada de simulaciones. Todo real.
+        </p>
+        <div class="about-pills reveal reveal-delay-4">
+          <span class="pill">Aprendizaje basado en proyectos</span>
+          <span class="pill">Open source</span>
+          <span class="pill">Cultura maker</span>
+          <span class="pill">Hardware real</span>
+          <span class="pill">Ingeniería inversa</span>
+          <span class="pill">Colombia 🇨🇴</span>
+        </div>
+      </div>
+      <div class="about-visual reveal reveal-delay-2">
+        <div class="about-hex-bg">
+          <div class="about-drone-wrap">🚁</div>
+        </div>
+        <div class="about-badge badge-1">
+          <span class="b-icon">⚡</span>
+          <div>
+            <div class="b-text">Componente</div>
+            <div class="b-val">LiPo 1S · 3.7V</div>
+          </div>
+        </div>
+        <div class="about-badge badge-2">
+          <span class="b-icon">📡</span>
+          <div>
+            <div class="b-text">Protocolo</div>
+            <div class="b-val">WiFi UDP 100Hz</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     STEAM
+════════════════════════════════════════ -->
+<section id="steam" class="section-pad">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:end;margin-bottom:.5rem;">
+      <div>
+        <p class="section-label reveal">Currículo</p>
+        <h2 class="section-h2 reveal reveal-delay-1">5 áreas.<br><em>1 dron.</em></h2>
+      </div>
+      <p class="section-p reveal reveal-delay-2" style="margin-top:auto;">
+        Cada componente del dron es una puerta de entrada a una disciplina. El estudiante
+        aprende la teoría en el momento exacto en que la necesita para hacer algo real.
+      </p>
+    </div>
+    <div class="steam-grid">
+      <div class="steam-card steam-s reveal reveal-delay-1">
+        <div class="steam-letter">S</div>
+        <div class="steam-word">Science</div>
+        <ul class="steam-topics">
+          <li>Física del vuelo y las 4 fuerzas</li>
+          <li>Electromagnetismo y motores DC</li>
+          <li>Ondas de radio 2.4GHz con SDR</li>
+          <li>Termodinámica en baterías LiPo</li>
+          <li>Ley de Faraday aplicada</li>
+        </ul>
+      </div>
+      <div class="steam-card steam-t reveal reveal-delay-2">
+        <div class="steam-letter">T</div>
+        <div class="steam-word">Technology</div>
+        <ul class="steam-topics">
+          <li>Microcontroladores ESP32 / STM32</li>
+          <li>Sensores IMU: giroscopio + acel.</li>
+          <li>Protocolos I2C, SPI, UDP</li>
+          <li>Desarrollo de app Android</li>
+          <li>Seguridad en comunicaciones</li>
+        </ul>
+      </div>
+      <div class="steam-card steam-e reveal reveal-delay-3">
+        <div class="steam-letter">E</div>
+        <div class="steam-word">Engineering</div>
+        <ul class="steam-topics">
+          <li>Diseño de PCB con KiCad</li>
+          <li>Algoritmo PID desde cero</li>
+          <li>RTOS y loops de tiempo real</li>
+          <li>Fabricación en JLCPCB</li>
+          <li>Ingeniería inversa real</li>
+        </ul>
+      </div>
+      <div class="steam-card steam-a reveal reveal-delay-4">
+        <div class="steam-letter">A</div>
+        <div class="steam-word">Art & Design</div>
+        <ul class="steam-topics">
+          <li>UX/UI de dashboards de vuelo</li>
+          <li>Diseño de chasis con Fusion 360</li>
+          <li>Impresión 3D funcional</li>
+          <li>Visualización de telemetría</li>
+          <li>Ergonomía del control remoto</li>
+        </ul>
+      </div>
+      <div class="steam-card steam-m reveal reveal-delay-5">
+        <div class="steam-letter">M</div>
+        <div class="steam-word">Mathematics</div>
+        <ul class="steam-topics">
+          <li>Cuaterniones y matrices 3D</li>
+          <li>Derivadas e integrales en PID</li>
+          <li>Trigonometría en sensores</li>
+          <li>Filtro de Kalman</li>
+          <li>Señales y Teorema de Nyquist</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     LEVELS
+════════════════════════════════════════ -->
+<section id="levels" class="section-pad">
+  <div class="container">
+    <div class="levels-intro">
+      <div>
+        <p class="section-label reveal">Progresión</p>
+        <h2 class="section-h2 reveal reveal-delay-1">De <em>explorador</em><br>a innovador</h2>
+      </div>
+      <p class="section-p reveal reveal-delay-2">
+        Cuatro niveles diseñados para crecer con el estudiante. Cada nivel construye
+        sobre el anterior, acumulando confianza, habilidades y proyectos reales en el portafolio.
+      </p>
+    </div>
+    <div class="levels-cards reveal">
+      <div class="level-card l1">
+        <div class="level-num-big">01</div>
+        <span class="level-tag">Explorador</span>
+        <div class="level-name">Explorador</div>
+        <div class="level-age">8–12 años · 20 horas</div>
+        <ul class="level-items">
+          <li>Las 4 fuerzas del vuelo</li>
+          <li>¿Qué hay dentro del dron?</li>
+          <li>Motores y magnetismo</li>
+          <li>Primer código: parpadear un LED</li>
+        </ul>
+      </div>
+      <div class="level-card l2">
+        <div class="level-num-big">02</div>
+        <span class="level-tag">Constructor</span>
+        <div class="level-name">Constructor</div>
+        <div class="level-age">13–16 años · 40 horas</div>
+        <ul class="level-items">
+          <li>Electrónica y circuitos PCB</li>
+          <li>Sensores IMU y giroscopio</li>
+          <li>Comunicación WiFi/BLE</li>
+          <li>App Android con joystick</li>
+        </ul>
+      </div>
+      <div class="level-card l3">
+        <div class="level-num-big">03</div>
+        <span class="level-tag">Ingeniero</span>
+        <div class="level-name">Ingeniero</div>
+        <div class="level-age">17–20 años · 80 horas</div>
+        <ul class="level-items">
+          <li>Diseño PCB en KiCad</li>
+          <li>Algoritmo PID desde cero</li>
+          <li>RTOS y tiempo real</li>
+          <li>Protocolo UDP seguro</li>
+        </ul>
+      </div>
+      <div class="level-card l4">
+        <div class="level-num-big">04</div>
+        <span class="level-tag">Innovador</span>
+        <div class="level-name">Innovador</div>
+        <div class="level-age">20+ años · 120h+</div>
+        <ul class="level-items">
+          <li>Filtro de Kalman</li>
+          <li>Visión computacional</li>
+          <li>Enjambres de drones</li>
+          <li>IA embebida en edge</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     HOW IT WORKS
+════════════════════════════════════════ -->
+<section id="how" class="section-pad">
+  <div class="container">
+    <p class="section-label reveal">Metodología ABP</p>
+    <h2 class="section-h2 reveal reveal-delay-1">Cómo <em>funciona</em></h2>
+    <div class="how-grid">
+      <div class="how-step reveal reveal-delay-1">
+        <div class="how-num">1</div>
+        <div class="how-icon">🔍</div>
+        <div class="how-title">Explorar</div>
+        <div class="how-desc">Desmontar el dron de Temu. Hacer hipótesis. ¿Qué hay adentro y por qué?</div>
+      </div>
+      <div class="how-step reveal reveal-delay-2">
+        <div class="how-num">2</div>
+        <div class="how-icon">📖</div>
+        <div class="how-title">Investigar</div>
+        <div class="how-desc">Buscar datasheets, leer documentación, ver videos técnicos del chip identificado.</div>
+      </div>
+      <div class="how-step reveal reveal-delay-3">
+        <div class="how-num">3</div>
+        <div class="how-icon">✏️</div>
+        <div class="how-title">Diseñar</div>
+        <div class="how-desc">Crear el esquemático, el wireframe de la app y el prototipo del firmware.</div>
+      </div>
+      <div class="how-step reveal reveal-delay-4">
+        <div class="how-num">4</div>
+        <div class="how-icon">🔧</div>
+        <div class="how-title">Construir</div>
+        <div class="how-desc">Soldar, programar y testear. Fallar rápido, aprender más rápido, iterar.</div>
+      </div>
+      <div class="how-step reveal reveal-delay-5">
+        <div class="how-num">5</div>
+        <div class="how-icon">🚀</div>
+        <div class="how-title">Compartir</div>
+        <div class="how-desc">Presentar el proyecto, publicar en GitHub y enseñarle a otros estudiantes.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     TECH STRIP
+════════════════════════════════════════ -->
+<section id="tech">
+  <div class="container">
+    <div class="tech-inner">
+      <div class="reveal">
+        <div class="tech-code">
+          <div class="code-bar">
+            <div class="code-dot cd-r"></div>
+            <div class="code-dot cd-y"></div>
+            <div class="code-dot cd-g"></div>
+            <span class="code-filename">pid_controller.cpp</span>
+          </div>
+          <pre><span class="cm">// Algoritmo PID — corazón del dron</span>
+<span class="kw">float</span> <span class="fn">PID::compute</span>(<span class="kw">float</span> setpoint, <span class="kw">float</span> actual) {
+  <span class="kw">float</span> error = setpoint - actual;
+
+  <span class="cm">// Proporcional</span>
+  <span class="kw">float</span> P = Kp * error;
+
+  <span class="cm">// Integral (anti-windup)</span>
+  integral += error * dt;
+  integral = constrain(integral, -<span class="num">100</span>, <span class="num">100</span>);
+  <span class="kw">float</span> I = Ki * integral;
+
+  <span class="cm">// Derivativo</span>
+  <span class="kw">float</span> D = Kd * (error - prev_error) / dt;
+  prev_error = error;
+
+  <span class="kw">return</span> P + I + D;  <span class="cm">// output → motor PWM</span>
+}</pre>
+        </div>
+      </div>
+      <div class="tech-features reveal reveal-delay-2">
+        <p class="section-label">Stack tecnológico</p>
+        <div class="tech-feat">
+          <div class="feat-icon-wrap">🔧</div>
+          <div>
+            <div class="feat-title">Hardware: ESP32 + PCB propia</div>
+            <div class="feat-desc">Diseñamos nuestra propia placa con KiCad y la fabricamos en JLCPCB. Los estudiantes aprenden electrónica real, no simulada.</div>
+          </div>
+        </div>
+        <div class="tech-feat">
+          <div class="feat-icon-wrap">📱</div>
+          <div>
+            <div class="feat-title">App Android en Kotlin</div>
+            <div class="feat-desc">Joystick virtual, telemetría en tiempo real y dashboard de sensores. Comunicación UDP a 100Hz para latencia mínima.</div>
+          </div>
+        </div>
+        <div class="tech-feat">
+          <div class="feat-icon-wrap">⚙️</div>
+          <div>
+            <div class="feat-title">Firmware con FreeRTOS</div>
+            <div class="feat-desc">Loop de control PID a 500Hz. Los estudiantes aprenden scheduling, prioridades de tareas y sistemas embebidos profesionales.</div>
+          </div>
+        </div>
+        <div class="tech-feat">
+          <div class="feat-icon-wrap">🔒</div>
+          <div>
+            <div class="feat-title">Seguridad y protocolos</div>
+            <div class="feat-desc">Analizamos las vulnerabilidades del dron original y diseñamos protocolos seguros. Ciberseguridad en hardware real.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     MARKETS
+════════════════════════════════════════ -->
+<section id="markets" class="section-pad">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:end;margin-bottom:3.5rem;">
+      <div>
+        <p class="section-label reveal">Mercados</p>
+        <h2 class="section-h2 reveal reveal-delay-1">Para <em>todos</em><br>los que aprenden</h2>
+      </div>
+      <p class="section-p reveal reveal-delay-2">
+        Autonovations se adapta a distintos contextos educativos con kits, programas
+        y plataformas diseñados para cada audiencia.
+      </p>
+    </div>
+    <div class="markets-grid">
+      <div class="market-card mk-1 reveal reveal-delay-1">
+        <div class="market-icon-wrap">🏫</div>
+        <div class="market-content">
+          <h3 style="color:#3b82f6;">Colegios y Escuelas</h3>
+          <p>Currículo alineado con estándares nacionales. Kits para 30 estudiantes por aula. Capacitación y soporte docente incluido.</p>
+          <span class="market-kit">📦 Kit Aula: 8 drones + guía docente + plataforma</span>
+        </div>
+      </div>
+      <div class="market-card mk-2 reveal reveal-delay-2">
+        <div class="market-icon-wrap">🎓</div>
+        <div class="market-content">
+          <h3 style="color:#10b981;">Universidades</h3>
+          <p>Laboratorios de sistemas embebidos, control automático y electrónica. Material para pregrado y posgrado en ingeniería.</p>
+          <span class="market-kit">📦 Kit Avanzado: PCB desnuda + acceso GitHub privado</span>
+        </div>
+      </div>
+      <div class="market-card mk-3 reveal reveal-delay-3">
+        <div class="market-icon-wrap">🏢</div>
+        <div class="market-content">
+          <h3 style="color:#a855f7;">Academias STEM</h3>
+          <p>Cursos intensivos de fin de semana, campamentos de verano y bootcamps de ingeniería juvenil con certificación.</p>
+          <span class="market-kit">📦 Bootcamp: 40h intensivas + certificación digital</span>
+        </div>
+      </div>
+      <div class="market-card mk-4 reveal reveal-delay-4">
+        <div class="market-icon-wrap">🏠</div>
+        <div class="market-content">
+          <h3 style="color:#f59e0b;">Familias / Homeschool</h3>
+          <p>Material autoguiado con videos, guías PDF y comunidad en línea. Aprende en casa a tu ritmo con soporte activo.</p>
+          <span class="market-kit">📦 Kit Familiar: 1 dron + 6 meses plataforma premium</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     ROADMAP
+════════════════════════════════════════ -->
+<section id="roadmap" class="section-pad">
+  <div class="container">
+    <p class="section-label reveal">Hoja de Ruta</p>
+    <h2 class="section-h2 reveal reveal-delay-1">De prototipo a<br><em>impacto nacional</em></h2>
+    <div class="roadmap-wrap reveal reveal-delay-2">
+      <div class="phase-card p1">
+        <div class="phase-bar"></div>
+        <div class="phase-quarter">Q1 2025</div>
+        <div class="phase-name">MVP</div>
+        <ul class="phase-items">
+          <li><span class="tick">✓</span>Currículo Nivel Explorador</li>
+          <li><span class="tick">✓</span>10 kits prototipo</li>
+          <li><span class="tick">✓</span>Piloto en 2 colegios</li>
+          <li><span class="tick">✓</span>App Android beta</li>
+        </ul>
+      </div>
+      <div class="phase-card p2">
+        <div class="phase-bar"></div>
+        <div class="phase-quarter">Q2 2025</div>
+        <div class="phase-name">Validación</div>
+        <ul class="phase-items">
+          <li><span class="tick">✓</span>Feedback 200 estudiantes</li>
+          <li><span class="tick">✓</span>Currículo Constructor</li>
+          <li><span class="tick">✓</span>Tienda online de kits</li>
+          <li><span class="tick">✓</span>Comunidad Discord</li>
+        </ul>
+      </div>
+      <div class="phase-card p3">
+        <div class="phase-bar"></div>
+        <div class="phase-quarter">Q3 2025</div>
+        <div class="phase-name">Escala</div>
+        <ul class="phase-items">
+          <li><span class="tick">✓</span>Niveles Ingeniero + Innovador</li>
+          <li><span class="tick">✓</span>Capacitación 50 docentes</li>
+          <li><span class="tick">✓</span>Alianzas universidades</li>
+          <li><span class="tick">✓</span>Open source en GitHub</li>
+        </ul>
+      </div>
+      <div class="phase-card p4">
+        <div class="phase-bar"></div>
+        <div class="phase-quarter">Q4 2025</div>
+        <div class="phase-name">Expansión</div>
+        <ul class="phase-items">
+          <li><span class="tick">✓</span>500+ estudiantes activos</li>
+          <li><span class="tick">✓</span>Franquicias STEM</li>
+          <li><span class="tick">✓</span>Versión en inglés</li>
+          <li><span class="tick">✓</span>Serie A Funding</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     IMPACT
+════════════════════════════════════════ -->
+<section id="impact" class="section-pad" style="background:var(--bg2);">
+  <div class="container">
+    <p class="section-label reveal">Impacto</p>
+    <h2 class="section-h2 reveal reveal-delay-1">Números que<br><em>importan</em></h2>
+    <div class="impact-numbers reveal reveal-delay-2">
+      <div class="impact-num-card">
+        <div class="impact-big">500<em>+</em></div>
+        <div class="impact-label">Estudiantes objetivo 2025</div>
+      </div>
+      <div class="impact-num-card">
+        <div class="impact-big">4</div>
+        <div class="impact-label">Niveles de profundidad</div>
+      </div>
+      <div class="impact-num-card">
+        <div class="impact-big">$<em>10</em></div>
+        <div class="impact-label">Costo del hardware base</div>
+      </div>
+      <div class="impact-num-card">
+        <div class="impact-big">100<em>%</em></div>
+        <div class="impact-label">Proyectos con hardware real</div>
+      </div>
+    </div>
+    <div class="quote-grid">
+      <div class="quote-card reveal reveal-delay-1">
+        <div class="quote-mark">"</div>
+        <p class="quote-text">Por primera vez entendí para qué sirve una derivada. No porque el profe me lo explicó, sino porque el dron se caía cuando mi Kd estaba mal.</p>
+        <div class="quote-author">
+          <div class="author-avatar">👨‍🎓</div>
+          <div>
+            <div class="author-name">Mateo R.</div>
+            <div class="author-role">Estudiante, 16 años — Nivel Constructor</div>
+          </div>
+        </div>
+      </div>
+      <div class="quote-card reveal reveal-delay-2">
+        <div class="quote-mark">"</div>
+        <p class="quote-text">Llevo 10 años enseñando física y nunca había visto estudiantes tan motivados. Autonovations hace que el aprendizaje sea inevitable.</p>
+        <div class="quote-author">
+          <div class="author-avatar">👩‍🏫</div>
+          <div>
+            <div class="author-name">Profa. Laura M.</div>
+            <div class="author-role">Docente de Física, Bogotá</div>
+          </div>
+        </div>
+      </div>
+      <div class="quote-card reveal reveal-delay-3">
+        <div class="quote-mark">"</div>
+        <p class="quote-text">Mi hijo de 12 años soldó su primer circuito, diseñó una PCB y la mandó a fabricar. Eso no pasa en ningún colegio normal.</p>
+        <div class="quote-author">
+          <div class="author-avatar">👨‍👦</div>
+          <div>
+            <div class="author-name">Carlos V.</div>
+            <div class="author-role">Padre — Kit Familiar Homeschool</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     CTA / CONTACT
+════════════════════════════════════════ -->
+<section id="contact">
+  <div class="container">
+    <div class="cta-inner">
+      <div class="cta-glow"></div>
+      <p class="section-label reveal">¿Listo para hackear?</p>
+      <h2 class="cta-h2 reveal reveal-delay-1">Únete a la<br><em>revolución STEAM</em></h2>
+      <p class="cta-sub reveal reveal-delay-2">
+        Ya seas docente, director de academia, padre o simplemente alguien con curiosidad
+        y un dron de Temu — hay un lugar para ti en Autonovations.
+      </p>
+      <div class="cta-actions reveal reveal-delay-3">
+        <a href="mailto:hola@autonovations.io" class="btn-primary">✉ hola@autonovations.io</a>
+        <a href="#levels" class="btn-outline">Ver el currículo</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+<footer>
+  <div class="footer-logo">
+    <div class="logo-dot" style="width:8px;height:8px;background:var(--cyan);border-radius:50%;animation:pulse-dot 2s ease-in-out infinite;"></div>
+    Autonovations
+  </div>
+  <div class="footer-links">
+    <a href="#about">Nosotros</a>
+    <a href="#steam">STEAM</a>
+    <a href="#levels">Niveles</a>
+    <a href="#markets">Mercados</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="mailto:hola@autonovations.io">Contacto</a>
+  </div>
+  <div class="footer-copy">© 2025 Autonovations · Hack it. Learn it. Build it. 🚁</div>
+</footer>
+
+<!-- ════════════════════════════════════════
+     JS
+════════════════════════════════════════ -->
+<script>
+/* ── Custom Cursor ── */
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursor-ring');
+let mouseX = 0, mouseY = 0;
+let ringX = 0, ringY = 0;
+
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  cursor.style.left = mouseX + 'px';
+  cursor.style.top = mouseY + 'px';
+});
+
+function animRing() {
+  ringX += (mouseX - ringX) * 0.12;
+  ringY += (mouseY - ringY) * 0.12;
+  cursorRing.style.left = ringX + 'px';
+  cursorRing.style.top = ringY + 'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+/* ── Nav scroll ── */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+/* ── Reveal on scroll ── */
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+reveals.forEach(el => observer.observe(el));
+
+/* ── Ticker duplicate for seamless loop ── */
+const track = document.getElementById('ticker-track');
+track.innerHTML += track.innerHTML;
+
+/* ── Smooth scroll for anchors ── */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+/* ── Parallax orbs ── */
+window.addEventListener('scroll', () => {
+  const sy = window.scrollY;
+  document.querySelectorAll('.hero-orb').forEach((o, i) => {
+    const speed = [0.08, 0.12, 0.05][i] || 0.08;
+    o.style.transform = `translateY(${sy * speed}px)`;
+  });
+}, { passive: true });
+
+/* ── Counter animation on impact section ── */
+const counters = document.querySelectorAll('.impact-big');
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const text = el.textContent;
+      const num = parseFloat(text.replace(/[^0-9.]/g, ''));
+      const suffix = text.replace(/[0-9.]/g, '').trim();
+      if (!isNaN(num) && num > 0) {
+        let start = 0;
+        const duration = 1200;
+        const step = timestamp => {
+          if (!start) start = timestamp;
+          const progress = Math.min((timestamp - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = Math.round(eased * num);
+          el.innerHTML = (text.startsWith('$') ? '$' : '') +
+            current + (suffix.includes('%') ? '<em>%</em>' : suffix.includes('+') ? '<em>+</em>' : suffix);
+          if (progress < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+counters.forEach(c => counterObserver.observe(c));
+</script>
+</body>
+</html>
