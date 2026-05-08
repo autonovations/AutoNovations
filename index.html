@@ -6,6 +6,7 @@
     <title>Autonovations - Autonomous Intelligence Connected</title>
     <meta name="description" content="Autonovations is a deep-tech engineering lab focused on the seamless integration of Artificial Intelligence, Robotics, and Industrial IoT (IIoT).">
     <meta name="keywords" content="AI, Robotics, IoT, Autonomous Systems, Drones, Deep Tech">
+    <link rel="icon" type="image/x-icon" href="favicon.png">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -381,6 +382,24 @@
             }
             .terminal-content {
                 height: 180px;
+            }
+        }
+
+        /* Tablet Adjustments */
+        @media (min-width: 769px) and (max-width: 1280px) {
+            #home {
+                align-items: flex-start !important;
+                padding-top: 110px !important;
+            }
+            #home h1 {
+                font-size: 3.5rem !important;
+                line-height: 1.1 !important;
+            }
+            #home p {
+                margin-bottom: 2rem !important;
+            }
+            .terminal-window {
+                max-width: 500px !important;
             }
         }
     </style>
