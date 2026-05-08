@@ -51,13 +51,53 @@
         .grid-bg {
             background-size: 50px 50px;
             background-image: 
-                linear-gradient(to right, rgba(0, 217, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0, 217, 255, 0.05) 1px, transparent 1px);
-            mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
-            -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+                linear-gradient(to right, rgba(0, 217, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 217, 255, 0.1) 1px, transparent 1px);
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 90%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 90%);
             position: absolute;
             inset: 0;
             z-index: -1;
+            transform: perspective(1000px) rotateX(20deg) scale(1.2);
+            transform-origin: top;
+        }
+        .grid-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent, rgba(0, 217, 255, 0.1), transparent);
+            height: 200%;
+            width: 100%;
+            animation: grid-shimmer 4s linear infinite;
+        }
+        @keyframes grid-shimmer {
+            0% { transform: translateY(-50%); }
+            100% { transform: translateY(0%); }
+        }
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.25;
+            z-index: -1;
+            pointer-events: none;
+            animation: orb-float 15s infinite alternate ease-in-out;
+        }
+        @keyframes orb-float {
+            0% { transform: translate(-10%, -10%) scale(1); }
+            50% { transform: translate(10%, 10%) scale(1.2); }
+            100% { transform: translate(5%, -5%) scale(0.9); }
+        }
+        .mouse-glow {
+            position: fixed;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 217, 255, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.5s ease;
         }
         .glass-panel {
             background: rgba(18, 18, 18, 0.6);
@@ -84,6 +124,23 @@
             opacity: 1;
             transform: translateY(0);
         }
+        .scanlines {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%,
+                rgba(0, 0, 0, 0.1) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.02),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.02)
+            );
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.3;
+        }
         #particles-js {
             position: fixed;
             width: 100%;
@@ -98,12 +155,84 @@
         .glow-button:hover {
             box-shadow: 0 0 30px rgba(0, 217, 255, 0.6);
         }
+
+        /* Language Dropdown Styles */
+        .lang-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .lang-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 9999px;
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            background: rgba(18, 18, 18, 0.4);
+            color: #E0E0E0;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .lang-btn:hover {
+            border-color: rgba(0, 217, 255, 0.5);
+            background: rgba(18, 18, 18, 0.6);
+        }
+        .lang-options {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+            min-width: 160px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+        .lang-dropdown:hover .lang-options {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .lang-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            width: 100%;
+            text-align: left;
+            color: #A0A0A0;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .lang-option:hover {
+            background: rgba(0, 217, 255, 0.1);
+            color: #00D9FF;
+        }
+        .lang-option.active {
+            color: #00D9FF;
+            background: rgba(0, 217, 255, 0.05);
+        }
+        .flag-icon {
+            width: 20px;
+            height: 14px;
+            object-fit: cover;
+            border-radius: 2px;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 </head>
 <body class="antialiased selection:bg-neon selection:text-dark">
-    <!-- Particles Background -->
+    <!-- Particles & Mouse Glow Background -->
     <div id="particles-js"></div>
+    <div class="mouse-glow" id="mouseGlow"></div>
 
     <!-- Navigation -->
     <nav class="fixed w-full z-50 transition-all duration-300 backdrop-blur-md bg-dark/50 border-b border-white/5" id="navbar">
@@ -113,54 +242,92 @@
                 <span class="font-tech font-bold text-2xl tracking-wider text-white hidden sm:block">AUTONOVATIONS</span>
             </a>
             <div class="hidden md:flex gap-8 text-sm font-medium tracking-widest uppercase items-center">
-                <a href="#about" class="text-gray-400 hover:text-neon transition-colors duration-300">About</a>
-                <a href="#technologies" class="text-gray-400 hover:text-neon transition-colors duration-300">Technologies</a>
-                <a href="#projects" class="text-gray-400 hover:text-neon transition-colors duration-300">Projects</a>
-                <a href="#contact" class="px-6 py-2 border border-neon/50 text-neon rounded-full hover:bg-neon hover:text-dark transition-all duration-300 font-bold glow-button">Join Us</a>
+                <a href="#about" class="text-gray-400 hover:text-neon transition-colors duration-300" data-i18n="nav_about">About</a>
+                <a href="#technologies" class="text-gray-400 hover:text-neon transition-colors duration-300" data-i18n="nav_technologies">Technologies</a>
+                <a href="#projects" class="text-gray-400 hover:text-neon transition-colors duration-300" data-i18n="nav_projects">Projects</a>
+                <a href="#contact" class="px-6 py-2 border border-neon/50 text-neon rounded-full hover:bg-neon hover:text-dark transition-all duration-300 font-bold glow-button" data-i18n="nav_join">Join Us</a>
+                
+                <!-- Language Dropdown -->
+                <div class="lang-dropdown ml-4">
+                    <button class="lang-btn" id="currentLangBtn">
+                        <img src="https://flagcdn.com/w40/us.png" alt="English" class="flag-icon" id="currentFlag">
+                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                    </button>
+                    <div class="lang-options">
+                        <button class="lang-option active" onclick="setLanguage('en')">
+                            <img src="https://flagcdn.com/w40/us.png" alt="English" class="flag-icon">
+                            <span data-i18n="lang_en">English</span>
+                        </button>
+                        <button class="lang-option" onclick="setLanguage('es')">
+                            <img src="https://flagcdn.com/w40/co.png" alt="Español" class="flag-icon">
+                            <span data-i18n="lang_es">Spanish</span>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <button class="md:hidden text-neon" id="menuBtn">
-                <i data-lucide="menu"></i>
-            </button>
+            <div class="flex md:hidden items-center gap-4">
+                <div class="lang-dropdown">
+                    <button class="lang-btn" id="mobileCurrentLangBtn">
+                        <img src="https://flagcdn.com/w40/us.png" alt="Language" class="flag-icon" id="mobileCurrentFlag">
+                    </button>
+                    <div class="lang-options">
+                        <button class="lang-option" onclick="setLanguage('en')">
+                            <img src="https://flagcdn.com/w40/us.png" alt="English" class="flag-icon">
+                            <span data-i18n="lang_en">English</span>
+                        </button>
+                        <button class="lang-option" onclick="setLanguage('es')">
+                            <img src="https://flagcdn.com/w40/co.png" alt="Español" class="flag-icon">
+                            <span data-i18n="lang_es">Spanish</span>
+                        </button>
+                    </div>
+                </div>
+                <button class="text-neon" id="menuBtn">
+                    <i data-lucide="menu"></i>
+                </button>
+            </div>
         </div>
     </nav>
 
     <!-- Mobile Menu -->
     <div class="fixed inset-0 bg-dark/95 z-40 hidden flex-col items-center justify-center gap-8 backdrop-blur-xl" id="mobileMenu">
-        <a href="#about" class="text-2xl font-tech text-white hover:text-neon transition-colors menu-link">About</a>
-        <a href="#technologies" class="text-2xl font-tech text-white hover:text-neon transition-colors menu-link">Technologies</a>
-        <a href="#projects" class="text-2xl font-tech text-white hover:text-neon transition-colors menu-link">Projects</a>
-        <a href="#contact" class="text-2xl font-tech text-neon menu-link">Join Us</a>
+        <a href="#about" class="text-2xl font-tech text-white hover:text-neon transition-colors menu-link" data-i18n="nav_about">About</a>
+        <a href="#technologies" class="text-2xl font-tech text-white hover:text-neon transition-colors menu-link" data-i18n="nav_technologies">Technologies</a>
+        <a href="#projects" class="text-2xl font-tech text-white hover:text-neon transition-colors menu-link" data-i18n="nav_projects">Projects</a>
+        <a href="#contact" class="text-2xl font-tech text-neon menu-link" data-i18n="nav_join">Join Us</a>
     </div>
 
     <!-- Hero Section -->
     <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
         <div class="grid-bg"></div>
+        <div class="scanlines"></div>
         
-        <!-- Glowing Orb -->
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-neon/5 rounded-full blur-[120px] -z-10 animate-pulse"></div>
+        <!-- Enhanced Glowing Orbs -->
+        <div class="glow-orb w-[600px] h-[600px] bg-primary/30 top-[-10%] left-[-10%]" style="animation-delay: 0s;"></div>
+        <div class="glow-orb w-[500px] h-[500px] bg-secondary/30 bottom-[-10%] right-[-10%]" style="animation-delay: -5s;"></div>
+        <div class="glow-orb w-[700px] h-[700px] bg-primary/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-[150px]" style="animation-delay: -10s;"></div>
 
         <div class="max-w-7xl mx-auto px-6 flex flex-col items-center text-center z-10">
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neon/30 bg-neon/5 backdrop-blur-sm mb-8 animate-fade-in" style="animation-delay: 0.2s;">
                 <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span>
-                <span class="text-neon text-sm font-tech tracking-widest uppercase">The Future is Here</span>
+                <span class="text-neon text-sm font-tech tracking-widest uppercase" data-i18n="hero_badge">The Future is Here</span>
             </div>
             
             <h1 class="font-tech text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-6 animate-fade-in" style="animation-delay: 0.4s;">
-                <span class="block text-white">Autonomous Intelligence</span>
-                <span class="block text-gradient animate-float">Connected</span>
+                <span class="block text-white" data-i18n="hero_title_1">Autonomous Intelligence</span>
+                <span class="block text-gradient animate-float" data-i18n="hero_title_2">Connected</span>
             </h1>
             
-            <p class="max-w-2xl text-gray-400 text-lg md:text-xl mb-12 animate-fade-in" style="animation-delay: 0.6s;">
+            <p class="max-w-2xl text-gray-400 text-lg md:text-xl mb-12 animate-fade-in" style="animation-delay: 0.6s;" data-i18n="hero_desc">
                 Bridging the gap between artificial intelligence and physical reality. We engineer the next generation of robotics, drones, and autonomous systems.
             </p>
             
             <div class="flex flex-col sm:flex-row gap-6 animate-fade-in" style="animation-delay: 0.8s;">
                 <a href="#technologies" class="px-8 py-4 bg-neon text-dark font-bold font-tech rounded-full glow-button transition-all duration-300 flex items-center justify-center gap-2 group">
-                    Explore Technology
+                    <span data-i18n="hero_btn_explore">Explore Technology</span>
                     <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
                 </a>
                 <a href="#contact" class="px-8 py-4 border border-white/20 text-white font-bold font-tech rounded-full hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-2">
-                    Start Building
+                    <span data-i18n="hero_btn_build">Start Building</span>
                     <i data-lucide="terminal" class="w-5 h-5"></i>
                 </a>
             </div>
@@ -178,23 +345,23 @@
         <div class="max-w-7xl mx-auto px-6">
             <div class="grid lg:grid-cols-2 gap-16 items-center">
                 <div class="reveal">
-                    <h2 class="text-neon font-tech tracking-widest uppercase text-sm mb-4">Who we are</h2>
-                    <h3 class="text-4xl md:text-5xl font-tech font-bold mb-6">Building the Future of Autonomous Intelligence</h3>
-                    <p class="text-gray-400 text-lg mb-6 leading-relaxed">
+                    <h2 class="text-neon font-tech tracking-widest uppercase text-sm mb-4" data-i18n="about_subtitle">Who we are</h2>
+                    <h3 class="text-4xl md:text-5xl font-tech font-bold mb-6" data-i18n="about_title">Building the Future of Autonomous Intelligence</h3>
+                    <p class="text-gray-400 text-lg mb-6 leading-relaxed" data-i18n="about_p1">
                         Autonovations is a deep-tech engineering lab focused on the seamless integration of Artificial Intelligence, Robotics, and Industrial IoT (IIoT).
                     </p>
-                    <p class="text-gray-400 text-lg leading-relaxed mb-8">
+                    <p class="text-gray-400 text-lg leading-relaxed mb-8" data-i18n="about_p2">
                         We don't just build software; we build physical-digital systems that perceive, decide, and act in the real world. From intelligent drones mapping complex environments to robotic systems integrated with state-of-the-art AI.
                     </p>
                     
                     <div class="flex items-center gap-12">
                         <div>
                             <div class="text-4xl font-bold text-white mb-2 text-gradient font-tech">AI + IoT</div>
-                            <div class="text-sm text-gray-400 uppercase tracking-wider font-tech">Unified</div>
+                            <div class="text-sm text-gray-400 uppercase tracking-wider font-tech" data-i18n="about_stat1">Unified</div>
                         </div>
                         <div>
                             <div class="text-4xl font-bold text-white mb-2 text-gradient font-tech">Next-Gen</div>
-                            <div class="text-sm text-gray-400 uppercase tracking-wider font-tech">Robotics</div>
+                            <div class="text-sm text-gray-400 uppercase tracking-wider font-tech" data-i18n="about_stat2">Robotics</div>
                         </div>
                     </div>
                 </div>
@@ -211,8 +378,8 @@
     <section id="technologies" class="py-32 bg-panel/30 border-y border-white/5 relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 relative z-10">
             <div class="text-center mb-20 reveal">
-                <h2 class="text-neon font-tech tracking-widest uppercase text-sm mb-4">Core Architecture</h2>
-                <h3 class="text-4xl md:text-5xl font-tech font-bold text-white">Technological Arsenal</h3>
+                <h2 class="text-neon font-tech tracking-widest uppercase text-sm mb-4" data-i18n="tech_subtitle">Core Architecture</h2>
+                <h3 class="text-4xl md:text-5xl font-tech font-bold text-white" data-i18n="tech_title">Technological Arsenal</h3>
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -222,8 +389,8 @@
                     <div class="w-14 h-14 rounded-lg bg-neon/10 flex items-center justify-center mb-6 text-neon group-hover:scale-110 transition-transform">
                         <i data-lucide="brain-circuit" class="w-8 h-8"></i>
                     </div>
-                    <h4 class="text-xl font-bold text-white mb-3 font-tech">AI Systems</h4>
-                    <p class="text-gray-400 text-sm leading-relaxed">Advanced neural networks built for edge intelligence. Deep learning logic, predictive analytics, and autonomous decision making.</p>
+                    <h4 class="text-xl font-bold text-white mb-3 font-tech" data-i18n="tech_card1_title">AI Systems</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed" data-i18n="tech_card1_desc">Advanced neural networks built for edge intelligence. Deep learning logic, predictive analytics, and autonomous decision making.</p>
                 </div>
 
                 <!-- Feature 2 -->
@@ -232,8 +399,8 @@
                     <div class="w-14 h-14 rounded-lg bg-neon/10 flex items-center justify-center mb-6 text-neon group-hover:scale-110 transition-transform">
                         <i data-lucide="plane" class="w-8 h-8"></i>
                     </div>
-                    <h4 class="text-xl font-bold text-white mb-3 font-tech">Autonomous Drones</h4>
-                    <p class="text-gray-400 text-sm leading-relaxed">Intelligent UAVs with swarm capabilities. Real-time scanning, collision avoidance, and precision navigation.</p>
+                    <h4 class="text-xl font-bold text-white mb-3 font-tech" data-i18n="tech_card2_title">Autonomous Drones</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed" data-i18n="tech_card2_desc">Intelligent UAVs with swarm capabilities. Real-time scanning, collision avoidance, and precision navigation.</p>
                 </div>
 
                 <!-- Feature 3 -->
@@ -242,8 +409,8 @@
                     <div class="w-14 h-14 rounded-lg bg-neon/10 flex items-center justify-center mb-6 text-neon group-hover:scale-110 transition-transform">
                         <i data-lucide="bot" class="w-8 h-8"></i>
                     </div>
-                    <h4 class="text-xl font-bold text-white mb-3 font-tech">Robotics Integration</h4>
-                    <p class="text-gray-400 text-sm leading-relaxed">Mechanical systems fused with cognitive intelligence. Interactive robots (Labubu style integration) and dynamic systems.</p>
+                    <h4 class="text-xl font-bold text-white mb-3 font-tech" data-i18n="tech_card3_title">Robotics Integration</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed" data-i18n="tech_card3_desc">Mechanical systems fused with cognitive intelligence. Interactive robots (Labubu style integration) and dynamic systems.</p>
                 </div>
 
                 <!-- Feature 4 -->
@@ -252,8 +419,8 @@
                     <div class="w-14 h-14 rounded-lg bg-neon/10 flex items-center justify-center mb-6 text-neon group-hover:scale-110 transition-transform">
                         <i data-lucide="network" class="w-8 h-8"></i>
                     </div>
-                    <h4 class="text-xl font-bold text-white mb-3 font-tech">Real-time Data Systems</h4>
-                    <p class="text-gray-400 text-sm leading-relaxed">High-performance streams connecting global IoT sensors. Processing massive telemetry with zero-downtime scalability.</p>
+                    <h4 class="text-xl font-bold text-white mb-3 font-tech" data-i18n="tech_card4_title">Real-time Data Systems</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed" data-i18n="tech_card4_desc">High-performance streams connecting global IoT sensors. Processing massive telemetry with zero-downtime scalability.</p>
                 </div>
             </div>
         </div>
@@ -264,8 +431,8 @@
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal">
                 <div>
-                    <h2 class="text-neon font-tech tracking-widest uppercase text-sm mb-4">Vision & Escalability</h2>
-                    <h3 class="text-4xl md:text-5xl font-tech font-bold text-white">Innovation Projects</h3>
+                    <h2 class="text-neon font-tech tracking-widest uppercase text-sm mb-4" data-i18n="projects_subtitle">Vision & Escalability</h2>
+                    <h3 class="text-4xl md:text-5xl font-tech font-bold text-white" data-i18n="projects_title">Innovation Projects</h3>
                 </div>
             </div>
 
@@ -279,13 +446,13 @@
                         </div>
                         <div class="w-full md:w-3/5">
                             <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Interactive Robotics</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">AI Integration</span>
+                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase" data-i18n="project1_tag1">Interactive Robotics</span>
+                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase" data-i18n="project1_tag2">AI Integration</span>
                             </div>
-                            <h4 class="text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech">Cognitive Companions</h4>
-                            <p class="text-gray-400 mb-6 text-lg">Next-generation interactive entities. By combining emotive mechatronics with large language models, we're building deeply responsive interfaces that bridge the digital and physical divide seamlessly.</p>
+                            <h4 class="text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech" data-i18n="project1_title">Cognitive Companions</h4>
+                            <p class="text-gray-400 mb-6 text-lg" data-i18n="project1_desc">Next-generation interactive entities. By combining emotive mechatronics with large language models, we're building deeply responsive interfaces that bridge the digital and physical divide seamlessly.</p>
                             <div class="text-white flex items-center gap-2 text-sm font-tech uppercase tracking-wider">
-                                View Capabilities <i data-lucide="arrow-right" class="w-4 h-4 text-neon"></i>
+                                <span data-i18n="project1_btn">View Capabilities</span> <i data-lucide="arrow-right" class="w-4 h-4 text-neon"></i>
                             </div>
                         </div>
                     </div>
@@ -300,13 +467,13 @@
                         </div>
                         <div class="w-full md:w-3/5 md:order-1">
                             <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Autonomous Systems</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Data</span>
+                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase" data-i18n="project2_tag1">Autonomous Systems</span>
+                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase" data-i18n="project2_tag2">Data</span>
                             </div>
-                            <h4 class="text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech">AI Trading Core</h4>
-                            <p class="text-gray-400 mb-6 text-lg">Harnessing unsupervised machine learning to detect patterns in global data sets. Our intelligent systems act autonomously, optimizing yield with sub-millisecond precision analysis.</p>
+                            <h4 class="text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech" data-i18n="project2_title">AI Trading Core</h4>
+                            <p class="text-gray-400 mb-6 text-lg" data-i18n="project2_desc">Harnessing unsupervised machine learning to detect patterns in global data sets. Our intelligent systems act autonomously, optimizing yield with sub-millisecond precision analysis.</p>
                             <div class="text-white flex items-center gap-2 text-sm font-tech uppercase tracking-wider">
-                                View Architecture <i data-lucide="arrow-left" class="w-4 h-4 text-neon md:order-first"></i>
+                                <span data-i18n="project2_btn">View Architecture</span> <i data-lucide="arrow-left" class="w-4 h-4 text-neon md:order-first"></i>
                             </div>
                         </div>
                     </div>
@@ -320,10 +487,10 @@
     <section id="contact" class="py-32 relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-t from-neon/10 to-transparent"></div>
         <div class="max-w-4xl mx-auto px-6 text-center relative z-10 reveal">
-            <h2 class="text-5xl md:text-7xl font-tech font-bold text-white mb-8">Build the Future <br><span class="text-gradient">With Us</span></h2>
-            <p class="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">Embrace the autonomous revolution. Connect with our engineering core to explore unparalleled technological synergies.</p>
+            <h2 class="text-5xl md:text-7xl font-tech font-bold text-white mb-8" data-i18n="cta_title">Build the Future <br><span class="text-gradient">With Us</span></h2>
+            <p class="text-xl text-gray-400 mb-12 max-w-2xl mx-auto" data-i18n="cta_desc">Embrace the autonomous revolution. Connect with our engineering core to explore unparalleled technological synergies.</p>
             <button class="px-10 py-5 bg-neon text-dark font-bold font-tech text-xl rounded-full hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 mx-auto glow-button group">
-                Join the Movement
+                <span data-i18n="cta_btn">Join the Movement</span>
                 <i data-lucide="zap" class="w-6 h-6 group-hover:animate-pulse"></i>
             </button>
         </div>
@@ -334,34 +501,91 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-[#020504] pt-16 pb-8 border-t border-white/5 relative z-10">
+    <footer class="bg-[#020504] pt-24 pb-12 border-t border-white/5 relative z-10 overflow-hidden">
+        <!-- Background decorative elements -->
+        <div class="absolute top-0 right-0 w-96 h-96 bg-neon/5 rounded-full blur-[100px] -z-10 translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-secondary/5 rounded-full blur-[80px] -z-10 -translate-x-1/2 translate-y-1/2"></div>
+
         <div class="max-w-7xl mx-auto px-6">
-            <div class="flex flex-col md:flex-row justify-between items-center mb-12">
-                <div class="flex items-center gap-4 mb-6 md:mb-0">
-                    <img src="logo_oficial_an.png" alt="Autonovations" class="h-10 w-10 object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer" onerror="this.src='https://placehold.co/100x100/00D9FF/FFFFFF?text=AN'">
-                    <span class="font-tech font-bold text-xl tracking-wider text-white">AUTONOVATIONS</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                <!-- Brand Column -->
+                <div class="space-y-6">
+                    <div class="flex items-center gap-3">
+                        <img src="logo_oficial_an.png" alt="Autonovations" class="h-10 w-10 object-contain hover:scale-110 transition-transform cursor-pointer" onerror="this.src='https://placehold.co/100x100/00D9FF/FFFFFF?text=AN'">
+                        <span class="font-tech font-bold text-2xl tracking-wider text-white">AUTONOVATIONS</span>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed text-sm max-w-xs" data-i18n="footer_tagline">
+                        Innovating at the intersection of AI and physical reality. We engineer the next generation of autonomous systems for a connected world.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon hover:border-neon/50 hover:bg-neon/5 transition-all group">
+                            <i data-lucide="twitter" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon hover:border-neon/50 hover:bg-neon/5 transition-all group">
+                            <i data-lucide="linkedin" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon hover:border-neon/50 hover:bg-neon/5 transition-all group">
+                            <i data-lucide="github" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon hover:border-neon/50 hover:bg-neon/5 transition-all group">
+                            <i data-lucide="instagram" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                        </a>
+                    </div>
                 </div>
-                
-                <div class="flex gap-6">
-                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon hover:border-neon/50 transition-all">
-                        <i data-lucide="twitter" class="w-4 h-4"></i>
-                    </a>
-                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon hover:border-neon/50 transition-all">
-                        <i data-lucide="linkedin" class="w-4 h-4"></i>
-                    </a>
-                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon hover:border-neon/50 transition-all">
-                        <i data-lucide="github" class="w-4 h-4"></i>
-                    </a>
+
+                <!-- Navigation Column -->
+                <div class="space-y-6">
+                    <h4 class="font-tech font-bold text-white text-lg uppercase tracking-widest" data-i18n="footer_links_title">Navigation</h4>
+                    <ul class="space-y-4">
+                        <li><a href="#home" class="text-gray-400 hover:text-neon transition-colors flex items-center gap-2 group" data-i18n="nav_home">Home <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"></i></a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-neon transition-colors flex items-center gap-2 group" data-i18n="nav_about">About <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"></i></a></li>
+                        <li><a href="#technologies" class="text-gray-400 hover:text-neon transition-colors flex items-center gap-2 group" data-i18n="nav_technologies">Technologies <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"></i></a></li>
+                        <li><a href="#projects" class="text-gray-400 hover:text-neon transition-colors flex items-center gap-2 group" data-i18n="nav_projects">Projects <i data-lucide="chevron-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"></i></a></li>
+                    </ul>
+                </div>
+
+                <!-- Technologies Column -->
+                <div class="space-y-6">
+                    <h4 class="font-tech font-bold text-white text-lg uppercase tracking-widest" data-i18n="footer_tech_title">Specialties</h4>
+                    <ul class="space-y-4">
+                        <li class="text-gray-400 hover:text-neon transition-colors cursor-pointer flex items-center gap-2" data-i18n="tech_card1_title">AI Systems</li>
+                        <li class="text-gray-400 hover:text-neon transition-colors cursor-pointer flex items-center gap-2" data-i18n="tech_card2_title">Autonomous Drones</li>
+                        <li class="text-gray-400 hover:text-neon transition-colors cursor-pointer flex items-center gap-2" data-i18n="tech_card3_title">Robotics Integration</li>
+                        <li class="text-gray-400 hover:text-neon transition-colors cursor-pointer flex items-center gap-2" data-i18n="tech_card4_title">Real-time Data Systems</li>
+                    </ul>
+                </div>
+
+                <!-- Newsletter Column -->
+                <div class="space-y-6">
+                    <h4 class="font-tech font-bold text-white text-lg uppercase tracking-widest" data-i18n="footer_newsletter_title">Intelligence Briefing</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed" data-i18n="footer_newsletter_desc">
+                        Subscribe to receive our latest breakthroughs in autonomous systems.
+                    </p>
+                    <form class="flex flex-col gap-3">
+                        <div class="relative">
+                            <input type="email" placeholder="Enter your email" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-neon/50 transition-all" data-i18n-placeholder="footer_newsletter_placeholder">
+                        </div>
+                        <button class="w-full bg-neon text-dark font-bold py-3 rounded-xl hover:bg-neon/90 transition-all flex items-center justify-center gap-2 group">
+                            <span data-i18n="footer_newsletter_btn">Subscribe</span>
+                            <i data-lucide="send" class="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
-            
-            <div class="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent mb-8"></div>
-            
-            <div class="flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 font-tech tracking-wide">
-                <p>&copy; 2026 Autonovations. Autonomous Intelligence Connected.</p>
-                <div class="flex gap-6 mt-4 md:mt-0">
-                    <a href="#" class="hover:text-neon transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-neon transition-colors">Terms of Service</a>
+
+            <!-- Bottom Bar -->
+            <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex flex-col items-center md:items-start gap-2">
+                    <p class="text-gray-500 text-sm font-tech tracking-wide" data-i18n="footer_copy">&copy; 2026 Autonovations. Autonomous Intelligence Connected.</p>
+                    <p class="text-gray-600 text-xs flex items-center gap-2">
+                        <i data-lucide="map-pin" class="w-3 h-3 text-neon"></i>
+                        <span data-i18n="footer_location">Silicon Valley | Remote Operations</span>
+                    </p>
+                </div>
+                
+                <div class="flex gap-8 text-sm font-tech">
+                    <a href="#" class="text-gray-500 hover:text-neon transition-colors" data-i18n="footer_privacy">Privacy Policy</a>
+                    <a href="#" class="text-gray-500 hover:text-neon transition-colors" data-i18n="footer_terms">Terms of Service</a>
                 </div>
             </div>
         </div>
@@ -375,26 +599,59 @@
         // Particles.js configuration
         particlesJS('particles-js', {
             "particles": {
-                "number": { "value": 40, "density": { "enable": true, "value_area": 1000 } },
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
                 "color": { "value": "#00D9FF" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.15, "random": true },
-                "size": { "value": 3, "random": true },
-                "line_linked": { "enable": true, "distance": 150, "color": "#00D9FF", "opacity": 0.05, "width": 1 },
-                "move": { "enable": true, "speed": 1, "direction": "none", "random": true, "out_mode": "out" }
+                "shape": { 
+                    "type": "polygon",
+                    "polygon": { "nb_sides": 6 }
+                },
+                "opacity": { 
+                    "value": 0.3, 
+                    "random": true,
+                    "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false }
+                },
+                "size": { 
+                    "value": 4, 
+                    "random": true,
+                    "anim": { "enable": true, "speed": 4, "size_min": 0.3, "sync": false }
+                },
+                "line_linked": { 
+                    "enable": true, 
+                    "distance": 150, 
+                    "color": "#00D9FF", 
+                    "opacity": 0.2, 
+                    "width": 1.5 
+                },
+                "move": { 
+                    "enable": true, 
+                    "speed": 2, 
+                    "direction": "none", 
+                    "random": true, 
+                    "straight": false, 
+                    "out_mode": "out",
+                    "bounce": false,
+                }
             },
             "interactivity": {
                 "detect_on": "canvas",
                 "events": {
-                    "onhover": { "enable": true, "mode": "grab" },
+                    "onhover": { "enable": true, "mode": "bubble" },
                     "onclick": { "enable": true, "mode": "push" }
                 },
                 "modes": {
-                    "grab": { "distance": 250, "line_linked": { "opacity": 0.2 } },
-                    "push": { "particles_nb": 3 }
+                    "grab": { "distance": 200, "line_linked": { "opacity": 0.4 } },
+                    "bubble": { "distance": 200, "size": 8, "duration": 2, "opacity": 0.8, "speed": 3 },
+                    "push": { "particles_nb": 4 }
                 }
             },
             "retina_detect": true
+        });
+
+        // Mouse Glow Effect
+        const mouseGlow = document.getElementById('mouseGlow');
+        window.addEventListener('mousemove', (e) => {
+            mouseGlow.style.left = e.clientX + 'px';
+            mouseGlow.style.top = e.clientY + 'px';
         });
 
         // Scroll Animations (Reveal)
@@ -457,6 +714,166 @@
                 menuBtn.innerHTML = '<i data-lucide="menu"></i>';
                 lucide.createIcons();
             });
+        });
+
+        // i18n Translation Logic
+        const translations = {
+            en: {
+                nav_about: "About",
+                nav_technologies: "Technologies",
+                nav_projects: "Projects",
+                nav_join: "Join Us",
+                hero_badge: "The Future is Here",
+                hero_title_1: "Autonomous Intelligence",
+                hero_title_2: "Connected",
+                hero_desc: "Bridging the gap between artificial intelligence and physical reality. We engineer the next generation of robotics, drones, and autonomous systems.",
+                hero_btn_explore: "Explore Technology",
+                hero_btn_build: "Start Building",
+                about_subtitle: "Who we are",
+                about_title: "Building the Future of Autonomous Intelligence",
+                about_p1: "Autonovations is a deep-tech engineering lab focused on the seamless integration of Artificial Intelligence, Robotics, and Industrial IoT (IIoT).",
+                about_p2: "We don't just build software; we build physical-digital systems that perceive, decide, and act in the real world. From intelligent drones mapping complex environments to robotic systems integrated with state-of-the-art AI.",
+                about_stat1: "Unified",
+                about_stat2: "Robotics",
+                tech_subtitle: "Core Architecture",
+                tech_title: "Technological Arsenal",
+                tech_card1_title: "AI Systems",
+                tech_card1_desc: "Advanced neural networks built for edge intelligence. Deep learning logic, predictive analytics, and autonomous decision making.",
+                tech_card2_title: "Autonomous Drones",
+                tech_card2_desc: "Intelligent UAVs with swarm capabilities. Real-time scanning, collision avoidance, and precision navigation.",
+                tech_card3_title: "Robotics Integration",
+                tech_card3_desc: "Mechanical systems fused with cognitive intelligence. Interactive robots (Labubu style integration) and dynamic systems.",
+                tech_card4_title: "Real-time Data Systems",
+                tech_card4_desc: "High-performance streams connecting global IoT sensors. Processing massive telemetry with zero-downtime scalability.",
+                projects_subtitle: "Vision & Escalability",
+                projects_title: "Innovation Projects",
+                project1_tag1: "Interactive Robotics",
+                project1_tag2: "AI Integration",
+                project1_title: "Cognitive Companions",
+                project1_desc: "Next-generation interactive entities. By combining emotive mechatronics with large language models, we're building deeply responsive interfaces that bridge the digital and physical divide seamlessly.",
+                project1_btn: "View Capabilities",
+                project2_tag1: "Autonomous Systems",
+                project2_tag2: "Data",
+                project2_title: "AI Trading Core",
+                project2_desc: "Harnessing unsupervised machine learning to detect patterns in global data sets. Our intelligent systems act autonomously, optimizing yield with sub-millisecond precision analysis.",
+                project2_btn: "View Architecture",
+                cta_title: "Build the Future <br><span class=\"text-gradient\">With Us</span>",
+                cta_desc: "Embrace the autonomous revolution. Connect with our engineering core to explore unparalleled technological synergies.",
+                cta_btn: "Join the Movement",
+                footer_copy: "&copy; 2026 Autonovations. Autonomous Intelligence Connected.",
+                footer_privacy: "Privacy Policy",
+                footer_terms: "Terms of Service",
+                lang_es: "Spanish",
+                nav_home: "Home",
+                footer_tagline: "Innovating at the intersection of AI and physical reality. We engineer the next generation of autonomous systems for a connected world.",
+                footer_links_title: "Navigation",
+                footer_tech_title: "Specialties",
+                footer_newsletter_title: "Intelligence Briefing",
+                footer_newsletter_desc: "Subscribe to receive our latest breakthroughs in autonomous systems.",
+                footer_newsletter_placeholder: "Enter your email",
+                footer_newsletter_btn: "Subscribe",
+                footer_location: "Silicon Valley | Remote Operations"
+            },
+            es: {
+                nav_about: "Nosotros",
+                nav_technologies: "Tecnologías",
+                nav_projects: "Proyectos",
+                nav_join: "Únete",
+                hero_badge: "El Futuro está Aquí",
+                hero_title_1: "Inteligencia Autónoma",
+                hero_title_2: "Conectada",
+                hero_desc: "Cerrando la brecha entre la inteligencia artificial y la realidad física. Diseñamos la próxima generación de robótica, drones y sistemas autónomos.",
+                hero_btn_explore: "Explorar Tecnología",
+                hero_btn_build: "Empezar a Construir",
+                about_subtitle: "Quiénes somos",
+                about_title: "Construyendo el Futuro de la Inteligencia Autónoma",
+                about_p1: "Autonovations es un laboratorio de ingeniería de tecnología profunda enfocado en la integración perfecta de Inteligencia Artificial, Robótica e IoT Industrial (IIoT).",
+                about_p2: "No solo construimos software; construimos sistemas físico-digitales que perciben, deciden y actúan en el mundo real. Desde drones inteligentes que mapean entornos complejos hasta sistemas robóticos integrados con IA de vanguardia.",
+                about_stat1: "Unificado",
+                about_stat2: "Robótica",
+                tech_subtitle: "Arquitectura Core",
+                tech_title: "Arsenal Tecnológico",
+                tech_card1_title: "Sistemas de IA",
+                tech_card1_desc: "Redes neuronales avanzadas creadas para inteligencia de borde. Lógica de aprendizaje profundo, analítica predictiva y toma de decisiones autónoma.",
+                tech_card2_title: "Drones Autónomos",
+                tech_card2_desc: "UAVs inteligentes con capacidades de enjambre. Escaneo en tiempo real, evitación de colisiones y navegación de precisión.",
+                tech_card3_title: "Integración Robótica",
+                tech_card3_desc: "Sistemas mecánicos fusionados con inteligencia cognitiva. Robots interactivos y sistemas dinámicos.",
+                tech_card4_title: "Sistemas de Datos en Tiempo Real",
+                tech_card4_desc: "Flujos de alto rendimiento que conectan sensores IoT globales. Procesamiento de telemetría masiva con escalabilidad sin tiempo de inactividad.",
+                projects_subtitle: "Visión y Escalabilidad",
+                projects_title: "Proyectos de Innovación",
+                project1_tag1: "Robótica Interactiva",
+                project1_tag2: "Integración de IA",
+                project1_title: "Compañeros Cognitivos",
+                project1_desc: "Entidades interactivas de próxima generación. Al combinar mecatrónica emotiva con grandes modelos de lenguaje, estamos construyendo interfaces profundamente receptivas que cierran la brecha digital y física sin problemas.",
+                project1_btn: "Ver Capacidades",
+                project2_tag1: "Sistemas Autónomos",
+                project2_tag2: "Datos",
+                project2_title: "Núcleo de Trading IA",
+                project2_desc: "Aprovechando el aprendizaje automático no supervisado para detectar patrones en conjuntos de datos globales. Nuestros sistemas inteligentes actúan de forma autónoma, optimizando el rendimiento con análisis de precisión de sub-milisegundos.",
+                project2_btn: "Ver Arquitectura",
+                cta_title: "Construye el Futuro <br><span class=\"text-gradient\">Con Nosotros</span>",
+                cta_desc: "Abraza la revolución autónoma. Conéctate con nuestro núcleo de ingeniería para explorar sinergias tecnológicas sin precedentes.",
+                cta_btn: "Únete al Movimiento",
+                footer_copy: "&copy; 2026 Autonovations. Inteligencia Autónoma Conectada.",
+                footer_privacy: "Política de Privacidad",
+                footer_terms: "Términos de Servicio",
+                lang_en: "Inglés",
+                lang_es: "Español",
+                nav_home: "Inicio",
+                footer_tagline: "Innovando en la intersección de la IA y la realidad física. Diseñamos la próxima generación de sistemas autónomos para un mundo conectado.",
+                footer_links_title: "Navegación",
+                footer_tech_title: "Especialidades",
+                footer_newsletter_title: "Boletín de Inteligencia",
+                footer_newsletter_desc: "Suscríbete para recibir nuestros últimos avances en sistemas autónomos.",
+                footer_newsletter_placeholder: "Ingresa tu correo",
+                footer_newsletter_btn: "Suscribirse",
+                footer_location: "Silicon Valley | Operaciones Remotas"
+            }
+        };
+
+        function setLanguage(lang) {
+            // Update current language indicator
+            const flagUrl = lang === 'es' ? 'https://flagcdn.com/w40/co.png' : 'https://flagcdn.com/w40/us.png';
+            
+            document.getElementById('currentFlag').src = flagUrl;
+            document.getElementById('mobileCurrentFlag').src = flagUrl;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    el.innerHTML = translations[lang][key];
+                }
+            });
+
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[lang][key]) {
+                    el.setAttribute('placeholder', translations[lang][key]);
+                }
+            });
+
+            // Update active state in dropdown
+            document.querySelectorAll('.lang-option').forEach(btn => {
+                btn.classList.remove('active');
+                // Check if the button's onclick attribute contains the selected language
+                if (btn.getAttribute('onclick').includes(`'${lang}'`)) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Save preference
+            localStorage.setItem('preferredLang', lang);
+        }
+
+        // Initialize language on load
+        window.addEventListener('DOMContentLoaded', () => {
+            // Default to 'en' unless a preference was already saved
+            const savedLang = localStorage.getItem('preferredLang') || 'en';
+            setLanguage(savedLang);
         });
     </script>
 </body>
