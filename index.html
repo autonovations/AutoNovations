@@ -493,7 +493,7 @@
                 </div>
 
                 <!-- Interactive Terminal -->
-                <div class="block animate-fade-in" style="animation-delay: 1s;">
+                <div class="hidden lg:block animate-fade-in" style="animation-delay: 1s;">
                     <div class="terminal-window glass-panel mx-auto lg:mx-0">
                         <div class="terminal-header">
                             <div class="terminal-dot bg-red-500/50"></div>
@@ -1141,10 +1141,12 @@
             setTimeout(typeTerminal, cmd.delay);
         }
 
-        // Start terminal when Hero is visible
+        // Start terminal when Hero is visible AND terminal is present/visible
         const heroSection = document.getElementById('home');
+        const terminalElement = document.querySelector('.terminal-window');
+        
         const heroObserver = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
+            if (entries[0].isIntersecting && window.getComputedStyle(terminalElement).display !== 'none') {
                 typeTerminal();
                 heroObserver.disconnect();
             }
