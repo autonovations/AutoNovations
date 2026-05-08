@@ -1,1370 +1,595 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="scroll-smooth">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Autonovations — Currículo STEAM</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoNovations — Technical Dossier & Curriculum</title>
+    <meta name="description" content="Dossier técnico de AutoNovations: Liderando la frontera entre la Inteligencia Artificial y la Realidad Física.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        tech: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        primary: '#00D9FF',
+                        secondary: '#0047AB',
+                        dark: '#0A0A0A',
+                        panel: '#121212',
+                        neon: '#00D9FF',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'scanline': 'scanline 8s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        },
+                        scanline: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(100%)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
-:root {
-  --dark:    #0A0E1A;
-  --mid:     #0F1D35;
-  --card:    #141F38;
-  --accent:  #00D4FF;
-  --purple:  #7C3AED;
-  --green:   #10B981;
-  --yellow:  #F59E0B;
-  --red:     #EF4444;
-  --blue:    #3B82F6;
-  --teal:    #06B6D4;
-  --white:   #FFFFFF;
-  --light:   #E2E8F0;
-  --muted:   #94A3B8;
-  --border:  #1E3A5F;
-}
+    <style>
+        body {
+            background-color: #0A0A0A;
+            color: #E0E0E0;
+            overflow: hidden;
+            user-select: none;
+        }
 
-body {
-  background: #000;
-  font-family: 'Barlow', sans-serif;
-  overflow: hidden;
-  user-select: none;
-}
+        /* Grid Background */
+        .grid-bg {
+            background-size: 60px 60px;
+            background-image:
+                linear-gradient(to right, rgba(0, 217, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 217, 255, 0.05) 1px, transparent 1px);
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
 
-/* ── DECK WRAPPER ── */
-#deck {
-  width: 100vw;
-  height: 100vh;
-  position: relative;
-}
+        .scanlines {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.01), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.01));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0.4;
+        }
 
-.slide {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--dark);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .5s ease, transform .5s ease;
-  transform: translateX(60px);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-.slide.active {
-  opacity: 1;
-  pointer-events: all;
-  transform: translateX(0);
-}
-.slide.exit {
-  opacity: 0;
-  transform: translateX(-60px);
-}
+        /* Slide Transition System */
+        .slide {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(1.05) translateY(20px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
 
-/* ── GRID LINES BG ── */
-.grid-bg {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-  background-size: 80px 80px;
-  pointer-events: none;
-}
+        .slide.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: scale(1) translateY(0);
+            z-index: 20;
+        }
 
-/* ── ACCENT BARS ── */
-.accent-bar-left {
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 5px;
-  background: var(--accent);
-  z-index: 2;
-}
-.accent-bar-right {
-  position: absolute;
-  right: 0; top: 0; bottom: 0;
-  width: 5px;
-  background: var(--accent);
-  z-index: 2;
-}
+        .slide.exit {
+            opacity: 0;
+            transform: scale(0.95) translateY(-20px);
+            z-index: 10;
+        }
 
-/* ── TOP BAR ── */
-.top-bar {
-  background: var(--mid);
-  padding: 0 2rem;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 2;
-}
-.top-bar-label {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: .75rem;
-  font-weight: 700;
-  letter-spacing: .25em;
-  color: var(--accent);
-  text-transform: uppercase;
-}
+        .glass-panel {
+            background: rgba(18, 18, 18, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 217, 255, 0.1);
+        }
 
-/* ── BOTTOM BAR ── */
-.bottom-bar {
-  background: var(--mid);
-  padding: 0 2rem;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  margin-top: auto;
-  position: relative;
-  z-index: 2;
-}
-.bottom-bar span {
-  font-size: .65rem;
-  color: var(--muted);
-}
+        .text-gradient {
+            background: linear-gradient(135deg, #ffffff 0%, #00D9FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-/* ── SLIDE BODY ── */
-.slide-body {
-  flex: 1;
-  padding: 1.5rem 2rem 1rem;
-  position: relative;
-  z-index: 1;
-  overflow: hidden;
-}
+        /* Glow Effects */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            z-index: 1;
+            pointer-events: none;
+        }
 
-/* ── TYPOGRAPHY ── */
-h1.big {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: clamp(3rem, 8vw, 6.5rem);
-  font-weight: 900;
-  color: var(--white);
-  letter-spacing: .05em;
-  line-height: 1;
-}
-h2.slide-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: clamp(1.5rem, 3.5vw, 2.4rem);
-  font-weight: 700;
-  color: var(--white);
-  margin-bottom: .75rem;
-}
-.tag-badge {
-  display: inline-block;
-  background: var(--accent);
-  color: var(--dark);
-  font-size: .65rem;
-  font-weight: 700;
-  letter-spacing: .2em;
-  padding: .2rem .6rem;
-  text-transform: uppercase;
-  margin-bottom: .75rem;
-}
+        /* Custom Scrollbar for inner content */
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(0, 217, 255, 0.3);
+            border-radius: 10px;
+        }
 
-/* ── CARDS ── */
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 2px;
-}
-.card-accent { border-color: var(--accent); }
-.card-blue   { border-color: var(--blue); }
-.card-green  { border-color: var(--green); }
-.card-purple { border-color: var(--purple); }
-.card-yellow { border-color: var(--yellow); }
-.card-teal   { border-color: var(--teal); }
+        /* Navigation Dots */
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .dot.active {
+            background: #00D9FF;
+            box-shadow: 0 0 10px #00D9FF;
+            transform: scale(1.5);
+        }
 
-/* ── NAVIGATION ── */
-#nav {
-  position: fixed;
-  bottom: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: .75rem;
-  background: rgba(10,14,26,.9);
-  border: 1px solid var(--border);
-  padding: .5rem 1rem;
-  border-radius: 100px;
-  z-index: 100;
-  backdrop-filter: blur(10px);
-}
-#nav button {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--light);
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: .9rem;
-  display: flex; align-items: center; justify-content: center;
-  transition: background .2s, border-color .2s;
-}
-#nav button:hover { background: var(--accent); border-color: var(--accent); color: var(--dark); }
-#slide-counter {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .75rem;
-  color: var(--muted);
-  min-width: 4rem;
-  text-align: center;
-}
-.dot-nav {
-  display: flex;
-  gap: .35rem;
-  align-items: center;
-}
-.dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--border);
-  cursor: pointer;
-  transition: background .2s, transform .2s;
-}
-.dot.active { background: var(--accent); transform: scale(1.4); }
-
-/* ── SLIDE 1: COVER ── */
-#s1 .orb1 {
-  position: absolute;
-  right: -80px; top: -80px;
-  width: 420px; height: 420px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(124,58,237,.15) 0%, transparent 70%);
-  border: 1px solid rgba(124,58,237,.3);
-}
-#s1 .orb2 {
-  position: absolute;
-  right: 40px; top: 10px;
-  width: 280px; height: 280px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0,212,255,.08) 0%, transparent 70%);
-  border: 1px solid rgba(0,212,255,.2);
-}
-#s1 .drone-icon {
-  position: absolute;
-  right: 8%; bottom: 15%;
-  font-size: 7rem;
-  animation: float 3s ease-in-out infinite;
-}
-@keyframes float {
-  0%,100% { transform: translateY(0) rotate(-3deg); }
-  50% { transform: translateY(-12px) rotate(3deg); }
-}
-#s1 .subtitle-line {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: clamp(1rem, 2.5vw, 1.6rem);
-  font-style: italic;
-  color: var(--accent);
-  margin: .4rem 0 .8rem;
-}
-#s1 .desc {
-  font-size: clamp(.75rem, 1.5vw, 1rem);
-  color: var(--light);
-  line-height: 1.6;
-  max-width: 55%;
-}
-#s1 .tagline {
-  font-size: .75rem;
-  color: var(--muted);
-}
-
-/* ── SLIDE 2: VISION ── */
-.quote-block {
-  border: 1px solid var(--accent);
-  background: var(--card);
-  padding: 1rem 1.5rem;
-  text-align: center;
-  margin-bottom: 1rem;
-}
-.quote-block p {
-  font-style: italic;
-  font-size: clamp(.85rem, 1.8vw, 1.1rem);
-  color: var(--white);
-  line-height: 1.5;
-}
-.pillar-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: .75rem;
-  flex: 1;
-}
-.pillar {
-  background: var(--card);
-  padding: 1.2rem 1rem;
-  border-radius: 2px;
-  border-width: 1px;
-  border-style: solid;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: .4rem;
-}
-.pillar .pillar-icon { font-size: 2rem; }
-.pillar .pillar-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 700;
-}
-.pillar p { font-size: .78rem; color: var(--light); line-height: 1.4; }
-
-/* ── SLIDE 3: STEAM MAP ── */
-.steam-row {
-  display: flex;
-  align-items: flex-start;
-  gap: .75rem;
-  padding: .55rem 0;
-  border-bottom: 1px solid var(--border);
-}
-.steam-row:last-child { border-bottom: none; }
-.steam-letter {
-  width: 44px; height: 44px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: var(--white);
-  flex-shrink: 0;
-}
-.steam-label {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: .15rem;
-}
-.steam-topics {
-  font-size: .78rem;
-  color: var(--muted);
-  font-family: 'JetBrains Mono', monospace;
-}
-
-/* ── SLIDE 4: LEVELS ── */
-.levels-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: .75rem;
-  flex: 1;
-  align-items: start;
-}
-.level-card {
-  background: var(--card);
-  border-width: 1.5px;
-  border-style: solid;
-  border-radius: 2px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-.level-header {
-  padding: .6rem .75rem;
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-}
-.level-num {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.8rem;
-  font-weight: 900;
-  color: var(--white);
-  line-height: 1;
-}
-.level-info .level-name {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--white);
-}
-.level-info .level-meta {
-  font-size: .65rem;
-  color: rgba(255,255,255,.7);
-}
-.level-modules {
-  padding: .6rem .75rem;
-  flex: 1;
-}
-.level-module {
-  font-size: .73rem;
-  color: var(--light);
-  padding: .2rem 0;
-  display: flex;
-  gap: .3rem;
-}
-.level-module .arr { flex-shrink: 0; }
-.level-outcome {
-  padding: .5rem .75rem;
-  font-size: .7rem;
-  color: var(--white);
-  text-align: center;
-  line-height: 1.3;
-  background: rgba(255,255,255,.08);
-}
-
-/* ── SLIDE 5/6/7/8: MODULE SLIDES ── */
-.two-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  flex: 1;
-  overflow: hidden;
-}
-.topic-row {
-  display: flex;
-  align-items: flex-start;
-  gap: .6rem;
-  padding: .45rem .6rem;
-  background: var(--card);
-  border: 1px solid var(--border);
-  margin-bottom: .4rem;
-}
-.topic-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: .05rem; }
-.topic-title {
-  font-size: .85rem;
-  font-weight: 600;
-  margin-bottom: .1rem;
-}
-.topic-desc { font-size: .73rem; color: var(--muted); line-height: 1.3; }
-
-.exp-card {
-  background: var(--card);
-  border: 1.5px solid var(--blue);
-  padding: .8rem 1rem;
-  height: 100%;
-}
-.exp-card h4 {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: .4rem;
-}
-
-/* PID */
-.pid-grid {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: .75rem;
-  margin-bottom: .75rem;
-}
-.pid-card {
-  background: var(--card);
-  border-width: 2px;
-  border-style: solid;
-  border-radius: 2px;
-  overflow: hidden;
-  display: flex;
-}
-.pid-letter-col {
-  width: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 2rem;
-  font-weight: 900;
-  color: var(--white);
-  flex-shrink: 0;
-}
-.pid-content {
-  padding: .5rem .6rem;
-  flex: 1;
-}
-.pid-content .pid-name { font-size: .85rem; font-weight: 700; margin-bottom: .15rem; }
-.pid-content .pid-formula {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .7rem;
-  color: var(--accent);
-  margin-bottom: .3rem;
-}
-.pid-content .pid-desc { font-size: .73rem; color: var(--light); line-height: 1.3; }
-
-/* STACK */
-.stack-layer {
-  display: flex;
-  align-items: center;
-  padding: .4rem .7rem;
-  margin-bottom: .25rem;
-  position: relative;
-}
-.stack-layer-name {
-  font-size: .85rem;
-  font-weight: 700;
-  color: var(--white);
-  min-width: 160px;
-}
-.stack-layer-desc { font-size: .73rem; color: var(--light); }
-.stack-arrow {
-  text-align: center;
-  color: var(--teal);
-  font-size: .8rem;
-  margin: -.05rem 0;
-}
-
-/* ART/MATH split */
-.split-col {
-  display: flex;
-  flex-direction: column;
-  gap: .45rem;
-}
-.half-card {
-  background: var(--card);
-  border-width: 1px;
-  border-style: solid;
-  padding: .5rem .65rem;
-  display: flex;
-  gap: .5rem;
-  align-items: flex-start;
-}
-.half-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: .05rem; }
-.half-title { font-size: .85rem; font-weight: 700; margin-bottom: .1rem; }
-.half-desc { font-size: .72rem; color: var(--light); line-height: 1.3; }
-
-/* ── SLIDE 9: METHODOLOGY ── */
-.steps-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 0;
-  margin-bottom: 1rem;
-  flex: 0 0 auto;
-}
-.step-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  position: relative;
-}
-.step-item:not(:last-child)::after {
-  content: '→';
-  position: absolute;
-  right: -12px;
-  top: 20px;
-  font-size: .9rem;
-  color: var(--border);
-  z-index: 1;
-}
-.step-circle {
-  width: 52px; height: 52px;
-  border-radius: 50%;
-  background: var(--card);
-  border-width: 2px;
-  border-style: solid;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.4rem;
-  font-weight: 900;
-  color: var(--white);
-  margin-bottom: .4rem;
-  flex-shrink: 0;
-}
-.step-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: .95rem;
-  font-weight: 700;
-  color: var(--white);
-  margin-bottom: .2rem;
-}
-.step-desc { font-size: .7rem; color: var(--muted); line-height: 1.3; padding: 0 .3rem; }
-.principles-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: .4rem;
-}
-.principle {
-  font-size: .8rem;
-  color: var(--light);
-  padding: .3rem .5rem;
-  background: var(--card);
-  border-left: 3px solid var(--accent);
-}
-
-/* ── SLIDE 10: MARKETS ── */
-.markets-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: .75rem;
-  flex: 1;
-}
-.market-card {
-  background: var(--card);
-  border-width: 1.5px;
-  border-style: solid;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.market-top {
-  padding: .7rem .85rem;
-  display: flex;
-  gap: .6rem;
-  align-items: flex-start;
-  flex: 1;
-}
-.market-icon { font-size: 1.5rem; flex-shrink: 0; }
-.market-title { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: .2rem; }
-.market-desc { font-size: .75rem; color: var(--light); line-height: 1.35; }
-.market-offer {
-  padding: .35rem .85rem;
-  font-size: .72rem;
-  color: var(--white);
-}
-
-/* ── SLIDE 11: ROADMAP ── */
-.roadmap-track {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  gap: 0;
-  margin-bottom: .6rem;
-  flex: 0 0 auto;
-}
-.roadmap-track::before {
-  content: '';
-  position: absolute;
-  top: 30px;
-  left: 50px;
-  right: 50px;
-  height: 2px;
-  background: var(--border);
-}
-.phase {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.phase-dot {
-  width: 16px; height: 16px;
-  border-radius: 50%;
-  border: 2px solid;
-  margin: 22px 0 .4rem;
-  position: relative;
-  z-index: 1;
-}
-.phase-q {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  margin-bottom: .1rem;
-}
-.phase-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--white);
-  margin-bottom: .5rem;
-}
-.phase-card {
-  background: var(--card);
-  border-width: 1px;
-  border-style: solid;
-  padding: .6rem .7rem;
-  width: 90%;
-}
-.phase-item {
-  font-size: .72rem;
-  color: var(--light);
-  padding: .18rem 0;
-  display: flex;
-  gap: .3rem;
-}
-.check { flex-shrink: 0; }
-
-/* ── SLIDE 12: CLOSE ── */
-#s12 .close-orb1 {
-  position: absolute;
-  left: -120px; bottom: -120px;
-  width: 500px; height: 500px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(124,58,237,.12) 0%, transparent 65%);
-  border: 1px solid rgba(124,58,237,.2);
-}
-#s12 .close-orb2 {
-  position: absolute;
-  right: -80px; top: -80px;
-  width: 380px; height: 380px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0,212,255,.08) 0%, transparent 65%);
-  border: 1px solid rgba(0,212,255,.15);
-}
-#s12 .center-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  height: 100%;
-  gap: 1rem;
-}
-#s12 .close-drone { font-size: 4rem; animation: float 3s ease-in-out infinite; }
-#s12 .close-headline {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: clamp(2.5rem, 6vw, 5rem);
-  font-weight: 900;
-  color: var(--white);
-  line-height: 1;
-}
-#s12 .close-sub {
-  font-style: italic;
-  color: var(--light);
-  font-size: clamp(.8rem, 1.5vw, 1rem);
-  max-width: 600px;
-  line-height: 1.6;
-}
-#s12 .cta-btn {
-  background: var(--accent);
-  color: var(--dark);
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  padding: .6rem 2rem;
-  border-radius: 2px;
-  letter-spacing: .1em;
-}
-
-/* ANIM CLASSES */
-.slide.active .anim { animation: fadeUp .5s ease forwards; opacity: 0; }
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.slide.active .anim-1 { animation-delay: .05s; }
-.slide.active .anim-2 { animation-delay: .12s; }
-.slide.active .anim-3 { animation-delay: .2s; }
-.slide.active .anim-4 { animation-delay: .28s; }
-.slide.active .anim-5 { animation-delay: .36s; }
-.slide.active .anim-6 { animation-delay: .44s; }
-
-/* fullscreen hint */
-#hint {
-  position: fixed; top: 1rem; right: 1.5rem;
-  font-size: .65rem; color: var(--muted);
-  font-family: 'JetBrains Mono', monospace;
-  z-index: 200;
-  opacity: .5;
-}
-</style>
+        /* Cyberpunk corner borders */
+        .cyber-corner {
+            position: relative;
+        }
+        .cyber-corner::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: 20px;
+            height: 20px;
+            border-top: 2px solid #00D9FF;
+            border-left: 2px solid #00D9FF;
+        }
+        .cyber-corner::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 20px;
+            height: 20px;
+            border-bottom: 2px solid #00D9FF;
+            border-right: 2px solid #00D9FF;
+        }
+    </style>
 </head>
-<body>
 
-<div id="deck">
-
-  <!-- ══════════════════════════════════════
-       SLIDE 1 — COVER
-  ══════════════════════════════════════ -->
-  <section class="slide active" id="s1">
+<body class="antialiased">
+    <div class="scanlines"></div>
     <div class="grid-bg"></div>
-    <div class="orb1"></div>
-    <div class="orb2"></div>
-    <div class="accent-bar-left"></div>
-    <div class="slide-body" style="display:flex;flex-direction:column;justify-content:center;padding-left:3rem;">
-      <div class="tag-badge anim anim-1">Startup Educativa</div>
-      <h1 class="big anim anim-2">AUTONOVATIONS</h1>
-      <div class="subtitle-line anim anim-3">Currículo STEAM Interactivo</div>
-      <p class="desc anim anim-4">Aprende ciencia, tecnología, ingeniería, arte y matemáticas<br>hackeando un dron de Temu por $10</p>
-    </div>
-    <div class="drone-icon">🚁</div>
-    <div class="bottom-bar">
-      <span class="tagline">🚁 &nbsp;Hack it. Learn it. Build it.</span>
-    </div>
-  </section>
 
-  <!-- ══════════════════════════════════════
-       SLIDE 2 — VISIÓN
-  ══════════════════════════════════════ -->
-  <section class="slide" id="s2">
-    <div class="grid-bg"></div>
-    <div class="accent-bar-left" style="background:var(--accent)"></div>
-    <div class="top-bar"><span class="top-bar-label">Nuestra Visión</span></div>
-    <div class="slide-body" style="display:flex;flex-direction:column;gap:.75rem;">
-      <h2 class="slide-title anim anim-1">¿Qué es Autonovations?</h2>
-      <div class="quote-block anim anim-2">
-        <p>"Convertimos un dron de $10 de Temu en la herramienta STEAM más poderosa del salón de clases."</p>
-      </div>
-      <div class="pillar-grid anim anim-3">
-        <div class="pillar card-accent" style="border-color:var(--accent);">
-          <span class="pillar-icon">🔬</span>
-          <span class="pillar-title" style="color:var(--accent)">Aprender</span>
-          <p>Conceptos reales de física, electrónica, matemáticas y programación con contexto tangible</p>
-        </div>
-        <div class="pillar" style="border-color:var(--green);">
-          <span class="pillar-icon">🔧</span>
-          <span class="pillar-title" style="color:var(--green)">Construir</span>
-          <p>Los estudiantes diseñan su propia PCB y app Android — crean tecnología, no solo la consumen</p>
-        </div>
-        <div class="pillar" style="border-color:var(--purple);">
-          <span class="pillar-icon">🚀</span>
-          <span class="pillar-title" style="color:var(--purple)">Innovar</span>
-          <p>Cultura maker: hackear, mejorar y proponer soluciones originales al mundo real</p>
-        </div>
-      </div>
-    </div>
-    <div class="bottom-bar"><span>Autonovations  |  Currículo STEAM</span></div>
-  </section>
+    <!-- Background Orbs -->
+    <div class="glow-orb w-[600px] h-[600px] bg-primary top-[-10%] left-[-10%]"></div>
+    <div class="glow-orb w-[500px] h-[500px] bg-secondary bottom-[-10%] right-[-10%]"></div>
 
-  <!-- ══════════════════════════════════════
-       SLIDE 3 — STEAM MAP
-  ══════════════════════════════════════ -->
-  <section class="slide" id="s3">
-    <div class="grid-bg"></div>
-    <div class="accent-bar-left"></div>
-    <div class="top-bar"><span class="top-bar-label">Mapa del Currículo</span></div>
-    <div class="slide-body" style="display:flex;flex-direction:column;">
-      <h2 class="slide-title anim anim-1">5 Áreas del Conocimiento — 1 Dron</h2>
-      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:.1rem;">
-        <div class="steam-row anim anim-2">
-          <div class="steam-letter" style="background:#3B82F6;">S</div>
-          <div>
-            <div class="steam-label" style="color:#3B82F6;">🔬 Science</div>
-            <div class="steam-topics">Física del vuelo · Electromagnetismo · Ondas de radio · Termodinámica</div>
-          </div>
-        </div>
-        <div class="steam-row anim anim-3">
-          <div class="steam-letter" style="background:#06B6D4;">T</div>
-          <div>
-            <div class="steam-label" style="color:#06B6D4;">💻 Technology</div>
-            <div class="steam-topics">Microcontroladores · Sensores IMU · Protocolos I2C/SPI · WiFi UDP</div>
-          </div>
-        </div>
-        <div class="steam-row anim anim-4">
-          <div class="steam-letter" style="background:#10B981;">E</div>
-          <div>
-            <div class="steam-label" style="color:#10B981;">⚙️ Engineering</div>
-            <div class="steam-topics">Diseño PCB · Control PID · RTOS · Ingeniería de sistemas</div>
-          </div>
-        </div>
-        <div class="steam-row anim anim-5">
-          <div class="steam-letter" style="background:#A855F7;">A</div>
-          <div>
-            <div class="steam-label" style="color:#A855F7;">🎨 Art & Design</div>
-            <div class="steam-topics">UX/UI · Diseño industrial · Impresión 3D · Visualización de datos</div>
-          </div>
-        </div>
-        <div class="steam-row anim anim-6" style="border-bottom:none;">
-          <div class="steam-letter" style="background:#F59E0B;">M</div>
-          <div>
-            <div class="steam-label" style="color:#F59E0B;">🔢 Mathematics</div>
-            <div class="steam-topics">Álgebra lineal · Cálculo PID · Filtro de Kalman · Lógica binaria</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="bottom-bar"><span>Autonovations  |  Currículo STEAM</span></div>
-  </section>
-
-  <!-- ══════════════════════════════════════
-       SLIDE 4 — LEVELS
-  ══════════════════════════════════════ -->
-  <section class="slide" id="s4">
-    <div class="grid-bg"></div>
-    <div class="accent-bar-left"></div>
-    <div class="top-bar"><span class="top-bar-label">Niveles de Progresión</span></div>
-    <div class="slide-body" style="display:flex;flex-direction:column;gap:.6rem;">
-      <h2 class="slide-title anim anim-1">De explorador a innovador</h2>
-      <div class="levels-grid anim anim-2">
-        <div class="level-card" style="border-color:#3B82F6;">
-          <div class="level-header" style="background:#3B82F6;">
-            <div class="level-num">01</div>
-            <div class="level-info">
-              <div class="level-name">Explorador</div>
-              <div class="level-meta">8–12 años · 20h</div>
+    <main id="deck" class="relative w-screen h-screen overflow-hidden">
+        
+        <!-- SLIDE 1: PORTADA / IDENTITY -->
+        <section class="slide active" id="s1">
+            <div class="flex-1 flex flex-col items-center justify-center text-center px-6 relative z-10">
+                <div class="mb-8 animate-float">
+                    <img src="AN-logo.png" alt="Logo" class="w-32 h-32 md:w-48 md:h-48 object-contain">
+                </div>
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neon/30 bg-neon/5 backdrop-blur-sm mb-6">
+                    <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span>
+                    <span class="text-neon text-xs font-tech tracking-[0.3em] uppercase">Technical Dossier 2026</span>
+                </div>
+                <h1 class="font-tech text-6xl md:text-8xl font-bold tracking-tighter mb-4">
+                    <span class="block text-white">AUTO</span>
+                    <span class="block text-gradient">NOVATIONS</span>
+                </h1>
+                <p class="max-w-2xl text-gray-400 text-lg md:text-xl font-light leading-relaxed">
+                    Ingeniería Deep-Tech en la frontera de la Inteligencia Artificial, <br class="hidden md:block"> 
+                    la Robótica Avanzada y la Realidad Física.
+                </p>
+                
+                <div class="mt-12 flex gap-4">
+                    <div class="px-6 py-1 border-l-2 border-neon bg-neon/5">
+                        <div class="text-[10px] text-neon uppercase tracking-widest font-tech">Core Focus</div>
+                        <div class="text-white font-tech font-bold uppercase tracking-wider">Autonomous Intelligence</div>
+                    </div>
+                    <div class="px-6 py-1 border-l-2 border-white/20 bg-white/5">
+                        <div class="text-[10px] text-gray-500 uppercase tracking-widest font-tech">Status</div>
+                        <div class="text-white font-tech font-bold uppercase tracking-wider">Active Operations</div>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="level-modules">
-            <div class="level-module"><span class="arr" style="color:#3B82F6">▸</span>Las 4 fuerzas del vuelo</div>
-            <div class="level-module"><span class="arr" style="color:#3B82F6">▸</span>¿Qué hay dentro del dron?</div>
-            <div class="level-module"><span class="arr" style="color:#3B82F6">▸</span>Motores y magnetos</div>
-            <div class="level-module"><span class="arr" style="color:#3B82F6">▸</span>Tu primer código: parpadear LED</div>
-          </div>
-          <div class="level-outcome">Entiende por qué vuela y puede programar un microcontrolador básico</div>
-        </div>
-        <div class="level-card" style="border-color:#10B981;">
-          <div class="level-header" style="background:#10B981;">
-            <div class="level-num">02</div>
-            <div class="level-info">
-              <div class="level-name">Constructor</div>
-              <div class="level-meta">13–16 años · 40h</div>
+            
+            <div class="p-8 flex justify-between items-end relative z-10">
+                <div class="font-mono text-[10px] text-gray-600 uppercase tracking-widest">
+                    SYSTEM_INIT: SUCCESSFUL<br>
+                    LOCAL_TIME: <span id="timeDisplay">13:35:09</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-[10px] text-neon font-tech tracking-[0.2em] uppercase">Use arrows to navigate</span>
+                    <i data-lucide="chevron-right" class="text-neon animate-pulse w-4 h-4"></i>
+                </div>
             </div>
-          </div>
-          <div class="level-modules">
-            <div class="level-module"><span class="arr" style="color:#10B981">▸</span>Electrónica y PCBs</div>
-            <div class="level-module"><span class="arr" style="color:#10B981">▸</span>Sensores IMU: giroscopio + acel.</div>
-            <div class="level-module"><span class="arr" style="color:#10B981">▸</span>Comunicación WiFi/BLE</div>
-            <div class="level-module"><span class="arr" style="color:#10B981">▸</span>App Android básica con joystick</div>
-          </div>
-          <div class="level-outcome">Suelda sus propios circuitos y controla el dron con su app</div>
-        </div>
-        <div class="level-card" style="border-color:#A855F7;">
-          <div class="level-header" style="background:#A855F7;">
-            <div class="level-num">03</div>
-            <div class="level-info">
-              <div class="level-name">Ingeniero</div>
-              <div class="level-meta">17–20 años · 80h</div>
+        </section>
+
+        <!-- SLIDE 2: MISION & VISION -->
+        <section class="slide" id="s2">
+            <div class="flex-1 flex flex-col p-12 md:p-24 relative z-10">
+                <div class="flex items-center gap-4 mb-12">
+                    <div class="w-12 h-px bg-neon"></div>
+                    <h2 class="text-neon font-tech text-sm tracking-[0.4em] uppercase">01 // Filosofía</h2>
+                </div>
+                
+                <div class="grid lg:grid-cols-2 gap-16 items-start">
+                    <div>
+                        <h3 class="text-4xl md:text-6xl font-tech font-bold text-white mb-8 leading-tight">
+                            Bridging the gap between <br>
+                            <span class="text-gradient">Neurons and Motors.</span>
+                        </h3>
+                        <p class="text-gray-400 text-lg leading-relaxed mb-8">
+                            En AutoNovations no solo desarrollamos software; diseñamos sistemas físico-digitales que perciben, deciden y actúan en el mundo real. Nuestra visión es la integración total de la IA en estructuras autónomas capaces de transformar la industria y la vida cotidiana.
+                        </p>
+                        
+                        <div class="space-y-6">
+                            <div class="glass-panel p-6 rounded-lg border-l-4 border-neon">
+                                <h4 class="text-white font-tech font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+                                    <i data-lucide="eye" class="w-4 h-4 text-neon"></i> Percepción
+                                </h4>
+                                <p class="text-sm text-gray-500">Sistemas de visión computacional y fusión de sensores de alta fidelidad para el mapeo constante del entorno físico.</p>
+                            </div>
+                            <div class="glass-panel p-6 rounded-lg border-l-4 border-white/20">
+                                <h4 class="text-white font-tech font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+                                    <i data-lucide="brain" class="w-4 h-4 text-gray-400"></i> Cognición
+                                </h4>
+                                <p class="text-sm text-gray-500">Modelos de lenguaje y redes neuronales embebidas que permiten el razonamiento lógico y la toma de decisiones autónoma.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="relative h-full flex items-center justify-center">
+                        <div class="absolute inset-0 bg-neon/10 blur-3xl rounded-full"></div>
+                        <img src="about_vision.png" alt="Vision" class="relative z-10 rounded-2xl border border-white/10 shadow-2xl w-full object-cover aspect-square max-w-md mx-auto">
+                        <!-- Technical Overlays -->
+                        <div class="absolute top-0 right-0 p-4 border border-neon/20 bg-dark/80 backdrop-blur-sm text-[10px] font-mono text-neon z-20">
+                            COORD_X: 4.5709<br>
+                            COORD_Y: -74.0721<br>
+                            NODE: MASTER_ALPHA
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="level-modules">
-            <div class="level-module"><span class="arr" style="color:#A855F7">▸</span>Diseño PCB en KiCad</div>
-            <div class="level-module"><span class="arr" style="color:#A855F7">▸</span>Algoritmo PID desde cero</div>
-            <div class="level-module"><span class="arr" style="color:#A855F7">▸</span>RTOS y loops de tiempo real</div>
-            <div class="level-module"><span class="arr" style="color:#A855F7">▸</span>Protocolo UDP seguro</div>
-          </div>
-          <div class="level-outcome">Diseña, fabrica y programa su propia placa de vuelo</div>
-        </div>
-        <div class="level-card" style="border-color:#F59E0B;">
-          <div class="level-header" style="background:#F59E0B;">
-            <div class="level-num">04</div>
-            <div class="level-info">
-              <div class="level-name">Innovador</div>
-              <div class="level-meta">20+ años · 120h+</div>
+        </section>
+
+        <!-- SLIDE 3: TECH STACK -->
+        <section class="slide" id="s3">
+            <div class="flex-1 flex flex-col p-12 md:p-24 relative z-10">
+                <div class="flex items-center gap-4 mb-12">
+                    <div class="w-12 h-px bg-neon"></div>
+                    <h2 class="text-neon font-tech text-sm tracking-[0.4em] uppercase">02 // Core Stack</h2>
+                </div>
+                
+                <h3 class="text-4xl md:text-5xl font-tech font-bold text-white mb-12">Ecosistema Tecnológico</h3>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 flex-1">
+                    <!-- Column 1: AI -->
+                    <div class="glass-panel p-8 rounded-xl cyber-corner">
+                        <div class="w-12 h-12 bg-neon/10 flex items-center justify-center text-neon mb-6 rounded-lg">
+                            <i data-lucide="brain-circuit" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="text-white font-tech font-bold text-xl mb-4">Inteligencia Artificial</h4>
+                        <ul class="space-y-3 font-mono text-xs text-gray-400">
+                            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-neon"></span> Large Language Models (LLM)</li>
+                            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-neon"></span> Computer Vision (PyTorch/TensorFlow)</li>
+                            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-neon"></span> Reinforcement Learning for Control</li>
+                            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-neon"></span> Predictive Analytics</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Column 2: Robotics -->
+                    <div class="glass-panel p-8 rounded-xl cyber-corner">
+                        <div class="w-12 h-12 bg-neon/10 flex items-center justify-center text-neon mb-6 rounded-lg">
+                            <i data-lucide="bot" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="text-white font-tech font-bold text-xl mb-4">Robótica y Control</h4>
+                        <ul class="space-y-3 font-mono text-xs text-gray-400">
+                            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-neon"></span> PID & Advanced Flight Control</li>
+                            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-neon"></span> ROS 2 (Robot Operating System)</li>
+                            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-neon"></span> Mechatronics & Actuator Design</li>
+                            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-neon"></span> Swarm Intelligence Protocols</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Column 3: IoT -->
+                    <div class="glass-panel p-8 rounded-xl cyber-corner">
+                        <div class="w-12 h-12 bg-neon/10 flex items-center justify-center text-neon mb-6 rounded-lg">
+                            <i data-lucide="network" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="text-white font-tech font-bold text-xl mb-4">Conectividad IIoT</h4>
+                        <ul class="space-y-3 font-mono text-xs text-gray-400">
+                            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-neon"></span> Industrial IoT Gateways</li>
+                            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-neon"></span> Real-time Data Streaming (MQTT/UDP)</li>
+                            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-neon"></span> Edge Computing (Jetson/ESP32)</li>
+                            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-neon"></span> Hybrid Cloud Infrastructure</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="level-modules">
-            <div class="level-module"><span class="arr" style="color:#F59E0B">▸</span>Filtro de Kalman y fusión sensores</div>
-            <div class="level-module"><span class="arr" style="color:#F59E0B">▸</span>Visión computacional con cámara</div>
-            <div class="level-module"><span class="arr" style="color:#F59E0B">▸</span>Enjambres de drones</div>
-            <div class="level-module"><span class="arr" style="color:#F59E0B">▸</span>IA embebida en edge</div>
-          </div>
-          <div class="level-outcome">Crea soluciones originales y puede publicar proyectos open source</div>
+        </section>
+
+        <!-- SLIDE 4: PROJECTS -->
+        <section class="slide" id="s4">
+            <div class="flex-1 flex flex-col p-12 md:p-24 relative z-10">
+                <div class="flex items-center gap-4 mb-12">
+                    <div class="w-12 h-px bg-neon"></div>
+                    <h2 class="text-neon font-tech text-sm tracking-[0.4em] uppercase">03 // Proyectos Elite</h2>
+                </div>
+                
+                <div class="grid lg:grid-cols-2 gap-8 flex-1">
+                    <div class="group relative overflow-hidden rounded-2xl glass-panel">
+                        <img src="project_companions.png" alt="Cognitive Companions" class="w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark via-dark/40 to-transparent p-10 flex flex-col justify-end">
+                            <div class="text-neon font-mono text-[10px] uppercase mb-2 tracking-widest">Active Project</div>
+                            <h4 class="text-3xl font-tech font-bold text-white mb-4">Cognitive Companions</h4>
+                            <p class="text-sm text-gray-400 max-w-sm mb-6">Integración de mecatrónica emocional con modelos de lenguaje masivos. Robots capaces de interacción empática profunda.</p>
+                            <div class="flex gap-2">
+                                <span class="px-3 py-1 bg-neon/10 border border-neon/30 text-neon text-[10px] rounded-full uppercase">Human-AI Interface</span>
+                                <span class="px-3 py-1 bg-neon/10 border border-neon/30 text-neon text-[10px] rounded-full uppercase">LLM Embebido</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid gap-8">
+                        <div class="group relative overflow-hidden rounded-2xl glass-panel h-64">
+                            <img src="project_trading.png" alt="Predictive Systems" class="w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-r from-dark to-transparent p-8 flex flex-col justify-center">
+                                <h4 class="text-2xl font-tech font-bold text-white mb-2">Predictive Core</h4>
+                                <p class="text-xs text-gray-400 max-w-xs mb-4">Sistemas de trading autónomo basados en análisis de sentimiento y patrones fractales en tiempo real.</p>
+                                <div class="text-neon font-mono text-[10px] uppercase tracking-widest flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span> Analyzing Streams
+                                </div>
+                            </div>
+                        </div>
+                        <div class="group relative overflow-hidden rounded-2xl glass-panel h-64">
+                            <div class="absolute inset-0 bg-neon/5"></div>
+                            <div class="p-8 flex flex-col justify-center h-full">
+                                <h4 class="text-2xl font-tech font-bold text-white mb-2">Autonomous Swarms</h4>
+                                <p class="text-xs text-gray-400 max-w-xs mb-4">Coordinación de enjambres de drones para logística industrial y monitoreo ambiental de alta resolución.</p>
+                                <div class="flex gap-2 mt-2">
+                                    <i data-lucide="plane" class="w-5 h-5 text-neon"></i>
+                                    <i data-lucide="plane" class="w-5 h-5 text-neon"></i>
+                                    <i data-lucide="plane" class="w-5 h-5 text-neon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 5: METODOLOGIA -->
+        <section class="slide" id="s5">
+            <div class="flex-1 flex flex-col p-12 md:p-24 relative z-10">
+                <div class="flex items-center gap-4 mb-12">
+                    <div class="w-12 h-px bg-neon"></div>
+                    <h2 class="text-neon font-tech text-sm tracking-[0.4em] uppercase">04 // Metodología</h2>
+                </div>
+                
+                <h3 class="text-4xl md:text-5xl font-tech font-bold text-white mb-16">Deep-Tech Lifecycle</h3>
+                
+                <div class="relative flex-1 flex items-center justify-between gap-4">
+                    <!-- Line -->
+                    <div class="absolute top-1/2 left-0 w-full h-px bg-white/10 -translate-y-1/2 z-0 hidden lg:block"></div>
+                    
+                    <div class="relative z-10 text-center flex flex-col items-center group flex-1">
+                        <div class="w-20 h-20 rounded-full border-2 border-neon/30 bg-dark flex items-center justify-center text-neon mb-6 group-hover:border-neon group-hover:shadow-[0_0_20px_#00D9FF] transition-all">
+                            <span class="font-tech text-2xl font-bold">01</span>
+                        </div>
+                        <h4 class="text-white font-tech font-bold uppercase tracking-widest mb-2">Hipótesis</h4>
+                        <p class="text-[10px] text-gray-500 max-w-[150px]">Identificación de brechas tecnológicas y viabilidad teórica.</p>
+                    </div>
+
+                    <div class="relative z-10 text-center flex flex-col items-center group flex-1">
+                        <div class="w-20 h-20 rounded-full border-2 border-neon/30 bg-dark flex items-center justify-center text-neon mb-6 group-hover:border-neon group-hover:shadow-[0_0_20px_#00D9FF] transition-all">
+                            <span class="font-tech text-2xl font-bold">02</span>
+                        </div>
+                        <h4 class="text-white font-tech font-bold uppercase tracking-widest mb-2">Simulación</h4>
+                        <p class="text-[10px] text-gray-500 max-w-[150px]">Modelado digital y entrenamiento en entornos sintéticos de alta fidelidad.</p>
+                    </div>
+
+                    <div class="relative z-10 text-center flex flex-col items-center group flex-1">
+                        <div class="w-20 h-20 rounded-full border-2 border-neon/30 bg-dark flex items-center justify-center text-neon mb-6 group-hover:border-neon group-hover:shadow-[0_0_20px_#00D9FF] transition-all">
+                            <span class="font-tech text-2xl font-bold">03</span>
+                        </div>
+                        <h4 class="text-white font-tech font-bold uppercase tracking-widest mb-2">Prototipado</h4>
+                        <p class="text-[10px] text-gray-500 max-w-[150px]">Fabricación ágil de hardware y despliegue de firmware en edge.</p>
+                    </div>
+
+                    <div class="relative z-10 text-center flex flex-col items-center group flex-1">
+                        <div class="w-20 h-20 rounded-full border-2 border-neon/30 bg-dark flex items-center justify-center text-neon mb-6 group-hover:border-neon group-hover:shadow-[0_0_20px_#00D9FF] transition-all">
+                            <span class="font-tech text-2xl font-bold">04</span>
+                        </div>
+                        <h4 class="text-white font-tech font-bold uppercase tracking-widest mb-2">Escalado</h4>
+                        <p class="text-[10px] text-gray-500 max-w-[150px]">Integración en ecosistemas industriales y optimización constante.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 6: CONTACT & LINKS -->
+        <section class="slide" id="s6">
+            <div class="flex-1 flex flex-col items-center justify-center text-center px-6 relative z-10">
+                <div class="w-24 h-24 mb-8">
+                    <i data-lucide="shield-check" class="w-full h-full text-neon animate-pulse"></i>
+                </div>
+                <h2 class="font-tech text-5xl md:text-7xl font-bold text-white mb-6">Let's Build <br><span class="text-gradient uppercase">The Future.</span></h2>
+                <p class="text-gray-400 max-w-xl text-lg mb-12 italic">
+                    "La mejor forma de predecir el futuro es programarlo en tiempo real."
+                </p>
+                
+                <div class="grid sm:grid-cols-3 gap-6 w-full max-w-3xl">
+                    <a href="mailto:hola@autonovations.io" class="glass-panel p-8 rounded-xl hover:bg-neon/10 transition-colors group">
+                        <i data-lucide="mail" class="w-8 h-8 text-neon mx-auto mb-4 group-hover:scale-110 transition-transform"></i>
+                        <span class="block text-white font-tech font-bold uppercase text-xs tracking-widest">Email Us</span>
+                    </a>
+                    <a href="index.html" class="glass-panel p-8 rounded-xl hover:bg-neon/10 transition-colors group">
+                        <i data-lucide="globe" class="w-8 h-8 text-neon mx-auto mb-4 group-hover:scale-110 transition-transform"></i>
+                        <span class="block text-white font-tech font-bold uppercase text-xs tracking-widest">Main Hub</span>
+                    </a>
+                    <a href="#" class="glass-panel p-8 rounded-xl hover:bg-neon/10 transition-colors group">
+                        <i data-lucide="linkedin" class="w-8 h-8 text-neon mx-auto mb-4 group-hover:scale-110 transition-transform"></i>
+                        <span class="block text-white font-tech font-bold uppercase text-xs tracking-widest">Connect</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="p-8 border-t border-white/5 bg-dark/50 flex justify-center">
+                <span class="text-[10px] text-gray-600 font-mono tracking-[0.4em] uppercase">© 2026 AutoNovations Laboratory // All Rights Reserved</span>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Navigation Overlay -->
+    <div class="fixed bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-6 z-50">
+        <div class="flex items-center gap-4">
+            <button id="prevBtn" class="w-10 h-10 flex items-center justify-center rounded-full border border-white/10 bg-dark/50 hover:border-neon hover:text-neon text-gray-500 transition-all">
+                <i data-lucide="chevron-left"></i>
+            </button>
+            <div class="flex gap-3" id="dotsContainer"></div>
+            <button id="nextBtn" class="w-10 h-10 flex items-center justify-center rounded-full border border-white/10 bg-dark/50 hover:border-neon hover:text-neon text-gray-500 transition-all">
+                <i data-lucide="chevron-right"></i>
+            </button>
         </div>
-      </div>
+        <div class="text-[10px] font-tech text-gray-600 tracking-[0.2em] uppercase">
+            Slide <span id="currentNum">1</span> / 6
+        </div>
     </div>
-    <div class="bottom-bar"><span>Autonovations  |  Currículo STEAM</span></div>
-  </section>
 
-  <!-- ══════════════════════════════════════
-       SLIDE 5 — SCIENCE
-  ══════════════════════════════════════ -->
-  <section class="slide" id="s5">
-    <div class="grid-bg"></div>
-    <div class="accent-bar-left" style="background:#3B82F6;"></div>
-    <div class="top-bar" style="background:#0A1628;"><span class="top-bar-label" style="color:#3B82F6;">🔬 &nbsp;Science</span></div>
-    <div class="slide-body" style="display:flex;flex-direction:column;gap:.5rem;">
-      <h2 class="slide-title anim anim-1">Física del Vuelo y Electrónica</h2>
-      <div class="two-col anim anim-2">
-        <div>
-          <div class="topic-row" style="border-color:#3B82F640;">
-            <span class="topic-icon">✈️</span>
-            <div><div class="topic-title" style="color:#3B82F6;">Las 4 Fuerzas del Vuelo</div><div class="topic-desc">Sustentación, empuje, resistencia, gravedad — medibles con el propio dron</div></div>
-          </div>
-          <div class="topic-row" style="border-color:#3B82F640;">
-            <span class="topic-icon">🔄</span>
-            <div><div class="topic-title" style="color:#3B82F6;">Torque y Rotación</div><div class="topic-desc">Por qué 2 hélices van en sentido contrario: cancelar torque con física real</div></div>
-          </div>
-          <div class="topic-row" style="border-color:#3B82F640;">
-            <span class="topic-icon">📡</span>
-            <div><div class="topic-title" style="color:#3B82F6;">Ondas Electromagnéticas</div><div class="topic-desc">Señal de radio 2.4GHz visualizada con SDR — ondas en tiempo real</div></div>
-          </div>
-          <div class="topic-row" style="border-color:#3B82F640;">
-            <span class="topic-icon">⚡</span>
-            <div><div class="topic-title" style="color:#3B82F6;">Ley de Joule y Ohm</div><div class="topic-desc">Midiendo temperatura de la batería LiPo bajo carga con multímetro</div></div>
-          </div>
-          <div class="topic-row" style="border-color:#3B82F640;">
-            <span class="topic-icon">🧲</span>
-            <div><div class="topic-title" style="color:#3B82F6;">Motor DC y Faraday</div><div class="topic-desc">Campos magnéticos en motores brushed — bobinas y fuerzas inductoras</div></div>
-          </div>
+    <!-- UI Elements -->
+    <div class="fixed top-8 left-8 z-50">
+        <div class="flex items-center gap-3">
+            <img src="logo_an_monogram.png" alt="AN" class="w-6 h-6 object-contain">
+            <span class="text-white font-tech font-bold tracking-tighter text-xs">AUTONOVATIONS</span>
         </div>
-        <div class="exp-card" style="border-color:#3B82F6;">
-          <div style="background:#3B82F6;margin:-0.8rem -1rem .8rem;padding:.5rem 1rem;">
-            <h4 style="color:#fff;font-size:.9rem;">⚗️ Experimento Estrella</h4>
-          </div>
-          <h4 style="color:var(--white);font-size:1.1rem;margin-bottom:.5rem;">Medir el empuje real</h4>
-          <p style="font-size:.8rem;color:var(--light);line-height:1.5;margin-bottom:.6rem;">Con una báscula digital y el dron sobre ella, medir la fuerza de empuje vs throttle. Graficar la curva potencia eléctrica vs fuerza de sustentación.</p>
-          <div style="background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);padding:.5rem .7rem;">
-            <div style="font-size:.75rem;font-weight:700;color:#3B82F6;margin-bottom:.3rem;">Conceptos aplicados:</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--light);">F = ma &nbsp;·&nbsp; Torque &nbsp;·&nbsp; RPM<br>Potencia eléctrica vs mecánica</div>
-          </div>
-        </div>
-      </div>
     </div>
-    <div class="bottom-bar"><span>Autonovations  |  Currículo STEAM</span></div>
-  </section>
 
-  <!-- ══════════════════════════════════════
-       SLIDE 6 — TECHNOLOGY
-  ══════════════════════════════════════ -->
-  <section class="slide" id="s6">
-    <div class="grid-bg"></div>
-    <div class="accent-bar-left" style="background:#06B6D4;"></div>
-    <div class="top-bar" style="background:#0A1628;"><span class="top-bar-label" style="color:#06B6D4;">💻 &nbsp;Technology</span></div>
-    <div class="slide-body" style="display:flex;flex-direction:column;gap:.5rem;">
-      <h2 class="slide-title anim anim-1">Sistemas Embebidos y Comunicaciones</h2>
-      <div class="two-col anim anim-2">
-        <div>
-          <div style="font-size:.8rem;font-weight:700;color:#06B6D4;margin-bottom:.4rem;font-family:'Barlow Condensed',sans-serif;letter-spacing:.05em;">STACK TECNOLÓGICO DEL DRON</div>
-          <div class="stack-layer" style="background:#06B6D4;"><span class="stack-layer-name">📱 App Android</span><span class="stack-layer-desc">Kotlin + Jetpack Compose + UDP Socket</span></div>
-          <div class="stack-arrow">↓</div>
-          <div class="stack-layer" style="background:#0891B2;"><span class="stack-layer-name">🌐 Protocolo UDP</span><span class="stack-layer-desc">Paquetes de control a 100Hz · latencia &lt;10ms</span></div>
-          <div class="stack-arrow">↓</div>
-          <div class="stack-layer" style="background:#0E7490;"><span class="stack-layer-name">🔧 ESP32 / STM32</span><span class="stack-layer-desc">MCU principal — FreeRTOS + loop de control</span></div>
-          <div class="stack-arrow">↓</div>
-          <div class="stack-layer" style="background:#155E75;"><span class="stack-layer-name">📊 IMU (MPU-6050)</span><span class="stack-layer-desc">Giroscopio + Acelerómetro — I2C a 400kHz</span></div>
-          <div class="stack-arrow">↓</div>
-          <div class="stack-layer" style="background:#164E63;"><span class="stack-layer-name">⚙️ Motores + MOSFETs</span><span class="stack-layer-desc">PWM a 8kHz — 4 canales independientes</span></div>
-        </div>
-        <div>
-          <div style="font-size:.8rem;font-weight:700;color:#06B6D4;margin-bottom:.4rem;font-family:'Barlow Condensed',sans-serif;letter-spacing:.05em;">CONCEPTOS CLAVE</div>
-          <div class="topic-row" style="border-color:#06B6D440;">
-            <span class="topic-icon">🔗</span>
-            <div><div class="topic-title" style="color:#06B6D4;">I2C vs SPI</div><div class="topic-desc">Cuándo usar cada protocolo — velocidad vs simplicidad</div></div>
-          </div>
-          <div class="topic-row" style="border-color:#06B6D440;">
-            <span class="topic-icon">📶</span>
-            <div><div class="topic-title" style="color:#06B6D4;">UDP vs TCP</div><div class="topic-desc">Por qué UDP gana en tiempo real aunque pierda paquetes</div></div>
-          </div>
-          <div class="topic-row" style="border-color:#06B6D440;">
-            <span class="topic-icon">〰️</span>
-            <div><div class="topic-title" style="color:#06B6D4;">PWM</div><div class="topic-desc">Cómo controlar velocidad del motor con duty cycle</div></div>
-          </div>
-          <div class="topic-row" style="border-color:#06B6D440;">
-            <span class="topic-icon">📊</span>
-            <div><div class="topic-title" style="color:#06B6D4;">Frecuencia de muestreo</div><div class="topic-desc">Teorema de Nyquist en el mundo real del IMU</div></div>
-          </div>
-          <div class="topic-row" style="border-color:#06B6D440;">
-            <span class="topic-icon">🔒</span>
-            <div><div class="topic-title" style="color:#06B6D4;">Seguridad OTA</div><div class="topic-desc">Vulnerabilidades del dron original y cómo solucionarlas</div></div>
-          </div>
-        </div>
-      </div>
+    <div class="fixed top-8 right-8 z-50 hidden md:block text-[10px] font-mono text-gray-600 uppercase tracking-widest">
+        SECURE_CONNECTION: AES-256<br>
+        PROTOCOL: HTTPS_LIVE
     </div>
-    <div class="bottom-bar"><span>Autonovations  |  Currículo STEAM</span></div>
-  </section>
 
-  <!-- ══════════════════════════════════════
-       SLIDE 7 — ENGINEERING
-  ══════════════════════════════════════ -->
-  <section class="slide" id="s7">
-    <div class="grid-bg"></div>
-    <div class="accent-bar-left" style="background:#10B981;"></div>
-    <div class="top-bar" style="background:#0A1628;"><span class="top-bar-label" style="color:#10B981;">⚙️ &nbsp;Engineering</span></div>
-    <div class="slide-body" style="display:flex;flex-direction:column;gap:.5rem;">
-      <h2 class="slide-title anim anim-1">Control PID y Diseño de Hardware</h2>
-      <div style="font-size:.85rem;font-weight:700;color:#10B981;margin-bottom:.3rem;font-family:'Barlow Condensed',sans-serif;letter-spacing:.05em;" class="anim anim-2">EL ALGORITMO PID — CORAZÓN DEL DRON</div>
-      <div class="pid-grid anim anim-3">
-        <div class="pid-card" style="border-color:#10B981;">
-          <div class="pid-letter-col" style="background:#10B981;">P</div>
-          <div class="pid-content">
-            <div class="pid-name" style="color:#10B981;">Proporcional</div>
-            <div class="pid-formula">Kp × error</div>
-            <div class="pid-desc">Reacción instantánea al error. Muy alto = oscilación.</div>
-          </div>
-        </div>
-        <div class="pid-card" style="border-color:#3B82F6;">
-          <div class="pid-letter-col" style="background:#3B82F6;">I</div>
-          <div class="pid-content">
-            <div class="pid-name" style="color:#3B82F6;">Integral</div>
-            <div class="pid-formula">Ki × Σerror dt</div>
-            <div class="pid-desc">Elimina el error acumulado. Evita deriva constante.</div>
-          </div>
-        </div>
-        <div class="pid-card" style="border-color:#A855F7;">
-          <div class="pid-letter-col" style="background:#A855F7;">D</div>
-          <div class="pid-content">
-            <div class="pid-name" style="color:#A855F7;">Derivativo</div>
-            <div class="pid-formula">Kd × d(error)/dt</div>
-            <div class="pid-desc">Anticipa el futuro. Amortigua oscilaciones.</div>
-          </div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;" class="anim anim-4">
-        <div style="background:var(--card);border:1px solid #10B981;padding:.7rem .85rem;">
-          <div style="font-size:.85rem;font-weight:700;color:#10B981;margin-bottom:.4rem;">🛠️ Diseño de PCB con KiCad</div>
-          <div style="font-size:.77rem;color:var(--light);line-height:1.6;">
-            <div>· Esquemático: selección de componentes LCSC</div>
-            <div>· Layout PCB: separar zona de potencia y lógica</div>
-            <div>· Fabricar en JLCPCB: $5 por 5 unidades</div>
-          </div>
-        </div>
-        <div style="background:var(--card);border:1px solid #A855F7;padding:.7rem .85rem;">
-          <div style="font-size:.85rem;font-weight:700;color:#A855F7;margin-bottom:.4rem;">🔄 RTOS y Tiempo Real</div>
-          <div style="font-size:.77rem;color:var(--light);line-height:1.6;">
-            <div>· Loop de control: 500Hz mínimo para estabilidad</div>
-            <div>· Tareas FreeRTOS: control PID + telemetría + radio</div>
-            <div>· Por qué el scheduling importa en seguridad</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="bottom-bar"><span>Autonovations  |  Currículo STEAM</span></div>
-  </section>
+    <script>
+        // Initialize Lucide
+        lucide.createIcons();
 
-  <!-- ══════════════════════════════════════
-       SLIDE 8 — ART + MATH
-  ══════════════════════════════════════ -->
-  <section class="slide" id="s8">
-    <div class="grid-bg"></div>
-    <div class="accent-bar-left" style="background:#A855F7;"></div>
-    <div class="top-bar" style="background:#0A1628;display:flex;gap:2rem;">
-      <span class="top-bar-label" style="color:#A855F7;">🎨 Art & Design</span>
-      <span class="top-bar-label" style="color:#F59E0B;">🔢 Mathematics</span>
-    </div>
-    <div class="slide-body" style="display:flex;flex-direction:column;gap:.5rem;">
-      <div style="display:grid;grid-template-columns:1fr 1px 1fr;gap:1rem;flex:1;">
-        <div class="split-col anim anim-2">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:700;color:var(--white);margin-bottom:.3rem;">Diseño que Vuela</div>
-          <div class="half-card" style="border-color:#A855F740;"><span class="half-icon">📱</span><div><div class="half-title" style="color:#A855F7;">UX/UI de la App</div><div class="half-desc">Diseñar un dashboard de telemetría que sea intuitivo bajo presión</div></div></div>
-          <div class="half-card" style="border-color:#A855F740;"><span class="half-icon">🖨️</span><div><div class="half-title" style="color:#A855F7;">Impresión 3D</div><div class="half-desc">Diseñar el chasis del dron con Fusion 360 — forma sigue función</div></div></div>
-          <div class="half-card" style="border-color:#A855F740;"><span class="half-icon">📊</span><div><div class="half-title" style="color:#A855F7;">Visualización de Datos</div><div class="half-desc">Graficar actitud, batería y altitud en tiempo real con animaciones</div></div></div>
-          <div class="half-card" style="border-color:#A855F740;"><span class="half-icon">🎯</span><div><div class="half-title" style="color:#A855F7;">Diseño Industrial</div><div class="half-desc">Ergonomía del control: ¿qué hace que un joystick sea cómodo?</div></div></div>
-        </div>
-        <div style="background:var(--border);"></div>
-        <div class="split-col anim anim-3">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:700;color:var(--white);margin-bottom:.3rem;">La Matemática Real</div>
-          <div class="half-card" style="border-color:#F59E0B40;"><span class="half-icon">🔢</span><div><div class="half-title" style="color:#F59E0B;">Álgebra Lineal</div><div class="half-desc">Cuaterniones y matrices de rotación para orientación 3D real</div></div></div>
-          <div class="half-card" style="border-color:#F59E0B40;"><span class="half-icon">∫</span><div><div class="half-title" style="color:#F59E0B;">Cálculo PID</div><div class="half-desc">La integral y la derivada del PID como conceptos físicos tangibles</div></div></div>
-          <div class="half-card" style="border-color:#F59E0B40;"><span class="half-icon">📐</span><div><div class="half-title" style="color:#F59E0B;">Trigonometría</div><div class="half-desc">Calcular ángulo real del dron con seno/coseno del acelerómetro</div></div></div>
-          <div class="half-card" style="border-color:#F59E0B40;"><span class="half-icon">〰️</span><div><div class="half-title" style="color:#F59E0B;">Señales y Filtros</div><div class="half-desc">Filtro de Kalman: por qué combinar giroscopio + acelerómetro</div></div></div>
-        </div>
-      </div>
-    </div>
-    <div class="bottom-bar"><span>Autonovations  |  Currículo STEAM</span></div>
-  </section>
+        const slides = document.querySelectorAll('.slide');
+        const dotsContainer = document.getElementById('dotsContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const currentNum = document.getElementById('currentNum');
+        const timeDisplay = document.getElementById('timeDisplay');
+        
+        let currentSlide = 0;
+        let isAnimating = false;
 
-  <!-- ══════════════════════════════════════
-       SLIDE 9 — METHODOLOGY
-  ══════════════════════════════════════ -->
-  <section class="slide" id="s9">
-    <div class="grid-bg"></div>
-    <div class="accent-bar-left"></div>
-    <div class="top-bar"><span class="top-bar-label">Metodología</span></div>
-    <div class="slide-body" style="display:flex;flex-direction:column;gap:.6rem;">
-      <h2 class="slide-title anim anim-1">Aprendizaje Basado en Proyectos (ABP)</h2>
-      <div class="steps-row anim anim-2">
-        <div class="step-item">
-          <div class="step-circle" style="border-color:#3B82F6;color:#3B82F6;">1</div>
-          <div class="step-title">Explorar</div>
-          <div class="step-desc">Desmontar el dron. ¿Qué hay adentro? Primera hipótesis.</div>
-        </div>
-        <div class="step-item">
-          <div class="step-circle" style="border-color:#06B6D4;color:#06B6D4;">2</div>
-          <div class="step-title">Investigar</div>
-          <div class="step-desc">Buscar datasheets, videos, documentación del chip.</div>
-        </div>
-        <div class="step-item">
-          <div class="step-circle" style="border-color:#10B981;color:#10B981;">3</div>
-          <div class="step-title">Diseñar</div>
-          <div class="step-desc">Crear esquemático, app wireframe, prototipo de firmware.</div>
-        </div>
-        <div class="step-item">
-          <div class="step-circle" style="border-color:#A855F7;color:#A855F7;">4</div>
-          <div class="step-title">Construir</div>
-          <div class="step-desc">Soldar, programar, testear. Fallar rápido, iterar rápido.</div>
-        </div>
-        <div class="step-item">
-          <div class="step-circle" style="border-color:#F59E0B;color:#F59E0B;">5</div>
-          <div class="step-title">Compartir</div>
-          <div class="step-desc">Presentar, publicar open source, enseñar a otros.</div>
-        </div>
-      </div>
-      <div class="anim anim-3">
-        <div style="font-size:.85rem;font-weight:700;color:var(--accent);margin-bottom:.4rem;font-family:'Barlow Condensed',sans-serif;letter-spacing:.05em;">PRINCIPIOS PEDAGÓGICOS</div>
-        <div class="principles-grid">
-          <div class="principle">🏆 Logros desbloqueables (gamification)</div>
-          <div class="principle">🌍 Proyectos con impacto real en la comunidad</div>
-          <div class="principle">👥 Aprendizaje colaborativo en equipos</div>
-          <div class="principle">📱 Documentación de progreso en portafolio digital</div>
-        </div>
-      </div>
-    </div>
-    <div class="bottom-bar"><span>Autonovations  |  Currículo STEAM</span></div>
-  </section>
+        // Create Dots
+        slides.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if (i === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(i));
+            dotsContainer.appendChild(dot);
+        });
 
-  <!-- ══════════════════════════════════════
-       SLIDE 10 — MARKETS
-  ══════════════════════════════════════ -->
-  <section class="slide" id="s10">
-    <div class="grid-bg"></div>
-    <div class="accent-bar-left"></div>
-    <div class="top-bar"><span class="top-bar-label">Mercados Objetivo</span></div>
-    <div class="slide-body" style="display:flex;flex-direction:column;gap:.6rem;">
-      <h2 class="slide-title anim anim-1">¿Para quién es Autonovations?</h2>
-      <div class="markets-grid anim anim-2">
-        <div class="market-card" style="border-color:#3B82F6;">
-          <div class="market-top">
-            <span class="market-icon">🏫</span>
-            <div><div class="market-title" style="color:#3B82F6;">Colegios y Escuelas</div><div class="market-desc">Currículo alineado con estándares nacionales. Kits de aula para 30 estudiantes. Capacitación docente incluida.</div></div>
-          </div>
-          <div class="market-offer" style="background:rgba(59,130,246,.2);">📦 Kit Aula: 8 drones + guía docente + plataforma digital</div>
-        </div>
-        <div class="market-card" style="border-color:#10B981;">
-          <div class="market-top">
-            <span class="market-icon">🎓</span>
-            <div><div class="market-title" style="color:#10B981;">Universidades</div><div class="market-desc">Laboratorios de sistemas embebidos, control automático y electrónica. Material para pregrado y posgrado.</div></div>
-          </div>
-          <div class="market-offer" style="background:rgba(16,185,129,.2);">📦 Kit Avanzado: PCB desnuda + acceso a repositorio GitHub</div>
-        </div>
-        <div class="market-card" style="border-color:#A855F7;">
-          <div class="market-top">
-            <span class="market-icon">🏢</span>
-            <div><div class="market-title" style="color:#A855F7;">Academias Privadas STEM</div><div class="market-desc">Cursos intensivos de fin de semana. Campamentos de verano. Bootcamps de ingeniería juvenil.</div></div>
-          </div>
-          <div class="market-offer" style="background:rgba(168,85,247,.2);">📦 Programa Bootcamp: 40h intensivas + certificación</div>
-        </div>
-        <div class="market-card" style="border-color:#F59E0B;">
-          <div class="market-top">
-            <span class="market-icon">🏠</span>
-            <div><div class="market-title" style="color:#F59E0B;">Familias / Homeschool</div><div class="market-desc">Aprendizaje en casa con material autoguiado. Videos, guías PDF y soporte de comunidad en línea.</div></div>
-          </div>
-          <div class="market-offer" style="background:rgba(245,158,11,.2);">📦 Kit Familiar: 1 dron + 6 meses de acceso plataforma</div>
-        </div>
-      </div>
-    </div>
-    <div class="bottom-bar"><span>Autonovations  |  Currículo STEAM</span></div>
-  </section>
+        const dots = document.querySelectorAll('.dot');
 
-  <!-- ══════════════════════════════════════
-       SLIDE 11 — ROADMAP
-  ══════════════════════════════════════ -->
-  <section class="slide" id="s11">
-    <div class="grid-bg"></div>
-    <div class="accent-bar-left"></div>
-    <div class="top-bar"><span class="top-bar-label">Hoja de Ruta</span></div>
-    <div class="slide-body" style="display:flex;flex-direction:column;gap:.4rem;">
-      <h2 class="slide-title anim anim-1">De prototipo a impacto nacional</h2>
-      <div class="roadmap-track anim anim-2">
-        <div class="phase">
-          <div class="phase-dot" style="background:#3B82F6;border-color:#3B82F6;"></div>
-          <div class="phase-q" style="color:#3B82F6;">Q1 2025</div>
-          <div class="phase-title">MVP</div>
-          <div class="phase-card" style="border-color:#3B82F6;">
-            <div class="phase-item"><span class="check" style="color:#3B82F6;">✓</span>Currículo Nivel Explorador</div>
-            <div class="phase-item"><span class="check" style="color:#3B82F6;">✓</span>10 kits prototipo</div>
-            <div class="phase-item"><span class="check" style="color:#3B82F6;">✓</span>Piloto en 2 colegios</div>
-            <div class="phase-item"><span class="check" style="color:#3B82F6;">✓</span>App Android beta</div>
-          </div>
-        </div>
-        <div class="phase">
-          <div class="phase-dot" style="background:#10B981;border-color:#10B981;"></div>
-          <div class="phase-q" style="color:#10B981;">Q2 2025</div>
-          <div class="phase-title">Validación</div>
-          <div class="phase-card" style="border-color:#10B981;">
-            <div class="phase-item"><span class="check" style="color:#10B981;">✓</span>Feedback 200 estudiantes</div>
-            <div class="phase-item"><span class="check" style="color:#10B981;">✓</span>Currículo Nivel Constructor</div>
-            <div class="phase-item"><span class="check" style="color:#10B981;">✓</span>Tienda online kits</div>
-            <div class="phase-item"><span class="check" style="color:#10B981;">✓</span>Comunidad Discord</div>
-          </div>
-        </div>
-        <div class="phase">
-          <div class="phase-dot" style="background:#A855F7;border-color:#A855F7;"></div>
-          <div class="phase-q" style="color:#A855F7;">Q3 2025</div>
-          <div class="phase-title">Escala</div>
-          <div class="phase-card" style="border-color:#A855F7;">
-            <div class="phase-item"><span class="check" style="color:#A855F7;">✓</span>Niveles Ingeniero + Innovador</div>
-            <div class="phase-item"><span class="check" style="color:#A855F7;">✓</span>Capacitación 50 docentes</div>
-            <div class="phase-item"><span class="check" style="color:#A855F7;">✓</span>Alianzas universidades</div>
-            <div class="phase-item"><span class="check" style="color:#A855F7;">✓</span>Open source en GitHub</div>
-          </div>
-        </div>
-        <div class="phase">
-          <div class="phase-dot" style="background:#F59E0B;border-color:#F59E0B;"></div>
-          <div class="phase-q" style="color:#F59E0B;">Q4 2025</div>
-          <div class="phase-title">Expansión</div>
-          <div class="phase-card" style="border-color:#F59E0B;">
-            <div class="phase-item"><span class="check" style="color:#F59E0B;">✓</span>500+ estudiantes activos</div>
-            <div class="phase-item"><span class="check" style="color:#F59E0B;">✓</span>Franquicia academias STEM</div>
-            <div class="phase-item"><span class="check" style="color:#F59E0B;">✓</span>Versión en inglés</div>
-            <div class="phase-item"><span class="check" style="color:#F59E0B;">✓</span>Serie A Funding</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="bottom-bar"><span>Autonovations  |  Currículo STEAM</span></div>
-  </section>
+        function updateUI() {
+            dots.forEach((dot, i) => dot.classList.toggle('active', i === currentSlide));
+            currentNum.textContent = currentSlide + 1;
+            
+            // Buttons state
+            prevBtn.classList.toggle('opacity-30', currentSlide === 0);
+            prevBtn.classList.toggle('pointer-events-none', currentSlide === 0);
+            nextBtn.classList.toggle('opacity-30', currentSlide === slides.length - 1);
+            nextBtn.classList.toggle('pointer-events-none', currentSlide === slides.length - 1);
+        }
 
-  <!-- ══════════════════════════════════════
-       SLIDE 12 — CLOSE
-  ══════════════════════════════════════ -->
-  <section class="slide" id="s12">
-    <div class="grid-bg"></div>
-    <div class="close-orb1"></div>
-    <div class="close-orb2"></div>
-    <div class="accent-bar-left"></div>
-    <div class="accent-bar-right"></div>
-    <div class="slide-body">
-      <div class="center-content">
-        <div class="close-drone anim anim-1">🚁</div>
-        <h1 class="close-headline anim anim-2">Hack it. Learn it.<br>Build it.</h1>
-        <p class="close-sub anim anim-3">Con Autonovations, cada estudiante no solo aprende tecnología —<br>se convierte en el ingeniero que el futuro necesita.</p>
-        <div class="cta-btn anim anim-4">autonovations.io &nbsp;|&nbsp; hola@autonovations.io</div>
-      </div>
-    </div>
-  </section>
+        function goToSlide(index) {
+            if (isAnimating || index === currentSlide || index < 0 || index >= slides.length) return;
+            
+            isAnimating = true;
+            const prevIndex = currentSlide;
+            currentSlide = index;
 
-</div><!-- /#deck -->
+            slides[prevIndex].classList.add('exit');
+            slides[prevIndex].classList.remove('active');
+            
+            slides[currentSlide].classList.add('active');
+            slides[currentSlide].classList.remove('exit');
 
-<!-- NAV -->
-<div id="nav">
-  <button id="btn-prev" title="Anterior (←)">‹</button>
-  <div class="dot-nav" id="dot-nav"></div>
-  <span id="slide-counter">1 / 12</span>
-  <button id="btn-next" title="Siguiente (→)">›</button>
-</div>
+            setTimeout(() => {
+                slides[prevIndex].classList.remove('exit');
+                isAnimating = false;
+            }, 800);
 
-<div id="hint">← → navegar &nbsp;·&nbsp; F tecla pantalla completa</div>
+            updateUI();
+        }
 
-<script>
-const slides = Array.from(document.querySelectorAll('.slide'));
-const total = slides.length;
-let current = 0;
-let animating = false;
+        prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
+        nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
 
-// Build dots
-const dotNav = document.getElementById('dot-nav');
-slides.forEach((_, i) => {
-  const d = document.createElement('div');
-  d.className = 'dot' + (i === 0 ? ' active' : '');
-  d.addEventListener('click', () => goTo(i));
-  dotNav.appendChild(d);
-});
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') goToSlide(currentSlide + 1);
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goToSlide(currentSlide - 1);
+        });
 
-function goTo(n) {
-  if (animating || n === current) return;
-  animating = true;
-  const prev = current;
-  current = Math.max(0, Math.min(total - 1, n));
+        // Touch Navigation
+        let startX = 0;
+        document.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+        document.addEventListener('touchend', (e) => {
+            const endX = e.changedTouches[0].clientX;
+            if (startX - endX > 50) goToSlide(currentSlide + 1);
+            if (endX - startX > 50) goToSlide(currentSlide - 1);
+        });
 
-  slides[prev].classList.add('exit');
-  slides[prev].classList.remove('active');
-  slides[current].classList.remove('exit');
-  slides[current].classList.add('active');
+        // Clock Update
+        setInterval(() => {
+            const now = new Date();
+            timeDisplay.textContent = now.toLocaleTimeString('es-ES', { hour12: false });
+        }, 1000);
 
-  setTimeout(() => {
-    slides[prev].classList.remove('exit');
-    animating = false;
-  }, 520);
-
-  // Update dots
-  dotNav.querySelectorAll('.dot').forEach((d, i) => {
-    d.classList.toggle('active', i === current);
-  });
-  document.getElementById('slide-counter').textContent = `${current + 1} / ${total}`;
-}
-
-document.getElementById('btn-prev').addEventListener('click', () => goTo(current - 1));
-document.getElementById('btn-next').addEventListener('click', () => goTo(current + 1));
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
-  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                     { e.preventDefault(); goTo(current - 1); }
-  if (e.key === 'f' || e.key === 'F') {
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-    else document.exitFullscreen();
-  }
-});
-
-// Touch swipe
-let tx = 0;
-document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
-document.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - tx;
-  if (Math.abs(dx) > 50) dx < 0 ? goTo(current + 1) : goTo(current - 1);
-}, { passive: true });
-
-// Hide hint after 4s
-setTimeout(() => { document.getElementById('hint').style.opacity = '0'; }, 4000);
-</script>
+        updateUI();
+    </script>
 </body>
+
 </html>
