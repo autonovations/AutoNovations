@@ -4,6 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autonovations - Autonomous Intelligence Connected</title>
+    <meta name="description" content="Autonovations is a deep-tech engineering lab focused on the seamless integration of Artificial Intelligence, Robotics, and Industrial IoT (IIoT).">
+    <meta name="keywords" content="AI, Robotics, IoT, Autonomous Systems, Drones, Deep Tech">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://autonovations.com/">
+    <meta property="og:title" content="Autonovations - Autonomous Intelligence Connected">
+    <meta property="og:description" content="Bridging the gap between artificial intelligence and physical reality. We engineer the next generation of robotics, drones, and autonomous systems.">
+    <meta property="og:image" content="about_vision.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://autonovations.com/">
+    <meta property="twitter:title" content="Autonovations - Autonomous Intelligence Connected">
+    <meta property="twitter:description" content="Bridging the gap between artificial intelligence and physical reality. We engineer the next generation of robotics, drones, and autonomous systems.">
+    <meta property="twitter:image" content="about_vision.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -226,6 +243,104 @@
             object-fit: cover;
             border-radius: 2px;
         }
+
+        /* Glitch Hover Effect */
+        .glitch-hover {
+            position: relative;
+            overflow: hidden;
+        }
+        .glitch-hover img {
+            transition: transform 0.5s ease;
+        }
+        .glitch-hover:hover img {
+            transform: scale(1.05);
+            filter: contrast(1.2) brightness(1.1);
+        }
+        .glitch-hover::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 217, 255, 0.1) 3px,
+                transparent 3px
+            );
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .glitch-hover:hover::after {
+            opacity: 1;
+            animation: scanline 0.2s linear infinite;
+        }
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        /* Terminal Styles */
+        .terminal-window {
+            background: rgba(5, 5, 5, 0.8);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            font-family: 'Space Grotesk', monospace;
+            overflow: hidden;
+            width: 100%;
+            max-width: 600px;
+        }
+        .terminal-header {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 15px;
+            display: flex;
+            gap: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .terminal-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .terminal-content {
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            scrollbar-width: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .terminal-content::-webkit-scrollbar {
+            display: none;
+        }
+        .terminal-line {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            opacity: 0;
+            transform: translateX(-10px);
+            animation: terminalLineIn 0.3s forwards;
+        }
+        .terminal-prompt {
+            color: #00D9FF;
+            margin-right: 8px;
+        }
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: #00D9FF;
+            margin-left: 4px;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+        @keyframes terminalLineIn {
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 </head>
@@ -306,30 +421,49 @@
         <div class="glow-orb w-[500px] h-[500px] bg-secondary/30 bottom-[-10%] right-[-10%]" style="animation-delay: -5s;"></div>
         <div class="glow-orb w-[700px] h-[700px] bg-primary/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-[150px]" style="animation-delay: -10s;"></div>
 
-        <div class="max-w-7xl mx-auto px-6 flex flex-col items-center text-center z-10">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neon/30 bg-neon/5 backdrop-blur-sm mb-8 animate-fade-in" style="animation-delay: 0.2s;">
-                <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span>
-                <span class="text-neon text-sm font-tech tracking-widest uppercase" data-i18n="hero_badge">The Future is Here</span>
-            </div>
-            
-            <h1 class="font-tech text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-6 animate-fade-in" style="animation-delay: 0.4s;">
-                <span class="block text-white" data-i18n="hero_title_1">Autonomous Intelligence</span>
-                <span class="block text-gradient animate-float" data-i18n="hero_title_2">Connected</span>
-            </h1>
-            
-            <p class="max-w-2xl text-gray-400 text-lg md:text-xl mb-12 animate-fade-in" style="animation-delay: 0.6s;" data-i18n="hero_desc">
-                Bridging the gap between artificial intelligence and physical reality. We engineer the next generation of robotics, drones, and autonomous systems.
-            </p>
-            
-            <div class="flex flex-col sm:flex-row gap-6 animate-fade-in" style="animation-delay: 0.8s;">
-                <a href="#technologies" class="px-8 py-4 bg-neon text-dark font-bold font-tech rounded-full glow-button transition-all duration-300 flex items-center justify-center gap-2 group">
-                    <span data-i18n="hero_btn_explore">Explore Technology</span>
-                    <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
-                </a>
-                <a href="#contact" class="px-8 py-4 border border-white/20 text-white font-bold font-tech rounded-full hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-2">
-                    <span data-i18n="hero_btn_build">Start Building</span>
-                    <i data-lucide="terminal" class="w-5 h-5"></i>
-                </a>
+        <div class="max-w-7xl mx-auto px-6 z-10 w-full">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neon/30 bg-neon/5 backdrop-blur-sm mb-8 animate-fade-in" style="animation-delay: 0.2s;">
+                        <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span>
+                        <span class="text-neon text-sm font-tech tracking-widest uppercase" data-i18n="hero_badge">The Future is Here</span>
+                    </div>
+                    
+                    <h1 class="font-tech text-5xl md:text-7xl font-bold leading-tight mb-6 animate-fade-in" style="animation-delay: 0.4s;">
+                        <span class="block text-white" data-i18n="hero_title_1">Autonomous Intelligence</span>
+                        <span class="block text-gradient animate-float" data-i18n="hero_title_2">Connected</span>
+                    </h1>
+                    
+                    <p class="max-w-2xl mx-auto lg:mx-0 text-gray-400 text-lg md:text-xl mb-12 animate-fade-in" style="animation-delay: 0.6s;" data-i18n="hero_desc">
+                        Bridging the gap between artificial intelligence and physical reality. We engineer the next generation of robotics, drones, and autonomous systems.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-6 animate-fade-in" style="animation-delay: 0.8s;">
+                        <a href="#technologies" class="px-8 py-4 bg-neon text-dark font-bold font-tech rounded-full glow-button transition-all duration-300 flex items-center justify-center gap-2 group">
+                            <span data-i18n="hero_btn_explore">Explore Technology</span>
+                            <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                        <a href="#contact" class="px-8 py-4 border border-white/20 text-white font-bold font-tech rounded-full hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-2">
+                            <span data-i18n="hero_btn_build">Start Building</span>
+                            <i data-lucide="terminal" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Interactive Terminal -->
+                <div class="hidden lg:block animate-fade-in" style="animation-delay: 1s;">
+                    <div class="terminal-window glass-panel">
+                        <div class="terminal-header">
+                            <div class="terminal-dot bg-red-500/50"></div>
+                            <div class="terminal-dot bg-yellow-500/50"></div>
+                            <div class="terminal-dot bg-green-500/50"></div>
+                            <span class="text-[10px] text-gray-500 ml-2 font-tech uppercase tracking-widest">Autonomous_Core_v2.0</span>
+                        </div>
+                        <div class="terminal-content" id="terminalContent">
+                            <div class="terminal-line text-gray-500">Initializing system protocols...</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -356,11 +490,11 @@
                     
                     <div class="flex items-center gap-12">
                         <div>
-                            <div class="text-4xl font-bold text-white mb-2 text-gradient font-tech">AI + IoT</div>
+                            <div class="text-4xl font-bold text-white mb-2 text-gradient font-tech counter" data-target="100">0</div>
                             <div class="text-sm text-gray-400 uppercase tracking-wider font-tech" data-i18n="about_stat1">Unified</div>
                         </div>
                         <div>
-                            <div class="text-4xl font-bold text-white mb-2 text-gradient font-tech">Next-Gen</div>
+                            <div class="text-4xl font-bold text-white mb-2 text-gradient font-tech counter" data-target="50">0</div>
                             <div class="text-sm text-gray-400 uppercase tracking-wider font-tech" data-i18n="about_stat2">Robotics</div>
                         </div>
                     </div>
@@ -368,7 +502,7 @@
 
                 <div class="relative reveal delay-200">
                     <div class="absolute inset-0 bg-neon/20 blur-[100px] rounded-full -z-10"></div>
-                    <img src="auto_city.jpg" alt="Autonovations Vision" class="w-full rounded-2xl border border-white/10 shadow-2xl glass-panel object-cover" onerror="this.src='https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80'">
+                    <img src="about_vision.png" alt="Autonovations Vision" class="w-full rounded-2xl border border-white/10 shadow-2xl glass-panel object-cover" onerror="this.src='https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80'">
                 </div>
             </div>
         </div>
@@ -440,8 +574,8 @@
                 <!-- Project 1 -->
                 <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden">
                     <div class="flex flex-col md:flex-row items-center gap-8">
-                        <div class="w-full md:w-2/5 h-64 bg-gray-800 rounded-xl overflow-hidden relative">
-                            <img src="https://images.unsplash.com/photo-1546776310-eef45dd6d63c?auto=format&fit=crop&q=80" alt="Robotics" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div class="w-full md:w-2/5 h-64 bg-gray-800 rounded-xl overflow-hidden relative glitch-hover">
+                            <img src="project_companions.png" alt="Robotics" class="w-full h-full object-cover transition-transform duration-700">
                             <div class="absolute inset-0 bg-neon/10 group-hover:bg-transparent transition-colors duration-500"></div>
                         </div>
                         <div class="w-full md:w-3/5">
@@ -461,8 +595,8 @@
                 <!-- Project 2 -->
                 <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-100 group cursor-pointer overflow-hidden">
                     <div class="flex flex-col md:flex-row items-center gap-8">
-                        <div class="w-full md:w-2/5 h-64 bg-gray-800 rounded-xl overflow-hidden relative md:order-2">
-                            <img src="https://images.unsplash.com/photo-1620712948218-c2688f99e44f?auto=format&fit=crop&q=80" alt="Trading AI" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div class="w-full md:w-2/5 h-64 bg-gray-800 rounded-xl overflow-hidden relative md:order-2 glitch-hover">
+                            <img src="project_trading.png" alt="Trading AI" class="w-full h-full object-cover transition-transform duration-700">
                             <div class="absolute inset-0 bg-neon/10 group-hover:bg-transparent transition-colors duration-500"></div>
                         </div>
                         <div class="w-full md:w-3/5 md:order-1">
@@ -880,6 +1014,90 @@
             // Save preference
             localStorage.setItem('preferredLang', lang);
         }
+
+        // Animated Counters
+        const counters = document.querySelectorAll('.counter');
+        const counterOptions = {
+            threshold: 1.0,
+            rootMargin: "0px 0px -20px 0px"
+        };
+
+        const counterObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = +counter.getAttribute('data-target');
+                    const duration = 2000; // 2 seconds
+                    const increment = target / (duration / 16); // 60fps
+
+                    let current = 0;
+                    const updateCounter = () => {
+                        current += increment;
+                        if (current < target) {
+                            counter.innerText = Math.ceil(current) + (counter.getAttribute('data-target') == '100' ? '%' : '+');
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            counter.innerText = target + (counter.getAttribute('data-target') == '100' ? '%' : '+');
+                        }
+                    };
+                    updateCounter();
+                    observer.unobserve(counter);
+                }
+            });
+        }, counterOptions);
+
+        counters.forEach(counter => counterObserver.observe(counter));
+
+        // Terminal Simulation Logic
+        const terminalContent = document.getElementById('terminalContent');
+        const commands = [
+            { text: 'Initializing Neural Core v2.0.4...', delay: 1000 },
+            { text: 'Status: ONLINE', color: '#00D9FF', delay: 500 },
+            { text: 'Connecting to global IoT mesh...', delay: 1200 },
+            { text: 'Nodes found: 1,420,892', delay: 400 },
+            { text: 'Executing: SwarmIntelligence.deploy()', delay: 1500 },
+            { text: 'Analyzing real-world telemetry...', delay: 800 },
+            { text: 'Pattern detected: Autonomous convergence', delay: 1000 },
+            { text: 'Action: Optimization protocol active', color: '#00D9FF', delay: 600 },
+            { text: 'Waiting for operator command...', delay: 2000, isPrompt: true }
+        ];
+
+        let commandIndex = 0;
+
+        function typeTerminal() {
+            if (commandIndex >= commands.length) {
+                // Reset or keep last line
+                return;
+            }
+
+            const cmd = commands[commandIndex];
+            const line = document.createElement('div');
+            line.className = 'terminal-line';
+            if (cmd.color) line.style.color = cmd.color;
+            
+            if (cmd.isPrompt) {
+                line.innerHTML = `<span class="terminal-prompt">></span>${cmd.text}<span class="terminal-cursor"></span>`;
+            } else {
+                line.innerHTML = `<span class="terminal-prompt">></span>${cmd.text}`;
+            }
+
+            terminalContent.appendChild(line);
+            terminalContent.scrollTop = terminalContent.scrollHeight;
+
+            commandIndex++;
+            setTimeout(typeTerminal, cmd.delay);
+        }
+
+        // Start terminal when Hero is visible
+        const heroSection = document.getElementById('home');
+        const heroObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                typeTerminal();
+                heroObserver.disconnect();
+            }
+        }, { threshold: 0.5 });
+        
+        heroObserver.observe(heroSection);
 
         // Initialize language on load
         window.addEventListener('DOMContentLoaded', () => {
