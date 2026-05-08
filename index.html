@@ -116,6 +116,11 @@
             transform: translate(-50%, -50%);
             transition: opacity 0.5s ease;
         }
+        /* Mobile adjustment for mouse glow */
+        @media (max-width: 768px) {
+            .mouse-glow { display: none; }
+        }
+
         .glass-panel {
             background: rgba(18, 18, 18, 0.6);
             backdrop-filter: blur(12px);
@@ -171,6 +176,19 @@
         }
         .glow-button:hover {
             box-shadow: 0 0 30px rgba(0, 217, 255, 0.6);
+        }
+
+        /* Mobile Menu Animation */
+        #mobileMenu {
+            opacity: 0;
+            transform: scale(1.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+        #mobileMenu.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
         }
 
         /* Language Dropdown Styles */
@@ -341,6 +359,30 @@
         @keyframes blink {
             50% { opacity: 0; }
         }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            section {
+                padding-top: 5rem !important;
+                padding-bottom: 5rem !important;
+            }
+            .hero-section {
+                padding-top: 8rem !important;
+            }
+            h1 {
+                font-size: 2.75rem !important;
+                line-height: 1.2 !important;
+            }
+            h3 {
+                font-size: 2rem !important;
+            }
+            .terminal-window {
+                max-height: 250px;
+            }
+            .terminal-content {
+                height: 180px;
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 </head>
@@ -405,10 +447,10 @@
 
     <!-- Mobile Menu -->
     <div class="fixed inset-0 bg-dark/95 z-40 hidden flex-col items-center justify-center gap-8 backdrop-blur-xl" id="mobileMenu">
-        <a href="#about" class="text-2xl font-tech text-white hover:text-neon transition-colors menu-link" data-i18n="nav_about">About</a>
-        <a href="#technologies" class="text-2xl font-tech text-white hover:text-neon transition-colors menu-link" data-i18n="nav_technologies">Technologies</a>
-        <a href="#projects" class="text-2xl font-tech text-white hover:text-neon transition-colors menu-link" data-i18n="nav_projects">Projects</a>
-        <a href="#contact" class="text-2xl font-tech text-neon menu-link" data-i18n="nav_join">Join Us</a>
+        <a href="#about" class="text-3xl font-tech text-white hover:text-neon transition-all menu-link" data-i18n="nav_about">About</a>
+        <a href="#technologies" class="text-3xl font-tech text-white hover:text-neon transition-all menu-link" data-i18n="nav_technologies">Technologies</a>
+        <a href="#projects" class="text-3xl font-tech text-white hover:text-neon transition-all menu-link" data-i18n="nav_projects">Projects</a>
+        <a href="#contact" class="px-8 py-3 border border-neon text-2xl font-tech text-neon rounded-full menu-link glow-button" data-i18n="nav_join">Join Us</a>
     </div>
 
     <!-- Hero Section -->
@@ -451,8 +493,8 @@
                 </div>
 
                 <!-- Interactive Terminal -->
-                <div class="hidden lg:block animate-fade-in" style="animation-delay: 1s;">
-                    <div class="terminal-window glass-panel">
+                <div class="block animate-fade-in" style="animation-delay: 1s;">
+                    <div class="terminal-window glass-panel mx-auto lg:mx-0">
                         <div class="terminal-header">
                             <div class="terminal-dot bg-red-500/50"></div>
                             <div class="terminal-dot bg-yellow-500/50"></div>
@@ -842,22 +884,33 @@
             menuOpen = !menuOpen;
             if (menuOpen) {
                 mobileMenu.classList.remove('hidden');
-                mobileMenu.classList.add('flex');
+                setTimeout(() => {
+                    mobileMenu.classList.add('flex', 'active');
+                }, 10);
                 menuBtn.innerHTML = '<i data-lucide="x"></i>';
+                document.body.style.overflow = 'hidden'; // Prevent scroll when menu is open
             } else {
-                mobileMenu.classList.add('hidden');
-                mobileMenu.classList.remove('flex');
+                mobileMenu.classList.remove('active');
+                setTimeout(() => {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenu.classList.remove('flex');
+                }, 400);
                 menuBtn.innerHTML = '<i data-lucide="menu"></i>';
+                document.body.style.overflow = '';
             }
             lucide.createIcons();
         });
 
         menuLinks.forEach(link => {
             link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-                mobileMenu.classList.remove('flex');
+                mobileMenu.classList.remove('active');
+                setTimeout(() => {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenu.classList.remove('flex');
+                }, 400);
                 menuOpen = false;
                 menuBtn.innerHTML = '<i data-lucide="menu"></i>';
+                document.body.style.overflow = '';
                 lucide.createIcons();
             });
         });
