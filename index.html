@@ -424,15 +424,64 @@
             }
         }
 
-        /* Mobile Adjustments */
+        /* ===== GLOBAL RESPONSIVE: Scroll offset for sticky navbar ===== */
+        section[id] {
+            scroll-margin-top: 80px;
+        }
+
+        /* ===== SMALL MOBILE (≤ 480px) ===== */
+        @media (max-width: 480px) {
+            section {
+                padding-top: 4rem !important;
+                padding-bottom: 4rem !important;
+            }
+
+            h1 {
+                font-size: 2rem !important;
+                line-height: 1.2 !important;
+            }
+
+            h3 {
+                font-size: 1.5rem !important;
+            }
+
+            #contact h2 {
+                font-size: 2rem !important;
+            }
+
+            .glow-orb {
+                width: 200px !important;
+                height: 200px !important;
+            }
+
+            /* About stats row */
+            #about .flex.items-center.gap-12 {
+                gap: 2rem;
+            }
+
+            /* Project image height */
+            .glitch-hover {
+                height: 200px !important;
+            }
+
+            /* Footer grid single column */
+            footer .grid {
+                grid-template-columns: 1fr !important;
+                gap: 2rem !important;
+            }
+
+            /* CTA button text */
+            #contact button {
+                font-size: 1rem !important;
+                padding: 1rem 2rem !important;
+            }
+        }
+
+        /* ===== MOBILE (≤ 768px) ===== */
         @media (max-width: 768px) {
             section {
                 padding-top: 5rem !important;
                 padding-bottom: 5rem !important;
-            }
-
-            .hero-section {
-                padding-top: 8rem !important;
             }
 
             h1 {
@@ -441,7 +490,11 @@
             }
 
             h3 {
-                font-size: 2rem !important;
+                font-size: 1.75rem !important;
+            }
+
+            #contact h2 {
+                font-size: 2.5rem !important;
             }
 
             .terminal-window {
@@ -451,10 +504,82 @@
             .terminal-content {
                 height: 180px;
             }
+
+            /* Contain glow orbs to prevent horizontal overflow */
+            .glow-orb {
+                width: 300px !important;
+                height: 300px !important;
+            }
+
+            /* Center project titles on mobile */
+            #projects .flex.flex-col.md\\:flex-row.justify-between {
+                align-items: flex-start !important;
+                text-align: left;
+            }
+
+            /* Adapt project image height */
+            .glitch-hover {
+                height: 220px !important;
+            }
+
+            /* Footer grid: 2 columns */
+            footer .grid {
+                grid-template-columns: 1fr !important;
+                gap: 2.5rem !important;
+            }
+
+            /* Footer bottom bar */
+            footer .pt-8 {
+                text-align: center;
+            }
+
+            footer .flex.gap-8 {
+                justify-content: center;
+            }
         }
 
-        /* Tablet Adjustments */
-        @media (min-width: 769px) and (max-width: 1280px) {
+        /* ===== TABLET PORTRAIT (769px - 1024px) ===== */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            #home {
+                align-items: flex-start !important;
+                padding-top: 110px !important;
+            }
+
+            #home h1 {
+                font-size: 3rem !important;
+                line-height: 1.1 !important;
+            }
+
+            #home p {
+                margin-bottom: 2rem !important;
+            }
+
+            h3 {
+                font-size: 2.25rem !important;
+            }
+
+            #contact h2 {
+                font-size: 3rem !important;
+            }
+
+            .terminal-window {
+                max-width: 500px !important;
+            }
+
+            /* Footer: 2x2 grid */
+            footer .grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 2.5rem !important;
+            }
+
+            /* Tech cards: 2 columns */
+            #technologies .grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        /* ===== TABLET LANDSCAPE (1025px - 1280px) ===== */
+        @media (min-width: 1025px) and (max-width: 1280px) {
             #home {
                 align-items: flex-start !important;
                 padding-top: 110px !important;
@@ -470,7 +595,12 @@
             }
 
             .terminal-window {
-                max-width: 500px !important;
+                max-width: 450px !important;
+            }
+
+            /* Footer: 4 columns */
+            footer .grid {
+                grid-template-columns: repeat(4, 1fr) !important;
             }
         }
     </style>
@@ -564,16 +694,16 @@
         <div class="grid-bg"></div>
         <div class="scanlines"></div>
 
-        <!-- Enhanced Glowing Orbs -->
-        <div class="glow-orb w-[600px] h-[600px] bg-primary/30 top-[-10%] left-[-10%]" style="animation-delay: 0s;">
+        <!-- Enhanced Glowing Orbs (responsive sizes) -->
+        <div class="glow-orb w-[300px] md:w-[500px] lg:w-[600px] h-[300px] md:h-[500px] lg:h-[600px] bg-primary/30 top-[-10%] left-[-10%]" style="animation-delay: 0s;">
         </div>
-        <div class="glow-orb w-[500px] h-[500px] bg-secondary/30 bottom-[-10%] right-[-10%]"
+        <div class="glow-orb w-[250px] md:w-[400px] lg:w-[500px] h-[250px] md:h-[400px] lg:h-[500px] bg-secondary/30 bottom-[-10%] right-[-10%]"
             style="animation-delay: -5s;"></div>
-        <div class="glow-orb w-[700px] h-[700px] bg-primary/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-[150px]"
+        <div class="glow-orb w-[350px] md:w-[550px] lg:w-[700px] h-[350px] md:h-[550px] lg:h-[700px] bg-primary/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-[150px]"
             style="animation-delay: -10s;"></div>
 
         <div class="max-w-7xl mx-auto px-6 z-10 w-full">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                 <div class="text-center lg:text-left">
                     <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neon/30 bg-neon/5 backdrop-blur-sm mb-8 animate-fade-in"
                         style="animation-delay: 0.2s;">
@@ -588,22 +718,22 @@
                         <span class="block text-gradient animate-float" data-i18n="hero_title_2">Connected</span>
                     </h1>
 
-                    <p class="max-w-2xl mx-auto lg:mx-0 text-gray-400 text-lg md:text-xl mb-12 animate-fade-in"
+                    <p class="max-w-2xl mx-auto lg:mx-0 text-gray-400 text-base md:text-lg lg:text-xl mb-8 md:mb-12 animate-fade-in"
                         style="animation-delay: 0.6s;" data-i18n="hero_desc">
                         Bridging the gap between artificial intelligence and physical reality. We engineer the next
                         generation of robotics, drones, and autonomous systems.
                     </p>
 
-                    <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-6 animate-fade-in"
+                    <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 sm:gap-6 animate-fade-in"
                         style="animation-delay: 0.8s;">
                         <a href="#technologies"
-                            class="px-8 py-4 bg-neon text-dark font-bold font-tech rounded-full glow-button transition-all duration-300 flex items-center justify-center gap-2 group">
+                            class="px-6 sm:px-8 py-3 sm:py-4 bg-neon text-dark font-bold font-tech rounded-full glow-button transition-all duration-300 flex items-center justify-center gap-2 group text-sm sm:text-base">
                             <span data-i18n="hero_btn_explore">Explore Technology</span>
                             <i data-lucide="arrow-right"
                                 class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
                         </a>
                         <a href="#contact"
-                            class="px-8 py-4 border border-white/20 text-white font-bold font-tech rounded-full hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-2">
+                            class="px-6 sm:px-8 py-3 sm:py-4 border border-white/20 text-white font-bold font-tech rounded-full hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base">
                             <span data-i18n="hero_btn_build">Start Building</span>
                             <i data-lucide="terminal" class="w-5 h-5"></i>
                         </a>
@@ -639,23 +769,23 @@
     <!-- About Section -->
     <section id="about" class="py-32 relative">
         <div class="max-w-7xl mx-auto px-6">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <div class="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
                 <div class="reveal">
                     <h2 class="text-neon font-tech tracking-widest uppercase text-sm mb-4" data-i18n="about_subtitle">
                         Who we are</h2>
-                    <h3 class="text-4xl md:text-5xl font-tech font-bold mb-6" data-i18n="about_title">Building the
+                    <h3 class="text-3xl md:text-4xl lg:text-5xl font-tech font-bold mb-6" data-i18n="about_title">Building the
                         Future of Autonomous Intelligence</h3>
-                    <p class="text-gray-400 text-lg mb-6 leading-relaxed" data-i18n="about_p1">
+                    <p class="text-gray-400 text-base md:text-lg mb-6 leading-relaxed" data-i18n="about_p1">
                         Autonovations is a deep-tech engineering lab focused on the seamless integration of Artificial
                         Intelligence, Robotics, and Industrial IoT (IIoT).
                     </p>
-                    <p class="text-gray-400 text-lg leading-relaxed mb-8" data-i18n="about_p2">
+                    <p class="text-gray-400 text-base md:text-lg leading-relaxed mb-8" data-i18n="about_p2">
                         We don't just build software; we build physical-digital systems that perceive, decide, and act
                         in the real world. From intelligent drones mapping complex environments to robotic systems
                         integrated with state-of-the-art AI.
                     </p>
 
-                    <div class="flex items-center gap-12">
+                    <div class="flex items-center gap-8 md:gap-12">
                         <div>
                             <div class="text-4xl font-bold text-white mb-2 text-gradient font-tech counter"
                                 data-target="100">0</div>
@@ -687,13 +817,13 @@
             <div class="text-center mb-20 reveal">
                 <h2 class="text-neon font-tech tracking-widest uppercase text-sm mb-4" data-i18n="tech_subtitle">Core
                     Architecture</h2>
-                <h3 class="text-4xl md:text-5xl font-tech font-bold text-white" data-i18n="tech_title">Technological
+                <h3 class="text-3xl md:text-4xl lg:text-5xl font-tech font-bold text-white" data-i18n="tech_title">Technological
                     Arsenal</h3>
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Feature 1 -->
-                <div class="glass-panel p-8 rounded-2xl reveal relative overflow-hidden group">
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal relative overflow-hidden group">
                     <div
                         class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                     </div>
@@ -764,7 +894,7 @@
                 <div>
                     <h2 class="text-neon font-tech tracking-widest uppercase text-sm mb-4"
                         data-i18n="projects_subtitle">Vision & Escalability</h2>
-                    <h3 class="text-4xl md:text-5xl font-tech font-bold text-white" data-i18n="projects_title">
+                    <h3 class="text-3xl md:text-4xl lg:text-5xl font-tech font-bold text-white" data-i18n="projects_title">
                         Innovation Projects</h3>
                 </div>
             </div>
@@ -772,8 +902,8 @@
             <div class="space-y-8">
                 <!-- Project 1 -->
                 <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden">
-                    <div class="flex flex-col md:flex-row items-center gap-8">
-                        <div class="w-full md:w-2/5 h-64 bg-gray-800 rounded-xl overflow-hidden relative glitch-hover">
+                    <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8">
+                        <div class="w-full md:w-2/5 h-48 sm:h-56 md:h-64 bg-gray-800 rounded-xl overflow-hidden relative glitch-hover">
                             <img src="project_companions.png" alt="Robotics"
                                 class="w-full h-full object-cover transition-transform duration-700">
                             <div
@@ -789,9 +919,9 @@
                                     class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase"
                                     data-i18n="project1_tag2">AI Integration</span>
                             </div>
-                            <h4 class="text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech"
+                            <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech"
                                 data-i18n="project1_title">Cognitive Companions</h4>
-                            <p class="text-gray-400 mb-6 text-lg" data-i18n="project1_desc">Next-generation interactive
+                            <p class="text-gray-400 mb-6 text-base md:text-lg" data-i18n="project1_desc">Next-generation interactive
                                 entities. By combining emotive mechatronics with large language models, we're building
                                 deeply responsive interfaces that bridge the digital and physical divide seamlessly.</p>
                             <div class="text-white flex items-center gap-2 text-sm font-tech uppercase tracking-wider">
@@ -804,9 +934,9 @@
 
                 <!-- Project 2 -->
                 <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-100 group cursor-pointer overflow-hidden">
-                    <div class="flex flex-col md:flex-row items-center gap-8">
+                    <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                         <div
-                            class="w-full md:w-2/5 h-64 bg-gray-800 rounded-xl overflow-hidden relative md:order-2 glitch-hover">
+                            class="w-full md:w-2/5 h-48 sm:h-56 md:h-64 bg-gray-800 rounded-xl overflow-hidden relative md:order-2 glitch-hover">
                             <img src="project_trading.png" alt="Trading AI"
                                 class="w-full h-full object-cover transition-transform duration-700">
                             <div
@@ -822,9 +952,9 @@
                                     class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase"
                                     data-i18n="project2_tag2">Data</span>
                             </div>
-                            <h4 class="text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech"
+                            <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech"
                                 data-i18n="project2_title">AI Trading Core</h4>
-                            <p class="text-gray-400 mb-6 text-lg" data-i18n="project2_desc">Harnessing unsupervised
+                            <p class="text-gray-400 mb-6 text-base md:text-lg" data-i18n="project2_desc">Harnessing unsupervised
                                 machine learning to detect patterns in global data sets. Our intelligent systems act
                                 autonomously, optimizing yield with sub-millisecond precision analysis.</p>
                             <div class="text-white flex items-center gap-2 text-sm font-tech uppercase tracking-wider">
@@ -843,12 +973,12 @@
     <section id="contact" class="py-32 relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-t from-neon/10 to-transparent"></div>
         <div class="max-w-4xl mx-auto px-6 text-center relative z-10 reveal">
-            <h2 class="text-5xl md:text-7xl font-tech font-bold text-white mb-8" data-i18n="cta_title">Build the Future
+            <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-tech font-bold text-white mb-6 md:mb-8" data-i18n="cta_title">Build the Future
                 <br><span class="text-gradient">With Us</span></h2>
-            <p class="text-xl text-gray-400 mb-12 max-w-2xl mx-auto" data-i18n="cta_desc">Embrace the autonomous
+            <p class="text-base md:text-xl text-gray-400 mb-8 md:mb-12 max-w-2xl mx-auto" data-i18n="cta_desc">Embrace the autonomous
                 revolution. Connect with our engineering core to explore unparalleled technological synergies.</p>
             <button
-                class="px-10 py-5 bg-neon text-dark font-bold font-tech text-xl rounded-full hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 mx-auto glow-button group">
+                class="px-8 sm:px-10 py-4 sm:py-5 bg-neon text-dark font-bold font-tech text-base sm:text-xl rounded-full hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 mx-auto glow-button group">
                 <span data-i18n="cta_btn">Join the Movement</span>
                 <i data-lucide="zap" class="w-6 h-6 group-hover:animate-pulse"></i>
             </button>
@@ -1224,6 +1354,7 @@
                 footer_copy: "&copy; 2026 Autonovations. Autonomous Intelligence Connected.",
                 footer_privacy: "Privacy Policy",
                 footer_terms: "Terms of Service",
+                lang_en: "English",
                 lang_es: "Spanish",
                 nav_home: "Home",
                 footer_tagline: "Innovating at the intersection of AI and physical reality. We engineer the next generation of autonomous systems for a connected world.",
