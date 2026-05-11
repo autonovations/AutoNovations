@@ -534,3 +534,54 @@ section[id] {
         grid-template-columns: repeat(4, 1fr) !important;
     }
 }
+
+/* Infinite Carousel */
+.carousel-track {
+    animation: scroll-right 25s linear infinite;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.carousel-track:hover {
+    animation-play-state: paused;
+    opacity: 1;
+}
+
+@keyframes scroll-right {
+    0% {
+        transform: translateX(-50%);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.carousel-container::before,
+.carousel-container::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 150px;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.carousel-container::before {
+    left: 0;
+    background: linear-gradient(to right, rgba(2, 5, 4, 0.8), transparent);
+}
+
+.carousel-container::after {
+    right: 0;
+    background: linear-gradient(to left, rgba(2, 5, 4, 0.8), transparent);
+}
+
+@media (max-width: 768px) {
+
+    .carousel-container::before,
+    .carousel-container::after {
+        width: 60px;
+    }
+}

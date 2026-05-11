@@ -138,19 +138,23 @@ let menuOpen = false;
 menuBtn.addEventListener('click', () => {
     menuOpen = !menuOpen;
     if (menuOpen) {
-        mobileMenu.classList.remove('hidden');
-        setTimeout(() => {
-            mobileMenu.classList.add('flex', 'active');
-        }, 10);
-        menuBtn.innerHTML = '<i data-lucide="x"></i>';
+        if (mobileMenu) {
+            mobileMenu.classList.remove('hidden');
+            setTimeout(() => {
+                mobileMenu.classList.add('flex', 'active');
+            }, 10);
+        }
+        if (menuBtn) menuBtn.innerHTML = '<i data-lucide="x"></i>';
         document.body.style.overflow = 'hidden';
     } else {
-        mobileMenu.classList.remove('active');
-        setTimeout(() => {
-            mobileMenu.classList.add('hidden');
-            mobileMenu.classList.remove('flex');
-        }, 400);
-        menuBtn.innerHTML = '<i data-lucide="menu"></i>';
+        if (mobileMenu) {
+            mobileMenu.classList.remove('active');
+            setTimeout(() => {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('flex');
+            }, 400);
+        }
+        if (menuBtn) menuBtn.innerHTML = '<i data-lucide="menu"></i>';
         document.body.style.overflow = '';
     }
     lucide.createIcons();
@@ -158,13 +162,15 @@ menuBtn.addEventListener('click', () => {
 
 menuLinks.forEach(link => {
     link.addEventListener('click', () => {
-        mobileMenu.classList.remove('active');
-        setTimeout(() => {
-            mobileMenu.classList.add('hidden');
-            mobileMenu.classList.remove('flex');
-        }, 400);
+        if (mobileMenu) {
+            mobileMenu.classList.remove('active');
+            setTimeout(() => {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('flex');
+            }, 400);
+        }
         menuOpen = false;
-        menuBtn.innerHTML = '<i data-lucide="menu"></i>';
+        if (menuBtn) menuBtn.innerHTML = '<i data-lucide="menu"></i>';
         document.body.style.overflow = '';
         lucide.createIcons();
     });
@@ -227,7 +233,8 @@ const translations = {
         footer_newsletter_desc: "Subscribe to receive our latest breakthroughs in autonomous systems.",
         footer_newsletter_placeholder: "Enter your email",
         footer_newsletter_btn: "Subscribe",
-        footer_location: "Silicon Valley | Remote Operations"
+        footer_location: "Silicon Valley | Remote Operations",
+        footer_about_me: "Founder & CEO"
     },
     es: {
         nav_about: "Nosotros",
@@ -284,15 +291,19 @@ const translations = {
         footer_newsletter_desc: "Suscríbete para recibir nuestros últimos avances en sistemas autónomos.",
         footer_newsletter_placeholder: "Ingresa tu correo",
         footer_newsletter_btn: "Suscribirse",
-        footer_location: "Silicon Valley | Operaciones Remotas"
+        footer_location: "Silicon Valley | Operaciones Remotas",
+        footer_about_me: "Fundador y CEO"
     }
 };
 
 function setLanguage(lang) {
     const flagUrl = lang === 'es' ? 'https://flagcdn.com/w40/co.png' : 'https://flagcdn.com/w40/us.png';
 
-    document.getElementById('currentFlag').src = flagUrl;
-    document.getElementById('mobileCurrentFlag').src = flagUrl;
+    const currentFlag = document.getElementById('currentFlag');
+    if (currentFlag) currentFlag.src = flagUrl;
+    
+    const mobileCurrentFlag = document.getElementById('mobileCurrentFlag');
+    if (mobileCurrentFlag) mobileCurrentFlag.src = flagUrl;
 
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
@@ -393,14 +404,16 @@ function typeTerminal() {
 const heroSection = document.getElementById('home');
 const terminalElement = document.querySelector('.terminal-window');
 
-const heroObserver = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting && window.getComputedStyle(terminalElement).display !== 'none') {
-        typeTerminal();
-        heroObserver.disconnect();
-    }
-}, { threshold: 0.5 });
+if (heroSection && terminalElement) {
+    const heroObserver = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && window.getComputedStyle(terminalElement).display !== 'none') {
+            typeTerminal();
+            heroObserver.disconnect();
+        }
+    }, { threshold: 0.5 });
 
-heroObserver.observe(heroSection);
+    heroObserver.observe(heroSection);
+}
 
 window.addEventListener('DOMContentLoaded', () => {
     const savedLang = localStorage.getItem('preferredLang') || 'en';

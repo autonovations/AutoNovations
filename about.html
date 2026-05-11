@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Felipe | Autonovations</title>
+    <meta name="description" content="Felipe - Developer, ML Engineer, AIoT Creator">
+    <link rel="icon" type="image/x-icon" href="images/favicon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#020504',
+                        neon: '#00D9FF',
+                        panel: '#0A1110',
+                        primary: '#00D9FF',
+                        secondary: '#FF0055'
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        tech: ['Space Grotesk', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="main.js" defer></script>
+</head>
+
+<body class="antialiased selection:bg-neon selection:text-dark bg-[#020504]">
+    <!-- Particles & Mouse Glow Background -->
+    <div id="particles-js"></div>
+    <div class="mouse-glow" id="mouseGlow"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300 backdrop-blur-md bg-dark/30 border-b border-white/5"
+        id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3 cursor-pointer">
+                <img src="images/AN-logo.png" alt="Autonovations Logo" class="h-8 md:h-10 w-8 md:w-10 object-contain">
+                <span
+                    class="font-tech font-bold text-2xl tracking-wider text-white hidden sm:block">AUTONOVATIONS</span>
+            </a>
+            <div class="hidden md:flex gap-8 text-sm font-medium tracking-widest uppercase items-center">
+                <a href="index.html#about"
+                    class="text-gray-400 hover:text-neon transition-colors duration-300">About</a>
+                <a href="index.html#technologies"
+                    class="text-gray-400 hover:text-neon transition-colors duration-300">Technologies</a>
+                <a href="index.html#projects"
+                    class="text-gray-400 hover:text-neon transition-colors duration-300">Projects</a>
+                <a href="about.html"
+                    class="text-neon transition-colors duration-300 font-bold border-b-2 border-neon pb-1">Profile</a>
+            </div>
+            <!-- Mobile Menu Btn -->
+            <div class="flex md:hidden items-center gap-4">
+                <button class="text-neon" id="menuBtn">
+                    <i data-lucide="menu"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="fixed inset-0 bg-dark/95 z-40 hidden flex-col items-center justify-center gap-8 backdrop-blur-xl" id="mobileMenu">
+        <a href="index.html#about" class="text-3xl font-tech text-white hover:text-neon transition-all menu-link">About</a>
+        <a href="index.html#technologies" class="text-3xl font-tech text-white hover:text-neon transition-all menu-link">Technologies</a>
+        <a href="index.html#projects" class="text-3xl font-tech text-white hover:text-neon transition-all menu-link">Projects</a>
+        <a href="about.html" class="text-3xl font-tech text-neon font-bold menu-link">Profile</a>
+    </div>
+
+    <!-- Profile Section -->
+    <section class="relative min-h-screen flex items-start pt-28 pb-20 overflow-hidden">
+        <div class="grid-bg"></div>
+        <div class="scanlines"></div>
+
+        <!-- Glow Orbs -->
+        <div class="glow-orb w-[300px] h-[300px] bg-primary/30 top-0 left-0"></div>
+        <div class="glow-orb w-[400px] h-[400px] bg-secondary/20 bottom-0 right-0"></div>
+
+        <div class="max-w-6xl mx-auto px-6 z-10 w-full animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="glass-panel p-8 md:p-12 rounded-3xl reveal border border-white/10 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-neon/5 to-transparent"></div>
+
+                <div class="grid lg:grid-cols-12 gap-12 items-center relative z-10">
+                    <!-- Profile Image -->
+                    <div class="lg:col-span-4 flex justify-center">
+                        <div class="relative group">
+                            <div
+                                class="absolute inset-0 bg-neon/30 rounded-full blur-[50px] group-hover:bg-neon/50 transition-all duration-500">
+                            </div>
+                            <div
+                                class="w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80 rounded-full border-4 border-neon/30 overflow-hidden relative z-10 p-2 bg-dark/50 shadow-[0_0_50px_rgba(0,217,255,0.2)] group-hover:shadow-[0_0_80px_rgba(0,217,255,0.4)] transition-shadow duration-500 mx-auto">
+                                <img src="images/portfolio/profile.jpg" alt="Felipe Profile"
+                                    class="w-full h-full object-cover rounded-full border border-white/10"
+                                    onerror="this.src='https://placehold.co/400x400/00D9FF/FFFFFF?text=Felipe'">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Info -->
+                    <div class="lg:col-span-8 text-center lg:text-left">
+                        <div
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neon/30 bg-neon/5 backdrop-blur-sm mb-4">
+                            <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span>
+                            <span class="text-neon text-sm font-tech tracking-widest uppercase">System Architect &
+                                Creator</span>
+                        </div>
+
+                        <h1 class="font-tech text-4xl sm:text-5xl md:text-7xl font-bold mb-4 text-white drop-shadow-lg">
+                            Felipe
+                        </h1>
+
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6 text-lg">
+                            <h3
+                                class="font-tech text-gray-300 flex items-center gap-2 justify-center hover:text-neon transition-colors duration-300">
+                                <i data-lucide="code" class="text-neon w-5 h-5"></i> Developer
+                            </h3>
+                            <span class="hidden sm:block text-gray-600">|</span>
+                            <h3
+                                class="font-tech text-gray-300 flex items-center gap-2 justify-center hover:text-neon transition-colors duration-300">
+                                <i data-lucide="brain-circuit" class="text-neon w-5 h-5"></i> ML Engineer
+                            </h3>
+                            <span class="hidden sm:block text-gray-600">|</span>
+                            <h3
+                                class="font-tech text-gray-300 flex items-center gap-2 justify-center hover:text-neon transition-colors duration-300">
+                                <i data-lucide="cpu" class="text-neon w-5 h-5"></i> AIoT Creator
+                            </h3>
+                        </div>
+
+                        <p class="max-w-2xl mx-auto lg:mx-0 text-gray-400 text-base md:text-lg mb-8 leading-relaxed">
+                            Passionate about building the future through code, machine learning, and interconnected
+                            autonomous systems. Bridging the gap between software algorithms and physical devices to
+                            solve real-world problems.
+                        </p>
+
+                        <!-- Social Links -->
+                        <div class="flex flex-wrap gap-4 justify-center lg:justify-start mb-8">
+                            <a target="_blank" href="https://www.linkedin.com/in/felipe-herrera-pinzon/"
+                                class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:border-neon/50 hover:bg-neon/10 transition-all group shadow-lg">
+                                <img src="images/portfolio/linkedin.png" alt="LinkedIn"
+                                    class="w-10 h-10 object-contain group-hover:scale-110 transition-transform">
+                            </a>
+                            <a target="_blank" href="https://www.youtube.com/channel/UC-cU2oHg4-hjeI21ov3wn4w"
+                                class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:border-red-500/50 hover:bg-red-500/10 transition-all group shadow-lg">
+                                <img src="images/portfolio/youtube.png" alt="YouTube"
+                                    class="w-10 h-10 object-contain group-hover:scale-110 transition-transform">
+                            </a>
+                            <a target="_blank" href="https://github.com/factordeveloper"
+                                class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:border-white/50 hover:bg-white/10 transition-all group shadow-lg">
+                                <img src="images/portfolio/github.png" alt="GitHub"
+                                    class="w-10 h-10 object-contain group-hover:scale-110 transition-transform">
+                            </a>
+                            <a target="_blank" href="https://play.google.com/store/apps/dev?id=6616258522728580660"
+                                class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:border-green-400/50 hover:bg-green-400/10 transition-all group shadow-lg">
+                                <img src="images/portfolio/play-store.png" alt="Play Store"
+                                    class="w-10 h-10 object-contain group-hover:scale-110 transition-transform">
+                            </a>
+                            <a target="_blank" href="https://wa.link/qw5e5u"
+                                class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:border-green-500/50 hover:bg-green-500/10 transition-all group shadow-lg">
+                                <img src="images/portfolio/whatsapp.png" alt="WhatsApp"
+                                    class="w-10 h-10 object-contain group-hover:scale-110 transition-transform">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Technologies Banner -->
+                <div class="mt-8 pt-8 border-t border-white/10">
+                    <h4
+                        class="text-neon font-tech tracking-widest uppercase text-sm mb-8 text-center flex items-center justify-center gap-3">
+                        <span class="w-12 h-px bg-neon/30"></span>
+                        Technological Arsenal
+                        <span class="w-12 h-px bg-neon/30"></span>
+                    </h4>
+                    <div class="carousel-container overflow-hidden relative py-4">
+                        <div class="carousel-track flex items-center gap-10 md:gap-16 w-max">
+                            <!-- First Set -->
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/react-logo.png" alt="React"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(0,217,255,0.8)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/node.png" alt="Node"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(0,255,0,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/mongo.jpeg" alt="Mongo"
+                                    class="h-10 md:h-12 object-contain rounded-md group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(0,255,0,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/python.png" alt="Python"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(255,255,0,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/django.png" alt="Django"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(0,255,100,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/fastapi-logo.png" alt="FastAPI"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(0,200,200,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/java_logo.png" alt="Java"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(255,100,0,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/spring_logo.png" alt="Spring"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(100,255,100,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/kotlin.jpg" alt="Kotlin"
+                                    class="h-10 md:h-12 object-contain rounded-md group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(100,100,255,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/firebase_logo.png" alt="Firebase"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(255,200,0,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/ultralytics_logo.png" alt="Ultralytics"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(0,100,255,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/opencv_logo.jpeg" alt="OpenCV"
+                                    class="h-10 md:h-12 object-contain rounded-md group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(255,0,0,0.5)] transition-all duration-300">
+                            </div>
+
+                            <!-- Second Set (Duplicate) -->
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/react-logo.png" alt="React"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(0,217,255,0.8)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/node.png" alt="Node"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(0,255,0,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/mongo.jpeg" alt="Mongo"
+                                    class="h-10 md:h-12 object-contain rounded-md group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(0,255,0,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/python.png" alt="Python"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(255,255,0,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/django.png" alt="Django"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(0,255,100,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/fastapi-logo.png" alt="FastAPI"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(0,200,200,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/java_logo.png" alt="Java"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(255,100,0,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/spring_logo.png" alt="Spring"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(100,255,100,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/kotlin.jpg" alt="Kotlin"
+                                    class="h-10 md:h-12 object-contain rounded-md group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(100,100,255,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/firebase_logo.png" alt="Firebase"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(255,200,0,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/ultralytics_logo.png" alt="Ultralytics"
+                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(0,100,255,0.5)] transition-all duration-300">
+                            </div>
+                            <div class="group relative flex-shrink-0">
+                                <img src="images/portfolio/tecs/opencv_logo.jpeg" alt="OpenCV"
+                                    class="h-10 md:h-12 object-contain rounded-md group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(255,0,0,0.5)] transition-all duration-300">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mt-8 text-center relative z-50">
+                    <a href="#projects" id="btnScrollToProjects"
+                        class="inline-flex items-center gap-2 px-8 py-4 bg-neon text-dark font-bold font-tech rounded-full glow-button transition-all duration-300 group hover:scale-105">
+                        View Projects <i data-lucide="arrow-right"
+                            class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+                <script>
+                    document.getElementById('btnScrollToProjects').addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const target = document.getElementById('projects');
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    });
+                </script>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="relative py-20 px-6 z-10 border-t border-white/5 bg-[#020504]">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="font-tech text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
+                    Project <span class="text-neon">Portfolio</span>
+                </h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Showcasing a diverse range of projects spanning Computer Vision, Mobile Development, Web Technologies, and Data Science.</p>
+            </div>
+
+            <!-- Category 1 -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-tech text-white mb-8 border-l-4 border-neon pl-4 flex items-center gap-3">
+                    <i data-lucide="eye" class="text-neon w-6 h-6"></i> Computer Vision & Ultralytics
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Project 1 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/locomotivens.png" alt="Railway" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">Railway Tracking</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Computer Vision</span>
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">OpenCV</span>
+                                </div>
+                            </div>
+                            <a href="https://railytics-realtime-tracker-913941087.development.catalystserverless.com/app/" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Project 2 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/yolo_cartagena.png" alt="City" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">City Traffic Analysis</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Computer Vision</span>
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Ultralytics</span>
+                                </div>
+                            </div>
+                            <a href="https://www.youtube.com/watch?v=FkpC0mtweeI" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Project 3 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/ocr_zipa.png" alt="OCR" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">OCR System</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">OCR</span>
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">OpenCV</span>
+                                </div>
+                            </div>
+                            <a href="https://www.youtube.com/watch?v=SrdHhUE2yx0" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category 2 -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-tech text-white mb-8 border-l-4 border-neon pl-4 flex items-center gap-3">
+                    <i data-lucide="smartphone" class="text-neon w-6 h-6"></i> Android & Jetpack Compose
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Project 4 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/tic_tac_toe.png" alt="Tic Tac Toe" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">Tic Tac Toe</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Android</span>
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Jetpack Compose</span>
+                                </div>
+                            </div>
+                            <a href="https://play.google.com/store/apps/details?id=com.factordev.tic_tac_toe_game&pcampaignid=web_share" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Project 5 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/dice.jpg" alt="Dice Roller" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">Dice Roller</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Android</span>
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Jetpack Compose</span>
+                                </div>
+                            </div>
+                            <a href="https://play.google.com/store/apps/details?id=com.factordev.diceroller&pcampaignid=web_share" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Project 6 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/task_admin.jpg" alt="Task Admin" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">Task Admin</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Android</span>
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Jetpack Compose</span>
+                                </div>
+                            </div>
+                            <a href="https://play.google.com/store/apps/details?id=com.axon.axon360&pcampaignid=web_share" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category 3 -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-tech text-white mb-8 border-l-4 border-neon pl-4 flex items-center gap-3">
+                    <i data-lucide="globe" class="text-neon w-6 h-6"></i> Real-time & Web Apps
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Project 7 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/firmas.jpg" alt="Firmas Socket.io" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">Digital Signatures</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">NodeJS</span>
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Socket.io</span>
+                                </div>
+                            </div>
+                            <a href="https://firmasdigitales.fly.dev/" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Project 8 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/videocall.jpg" alt="Telemedicina" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">Telemedicine RTC</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">WebRTC</span>
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Express</span>
+                                </div>
+                            </div>
+                            <a href="https://teleconsultas-salud-masin.fly.dev/" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category 4 -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-tech text-white mb-8 border-l-4 border-neon pl-4 flex items-center gap-3">
+                    <i data-lucide="database" class="text-neon w-6 h-6"></i> Data Science & Python
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Project 9 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/snake.png" alt="Snake Game" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">Snake Game</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Python</span>
+                                </div>
+                            </div>
+                            <a href="https://factordeveloper.github.io/snake_game_python_tutle/" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Project 10 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/activacionRNA.png" alt="RNA Activation" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">RNA Activation Functions</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Python</span>
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Jupyter</span>
+                                </div>
+                            </div>
+                            <a href="https://colab.research.google.com/drive/1NN3GwdTRFGPe5NR_Cafmt_WmHJNqyeLX?usp=sharing" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Project 11 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/4_raya.png" alt="4 en Raya" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">Connect 4</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Python</span>
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Jupyter</span>
+                                </div>
+                            </div>
+                            <a href="https://factordeveloper.github.io/cuatro_en_raya_python_jupyter/" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Project 12 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/pandas.png" alt="Pandas" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">Intro Pandas</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Python</span>
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Pandas</span>
+                                </div>
+                            </div>
+                            <a href="https://colab.research.google.com/drive/1pw7PwIA4QCa8T7oIZbtYEyAi_Oh7MQFe?usp=sharing" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Project 13 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/numpy.png" alt="Numpy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">Intro Numpy</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Python</span>
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Numpy</span>
+                                </div>
+                            </div>
+                            <a href="https://colab.research.google.com/drive/1s6AgYfHTNpFStqH4omzcslXw_rOFeBzD?usp=sharing" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Project 14 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/matplotlib.png" alt="Matplotlib" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">Intro Matplotlib</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Python</span>
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Matplotlib</span>
+                                </div>
+                            </div>
+                            <a href="https://colab.research.google.com/drive/1YzxgAVk83CrR13Fsr_vqROD7QRxz_plO?usp=sharing" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category 5 -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-tech text-white mb-8 border-l-4 border-neon pl-4 flex items-center gap-3">
+                    <i data-lucide="brain-circuit" class="text-neon w-6 h-6"></i> Machine Learning
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Project 15 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/temperature_project.jpeg" alt="Celsius to Fahrenheit" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">Celsius to Fahrenheit</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Machine Learning</span>
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Python</span>
+                                </div>
+                            </div>
+                            <a href="https://factordeveloper.github.io/ML_Trainee_project_celsius_farenheit/" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Project 16 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/numbers_draw.jpg" alt="Number Draw" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">Draw a Number</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Machine Learning</span>
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">JS</span>
+                                </div>
+                            </div>
+                            <a href="https://factordeveloper.github.io/ML_Trainee_project_dibujar_numero/" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Project 17 -->
+                    <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-black/50">
+                            <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+                            <img src="images/portfolio/cats_vs_dogs.jpg" alt="Cats vs Dogs" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                            <div>
+                                <h4 class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">Cats vs Dogs</h4>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Machine Learning</span>
+                                    <span class="text-xs px-2 py-1 bg-white/5 text-gray-300 rounded-md border border-white/10">Python</span>
+                                </div>
+                            </div>
+                            <a href="https://factordeveloper.github.io/ML_Trainee_project_cat_vs_dogs/" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
+                                View Project <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#020504] py-8 border-t border-white/5 relative z-10 text-center">
+        <p class="text-gray-500 text-sm font-tech tracking-wide">
+            &copy; 2026 Juan Felipe Herrera Pinzón | Autonovations. All rights reserved.
+        </p>
+    </footer>
+
+    <script>
+        // Initialize lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
