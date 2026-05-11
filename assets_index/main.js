@@ -129,6 +129,51 @@ window.addEventListener('scroll', () => {
     }
 });
 
+// Scroll Spy for active nav links
+const sections = ['about', 'technologies', 'projects'];
+const navLinks = document.querySelectorAll('nav div.hidden.md\\:flex a[href^="#"]');
+const mobileNavLinks = document.querySelectorAll('#mobileMenu a.menu-link[href^="#"]');
+
+function updateActiveNavLink() {
+    let current = "";
+    const scrollPos = window.scrollY + 150; // Offset for better detection
+
+    sections.forEach(id => {
+        const section = document.getElementById(id);
+        if (section) {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.offsetHeight;
+            if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+                current = id;
+            }
+        }
+    });
+
+    const allLinks = [...navLinks, ...mobileNavLinks];
+    allLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === `#${current}`) {
+            link.classList.add('text-neon');
+            link.classList.remove('text-gray-400', 'text-white');
+            if (link.classList.contains('menu-link')) {
+                 link.classList.add('font-bold');
+            }
+        } else {
+            if (!link.classList.contains('glow-button')) {
+                link.classList.remove('text-neon', 'font-bold');
+                if (link.classList.contains('menu-link')) {
+                    link.classList.add('text-white');
+                } else {
+                    link.classList.add('text-gray-400');
+                }
+            }
+        }
+    });
+}
+
+window.addEventListener('scroll', updateActiveNavLink);
+window.addEventListener('load', updateActiveNavLink);
+
 // Mobile Menu logic
 const menuBtn = document.getElementById('menuBtn');
 const mobileMenu = document.getElementById('mobileMenu');
