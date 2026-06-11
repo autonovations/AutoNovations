@@ -1,0 +1,3312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UAV Tech Lab - Portal de Aprendizaje e Ingeniería Electrónica</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Portal interactivo de electrónica para técnicos de UAVs. Aprende ley de Ohm, uso del multímetro, soldadura, protoboard, PCBs y microcontroladores Arduino/ESP32.">
+  <meta name="keywords" content="UAV, Drones, Electrónica, Multímetro, Soldadura, Arduino, ESP32, Protoboard, PCB">
+  <meta name="author" content="Antigravity UAV Engineer">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      /* Palette: Tactical/Cyber-Tech Dark Mode */
+      --bg-darker: #070b13;
+      --bg-dark: #0d121f;
+      --bg-card: #151c2d;
+      --bg-card-hover: #1e283f;
+      --border: #222f47;
+      --border-focus: #00f0ff;
+      
+      --accent-cyan: #00f0ff;
+      --accent-cyan-dim: rgba(0, 240, 255, 0.15);
+      --accent-amber: #ff9d00;
+      --accent-amber-dim: rgba(255, 157, 0, 0.15);
+      --accent-green: #39ff14;
+      --accent-green-dim: rgba(57, 255, 20, 0.15);
+      --accent-red: #ff3366;
+      --accent-red-dim: rgba(255, 51, 102, 0.15);
+      
+      --text-primary: #f0f4f8;
+      --text-secondary: #a0aec0;
+      --text-muted: #627288;
+      
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Base reset & scrollbars */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg-darker);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-darker);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: var(--radius-sm);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-cyan);
+    }
+
+    /* Layout */
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 280px;
+      background-color: var(--bg-dark);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      padding: 1.5rem;
+    }
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      letter-spacing: 0.05em;
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+    }
+    .sidebar-brand i {
+      animation: pulse-cyan 3s infinite ease-in-out;
+    }
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+    .nav-item button {
+      width: 100%;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-align: left;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: var(--transition);
+      border: 1px solid transparent;
+    }
+    .nav-item button:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-primary);
+    }
+    .nav-item.active button {
+      background-color: var(--accent-cyan-dim);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.05);
+    }
+
+    /* Sidebar Progress Gauge */
+    .progress-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+    .progress-box-title {
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .progress-circle-wrapper {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 10px auto;
+    }
+    .progress-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .progress-bg-circle {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 8;
+    }
+    .progress-bar-circle {
+      fill: none;
+      stroke: var(--accent-cyan);
+      stroke-width: 8;
+      stroke-dasharray: 283;
+      stroke-dashoffset: 283;
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      stroke-linecap: round;
+    }
+    .progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+    .progress-details {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 280px;
+      flex-grow: 1;
+      padding: 2.5rem;
+      max-width: 1200px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Common Header styles */
+    .content-header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+    }
+    .content-header h1 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .content-header p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    /* Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background-color: var(--border);
+      transition: var(--transition);
+    }
+    .card:hover {
+      background-color: var(--bg-card-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    .card:hover::before {
+      background-color: var(--accent-cyan);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-badge {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-core {
+      background-color: var(--accent-cyan-dim);
+      color: var(--accent-cyan);
+    }
+    .badge-adv {
+      background-color: var(--accent-amber-dim);
+      color: var(--accent-amber);
+    }
+    .card-desc {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+      height: 4.5em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+    .card-status {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card-btn {
+      background-color: transparent;
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      padding: 6px 14px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .card-btn:hover {
+      background-color: var(--accent-cyan);
+      color: var(--bg-darker);
+    }
+
+    /* Tab Content visibility */
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Layout Sections */
+    .module-content-grid {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 2rem;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .module-content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Typography & Content Layout */
+    .learning-section {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .learning-section h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--accent-cyan);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .learning-section h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      margin: 1.25rem 0 0.5rem 0;
+      color: var(--text-primary);
+    }
+    .learning-section p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      line-height: 1.7;
+    }
+    .learning-section ul {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+    }
+    .learning-section li {
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+    }
+
+    /* Highlight box / Alerts */
+    .alert-box {
+      padding: 1.25rem;
+      border-radius: var(--radius-lg);
+      margin: 1.5rem 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      border: 1px solid transparent;
+    }
+    .alert-box.info {
+      background-color: var(--accent-cyan-dim);
+      border-color: rgba(0, 240, 255, 0.2);
+      color: var(--text-primary);
+    }
+    .alert-box.info i { color: var(--accent-cyan); }
+    .alert-box.warn {
+      background-color: var(--accent-amber-dim);
+      border-color: rgba(255, 157, 0, 0.2);
+      color: var(--text-primary);
+    }
+    .alert-box.warn i { color: var(--accent-amber); }
+    .alert-box.success {
+      background-color: var(--accent-green-dim);
+      border-color: rgba(57, 255, 20, 0.2);
+      color: var(--text-primary);
+    }
+    .alert-box.success i { color: var(--accent-green); }
+    .alert-box-text {
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    /* Interactive Calculators & Simulators */
+    .interactive-widget {
+      background-color: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .widget-title {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .widget-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 600px) {
+      .widget-grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Slider / Inputs Customization */
+    .control-group {
+      margin-bottom: 1rem;
+    }
+    .control-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .control-label span.val {
+      font-family: var(--font-mono);
+      color: var(--accent-cyan);
+    }
+    .slider-input {
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: var(--radius-sm);
+      outline: none;
+      -webkit-appearance: none;
+      margin: 10px 0;
+    }
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--accent-cyan);
+      transition: 0.1s;
+    }
+    .slider-input::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* Ohm's Law Visualization Circuit */
+    .ohm-viz {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #0b0f19;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+    }
+    .math-display {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-top: 10px;
+      background: var(--bg-card);
+      padding: 6px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+    .math-display span.result {
+      color: var(--accent-green);
+      text-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+    }
+
+    /* Electron Flow SVG representation */
+    .circuit-wire {
+      width: 100%;
+      height: 60px;
+      background: #060910;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-sm);
+      position: relative;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+    .electron {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent-amber);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-amber);
+    }
+
+    /* Multimeter Simulator UI */
+    .multimetro-sim-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      background: #090e18;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+    }
+    .multimetro-row {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 768px) {
+      .multimetro-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Virtual Multimeter Styling */
+    .multimeter-device {
+      background: #e65c00; /* Orange body */
+      border: 6px solid #b34700;
+      border-radius: 20px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: inset 0 2px 5px rgba(255,255,255,0.2), 0 10px 25px rgba(0,0,0,0.5);
+      position: relative;
+    }
+    .multimeter-brand {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #ffd2b3;
+      text-align: center;
+      letter-spacing: 0.1em;
+      margin-bottom: -4px;
+    }
+    .multimeter-lcd {
+      background: #9ebb9e;
+      border: 4px solid #3d4a3d;
+      border-radius: var(--radius-md);
+      padding: 8px;
+      height: 64px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      color: #1a241a;
+      box-shadow: inset 0 3px 5px rgba(0,0,0,0.3);
+    }
+    .lcd-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      font-weight: 600;
+    }
+    .lcd-value {
+      font-size: 1.8rem;
+      text-align: right;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 0.05em;
+    }
+    .multimeter-dial-wrapper {
+      display: flex;
+      justify-content: center;
+      position: relative;
+      margin: 10px 0;
+    }
+    .dial-outer {
+      width: 100px;
+      height: 100px;
+      background: #2b2b2b;
+      border-radius: 50%;
+      border: 4px solid #1f1f1f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    .dial-label {
+      position: absolute;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #ffffff;
+      font-family: var(--font-display);
+    }
+    .label-off { top: 6px; }
+    .label-vdc { right: 8px; top: 28px; color: var(--accent-cyan); }
+    .label-ohms { left: 8px; top: 28px; color: var(--accent-amber); }
+    .label-cont { bottom: 8px; left: 24px; color: var(--accent-green); }
+    
+    .dial-knob {
+      width: 60px;
+      height: 60px;
+      background: #404040;
+      border-radius: 50%;
+      border: 2px solid #222;
+      position: relative;
+      cursor: pointer;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.2);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .dial-knob::after {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 20px;
+      background: #ff3300;
+      border-radius: var(--radius-sm);
+    }
+
+    .multimeter-ports {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 5px;
+    }
+    .port {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 3px solid #222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.5rem;
+      font-weight: 700;
+      color: white;
+    }
+    .port.com { background: black; }
+    .port.volt-res { background: red; }
+
+    /* Interactive Schematic for Multimeter Practice */
+    .schematic-box {
+      border: 1px solid var(--border);
+      background: #0b0f19;
+      border-radius: var(--radius-lg);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .probe-controllers {
+      display: flex;
+      justify-content: space-between;
+      background: var(--bg-card);
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      margin-bottom: 1rem;
+      border: 1px solid var(--border);
+    }
+    .probe-indicator {
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .probe-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot-red { background-color: var(--accent-red); box-shadow: 0 0 8px var(--accent-red); }
+    .dot-black { background-color: #ffffff; box-shadow: 0 0 8px #ffffff; }
+
+    .circuit-svg-wrapper {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    .circuit-svg {
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+    }
+    .test-node {
+      cursor: pointer;
+      transition: r 0.2s, fill 0.2s;
+    }
+    .test-node:hover {
+      r: 8px;
+    }
+    .node-label {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      fill: var(--text-secondary);
+      pointer-events: none;
+    }
+    .schematic-controls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+    }
+    .schematic-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .schematic-btn:hover {
+      background-color: var(--bg-card-hover);
+      border-color: var(--accent-cyan);
+    }
+    .schematic-btn.active {
+      background-color: var(--accent-cyan-dim);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    /* Sound Beep animation */
+    .beep-visualizer {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      visibility: hidden;
+      color: var(--accent-green);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+    .beep-visualizer.active {
+      visibility: visible;
+      animation: pulse-green 1s infinite ease-in-out;
+    }
+    .wave-bar {
+      width: 2px;
+      height: 12px;
+      background: var(--accent-green);
+      animation: wave-bounce 0.5s infinite ease-in-out alternate;
+    }
+    .wave-bar:nth-child(2) { animation-delay: 0.15s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.3s; }
+
+    /* Component List/Card View */
+    .comp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+    .comp-thumbnail {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .comp-thumbnail:hover {
+      background-color: var(--bg-card-hover);
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+    }
+    .comp-thumbnail.active {
+      background-color: var(--accent-cyan-dim);
+      border-color: var(--accent-cyan);
+    }
+    .comp-thumbnail-icon {
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: center;
+    }
+    .comp-thumbnail-name {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    .comp-detail-panel {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+    }
+    .comp-detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .comp-detail-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      color: var(--accent-cyan);
+    }
+    .comp-detail-type {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+    }
+    .comp-desc-meta {
+      display: grid;
+      grid-template-columns: 1fr 120px;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    @media (max-width: 500px) {
+      .comp-desc-meta {
+        grid-template-columns: 1fr;
+      }
+    }
+    .comp-symbol-box {
+      border: 1px solid var(--border);
+      background: #0b0f19;
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+    .comp-symbol-box svg {
+      width: 60px;
+      height: 40px;
+      margin-bottom: 4px;
+    }
+    .how-to-test {
+      background: rgba(255, 157, 0, 0.05);
+      border: 1px solid rgba(255, 157, 0, 0.2);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      margin-top: 1rem;
+    }
+    .how-to-test-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-amber);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Soldering Interactive Guide */
+    .solder-steps-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .solder-visual {
+      background: #0a0d17;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+    }
+    .solder-slider-controls {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      border-radius: var(--radius-lg);
+    }
+    .step-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+    .step-nav-btn {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .step-nav-btn:hover:not(:disabled) {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    .step-nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    .solder-step-indicator {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .solder-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: var(--transition);
+    }
+    .solder-dot.active {
+      background: var(--accent-cyan);
+      box-shadow: 0 0 8px var(--accent-cyan);
+    }
+
+    /* Interactive Soldering SVG states */
+    .soldering-svg {
+      width: 100%;
+      max-width: 320px;
+      height: 180px;
+    }
+    .solder-joint {
+      fill: #2f3e58;
+      transition: fill 0.5s;
+    }
+    .solder-joint.hot {
+      fill: #ff4500;
+    }
+    .solder-liquid {
+      fill: none;
+      transition: fill 0.5s, opacity 0.5s;
+      opacity: 0;
+    }
+    .solder-liquid.flow {
+      fill: #cccccc;
+      opacity: 1;
+    }
+    .solder-iron {
+      transform: translate(60px, -60px);
+      transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    .solder-iron.touch {
+      transform: translate(0, 0);
+    }
+    .solder-iron-tip {
+      fill: #666666;
+    }
+    .solder-iron-tip.hot {
+      fill: #ffaa66;
+    }
+    .solder-wire {
+      transform: translate(-60px, -40px);
+      transition: transform 0.5s;
+    }
+    .solder-wire.touch {
+      transform: translate(0, 0);
+    }
+
+    /* Solder Joint Comparison Gallery */
+    .solder-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .gallery-item {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .gallery-item:hover {
+      border-color: var(--accent-cyan);
+    }
+    .gallery-item svg {
+      width: 80px;
+      height: 60px;
+      margin: 0 auto 8px auto;
+    }
+    .gallery-item-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+    .gallery-item-status {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .status-ok { color: var(--accent-green); }
+    .status-bad { color: var(--accent-red); }
+
+    /* Protoboard interactive */
+    .proto-container {
+      background: #090e18;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .proto-board-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      padding: 1rem 0;
+      display: flex;
+      justify-content: center;
+    }
+    .proto-svg {
+      width: 680px;
+      height: auto;
+      user-select: none;
+    }
+    .proto-hole {
+      fill: #1a1a1a;
+      stroke: #333333;
+      stroke-width: 0.5;
+      cursor: pointer;
+      transition: fill 0.1s, stroke 0.1s;
+    }
+    .proto-hole:hover {
+      fill: var(--accent-cyan);
+      stroke: var(--accent-cyan);
+    }
+    .proto-hole.connected {
+      fill: var(--accent-green);
+      stroke: var(--accent-green);
+      filter: drop-shadow(0 0 2px var(--accent-green));
+    }
+    .proto-label-text {
+      font-family: var(--font-sans);
+      font-size: 8px;
+      fill: var(--text-muted);
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    /* Microcontroller Board Pinout CSS and interactive */
+    .mcu-selector {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+    .mcu-btn {
+      flex: 1;
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 10px;
+      font-family: var(--font-display);
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .mcu-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--text-primary);
+    }
+    .mcu-btn.active {
+      background-color: var(--accent-cyan-dim);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    .mcu-display {
+      background: #090e18;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 420px;
+      position: relative;
+    }
+    .mcu-svg-container {
+      width: 100%;
+      max-width: 450px;
+      height: auto;
+      margin: 1rem 0;
+    }
+    .mcu-pin-hoverable {
+      cursor: pointer;
+    }
+    .mcu-pin-hoverable:hover .pin-glow {
+      opacity: 0.8;
+    }
+    .pin-glow {
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .pin-glow.active {
+      opacity: 0.8;
+    }
+    .pin-glow.p-power { fill: var(--accent-red); filter: drop-shadow(0 0 3px var(--accent-red)); }
+    .pin-glow.p-gnd { fill: #ffffff; filter: drop-shadow(0 0 3px #ffffff); }
+    .pin-glow.p-adc { fill: var(--accent-amber); filter: drop-shadow(0 0 3px var(--accent-amber)); }
+    .pin-glow.p-pwm { fill: var(--accent-green); filter: drop-shadow(0 0 3px var(--accent-green)); }
+    .pin-glow.p-comm { fill: var(--accent-cyan); filter: drop-shadow(0 0 3px var(--accent-cyan)); }
+    
+    .pin-info-overlay {
+      margin-top: 1rem;
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      min-height: 60px;
+    }
+    .pin-info-title {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .pin-info-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* Study Plan Roadmap list */
+    .roadmap-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .roadmap-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      transition: var(--transition);
+    }
+    .roadmap-item:hover {
+      border-color: var(--border-focus);
+    }
+    .roadmap-checkbox-wrapper {
+      padding-top: 4px;
+    }
+    .roadmap-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      color: var(--bg-darker);
+    }
+    .roadmap-item.checked .roadmap-checkbox {
+      background-color: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+      color: var(--bg-darker);
+      box-shadow: 0 0 8px var(--accent-cyan);
+    }
+    .roadmap-checkbox i {
+      font-size: 14px;
+      stroke-width: 3px;
+      display: none;
+    }
+    .roadmap-item.checked .roadmap-checkbox i {
+      display: block;
+    }
+    .roadmap-body {
+      flex-grow: 1;
+    }
+    .roadmap-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+      transition: var(--transition);
+    }
+    .roadmap-item.checked .roadmap-title {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+    .roadmap-meta {
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+      margin-bottom: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .roadmap-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .roadmap-item.checked .roadmap-desc {
+      color: var(--text-muted);
+    }
+
+    /* Quiz Panel Styling */
+    .quiz-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .quiz-question {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 1.25rem;
+    }
+    .quiz-option {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .quiz-option:hover {
+      border-color: var(--accent-cyan);
+      background-color: var(--bg-card-hover);
+    }
+    .quiz-option.selected {
+      border-color: var(--accent-cyan);
+      background-color: var(--accent-cyan-dim);
+    }
+    .quiz-option.correct {
+      border-color: var(--accent-green);
+      background-color: var(--accent-green-dim);
+    }
+    .quiz-option.incorrect {
+      border-color: var(--accent-red);
+      background-color: var(--accent-red-dim);
+    }
+    .quiz-feedback {
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .quiz-feedback.show {
+      display: block;
+    }
+    .quiz-submit-btn {
+      width: 100%;
+      background: var(--accent-cyan);
+      color: var(--bg-darker);
+      border: none;
+      padding: 10px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.9rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: var(--transition);
+    }
+    .quiz-submit-btn:hover {
+      box-shadow: 0 0 15px var(--accent-cyan);
+      transform: translateY(-1px);
+    }
+    .quiz-submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Keyframes */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-cyan {
+      0%, 100% { filter: drop-shadow(0 0 2px rgba(0, 240, 255, 0.4)); }
+      50% { filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.9)); }
+    }
+    @keyframes pulse-green {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+    @keyframes wave-bounce {
+      from { height: 4px; }
+      to { height: 16px; }
+    }
+    
+    /* Code styling */
+    pre {
+      background: #060911;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      margin: 12px 0;
+    }
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    /* Sidebar collapsible / Mobile responsive toggle */
+    .menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 101;
+      transition: var(--transition);
+    }
+    @media (max-width: 900px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main-content {
+        margin-left: 0;
+        padding: 1.5rem;
+        padding-top: 5rem;
+      }
+      .menu-toggle {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mobile Menu Toggle Button -->
+  <button id="menuToggle" class="menu-toggle" aria-label="Abrir Menú">
+    <i data-lucide="menu"></i>
+  </button>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <i data-lucide="drone" class="accent-cyan"></i>
+        <span>UAV Tech Lab</span>
+      </div>
+      
+      <ul class="nav-list">
+        <li class="nav-item active" data-tab="dashboard">
+          <button><i data-lucide="layout-dashboard"></i>Dashboard</button>
+        </li>
+        <li class="nav-item" data-tab="electronica">
+          <button><i data-lucide="zap"></i>Electrónica Básica</button>
+        </li>
+        <li class="nav-item" data-tab="multimetro">
+          <button><i data-lucide="gauge"></i>El Multímetro</button>
+        </li>
+        <li class="nav-item" data-tab="componentes">
+          <button><i data-lucide="cpu"></i>Componentes</button>
+        </li>
+        <li class="nav-item" data-tab="soldadura">
+          <button><i data-lucide="flame"></i>Soldadura</button>
+        </li>
+        <li class="nav-item" data-tab="protoboard">
+          <button><i data-lucide="grid"></i>Protoboard y PCB</button>
+        </li>
+        <li class="nav-item" data-tab="microcontroladores">
+          <button><i data-lucide="terminal"></i>Microcontroladores</button>
+        </li>
+        <li class="nav-item" data-tab="ruta">
+          <button><i data-lucide="map"></i>Mi Ruta de Estudio</button>
+        </li>
+      </ul>
+      
+      <!-- User study progress dashboard widget -->
+      <div class="progress-box">
+        <div class="progress-box-title">Progreso del Curso</div>
+        <div class="progress-circle-wrapper">
+          <svg class="progress-svg">
+            <circle class="progress-bg-circle" cx="50" cy="50" r="45"></circle>
+            <circle id="globalProgressBar" class="progress-bar-circle" cx="50" cy="50" r="45"></circle>
+          </svg>
+          <div id="globalProgressText" class="progress-text">0%</div>
+        </div>
+        <div id="globalProgressDetails" class="progress-details">0 / 0 completados</div>
+      </div>
+    </nav>
+    
+    <!-- Main Content Panel -->
+    <main class="main-content" id="mainContent">
+
+      <!-- ==================== DASHBOARD PANEL ==================== -->
+      <div id="tab-dashboard" class="tab-pane active">
+        <div class="content-header">
+          <h1><i data-lucide="layout-dashboard" class="accent-cyan"></i>Laboratorio Técnico UAV</h1>
+          <p>Tu centro integrado de formación técnica y entrenamiento de laboratorio desde cero hasta experto.</p>
+        </div>
+        
+        <div class="alert-box info">
+          <i data-lucide="info" class="accent-cyan"></i>
+          <div class="alert-box-text">
+            <strong>Bienvenido al Portal de Entrenamiento UAV.</strong> Este sistema interactivo está diseñado para entregarte las competencias que exigen los regimientos tecnológicos de operaciones aéreas. Explora los simuladores de cada sección y utiliza la pestaña <strong>"Mi Ruta de Estudio"</strong> para rastrear tu avance. Tu progreso se guardará automáticamente.
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i data-lucide="zap" class="accent-cyan"></i>Electrónica Básica</div>
+              <span class="card-badge badge-core">Core</span>
+            </div>
+            <p class="card-desc">Domina voltaje, corriente y resistencia. Explora la ley de Ohm interactivamente y visualiza el flujo de electrones en tiempo real.</p>
+            <div class="card-footer">
+              <div class="card-status"><i data-lucide="clock"></i> 5 horas aprox.</div>
+              <button class="card-btn" onclick="switchTab('electronica')">Estudiar</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i data-lucide="gauge" class="accent-cyan"></i>El Multímetro</div>
+              <span class="card-badge badge-core">Core</span>
+            </div>
+            <p class="card-desc">Simula mediciones reales de tensión, resistencia y continuidad sobre un circuito interactivo de drones con puntas de prueba.</p>
+            <div class="card-footer">
+              <div class="card-status"><i data-lucide="clock"></i> 8 horas aprox.</div>
+              <button class="card-btn" onclick="switchTab('multimetro')">Medir</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i data-lucide="cpu" class="accent-cyan"></i>Componentes</div>
+              <span class="card-badge badge-core">Core</span>
+            </div>
+            <p class="card-desc">Enciclopedia técnica de resistencias, capacitores, transistores y MOSFETs, incluyendo guías paso a paso para testearlos.</p>
+            <div class="card-footer">
+              <div class="card-status"><i data-lucide="clock"></i> 10 horas aprox.</div>
+              <button class="card-btn" onclick="switchTab('componentes')">Explorar</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i data-lucide="flame" class="accent-cyan"></i>Soldadura SMD/THT</div>
+              <span class="card-badge badge-core">Core</span>
+            </div>
+            <p class="card-desc">Simulador secuencial que enseña a aplicar calor y flux correctamente para lograr juntas de calidad militar sin dañar placas.</p>
+            <div class="card-footer">
+              <div class="card-status"><i data-lucide="clock"></i> 15 horas aprox.</div>
+              <button class="card-btn" onclick="switchTab('soldadura')">Soldar</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i data-lucide="grid" class="accent-cyan"></i>Protoboard y PCB</div>
+              <span class="card-badge badge-core">Core</span>
+            </div>
+            <p class="card-desc">Aprende a cablear circuitos en protoboard mediante resaltados de buses y a mapear esquemáticos eléctricos reales de drones.</p>
+            <div class="card-footer">
+              <div class="card-status"><i data-lucide="clock"></i> 6 horas aprox.</div>
+              <button class="card-btn" onclick="switchTab('protoboard')">Diseñar</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i data-lucide="terminal" class="accent-cyan"></i>Microcontroladores</div>
+              <span class="card-badge badge-adv">Avanzado</span>
+            </div>
+            <p class="card-desc">Explora de forma interactiva los pinouts y arquitecturas de Arduino y ESP32. Estudia la programación de telemetría y sensores.</p>
+            <div class="card-footer">
+              <div class="card-status"><i data-lucide="clock"></i> 20 horas aprox.</div>
+              <button class="card-btn" onclick="switchTab('microcontroladores')">Programar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== ELECTRONICA BASICA PANEL ==================== -->
+      <div id="tab-electronica" class="tab-pane">
+        <div class="content-header">
+          <h1><i data-lucide="zap" class="accent-cyan"></i>Electrónica Básica</h1>
+          <p>Los principios fundamentales que gobiernan los circuitos de potencia y control de un UAV.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div>
+            <section class="learning-section">
+              <h2>Magnitudes Eléctricas y la Ley de Ohm</h2>
+              <p>Para trabajar en drones, no puedes omitir la física elemental. La corriente eléctrica es el flujo ordenado de electrones que recorre un circuito bajo una diferencia de potencial.</p>
+              
+              <h3>1. Voltaje (Tensión - V)</h3>
+              <p>Medido en <strong>Voltios (V)</strong>. Es la fuerza electromotriz que "empuja" a los electrones a través del conductor. En un dron de carreras convencional de 5 pulgadas, la tensión nominal suele ser de 14.8V (4 celdas LiPo) o 22.2V (6 celdas LiPo). Una medición correcta garantiza que tus componentes no se quemen por sobretensión o fallen por subtensión.</p>
+
+              <h3>2. Corriente (Intensidad - I)</h3>
+              <p>Medida en <strong>Amperios (A)</strong>. Es el caudal o volumen de electrones que circula por segundo. Un motor brushless a máxima potencia puede succionar más de 30-40 amperios de forma continua de tu batería. Es por esto que los ESCs de potencia del dron requieren cables gruesos (calibre AWG 12 o 14) y soldaduras masivas.</p>
+
+              <h3>3. Resistencia (R)</h3>
+              <p>Medida en <strong>Ohmios (Ω)</strong>. Es la oposición natural de los materiales al paso de la corriente. Cables muy delgados o soldaduras frías actúan como resistencias indeseadas, convirtiendo la preciada energía de la batería en calor, lo cual puede fundir cables en pleno vuelo.</p>
+              
+              <div class="alert-box warn">
+                <i data-lucide="alert-triangle" class="accent-amber"></i>
+                <div class="alert-box-text">
+                  <strong>Ley de Ohm: V = I × R</strong><br>
+                  A mayor voltaje, mayor corriente fluirá. A mayor resistencia en el camino, menor será la corriente que logre pasar. ¡Entender esto evita incendiar componentes!
+                </div>
+              </div>
+            </section>
+            
+            <section class="learning-section">
+              <h2>Leyes de Kirchhoff</h2>
+              <p>Los esquemáticos de los flight controllers son redes complejas. Las leyes de Kirchhoff nos permiten analizar cómo se ramifica la energía:</p>
+              <ul>
+                <li><strong>Primera Ley (Corriente):</strong> La suma de corrientes que entran a un nodo es igual a la suma de corrientes que salen. Toda la corriente que la batería bombea hacia los ESCs debe regresar exactamente igual por el borne negativo.</li>
+                <li><strong>Segunda Ley (Tensión):</strong> En una malla cerrada, la suma de las caídas de tensión es igual al voltaje aplicado. Si tu regulador de voltaje de 5V alimenta un chip de video y una cámara, ambos consumirán voltaje de forma que las caídas a lo largo del regulador equivalgan a los 5V suministrados.</li>
+              </ul>
+            </section>
+          </div>
+
+          <!-- Interactive ohm's law simulator widget -->
+          <div class="sidebar-widgets">
+            <div class="interactive-widget">
+              <div class="widget-title"><i data-lucide="sliders" class="accent-cyan"></i>Simulador Ley de Ohm</div>
+              
+              <div class="control-group">
+                <div class="control-label">Tensión (Voltaje) <span id="ohmVals-V" class="val">9.0 V</span></div>
+                <input id="ohmSlider-V" class="slider-input" type="range" min="1" max="24" step="0.5" value="9">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label">Resistencia <span id="ohmVals-R" class="val">100 Ω</span></div>
+                <input id="ohmSlider-R" class="slider-input" type="range" min="10" max="1000" step="10" value="100">
+              </div>
+
+              <div class="ohm-viz">
+                <div class="widget-title"><i data-lucide="activity"></i>Visualización de Corriente</div>
+                <div class="circuit-wire" id="wireContainer">
+                  <!-- Electrons animated inside via JS -->
+                </div>
+                <div class="math-display">
+                  I = <span id="ohmCalcResult" class="result">0.090 A</span> (90 mA)
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quiz for Module 1 -->
+            <div class="quiz-box" id="quiz-electronica">
+              <div class="quiz-question">Si medimos una caída de tensión de 9V a través de un puente térmico con una resistencia interna anómala de 0.5 Ω, ¿qué cantidad de corriente está disipándose en forma de calor?</div>
+              <div class="quiz-options">
+                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. 4.5 Amperios</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. 18 Amperios</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. 0.05 Amperios</div>
+              </div>
+              <div class="quiz-feedback" id="quiz-feedback-electronica"></div>
+              <button class="quiz-submit-btn" onclick="submitQuiz('electronica', 1)" disabled>Enviar Respuesta</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== EL MULTIMETRO PANEL ==================== -->
+      <div id="tab-multimetro" class="tab-pane">
+        <div class="content-header">
+          <h1><i data-lucide="gauge" class="accent-cyan"></i>Uso y Diagnóstico con el Multímetro</h1>
+          <p>Aprende a diagnosticar, rastrear continuidad y detectar cortocircuitos en un dron.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div>
+            <section class="learning-section">
+              <h2>¿Cómo operar el multímetro de forma segura?</h2>
+              <p>El multímetro es los ojos del técnico de UAV. Se compone de un dial rotativo para seleccionar funciones y dos cables (puntas de prueba): una punta <strong>negra (COM)</strong> y una punta <strong>roja (+)</strong>.</p>
+              
+              <h3>1. Medición de Tensión / Voltaje (V DC)</h3>
+              <p>Para medir tensiones en circuitos continuos (baterías, reguladores del FC). Conecta la punta negra al polo de tierra (GND o negativo) y la roja al nodo a probar en <strong>paralelo</strong>. Si colocas las puntas invertidas, simplemente leerás un valor negativo. ¡Importante! El multímetro no sufrirá daños.</p>
+
+              <h3>2. Medición de Continuidad (¡El Pitido!)</h3>
+              <p>La herramienta número uno para diagnosticar. Mide si existe conexión directa (resistencia menor a unos 30-50 Ω) entre dos puntos. Se utiliza para comprobar si un cable no está roto por dentro o para detectar <strong>cortocircuitos críticos</strong>.
+              <br><strong class="accent-red">Regla de Oro:</strong> Antes de conectar una batería nueva a tu dron recién armado, pon el multímetro en continuidad y mide entre el borne positivo y negativo del conector XT60. Si pita, hay un cortocircuito que quemaría el dron instantáneamente al conectarle energía.</p>
+
+              <h3>3. Medición de Resistencia (Ohmios - Ω)</h3>
+              <p>Permite corroborar el valor de las resistencias de precisión en tu PCB o medir el embobinado interno de los motores brushless (que suele ser sumamente bajo, de 0.1 a 0.5 ohmios).
+              <br><strong class="accent-amber">Advertencia:</strong> Nunca midas resistencia en un circuito energizado. Podrías quemar el fusible interno del multímetro o dar una lectura errónea.</p>
+            </section>
+            
+            <section class="learning-section">
+              <h2>Práctica Interactiva de Diagnóstico</h2>
+              <p>Utiliza el panel simulador de la derecha. Selecciona la función del multímetro girando el dial del aparato, luego haz clic en los diferentes nodos del circuito de la placa para conectar la punta activa.</p>
+              <p><strong>Meta:</strong> Verifica si la batería entrega tensión, comprueba si el interruptor funciona midiendo continuidad, y asegúrate de medir la caída de voltaje en la resistencia limitadora.</p>
+            </section>
+          </div>
+
+          <!-- Interactive multimeter simulator widget -->
+          <div class="sidebar-widgets">
+            <div class="multimetro-sim-container">
+              <div class="widget-title"><i data-lucide="gauge"></i>Simulador de Multímetro</div>
+              
+              <div class="multimetro-row">
+                <!-- Visual Multimeter Graphic -->
+                <div class="multimeter-device">
+                  <div class="multimeter-brand">UAV-FLUKETEC 115</div>
+                  <div class="multimeter-lcd">
+                    <div class="lcd-top">
+                      <span>DC V</span>
+                      <span id="multimeterStatusText">AUTO</span>
+                    </div>
+                    <div id="multimeterDisplay" class="lcd-value">0.00</div>
+                  </div>
+                  
+                  <div class="multimeter-dial-wrapper">
+                    <div class="dial-outer">
+                      <div class="dial-label label-off">OFF</div>
+                      <div class="dial-label label-vdc">V ⎓</div>
+                      <div class="dial-label label-ohms">Ω</div>
+                      <div class="dial-label label-cont">🔊</div>
+                      <div id="multimeterKnob" class="dial-knob" onclick="rotateMultimeterDial()"></div>
+                    </div>
+                  </div>
+                  
+                  <div class="multimeter-ports">
+                    <div class="port com">COM</div>
+                    <div class="port volt-res">V/Ω</div>
+                  </div>
+                </div>
+                
+                <!-- Schematic to Probe -->
+                <div class="schematic-box">
+                  <div class="probe-controllers-wrapper" style="margin-bottom: 1rem;">
+                    <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px; font-weight:600; text-transform:uppercase;">Selecciona sonda para colocar:</div>
+                    <div class="probe-selector-buttons" style="display: flex; gap: 10px; width: 100%;">
+                      <button id="btnActiveProbeRed" class="probe-sel-btn active red" onclick="setActiveProbe('red')" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--bg-card); border: 2px solid var(--accent-red); padding: 8px; border-radius: var(--radius-md); color: var(--text-primary); cursor: pointer; font-weight: 600; transition: var(--transition);">
+                        <span class="probe-dot dot-red" style="width:10px; height:10px; border-radius:50%; background:var(--accent-red); box-shadow:0 0 8px var(--accent-red);"></span> Roja: <strong style="margin-left:4px;"><span id="activeRedNode">N/A</span></strong>
+                      </button>
+                      <button id="btnActiveProbeBlack" class="probe-sel-btn black" onclick="setActiveProbe('black')" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--bg-card); border: 1px solid var(--border); padding: 8px; border-radius: var(--radius-md); color: var(--text-secondary); cursor: pointer; font-weight: 600; transition: var(--transition);">
+                        <span class="probe-dot dot-black" style="width:10px; height:10px; border-radius:50%; background:#fff; box-shadow:0 0 8px #fff;"></span> Negra: <strong style="margin-left:4px;"><span id="activeBlackNode">GND</span></strong>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="circuit-svg-wrapper">
+                    <!-- Circuit schematic SVG -->
+                    <svg class="circuit-svg" viewBox="0 0 300 200">
+                      <!-- Grid lines -->
+                      <line x1="10" y1="10" x2="290" y2="10" stroke="#152136" stroke-dasharray="2" />
+                      <line x1="10" y1="50" x2="290" y2="50" stroke="#152136" stroke-dasharray="2" />
+                      <line x1="10" y1="90" x2="290" y2="90" stroke="#152136" stroke-dasharray="2" />
+                      <line x1="10" y1="130" x2="290" y2="130" stroke="#152136" stroke-dasharray="2" />
+                      <line x1="10" y1="170" x2="290" y2="170" stroke="#152136" stroke-dasharray="2" />
+                      
+                      <!-- Connections / wires -->
+                      <path d="M 50 150 L 50 50 L 100 50 M 150 50 L 200 50 M 200 50 L 200 70 M 200 90 L 200 150 L 50 150" fill="none" stroke="#3182ce" stroke-width="3" />
+                      
+                      <!-- Battery 9V -->
+                      <rect x="35" y="80" width="30" height="40" fill="#2d3748" stroke="#4a5568" stroke-width="2" rx="3" />
+                      <line x1="35" y1="90" x2="25" y2="90" stroke="#ff3366" stroke-width="2" />
+                      <text x="50" y="105" fill="white" font-size="10" text-anchor="middle">9V</text>
+                      <text x="38" y="93" fill="#ff3366" font-size="10" font-weight="bold">+</text>
+                      <text x="38" y="117" fill="#cbd5e0" font-size="10" font-weight="bold">-</text>
+
+                      <!-- Switch (Open or Closed) -->
+                      <g id="switchGraphic" class="circuit-component">
+                        <circle cx="100" cy="50" r="4" fill="white" />
+                        <circle cx="150" cy="50" r="4" fill="white" />
+                        <line id="switchLever" x1="100" y1="50" x2="145" y2="30" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+                      </g>
+                      <text x="125" y="25" fill="#a0aec0" font-size="8" text-anchor="middle">SW1 (Pulsador)</text>
+
+                      <!-- Resistor 1k -->
+                      <g class="circuit-component">
+                        <rect x="185" y="70" width="30" height="20" fill="#2d3748" stroke="#dd6b20" stroke-width="2" rx="2" />
+                        <!-- color bands -->
+                        <rect x="190" y="70" width="3" height="20" fill="#744210" />
+                        <rect x="196" y="70" width="3" height="20" fill="black" />
+                        <rect x="202" y="70" width="3" height="20" fill="red" />
+                      </g>
+                      <text x="230" y="82" fill="#a0aec0" font-size="8">R1 (1 kΩ)</text>
+
+                      <!-- Test Node Dots to click -->
+                      <!-- Node 1: Bat + -->
+                      <circle cx="50" cy="50" r="6" fill="#e53e3e" class="test-node" onclick="selectNodeForActiveProbe('TP1', 50, 50)" />
+                      <text x="50" y="42" class="node-label">TP1 (BAT+)</text>
+
+                      <!-- Node 2: After switch -->
+                      <circle cx="160" cy="50" r="6" fill="#319795" class="test-node" onclick="selectNodeForActiveProbe('TP2', 160, 50)" />
+                      <text x="175" y="45" class="node-label">TP2 (V_SW)</text>
+
+                      <!-- Node 3: After Resistor / Before Ground -->
+                      <circle cx="200" cy="110" r="6" fill="#ecc94b" class="test-node" onclick="selectNodeForActiveProbe('TP3', 200, 110)" />
+                      <text x="215" y="114" class="node-label">TP3 (R_OUT)</text>
+
+                      <!-- Node 4: Ground (Black lead target by default) -->
+                      <circle cx="120" cy="150" r="6" fill="#4a5568" class="test-node" onclick="selectNodeForActiveProbe('GND', 120, 150)" />
+                      <text x="120" y="165" class="node-label">GND (TP4)</text>
+
+                      <!-- Active probe graphic markers -->
+                      <g id="probeRedMarker" opacity="0">
+                        <path d="M 0 0 L -10 -25 L -5 -25 L -5 -40 L 5 -40 L 5 -25 L 10 -25 Z" fill="#ff3366" />
+                        <circle cx="0" cy="0" r="2" fill="white" />
+                      </g>
+                      <g id="probeBlackMarker" opacity="0">
+                        <path d="M 0 0 L -10 -25 L -5 -25 L -5 -40 L 5 -40 L 5 -25 L 10 -25 Z" fill="#ffffff" />
+                        <circle cx="0" cy="0" r="2" fill="black" />
+                      </g>
+                    </svg>
+                  </div>
+                  
+                  <div class="schematic-controls">
+                    <button class="schematic-btn" id="btnToggleSwitch" onclick="toggleSimSwitch()">
+                      <i data-lucide="toggle-left"></i> Cerrar Interruptor
+                    </button>
+                    
+                    <div class="beep-visualizer" id="beepVisual">
+                      <div class="wave-bar"></div>
+                      <div class="wave-bar"></div>
+                      <div class="wave-bar"></div>
+                      <span>BEEP! OK</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quiz for Module 2 -->
+            <div class="quiz-box" id="quiz-multimetro">
+              <div class="quiz-question">¿Cuál es la primera medición recomendada que debe realizar un técnico antes de alimentar por primera vez un dron recién armado?</div>
+              <div class="quiz-options">
+                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. Medir el voltaje de la celda de la batería LiPo.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. Comprobar la continuidad en el borne XT60 para verificar ausencia de cortos.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. Medir la resistencia del motor de cola en vacío.</div>
+              </div>
+              <div class="quiz-feedback" id="quiz-feedback-multimetro"></div>
+              <button class="quiz-submit-btn" onclick="submitQuiz('multimetro', 1)" disabled>Enviar Respuesta</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== COMPONENTES PANEL ==================== -->
+      <div id="tab-componentes" class="tab-pane">
+        <div class="content-header">
+          <h1><i data-lucide="cpu" class="accent-cyan"></i>Componentes Electrónicos Básicos y Avanzados</h1>
+          <p>Enciclopedia interactiva de los ladrillos lógicos que constituyen las placas del UAV.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div>
+            <section class="learning-section">
+              <h2>Biblioteca de Componentes</h2>
+              <p>Selecciona un componente de la cuadrícula superior para estudiar su símbolo esquemático, su comportamiento, su uso directo en sistemas de aeronaves no tripuladas y el protocolo técnico para testear su estado con el multímetro.</p>
+              
+              <div class="comp-grid">
+                <div class="comp-thumbnail active" onclick="showComponent('resistencia')">
+                  <div class="comp-thumbnail-icon accent-amber"><i data-lucide="activity"></i></div>
+                  <div class="comp-thumbnail-name">Resistencia</div>
+                </div>
+                <div class="comp-thumbnail" onclick="showComponent('capacitor')">
+                  <div class="comp-thumbnail-icon accent-cyan"><i data-lucide="battery"></i></div>
+                  <div class="comp-thumbnail-name">Capacitor</div>
+                </div>
+                <div class="comp-thumbnail" onclick="showComponent('diodo')">
+                  <div class="comp-thumbnail-icon accent-green"><i data-lucide="arrow-right-left"></i></div>
+                  <div class="comp-thumbnail-name">Diodo y LED</div>
+                </div>
+                <div class="comp-thumbnail" onclick="showComponent('mosfet')">
+                  <div class="comp-thumbnail-icon accent-red"><i data-lucide="toggle-right"></i></div>
+                  <div class="comp-thumbnail-name">MOSFET</div>
+                </div>
+                <div class="comp-thumbnail" onclick="showComponent('regulador')">
+                  <div class="comp-thumbnail-icon accent-cyan"><i data-lucide="shuffle"></i></div>
+                  <div class="comp-thumbnail-name">Regulador LDO</div>
+                </div>
+                <div class="comp-thumbnail" onclick="showComponent('esc')">
+                  <div class="comp-thumbnail-icon accent-amber"><i data-lucide="orbit"></i></div>
+                  <div class="comp-thumbnail-name">FETs de ESC</div>
+                </div>
+              </div>
+
+              <!-- Component details panel -->
+              <div class="comp-detail-panel" id="compDetailPanel">
+                <!-- Injected via Javascript -->
+              </div>
+            </section>
+          </div>
+
+          <div class="sidebar-widgets">
+            <div class="interactive-widget">
+              <div class="widget-title"><i data-lucide="help-circle"></i>Identificación de Código</div>
+              <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom: 10px;">
+                Las resistencias SMD usan códigos de 3 dígitos (ej: 102 = 10 + 2 ceros = 1000 Ω = 1kΩ).
+              </p>
+              <div class="control-group">
+                <label class="control-label">Ingresa el código SMD: </label>
+                <input type="text" id="smdCodeInput" placeholder="Ej: 472" style="background:var(--bg-dark); border:1px solid var(--border); padding:8px; border-radius:var(--radius-md); color:white; width:100%; font-family:var(--font-mono); font-size:1rem;" oninput="decodeSMDResistor()">
+              </div>
+              <div style="background:#060a12; border:1px dashed var(--border); padding:10px; border-radius:var(--radius-md); font-family:var(--font-mono); font-size:0.9rem; text-align:center;">
+                Valor: <span id="smdResultText" style="color:var(--accent-cyan); font-weight:bold;">Ingrese código</span>
+              </div>
+            </div>
+            
+            <!-- Quiz for Module 3 -->
+            <div class="quiz-box" id="quiz-componentes">
+              <div class="quiz-question">Si los motores brushless de tu dron comienzan a girar de forma errática o se calientan excesivamente a bajo acelerador, ¿cuál componente en la línea de potencia del ESC es más probable que haya sufrido una degradación?</div>
+              <div class="quiz-options">
+                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. El capacitor electrolítico de filtrado.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. Uno de los MOSFETs (transistores de conmutación de canal N) dañados en el puente H.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. El diodo Zener de protección contra picos.</div>
+              </div>
+              <div class="quiz-feedback" id="quiz-feedback-componentes"></div>
+              <button class="quiz-submit-btn" onclick="submitQuiz('componentes', 1)" disabled>Enviar Respuesta</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== SOLDADURA PANEL ==================== -->
+      <div id="tab-soldadura" class="tab-pane">
+        <div class="content-header">
+          <h1><i data-lucide="flame" class="accent-cyan"></i>Soldadura THT y SMD de Calidad Militar</h1>
+          <p>El arte de unir metales a nivel molecular para resistir vibraciones extremas.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div>
+            <section class="learning-section">
+              <h2>Soldadura de Componentes Electrónicos</h2>
+              <p>Los drones experimentan vibraciones severas por los motores girando a más de 25,000 RPM. Una soldadura defectuosa ("soldadura fría" o junta fracturada) fallará inevitablemente en el aire, provocando una pérdida catastrófica del dron.</p>
+              
+              <h3>Tipos de Tecnologías</h3>
+              <ul>
+                <li><strong>THT (Through-Hole Technology):</strong> Los pines de los componentes (como condensadores grandes o cables XT60) atraviesan la placa. Requieren puntas de soldador gruesas para transferir calor suficiente a las tierras masivas de cobre.</li>
+                <li><strong>SMD (Surface Mount Device):</strong> Componentes de montaje superficial directos sobre pads de cobre (resistencias minúsculas, microcontroladores, giroscopios). Requieren pulso firme, estaño fino (0.8mm o menor) y abundante <strong>flux</strong> (pasta decapante que remueve óxidos y canaliza la aleación).</li>
+              </ul>
+            </section>
+            
+            <section class="learning-section">
+              <h2>Galería Interactiva de uniones de Soldadura</h2>
+              <p>Haz clic en los tipos de uniones para ver sus perfiles e inspeccionar si cumplen con la especificación industrial IPC-A-610.</p>
+              
+              <div class="solder-gallery">
+                <div class="gallery-item" onclick="selectSolderGallery('perfect')">
+                  <svg viewBox="0 0 100 80">
+                    <rect x="10" y="60" width="80" height="10" fill="#2d3748" />
+                    <line x1="50" y1="10" x2="50" y2="70" stroke="#718096" stroke-width="4" />
+                    <!-- Solder cone -->
+                    <path d="M 35 60 C 42 60 46 45 48 35 L 52 35 C 54 45 58 60 65 60 Z" fill="#a0aec0" />
+                  </svg>
+                  <div class="gallery-item-name">Concavidad Ideal</div>
+                  <div class="gallery-item-status status-ok">Aceptable</div>
+                </div>
+                
+                <div class="gallery-item" onclick="selectSolderGallery('cold')">
+                  <svg viewBox="0 0 100 80">
+                    <rect x="10" y="60" width="80" height="10" fill="#2d3748" />
+                    <line x1="50" y1="10" x2="50" y2="70" stroke="#718096" stroke-width="4" />
+                    <!-- Cold blob -->
+                    <circle cx="50" cy="50" r="14" fill="#718096" />
+                  </svg>
+                  <div class="gallery-item-name">Junta Fría (Globo)</div>
+                  <div class="gallery-item-status status-bad">Rechazada</div>
+                </div>
+
+                <div class="gallery-item" onclick="selectSolderGallery('insufficient')">
+                  <svg viewBox="0 0 100 80">
+                    <rect x="10" y="60" width="80" height="10" fill="#2d3748" />
+                    <line x1="50" y1="10" x2="50" y2="70" stroke="#718096" stroke-width="4" />
+                    <!-- Thin layer -->
+                    <path d="M 45 60 L 48 55 L 52 55 L 55 60 Z" fill="#cbd5e0" />
+                  </svg>
+                  <div class="gallery-item-name">Insuficiente</div>
+                  <div class="gallery-item-status status-bad">Rechazada</div>
+                </div>
+
+                <div class="gallery-item" onclick="selectSolderGallery('bridge')">
+                  <svg viewBox="0 0 100 80">
+                    <rect x="10" y="60" width="80" height="10" fill="#2d3748" />
+                    <line x1="30" y1="10" x2="30" y2="70" stroke="#718096" stroke-width="4" />
+                    <line x1="70" y1="10" x2="70" y2="70" stroke="#718096" stroke-width="4" />
+                    <!-- Bridge blob -->
+                    <rect x="25" y="45" width="50" height="18" rx="6" fill="#cbd5e0" />
+                  </svg>
+                  <div class="gallery-item-name">Puente (Corto)</div>
+                  <div class="gallery-item-status status-bad">Rechazada</div>
+                </div>
+              </div>
+              
+              <div style="background:var(--bg-darker); border:1px solid var(--border); border-radius:var(--radius-md); padding:1rem; margin-top:1rem;" id="solderGalleryDetail">
+                <strong>Selecciona una junta para inspeccionar el diagnóstico técnico.</strong>
+              </div>
+            </section>
+          </div>
+
+          <!-- Interactive soldering guide widget -->
+          <div class="sidebar-widgets">
+            <div class="interactive-widget">
+              <div class="widget-title"><i data-lucide="play" class="accent-cyan"></i>Pasos para Soldar Correctamente</div>
+              
+              <div class="solder-steps-container">
+                <div class="solder-visual">
+                  <svg class="soldering-svg" viewBox="0 0 200 120">
+                    <!-- Pad and lead -->
+                    <rect x="40" y="100" width="120" height="6" fill="#1b4d3e" stroke="#2e7d32" /> <!-- PCB -->
+                    <circle cx="100" cy="103" r="8" fill="#d4af37" /> <!-- Gold pad -->
+                    <rect x="97" y="30" width="6" height="70" fill="#a0aec0" rx="1" /> <!-- Component pin -->
+                    
+                    <!-- Solder liquid SVG -->
+                    <path id="solderLiquid" class="solder-liquid" d="M 88 100 Q 100 70 100 70 Q 100 70 112 100 Z" />
+
+                    <!-- Soldering Iron (cautin) -->
+                    <g id="solderIron" class="solder-iron">
+                      <!-- handle -->
+                      <rect x="140" y="10" width="50" height="14" fill="#1e293b" rx="2" transform="rotate(25, 140, 10)" />
+                      <!-- metal shaft -->
+                      <rect x="100" y="10" width="45" height="6" fill="#cbd5e0" transform="rotate(25, 100, 10)" />
+                      <!-- tip -->
+                      <polygon points="90,12 105,8 105,16" id="solderIronTip" class="solder-iron-tip" transform="rotate(25, 100, 10)" />
+                    </g>
+                    
+                    <!-- Solder wire (estaño) -->
+                    <g id="solderWire" class="solder-wire">
+                      <path d="M 30 20 C 50 30, 40 70, 90 98" fill="none" stroke="#718096" stroke-width="4" stroke-linecap="round" />
+                    </g>
+                  </svg>
+                </div>
+                
+                <div class="solder-slider-controls">
+                  <div class="solder-step-indicator">
+                    <div class="solder-dot active" id="sdot-1"></div>
+                    <div class="solder-dot" id="sdot-2"></div>
+                    <div class="solder-dot" id="sdot-3"></div>
+                    <div class="solder-dot" id="sdot-4"></div>
+                  </div>
+                  <div style="font-size:0.85rem; color:var(--text-secondary); text-align:center; min-height: 4.5em;" id="solderStepDesc">
+                    <strong>Paso 1: Precalentar.</strong> Coloca la punta del soldador (a unos 350°C) de modo que toque simultáneamente el pad de cobre y el pin metálico del componente por 1-2 segundos.
+                  </div>
+                  <div class="step-nav">
+                    <button class="step-nav-btn" id="solderPrevBtn" onclick="navigateSolderStep(-1)" disabled>Anterior</button>
+                    <button class="step-nav-btn" id="solderNextBtn" onclick="navigateSolderStep(1)">Siguiente</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quiz for Module 4 -->
+            <div class="quiz-box" id="quiz-soldadura">
+              <div class="quiz-question">¿Cuál es el propósito del flux químico en la soldadura electrónica SMD de drones?</div>
+              <div class="quiz-options">
+                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. Aumentar la temperatura de fusión del estaño para resistir motores más potentes.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. Limpiar químicamente los óxidos de los metales calientes y reducir la tensión superficial para que el estaño fluya de forma fluida.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. Actuar como un aislante eléctrico protector sobre la junta.</div>
+              </div>
+              <div class="quiz-feedback" id="quiz-feedback-soldadura"></div>
+              <button class="quiz-submit-btn" onclick="submitQuiz('soldadura', 1)" disabled>Enviar Respuesta</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== PROTOBOARD Y PCB PANEL ==================== -->
+      <div id="tab-protoboard" class="tab-pane">
+        <div class="content-header">
+          <h1><i data-lucide="grid" class="accent-cyan"></i>Prototipado en Protoboard y Lectura de PCBs</h1>
+          <p>Aprende a cablear circuitos experimentales y a interpretar mapas eléctricos complejos.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div>
+            <section class="learning-section">
+              <h2>¿Cómo funciona la Protoboard (Breadboard)?</h2>
+              <p>Antes de diseñar un PCB permanente o fabricar una tarjeta, se prueban los circuitos en una protoboard. Esta placa está repleta de clips metálicos internos que conectan mecánicamente las filas y columnas.</p>
+              
+              <h3>Estructura Interna de Conexiones</h3>
+              <ul>
+                <li><strong>Líneas de alimentación (Buses):</strong> Corren de forma horizontal a lo largo de los extremos superior e inferior. Marcados en rojo (+) y azul (-). Sirven para distribuir voltaje a cualquier parte del circuito.</li>
+                <li><strong>Columnas de prototipado (Terminales):</strong> Corren verticalmente en grupos de 5 agujeros (ej: A-B-C-D-E están unidos internamente). La canaleta central separa el lado superior del inferior, lo que permite insertar circuitos integrados (como MCUs) sin cortocircuitar sus pines opuestos.</li>
+              </ul>
+              
+              <div class="alert-box info">
+                <i data-lucide="help-circle" class="accent-cyan"></i>
+                <div class="alert-box-text">
+                  <strong>Pista Interactiva:</strong> Pasa el puntero del mouse sobre cualquier agujero de la protoboard de la derecha para resaltar en verde todos los agujeros conectados eléctricamente por debajo.
+                </div>
+              </div>
+            </section>
+            
+            <section class="learning-section">
+              <h2>Mapeo y Lectura de Diagramas Esquemáticos</h2>
+              <p>Un esquemático es el plano teórico de un circuito. Como técnico de UAVs, debes ser capaz de tomar el esquemático oficial de un controlador de vuelo (ej: Matek o SpeedyBee) y localizar los terminales críticos.</p>
+              
+              <h3>Puntos de Control Clave en Drones</h3>
+              <ul>
+                <li><strong>PDB (Power Distribution Board):</strong> Es el sistema de venas de corriente. El esquemático mostrará pistas anchas que enlazan el conector de la batería directo a las bobinas del filtro LC y a los reguladores reductores (Buck Regulators) de 5V y 9V.</li>
+                <li><strong>Filtros LC:</strong> Integrados por un inductor (L) y un capacitor (C). Se encargan de suavizar los picos de voltaje inducidos por el frenado regenerativo de los motores, limpiando el suministro eléctrico para que la señal de video no tenga líneas de interferencia.</li>
+              </ul>
+            </section>
+          </div>
+
+          <div class="sidebar-widgets">
+            <div class="proto-container">
+              <div class="widget-title"><i data-lucide="layers"></i>Visualizador de Protoboard</div>
+              <div class="proto-board-wrapper">
+                <!-- SVG Half-size Breadboard -->
+                <svg class="proto-svg" viewBox="0 0 340 130" id="protoBoardSvg">
+                  <!-- Breadboard body -->
+                  <rect x="5" y="5" width="330" height="120" fill="#e2e8f0" stroke="#cbd5e0" stroke-width="2" rx="4" />
+                  <rect x="5" y="60" width="330" height="10" fill="#a0aec0" /> <!-- Separator ridge -->
+                  
+                  <!-- Labels -->
+                  <text x="170" y="66" class="proto-label-text" fill="white">CANALETA CENTRAL DE SEPARACIÓN IC</text>
+                  
+                  <!-- Draw rows and columns of holes -->
+                  <!-- Power rails top: + (red line), - (blue line) -->
+                  <line x1="20" y1="12" x2="320" y2="12" stroke="#ff3366" stroke-width="1.5" />
+                  <line x1="20" y1="22" x2="320" y2="22" stroke="#3182ce" stroke-width="1.5" />
+                  
+                  <!-- Power rails bottom: + (red line), - (blue line) -->
+                  <line x1="20" y1="108" x2="320" y2="108" stroke="#ff3366" stroke-width="1.5" />
+                  <line x1="20" y1="118" x2="320" y2="118" stroke="#3182ce" stroke-width="1.5" />
+                  
+                  <!-- Dynamically rendered pins in JS loop to keep code clean -->
+                </svg>
+              </div>
+            </div>
+            
+            <!-- Quiz for Module 5 -->
+            <div class="quiz-box" id="quiz-protoboard">
+              <div class="quiz-question">Si quieres colocar un circuito integrado tipo temporizador (por ejemplo, el NE555) en una protoboard para pruebas, ¿dónde debes posicionarlo exactamente?</div>
+              <div class="quiz-options">
+                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. A lo largo de cualquiera de las pistas de buses de alimentación laterales (+ o -).</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. Cruzando la canaleta divisoria central, de modo que sus filas de pines opuestas queden en columnas separadas (e.g. fila E y fila F).</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. Completamente alineado en una sola fila de 5 agujeros verticales.</div>
+              </div>
+              <div class="quiz-feedback" id="quiz-feedback-protoboard"></div>
+              <button class="quiz-submit-btn" onclick="submitQuiz('protoboard', 1)" disabled>Enviar Respuesta</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== MICROCONTROLADORES PANEL ==================== -->
+      <div id="tab-microcontroladores" class="tab-pane">
+        <div class="content-header">
+          <h1><i data-lucide="terminal" class="accent-cyan"></i>Microcontroladores (MCU) - Arduino y ESP32</h1>
+          <p>Los procesadores encargados de computar la navegación y control dinámico del UAV.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div>
+            <section class="learning-section">
+              <h2>¿Qué es un Microcontrolador en UAVs?</h2>
+              <p>El microcontrolador (MCU) es el procesador principal de tu Flight Controller. Recibe mediciones a velocidades de microsegundos de sensores inerciales (giroscopio/acelerómetro), calcula la orientación física del dron usando algoritmos de lazo cerrado (PID) y envía comandos de velocidad a los 4 ESCs para estabilizar el vuelo.</p>
+              
+              <h3>Modelos Clave</h3>
+              <ul>
+                <li><strong>Arduino (ATmega328P):</strong> El micro de 8 bits clásico. Muy robusto, ideal para comprender los fundamentos de puertos de entrada y salida digital, convertidores analógicos y protocolos de comunicación UART.</li>
+                <li><strong>ESP32 (WROOM / Dual Core):</strong> Procesador ultrarrápido de 32 bits a 240 MHz con Wi-Fi y Bluetooth nativos. Muy empleado en sistemas de telemetría secundaria, procesamiento de enlace de control y micro-drones.</li>
+                <li><strong>STM32 (F4 / F7 / H7):</strong> Los chips industriales de alto rendimiento estándar para ArduPilot y Betaflight. Soportan cálculos de punto flotante pesados a frecuencias de refresco inerciales extremas de hasta 8kHz.</li>
+              </ul>
+            </section>
+            
+            <section class="learning-section">
+              <h2>Comunicaciones y Buses de Datos</h2>
+              <p>Un controlador no opera aislado. Conecta múltiples periféricos mediante buses serie:</p>
+              <ul>
+                <li><strong>PWM (Pulse Width Modulation):</strong> Impulsos digitales de ancho variable. Controlan la posición de servomotores y la velocidad de los ESCs más antiguos.</li>
+                <li><strong>I2C (SDA/SCL):</strong> Protocolo de dos cables. Conecta sensores lentos como barómetros (medición de altitud) y brújulas electrónicas (magnetómetro).</li>
+                <li><strong>SPI (MOSI/MISO/SCK/CS):</strong> Bus serie de alta velocidad. Conecta el giroscopio e IMU primario para evitar latencias de lectura.</li>
+                <li><strong>UART (TX/RX):</strong> Comunicación serie punto a punto. Se utiliza para enlazar el GPS, la telemetría ExpressLRS y la telemetría del OSD de video.</li>
+              </ul>
+
+              <h3>Ejemplo de Código: Lectura de Canal del Receptor (PWM)</h3>
+              <pre><code class="language-cpp">
+// Código Arduino básico para leer pulsos de servo del receptor
+const int pinReceptor = 5; // Pin de entrada digital
+unsigned long duracionPulso;
+
+void setup() {
+  pinMode(pinReceptor, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Mide el ancho del pulso en microsegundos (normalmente entre 1000 y 2000 us)
+  duracionPulso = pulseIn(pinReceptor, HIGH);
+  Serial.print("Canal UAV: ");
+  Serial.println(duracionPulso);
+  delay(100);
+}
+              </code></pre>
+            </section>
+          </div>
+
+          <div class="sidebar-widgets">
+            <div class="mcu-selector">
+              <button id="btnSelectArduino" class="mcu-btn active" onclick="switchMCU('arduino')">Arduino Uno</button>
+              <button id="btnSelectESP32" class="mcu-btn" onclick="switchMCU('esp32')">ESP32 DevKit</button>
+            </div>
+            
+            <div class="mcu-display">
+              <div class="widget-title"><i data-lucide="cpu"></i>Mapa Pinout Interactivo</div>
+              <p style="font-size:0.75rem; color:var(--text-secondary); text-align:center;">Pasa el mouse sobre los pines marcados en color para revelar sus funciones específicas de comunicación y potencia.</p>
+              
+              <div class="mcu-svg-container" id="mcuSvgContainer">
+                <!-- SVG of board dynamically updated -->
+              </div>
+              
+              <div class="pin-info-overlay">
+                <div class="pin-info-title" id="mcuPinName">Pin Seleccionado</div>
+                <div class="pin-info-desc" id="mcuPinDesc">Pasa el mouse sobre un pin coloreado para inspeccionar su datasheet y asignación UART/I2C/SPI.</div>
+              </div>
+            </div>
+            
+            <!-- Quiz for Module 6 -->
+            <div class="quiz-box" id="quiz-microcontroladores">
+              <div class="quiz-question">¿Por qué protocolo de comunicación digital en serie se conecta habitualmente el giroscopio e IMU principal a la controladora de vuelo de un dron?</div>
+              <div class="quiz-options">
+                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. A través del bus SPI debido a su altísima velocidad de reloj y mínima latencia.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. Vía bus analógico I2C por su simplicidad de direccionamiento por software.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. Usando un enlace analógico directo por PWM de un solo pin.</div>
+              </div>
+              <div class="quiz-feedback" id="quiz-feedback-microcontroladores"></div>
+              <button class="quiz-submit-btn" onclick="submitQuiz('microcontroladores', 0)" disabled>Enviar Respuesta</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== RUTA DE ESTUDIO PANEL ==================== -->
+      <div id="tab-ruta" class="tab-pane">
+        <div class="content-header">
+          <h1><i data-lucide="map" class="accent-cyan"></i>Ruta de Aprendizaje UAV desde Cero</h1>
+          <p>Tu cronograma interactivo y lista de tareas. Haz clic en las casillas para actualizar tu progreso global.</p>
+        </div>
+
+        <section class="learning-section">
+          <h2>Lista de Tareas e Hitos de Estudio</h2>
+          <p>Esta sección consolida las semanas de preparación basadas en los requisitos reales para ingenieros y mecánicos de drones en campo táctico.</p>
+          
+          <div class="roadmap-list" id="roadmapListContainer">
+            <!-- Dynamically loaded from study plan js arrays -->
+          </div>
+        </section>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // =========================================================================
+    // NAVIGATION & SPA TABS
+    // =========================================================================
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      
+      const targetPane = document.getElementById(`tab-${tabId}`);
+      if (targetPane) targetPane.classList.add('active');
+      
+      const targetNavItem = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
+      if (targetNavItem) targetNavItem.classList.add('active');
+
+      // Close mobile sidebar on navigation
+      document.getElementById('sidebar').classList.remove('open');
+      
+      // Reset scroll position
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        switchTab(item.getAttribute('data-tab'));
+      });
+    });
+
+    // Mobile menu toggle logic
+    document.getElementById('menuToggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+
+    // =========================================================================
+    // PROGRESS TRACKING & LOCALSTORAGE
+    // =========================================================================
+    // List of roadmap tasks from the documents
+    const roadmapTasks = [
+      { id: "task1", phase: "Fase 1", title: "Fundamentos de Ley de Ohm", desc: "Aprender voltaje, corriente, resistencia y calcular a mano circuitos serie/paralelo." },
+      { id: "task2", phase: "Fase 1", title: "Entrenamiento de Multímetro", desc: "Aprender a medir caídas de voltaje en DC, resistencia de componentes y buscar cortos usando continuidad." },
+      { id: "task3", phase: "Fase 1", title: "Primeras 100 soldaduras de práctica", desc: "Adquirir placa SMD de entrenamiento y soldar conectores, resistencias y capacitores baratos." },
+      { id: "task4", phase: "Fase 1", title: "Lectura de Esquemáticos", desc: "Entender símbolos ANSI e IEC y descargar el esquemático de un Flight Controller real (e.g. Matek F405)." },
+      { id: "task5", phase: "Fase 2", title: "Anatomía de Sistemas UAV", desc: "Estudiar la función del Flight Controller (FC), Variadores de velocidad (ESCs), Motores brushless y baterías LiPo." },
+      { id: "task6", phase: "Fase 2", title: "Reparación de un ESC dañado", desc: "Diagnosticar reguladores quemados o FETs fundidos con multímetro y realizar desoldadura SMD." },
+      { id: "task7", phase: "Fase 2", title: "Ensamble Completo de Dron 5\"", desc: "Comprar frame, motores y pila. Soldar todo el mazo de cables y configurar Betaflight de inicio a fin." },
+      { id: "task8", phase: "Fase 3", title: "Simulación de Autopiloto en SITL", desc: "Instalar Mission Planner, flashear ArduPilot y definir misiones autónomas simuladas con waypoints." },
+      { id: "task9", phase: "Fase 3", title: "Programación en Python con pymavlink", desc: "Desarrollar un script simple en Python para conectarse al simulador MAVLink y leer telemetría en consola." },
+      { id: "task10", phase: "Fase 3", title: "Modernización y Blackbox", desc: "Instalar módulo GPS para failsafe de rescate, configurar ExpressLRS y analizar logs con Blackbox Explorer." }
+    ];
+
+    let userProgress = {};
+
+    function initProgressTracker() {
+      // Load from localStorage
+      const saved = localStorage.getItem('uav_progress');
+      if (saved) {
+        try {
+          userProgress = JSON.parse(saved);
+        } catch(e) {
+          userProgress = {};
+        }
+      }
+
+      // Draw the checkboxes in the Roadmap tab
+      const container = document.getElementById('roadmapListContainer');
+      container.innerHTML = '';
+      
+      roadmapTasks.forEach(task => {
+        const isChecked = userProgress[task.id] === true;
+        const itemHtml = `
+          <div class="roadmap-item ${isChecked ? 'checked' : ''}" id="item-${task.id}">
+            <div class="roadmap-checkbox-wrapper">
+              <div class="roadmap-checkbox" onclick="toggleTask('${task.id}')">
+                <i data-lucide="check"></i>
+              </div>
+            </div>
+            <div class="roadmap-body">
+              <span class="roadmap-meta">${task.phase}</span>
+              <h3 class="roadmap-title">${task.title}</h3>
+              <p class="roadmap-desc">${task.desc}</p>
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', itemHtml);
+      });
+      
+      lucide.createIcons();
+      updateGlobalProgressUI();
+    }
+
+    function toggleTask(taskId) {
+      userProgress[taskId] = !userProgress[taskId];
+      localStorage.setItem('uav_progress', JSON.stringify(userProgress));
+      
+      const element = document.getElementById(`item-${taskId}`);
+      if (userProgress[taskId]) {
+        element.classList.add('checked');
+      } else {
+        element.classList.remove('checked');
+      }
+      
+      updateGlobalProgressUI();
+    }
+
+    function updateGlobalProgressUI() {
+      const total = roadmapTasks.length;
+      let completed = 0;
+      
+      roadmapTasks.forEach(task => {
+        if (userProgress[task.id] === true) completed++;
+      });
+      
+      const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+      
+      // Update sidebar gauge
+      const circle = document.getElementById('globalProgressBar');
+      // circumference is 2 * pi * 45 = 282.74 (let's use 283)
+      const offset = 283 - (pct / 100) * 283;
+      circle.style.strokeDashoffset = offset;
+      
+      document.getElementById('globalProgressText').innerText = `${pct}%`;
+      document.getElementById('globalProgressDetails').innerText = `${completed} / ${total} hitos completados`;
+    }
+
+    // =========================================================================
+    // MODULE 1: OHM'S LAW SIMULATOR
+    // =========================================================================
+    const vSlider = document.getElementById('ohmSlider-V');
+    const rSlider = document.getElementById('ohmSlider-R');
+    const wireContainer = document.getElementById('wireContainer');
+
+    function updateOhmCalculation() {
+      const v = parseFloat(vSlider.value);
+      const r = parseFloat(rSlider.value);
+      const i = v / r; // Amps
+      
+      document.getElementById('ohmVals-V').innerText = `${v.toFixed(1)} V`;
+      document.getElementById('ohmVals-R').innerText = `${r} Ω`;
+      
+      const ma = i * 1000;
+      document.getElementById('ohmCalcResult').innerText = `${i.toFixed(3)} A (${ma.toFixed(0)} mA)`;
+
+      // Animate electrons inside container based on current
+      updateElectronFlow(i);
+    }
+
+    // Spawn electrons
+    const numElectrons = 15;
+    const electrons = [];
+    for (let j = 0; j < numElectrons; j++) {
+      const el = document.createElement('div');
+      el.className = 'electron';
+      wireContainer.appendChild(el);
+      electrons.push({
+        element: el,
+        pos: Math.random() * 100 // initial position in percent
+      });
+    }
+
+    let animationFrameId;
+    function updateElectronFlow(current) {
+      // Speed multiplier based on current
+      const baseSpeed = current * 5;
+      
+      function animate() {
+        electrons.forEach(elObj => {
+          elObj.pos += baseSpeed;
+          if (elObj.pos > 100) {
+            elObj.pos = 0;
+          }
+          elObj.element.style.left = `${elObj.pos}%`;
+          
+          // Width of electron changes slightly based on resistance (constriction)
+          const resistanceVal = parseFloat(rSlider.value);
+          const size = Math.max(4, 12 - (resistanceVal / 120));
+          elObj.element.style.width = `${size}px`;
+          elObj.element.style.height = `${size}px`;
+        });
+        animationFrameId = requestAnimationFrame(animate);
+      }
+      
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      animate();
+    }
+
+    vSlider.addEventListener('input', updateOhmCalculation);
+    rSlider.addEventListener('input', updateOhmCalculation);
+
+    // =========================================================================
+    // MODULE 2: MULTIMETER SIMULATOR
+    // =========================================================================
+    let multimeterDialState = 0; // 0: OFF, 1: VDC, 2: OHMS, 3: CONTINUITY
+    let isCircuitSwitchClosed = false;
+    let placedProbes = {
+      red: { label: 'N/A', x: 0, y: 0 },
+      black: { label: 'GND', x: 120, y: 150 } // GND Node default
+    };
+
+    function rotateMultimeterDial() {
+      multimeterDialState = (multimeterDialState + 1) % 4;
+      const knob = document.getElementById('multimeterKnob');
+      const lcd = document.getElementById('multimeterDisplay');
+      const statusText = document.getElementById('multimeterStatusText');
+      
+      // Visual rotation
+      const angles = [0, 65, 180, 245];
+      knob.style.transform = `rotate(${angles[multimeterDialState]}deg)`;
+      
+      if (multimeterDialState === 0) {
+        lcd.innerText = "";
+        statusText.innerText = "OFF";
+      } else if (multimeterDialState === 1) {
+        statusText.innerText = "DC V";
+        calculateMeasurement();
+      } else if (multimeterDialState === 2) {
+        statusText.innerText = "Ω";
+        calculateMeasurement();
+      } else if (multimeterDialState === 3) {
+        statusText.innerText = "CONT";
+        calculateMeasurement();
+      }
+    }
+
+    function toggleSimSwitch() {
+      isCircuitSwitchClosed = !isCircuitSwitchClosed;
+      const btn = document.getElementById('btnToggleSwitch');
+      const lever = document.getElementById('switchLever');
+      
+      if (isCircuitSwitchClosed) {
+        btn.innerHTML = `<i data-lucide="toggle-right"></i> Abrir Interruptor`;
+        btn.classList.add('active');
+        lever.setAttribute('x2', '145');
+        lever.setAttribute('y2', '50'); // flat
+      } else {
+        btn.innerHTML = `<i data-lucide="toggle-left"></i> Cerrar Interruptor`;
+        btn.classList.remove('active');
+        lever.setAttribute('x2', '145');
+        lever.setAttribute('y2', '30'); // angled open
+      }
+      lucide.createIcons();
+      calculateMeasurement();
+    }
+
+    let activeProbeColor = 'red';
+    let audioCtx = null;
+
+    function playBeepSound() {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(2500, audioCtx.currentTime); // 2.5kHz
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.12); // 120ms
+      } catch (e) {
+        console.warn('AudioContext not supported or blocked', e);
+      }
+    }
+
+    function setActiveProbe(color) {
+      activeProbeColor = color;
+      const btnRed = document.getElementById('btnActiveProbeRed');
+      const btnBlack = document.getElementById('btnActiveProbeBlack');
+      
+      if (!btnRed || !btnBlack) return;
+      
+      if (color === 'red') {
+        btnRed.classList.add('active');
+        btnRed.style.borderColor = 'var(--accent-red)';
+        btnRed.style.color = 'var(--text-primary)';
+        
+        btnBlack.classList.remove('active');
+        btnBlack.style.borderColor = 'var(--border)';
+        btnBlack.style.color = 'var(--text-secondary)';
+      } else {
+        btnBlack.classList.add('active');
+        btnBlack.style.borderColor = '#ffffff';
+        btnBlack.style.color = '#ffffff';
+        
+        btnRed.classList.remove('active');
+        btnRed.style.borderColor = 'var(--border)';
+        btnRed.style.color = 'var(--text-secondary)';
+      }
+    }
+
+    function selectNodeForActiveProbe(nodeLabel, x, y) {
+      placeProbe(activeProbeColor, nodeLabel, x, y);
+      
+      // Auto-toggle
+      if (activeProbeColor === 'red') {
+        setActiveProbe('black');
+      } else {
+        setActiveProbe('red');
+      }
+    }
+
+    // Expose to window context
+    window.setActiveProbe = setActiveProbe;
+    window.selectNodeForActiveProbe = selectNodeForActiveProbe;
+
+    function placeProbe(color, nodeLabel, x, y) {
+      placedProbes[color] = { label: nodeLabel, x: x, y: y };
+      
+      // Update screen label
+      if (color === 'red') {
+        document.getElementById('activeRedNode').innerText = nodeLabel;
+        const marker = document.getElementById('probeRedMarker');
+        marker.setAttribute('transform', `translate(${x}, ${y})`);
+        marker.setAttribute('opacity', '1');
+      } else {
+        document.getElementById('activeBlackNode').innerText = nodeLabel;
+        const marker = document.getElementById('probeBlackMarker');
+        marker.setAttribute('transform', `translate(${x}, ${y})`);
+        marker.setAttribute('opacity', '1');
+      }
+      
+      calculateMeasurement();
+    }
+
+    function calculateMeasurement() {
+      const lcd = document.getElementById('multimeterDisplay');
+      const beepVisual = document.getElementById('beepVisual');
+      beepVisual.classList.remove('active');
+      
+      if (multimeterDialState === 0) {
+        lcd.innerText = "";
+        return;
+      }
+      
+      const red = placedProbes.red.label;
+      const black = placedProbes.black.label;
+      
+      if (red === 'N/A' || black === 'N/A') {
+        lcd.innerText = "0.00";
+        return;
+      }
+
+      // Voltages at nodes relative to GND (TP4/GND node)
+      let vRed = 0;
+      let vBlack = 0;
+
+      // Calculate potentials based on switch state
+      if (isCircuitSwitchClosed) {
+        // Closed: Battery connects to resistor, LED is active
+        // LED forward voltage is roughly 2.0V
+        // Battery is 9.0V
+        // Node potentials vs GND:
+        // TP1 (BAT+): 9V
+        // TP2 (V_SW): 9V (closed switch)
+        // TP3 (R_OUT): 2.0V (drop across resistor from 9V to 2V, 7V drop across 1kΩ)
+        // GND (TP4): 0V
+        if (red === 'TP1') vRed = 9.0;
+        if (red === 'TP2') vRed = 9.0;
+        if (red === 'TP3') vRed = 2.0;
+        if (red === 'GND') vRed = 0.0;
+        
+        if (black === 'TP1') vBlack = 9.0;
+        if (black === 'TP2') vBlack = 9.0;
+        if (black === 'TP3') vBlack = 2.0;
+        if (black === 'GND') vBlack = 0.0;
+      } else {
+        // Open switch: No current flows. LED voltage drops to 0.
+        // Node potentials vs GND:
+        // TP1 (BAT+): 9V
+        // TP2 (V_SW): 0V (disconnected)
+        // TP3 (R_OUT): 0V (no current)
+        // GND (TP4): 0V
+        if (red === 'TP1') vRed = 9.0;
+        if (red === 'TP2') vRed = 0.0;
+        if (red === 'TP3') vRed = 0.0;
+        if (red === 'GND') vRed = 0.0;
+
+        if (black === 'TP1') vBlack = 9.0;
+        if (black === 'TP2') vBlack = 0.0;
+        if (black === 'TP3') vBlack = 0.0;
+        if (black === 'GND') vBlack = 0.0;
+      }
+
+      const voltageDifference = vRed - vBlack;
+
+      // Mode logic
+      if (multimeterDialState === 1) { // Voltage DC
+        lcd.innerText = `${voltageDifference.toFixed(2)} V`;
+      } 
+      else if (multimeterDialState === 2) { // Resistance Mode
+        // Circuit must be unenergized or it displays error
+        // Let's assume user measures resistances
+        // (For simplicity we assume they measure components directly)
+        
+        // R1: between TP2 and TP3 is 1kΩ (1000 ohms)
+        if ((red === 'TP2' && black === 'TP3') || (red === 'TP3' && black === 'TP2')) {
+          lcd.innerText = "1000 Ω";
+        } else if ((red === 'TP1' && black === 'TP2') || (red === 'TP2' && black === 'TP1')) {
+          // Across switch
+          if (isCircuitSwitchClosed) {
+            lcd.innerText = "0.2 Ω";
+          } else {
+            lcd.innerText = "O.L"; // Open Loop
+          }
+        } else {
+          lcd.innerText = "O.L";
+        }
+      } 
+      else if (multimeterDialState === 3) { // Continuity
+        // Pushes a small test current, beeps if resistance is under ~50 ohms
+        if ((red === 'TP1' && black === 'TP2') || (red === 'TP2' && black === 'TP1')) {
+          // Across switch
+          if (isCircuitSwitchClosed) {
+            lcd.innerText = "0.2 Ω";
+            beepVisual.classList.add('active');
+            playBeepSound();
+          } else {
+            lcd.innerText = "O.L";
+          }
+        } else if (red === black) {
+          // Same point
+          lcd.innerText = "0.0 Ω";
+          beepVisual.classList.add('active');
+          playBeepSound();
+        } else {
+          lcd.innerText = "O.L";
+        }
+      }
+    }
+
+    // Init markers on start
+    placeProbe('black', 'GND', 120, 150);
+
+    // =========================================================================
+    // MODULE 3: COMPONENT ENCYCLOPEDIA
+    // =========================================================================
+    const compData = {
+      resistencia: {
+        title: "La Resistencia (R)",
+        type: "Básico / Pasivo",
+        color: "var(--accent-amber)",
+        desc: "Limita o regula el flujo de corriente en un circuito y produce caídas controladas de tensión. Su valor se mide en Ohmios (Ω).",
+        useCase: "En drones, se usan resistencias 'pull-up' en los pines de sensores I2C para estabilizar las señales de comunicación digital, y resistencias shunt de valores bajísimos (e.g. 0.001 Ω) en el PDB para censar el consumo total de corriente (Telemetría de Amperios).",
+        testProcedure: "Pon el multímetro en modo Ohmios (Ω). Coloca una sonda a cada extremo del resistor (sin que el circuito tenga energía). Compara la lectura con las bandas de colores o el código impreso en la superficie SMD.",
+        symbolSvg: `<svg viewBox="0 0 60 40"><path d="M 5 20 L 15 20 L 18 12 L 24 28 L 30 12 L 36 28 L 42 12 L 45 20 L 55 20" fill="none" stroke="var(--accent-amber)" stroke-width="2" /></svg>`
+      },
+      capacitor: {
+        title: "El Capacitor (Condensador - C)",
+        type: "Básico / Pasivo",
+        color: "var(--accent-cyan)",
+        desc: "Almacena energía en un campo eléctrico y bloquea la corriente continua mientras deja pasar las señales alternas de ruido de alta frecuencia.",
+        useCase: "En drones FPV, se suelda un capacitor electrolítico grande (e.g. 1000µF 35V Low ESR) directamente a las terminales de alimentación XT60 de los ESCs. Esto actúa como amortiguador para absolver el ruido eléctrico de conmutación del motor brushless, evitando que se raye o distorsione la señal de la cámara de video.",
+        testProcedure: "Pon el multímetro en modo Capacitancia (F). Toca las patillas (respetando polaridad en electrolíticos). El display subirá mientras carga y te dará el valor en microfaradios. Para ver si está quemado o en corto, usa continuidad: si pita, el dieléctrico interno falló.",
+        symbolSvg: `<svg viewBox="0 0 60 40"><path d="M 5 20 L 25 20 M 35 20 L 55 20 M 25 8 L 25 32 M 35 8 L 35 32" fill="none" stroke="var(--accent-cyan)" stroke-width="2" /></svg>`
+      },
+      diodo: {
+        title: "El Diodo y LED (D)",
+        type: "Básico / Semiconductor",
+        color: "var(--accent-green)",
+        desc: "Permite el paso de la corriente en un solo sentido (polarización directa) y lo bloquea en el opuesto (polarización inversa). Los LEDs emiten fotones de luz al conducir.",
+        useCase: "Se usan diodos rectificadores (Schottky) para proteger el microcontrolador del dron contra inversiones accidentales de polaridad en el puerto USB, o LEDs integrados para indicar el estado del GPS (fijación de satélites) y advertencias de batería baja.",
+        testProcedure: "Pon el multímetro en Modo Diodo (símbolo de flecha con barra). Conecta la punta roja al ánodo (+) y la negra al cátodo (-). Deberás medir una caída de tensión típica de 0.5V a 0.7V. Invierte las puntas: debe marcar O.L (sin conducción).",
+        symbolSvg: `<svg viewBox="0 0 60 40"><path d="M 5 20 L 20 20 M 35 20 L 55 20 M 20 10 L 20 30 M 30 10 L 30 30 M 20 20 L 30 10 L 30 30 Z" fill="none" stroke="var(--accent-green)" stroke-width="2" /></svg>`
+      },
+      mosfet: {
+        title: "El MOSFET (Transistor de Potencia)",
+        type: "Avanzado / Activo",
+        color: "var(--accent-red)",
+        desc: "Interruptor electrónico ultrarrápido controlado por voltaje. Al aplicar tensión en su pin de compuerta (Gate), permite el paso de enormes corrientes entre Drenador (Drain) y Fuente (Source).",
+        useCase: "Son las piezas fundamentales en los ESCs de potencia. Cada motor brushless es controlado por 6 MOSFETs agrupados en 3 puentes H que conmutan corrientes de hasta 60A miles de veces por segundo para excitar las bobinas electromagnéticas.",
+        testProcedure: "Usa el modo Diodo. Mide entre Drenador (pin central/pestaña trasera) y Fuente (pin derecho). Deberás medir el diodo de protección interna (~0.5V). Al tocar momentáneamente Gate con la punta roja, el canal se 'activa' y marcará continuidad entre Drain y Source.",
+        symbolSvg: `<svg viewBox="0 0 60 40"><path d="M 5 20 L 20 20 M 20 10 L 20 30 M 24 10 L 24 18 M 24 22 L 24 30 M 24 15 L 35 15 L 35 20 M 24 25 L 35 25 L 35 20 M 35 20 L 55 20" fill="none" stroke="var(--accent-red)" stroke-width="2" /></svg>`
+      },
+      regulador: {
+        title: "Regulador Lineal (LDO)",
+        type: "Avanzado / Integrado",
+        color: "var(--accent-cyan)",
+        desc: "Dispositivo integrado que toma una tensión de entrada variable y ruidosa y entrega un voltaje de salida perfectamente regulado y limpio (típicamente 5V o 3.3V) a costa de disipar la diferencia como calor.",
+        useCase: "En el Flight Controller, se usa un LDO para tomar los 5V de entrada de la placa de distribución y reducirlos a 3.3V ultraestables que alimentan exclusivamente los giroscopios y el procesador STM32, evitando interferencias de potencia.",
+        testProcedure: "Con el circuito energizado, pon el multímetro en Voltaje DC. Mide entre el pin de salida (OUT) y GND. Debe dar exactamente el voltaje especificado (e.g. 3.30V ±0.05V). Si marca el voltaje de entrada, el chip está cortocircuitado y dañará los sensores.",
+        symbolSvg: `<svg viewBox="0 0 60 40"><rect x="15" y="10" width="30" height="20" fill="none" stroke="var(--accent-cyan)" stroke-width="2" /><path d="M 5 20 L 15 20 M 45 20 L 55 20 M 30 30 L 30 38" fill="none" stroke="var(--accent-cyan)" stroke-width="2" /></svg>`
+      },
+      esc: {
+        title: "FETs del Variador (ESC)",
+        type: "Componente UAV",
+        color: "var(--accent-amber)",
+        desc: "Módulo integrado en los ESCs modernos compuesto por un driver de compuerta (gate driver) y transistores MOSFET que decodifican la señal DSHOT del procesador de vuelo para girar el motor brushless.",
+        useCase: "Se encarga del posicionamiento angular del rotor. En caso de impacto o si el motor se bloquea con pasto, el motor exige corriente máxima hasta fundir la estructura interna de estos MOSFETs, dejando el motor inservible o echando humo.",
+        testProcedure: "Coloca el multímetro en resistencia o diodo. Mide la impedancia entre las terminales de fase de salida del motor (los 3 cables) y los terminales de alimentación positivo/negativo de la batería. Si la resistencia está cercana a 0 ohms, ese canal del ESC está quemado.",
+        symbolSvg: `<svg viewBox="0 0 60 40"><circle cx="30" cy="20" r="10" fill="none" stroke="var(--accent-amber)" stroke-width="2" /><path d="M 5 20 L 20 20 M 40 20 L 55 20" fill="none" stroke="var(--accent-amber)" stroke-width="2" /></svg>`
+      }
+    };
+
+    function showComponent(compId) {
+      document.querySelectorAll('.comp-thumbnail').forEach(el => {
+        el.classList.remove('active');
+        if (el.getAttribute('onclick') && el.getAttribute('onclick').includes(`'${compId}'`)) {
+          el.classList.add('active');
+        }
+      });
+
+      const data = compData[compId];
+      const panel = document.getElementById('compDetailPanel');
+      
+      panel.innerHTML = `
+        <div class="comp-detail-header">
+          <div class="comp-detail-title">${data.title}</div>
+          <span class="comp-detail-type" style="background-color: ${data.color}25; color: ${data.color}; border: 1px solid ${data.color}50">${data.type}</span>
+        </div>
+        
+        <div class="comp-desc-meta">
+          <div>
+            <p><strong>Descripción:</strong> ${data.desc}</p>
+            <p><strong>Integración en UAV:</strong> ${data.useCase}</p>
+          </div>
+          <div class="comp-symbol-box">
+            ${data.symbolSvg}
+            <span>Símbolo Esquemático</span>
+          </div>
+        </div>
+        
+        <div class="how-to-test">
+          <div class="how-to-test-title">
+            <i data-lucide="shield-alert"></i> Metodología de Diagnóstico en Laboratorio
+          </div>
+          <p style="margin: 0; font-size: 0.85rem; color: var(--text-primary);">${data.testProcedure}</p>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // Default load
+    showComponent('resistencia');
+
+    function decodeSMDResistor() {
+      const code = document.getElementById('smdCodeInput').value.trim();
+      const result = document.getElementById('smdResultText');
+      
+      if (code.length < 3 || isNaN(code)) {
+        result.innerText = "Código Inválido";
+        result.style.color = "var(--accent-red)";
+        return;
+      }
+      
+      const digits = code.substring(0, code.length - 1);
+      const multiplier = parseInt(code.charAt(code.length - 1));
+      
+      const val = parseInt(digits) * Math.pow(10, multiplier);
+      
+      let formattedVal = "";
+      if (val >= 1000000) {
+        formattedVal = `${(val / 1000000).toFixed(1)} MΩ`;
+      } else if (val >= 1000) {
+        formattedVal = `${(val / 1000).toFixed(1)} kΩ`;
+      } else {
+        formattedVal = `${val} Ω`;
+      }
+      
+      result.innerText = formattedVal;
+      result.style.color = "var(--accent-cyan)";
+    }
+
+    // =========================================================================
+    // MODULE 4: SOLDERING INTERACTIVE GUIDE & GALLERY
+    // =========================================================================
+    let currentSolderStep = 1;
+    const solderSteps = [
+      {
+        desc: "<strong>Paso 1: Precalentar.</strong> Coloca la punta del soldador (ajustado a unos 350°C) de modo que toque simultáneamente el pad de cobre y el pin metálico del componente por 1-2 segundos.",
+        ironTouch: true,
+        ironHot: true,
+        wireTouch: false,
+        liquidFlow: false
+      },
+      {
+        desc: "<strong>Paso 2: Aplicar Estaño.</strong> Introduce el alambre de estaño (aleación 63/37 preferiblemente con núcleo de resina) en el punto de contacto opuesto al cautín, no directamente a la punta. Deja fundir la cantidad adecuada.",
+        ironTouch: true,
+        ironHot: true,
+        wireTouch: true,
+        liquidFlow: true
+      },
+      {
+        desc: "<strong>Paso 3: Retirar el Estaño.</strong> Retira primero el alambre de estaño para evitar que se quede pegado al enfriarse, pero mantén el soldador apoyado una fracción de segundo para asegurar la humectación en toda la superficie.",
+        ironTouch: true,
+        ironHot: true,
+        wireTouch: false,
+        liquidFlow: true
+      },
+      {
+        desc: "<strong>Paso 4: Dejar Enfriar.</strong> Retira el soldador. No muevas la pieza ni soples la junta mientras se solidifica (toma 2-3 segundos). Una buena soldadura debe ser brillante, cóncava y cubrir el pad por completo.",
+        ironTouch: false,
+        ironHot: false,
+        wireTouch: false,
+        liquidFlow: true // solid solidified shape now
+      }
+    ];
+
+    function navigateSolderStep(dir) {
+      currentSolderStep += dir;
+      
+      document.getElementById('solderPrevBtn').disabled = currentSolderStep === 1;
+      document.getElementById('solderNextBtn').disabled = currentSolderStep === 4;
+      
+      // Update dots
+      document.querySelectorAll('.solder-dot').forEach(el => el.classList.remove('active'));
+      document.getElementById(`sdot-${currentSolderStep}`).classList.add('active');
+      
+      const step = solderSteps[currentSolderStep - 1];
+      document.getElementById('solderStepDesc').innerHTML = step.desc;
+
+      // Animate SVG components
+      const iron = document.getElementById('solderIron');
+      const tip = document.getElementById('solderIronTip');
+      const wire = document.getElementById('solderWire');
+      const liquid = document.getElementById('solderLiquid');
+
+      if (step.ironTouch) {
+        iron.classList.add('touch');
+      } else {
+        iron.classList.remove('touch');
+      }
+
+      if (step.ironHot) {
+        tip.classList.add('hot');
+      } else {
+        tip.classList.remove('hot');
+      }
+
+      if (step.wireTouch) {
+        wire.classList.add('touch');
+      } else {
+        wire.classList.remove('touch');
+      }
+
+      if (step.liquidFlow) {
+        liquid.classList.add('flow');
+      } else {
+        liquid.classList.remove('flow');
+      }
+    }
+
+    const solderGalleryDetails = {
+      perfect: "<strong>Concavidad Ideal (Junta Brillante):</strong> El estaño fluyó perfectamente cubriendo tanto el pad de la pista como el pin del componente en forma de cono cóncavo. Indica calor correcto y uso de flux. Máxima resistencia a vibraciones.",
+      cold: "<strong>Junta Fría (Soldadura Opaca/Agrietada):</strong> Se produce si el soldador no calentó lo suficiente la pieza o si ésta se movió mientras se enfriaba. Tiene pésima conductividad mecánica y eléctrica. Se repara aplicando flux y recalentando con el cautín.",
+      insufficient: "<strong>Estaño Insuficiente:</strong> La junta carece de soporte mecánico. No envolvió el pin del componente. Se soluciona aplicando un aporte extra de estaño con la punta del cautín caliente.",
+      bridge: "<strong>Puente de Estaño (Cortocircuito):</strong> Ocurre al aplicar estaño en exceso, uniendo eléctricamente dos pads independientes. En un regulador o ESC, esto provocará una explosión al conectar la batería. Se retira usando malla desoldadora o extractor."
+    };
+
+    function selectSolderGallery(type) {
+      document.getElementById('solderGalleryDetail').innerHTML = solderGalleryDetails[type];
+    }
+
+    // =========================================================================
+    // MODULE 5: PROTOBOARD DRAW & HIGHLIGHTS
+    // =========================================================================
+    function drawProtoboardInteractive() {
+      const svg = document.getElementById('protoBoardSvg');
+      
+      // We will draw the pins programmatically to avoid heavy HTML.
+      // Columns: 30 columns.
+      // Rails: Top (+ and -), Bottom (+ and -).
+      // Main area: 5 holes on top (A, B, C, D, E) and 5 holes on bottom (F, G, H, I, J) per column.
+      
+      // Draw top bus holes (+)
+      let rowHtml = "";
+      for (let c = 1; c <= 30; c++) {
+        const x = 20 + (c * 10);
+        // Top positive bus
+        rowHtml += `<circle cx="${x}" cy="12" r="2.5" class="proto-hole" data-connection="top-pos" />`;
+        // Top negative bus
+        rowHtml += `<circle cx="${x}" cy="22" r="2.5" class="proto-hole" data-connection="top-neg" />`;
+        
+        // Bottom positive bus
+        rowHtml += `<circle cx="${x}" cy="108" r="2.5" class="proto-hole" data-connection="bot-pos" />`;
+        // Bottom negative bus
+        rowHtml += `<circle cx="${x}" cy="118" r="2.5" class="proto-hole" data-connection="bot-neg" />`;
+      }
+      
+      // Draw terminal columns
+      const rowLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+      for (let c = 1; c <= 30; c++) {
+        const x = 20 + (c * 10);
+        
+        // Top half (A to E) -> Connected vertically
+        for (let r = 0; r < 5; r++) {
+          const y = 32 + (r * 5);
+          rowHtml += `<circle cx="${x}" cy="${y}" r="2.2" class="proto-hole" data-connection="col-top-${c}" />`;
+        }
+        
+        // Bottom half (F to J) -> Connected vertically
+        for (let r = 5; r < 10; r++) {
+          const y = 47 + (r * 5); // offsets down for Central divider ridge
+          rowHtml += `<circle cx="${x}" cy="${y}" r="2.2" class="proto-hole" data-connection="col-bot-${c}" />`;
+        }
+      }
+      
+      svg.insertAdjacentHTML('beforeend', rowHtml);
+      
+      // Add event listeners for hover highlight
+      document.querySelectorAll('.proto-hole').forEach(hole => {
+        hole.addEventListener('mouseenter', () => {
+          const conn = hole.getAttribute('data-connection');
+          document.querySelectorAll(`.proto-hole[data-connection="${conn}"]`).forEach(connectedHole => {
+            connectedHole.classList.add('connected');
+          });
+        });
+        
+        hole.addEventListener('mouseleave', () => {
+          const conn = hole.getAttribute('data-connection');
+          document.querySelectorAll(`.proto-hole[data-connection="${conn}"]`).forEach(connectedHole => {
+            connectedHole.classList.remove('connected');
+          });
+        });
+      });
+    }
+
+    // =========================================================================
+    // MODULE 6: MICROCONTROLLERS PINOUT EXPLORER
+    // =========================================================================
+    const mcuData = {
+      arduino: {
+        svg: `
+          <svg viewBox="0 0 200 160" class="mcu-board">
+            <!-- Board body -->
+            <rect x="10" y="10" width="180" height="140" fill="#005b82" stroke="#003d59" stroke-width="2" rx="6" />
+            <!-- ATmega chip -->
+            <rect x="70" y="55" width="80" height="20" fill="#202020" rx="1" />
+            <text x="110" y="68" fill="#a0a0a0" font-size="8" font-family="monospace" text-anchor="middle">ATmega328P</text>
+            <!-- Crystal oscillator -->
+            <rect x="40" y="45" width="12" height="6" fill="#cccccc" rx="1" />
+            <!-- USB Port -->
+            <rect x="2" y="20" width="30" height="24" fill="#cbd5e0" rx="2" />
+            <!-- Power Jack -->
+            <rect x="2" y="110" width="36" height="28" fill="#1a1a1a" rx="2" />
+            
+            <!-- Headers Top (Digital) -->
+            <rect x="50" y="14" width="130" height="8" fill="#2b2b2b" />
+            <!-- Headers Bottom (Power/Analog) -->
+            <rect x="50" y="138" width="120" height="8" fill="#2b2b2b" />
+            
+            <!-- Hoverable Pins -->
+            <!-- D13 (SPI SCK) -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', 'D13')" onmouseleave="resetPin()">
+              <circle cx="172" cy="18" r="4" class="pin-glow p-comm" id="pin-ard-D13" />
+              <circle cx="172" cy="18" r="2.5" fill="#333" />
+            </g>
+            <!-- D11 (SPI MOSI / PWM) -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', 'D11')" onmouseleave="resetPin()">
+              <circle cx="152" cy="18" r="4" class="pin-glow p-pwm" id="pin-ard-D11" />
+              <circle cx="152" cy="18" r="2.5" fill="#333" />
+            </g>
+            <!-- D9 (PWM) -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', 'D9')" onmouseleave="resetPin()">
+              <circle cx="132" cy="18" r="4" class="pin-glow p-pwm" id="pin-ard-D9" />
+              <circle cx="132" cy="18" r="2.5" fill="#333" />
+            </g>
+            <!-- D3 (PWM / Interrupt) -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', 'D3')" onmouseleave="resetPin()">
+              <circle cx="92" cy="18" r="4" class="pin-glow p-pwm" id="pin-ard-D3" />
+              <circle cx="92" cy="18" r="2.5" fill="#333" />
+            </g>
+            <!-- TX / D1 -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', 'D1')" onmouseleave="resetPin()">
+              <circle cx="72" cy="18" r="4" class="pin-glow p-comm" id="pin-ard-D1" />
+              <circle cx="72" cy="18" r="2.5" fill="#333" />
+            </g>
+            
+            <!-- Power 5V (Bottom) -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', '5V')" onmouseleave="resetPin()">
+              <circle cx="82" cy="142" r="4" class="pin-glow p-power" id="pin-ard-5V" />
+              <circle cx="82" cy="142" r="2.5" fill="#333" />
+            </g>
+            <!-- GND (Bottom) -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', 'GND')" onmouseleave="resetPin()">
+              <circle cx="102" cy="142" r="4" class="pin-glow p-gnd" id="pin-ard-GND" />
+              <circle cx="102" cy="142" r="2.5" fill="#333" />
+            </g>
+            <!-- A0 (Analog Input) -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', 'A0')" onmouseleave="resetPin()">
+              <circle cx="122" cy="142" r="4" class="pin-glow p-adc" id="pin-ard-A0" />
+              <circle cx="122" cy="142" r="2.5" fill="#333" />
+            </g>
+            <!-- A4 (I2C SDA) -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', 'A4')" onmouseleave="resetPin()">
+              <circle cx="152" cy="142" r="4" class="pin-glow p-comm" id="pin-ard-A4" />
+              <circle cx="152" cy="142" r="2.5" fill="#333" />
+            </g>
+            
+            <text x="110" y="100" fill="#003d59" font-size="12" font-family="sans-serif" font-weight="bold" opacity="0.3" text-anchor="middle">ARDUINO UNO</text>
+          </svg>
+        `,
+        pins: {
+          D13: { name: "Pin Digital 13 (SCK)", desc: "Pin digital estándar. En bus SPI actúa como Serial Clock (SCK), dictando el ritmo de transmisión de datos hacia periféricos de alta velocidad (como la ranura de tarjeta SD de caja negra en el FC)." },
+          D11: { name: "Pin Digital 11 (MOSI / PWM)", desc: "Soporta salida analógica simulada por modulación de ancho de pulso (PWM) para modular velocidad de variadores. En buses SPI funciona como Master Out Slave In (MOSI)." },
+          D9: { name: "Pin Digital 9 (PWM)", desc: "Salida PWM pura de 8 bits. Altamente empleado en drones para controlar la señal de posición angular de servomotores en frames gimbal de cámara o aletas de planeadores UAV." },
+          D3: { name: "Pin Digital 3 (PWM / INT1)", desc: "Soporta interrupciones externas por hardware. Esto permite al procesador detener inmediatamente sus cálculos para atender una señal de alta prioridad, como el eco de un sensor ultrasónico de proximidad." },
+          D1: { name: "Pin Digital 1 (TX - UART)", desc: "Pin de transmisión serie (Transmitter). Se utiliza para volcar datos de telemetría a la computadora de control en tierra a través del chip convertidor USB-a-Serie integrado." },
+          "5V": { name: "Pin de Alimentación 5V", desc: "Entrega voltaje regulado a 5.0 Voltios directo desde la fuente USB o el regulador LDO interno. Se usa para alimentar sensores primarios y módulos receptores de radio." },
+          GND: { name: "Tierra (Ground)", desc: "El punto de referencia común de 0 Voltios de todo el sistema eléctrico. Toda corriente que sale de los pines de salida debe retornar obligatoriamente a GND." },
+          A0: { name: "Pin Analógico 0 (ADC)", desc: "Puerto de entrada acoplado a un Convertidor Analógico-Digital (ADC) de 10 bits. Convierte voltajes analógicos continuos (0V a 5V) a números enteros (0 a 1023). Útil para sensores de temperatura analógicos." },
+          A4: { name: "Pin Analógico 4 (SDA - I2C)", desc: "Actúa como bus de datos serial (Serial Data) del protocolo I2C. Permite conectar sensores barométricos o magnetómetros en paralelo compartiendo una sola línea." }
+        }
+      },
+      esp32: {
+        svg: `
+          <svg viewBox="0 0 200 160" class="mcu-board">
+            <!-- Board body -->
+            <rect x="15" y="10" width="170" height="140" fill="#1a1a1a" stroke="#333" stroke-width="2" rx="4" />
+            <!-- ESP32 Module chip -->
+            <rect x="75" y="15" width="50" height="40" fill="#2d3748" rx="2" />
+            <!-- Metal shield lines -->
+            <rect x="80" y="20" width="40" height="30" fill="none" stroke="#a0aec0" stroke-width="1.5" />
+            <text x="100" y="38" fill="white" font-size="7" font-family="monospace" text-anchor="middle">ESP32-WROOM</text>
+            <!-- Antenna pattern -->
+            <path d="M 80 14 L 85 14 L 85 18 L 90 18 L 90 14 L 95 14" fill="none" stroke="#d4af37" stroke-width="2" />
+            
+            <!-- Headers Left -->
+            <rect x="25" y="40" width="8" height="100" fill="#2b2b2b" />
+            <!-- Headers Right -->
+            <rect x="167" y="40" width="8" height="100" fill="#2b2b2b" />
+            
+            <!-- Pins Left -->
+            <!-- 3V3 -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('esp32', '3V3')" onmouseleave="resetPin()">
+              <circle cx="29" cy="46" r="4" class="pin-glow p-power" id="pin-esp-3V3" />
+              <circle cx="29" cy="46" r="2.5" fill="#444" />
+            </g>
+            <!-- GPIO34 (ADC) -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('esp32', 'G34')" onmouseleave="resetPin()">
+              <circle cx="29" cy="66" r="4" class="pin-glow p-adc" id="pin-esp-G34" />
+              <circle cx="29" cy="66" r="2.5" fill="#444" />
+            </g>
+            <!-- GPIO21 (I2C SDA) -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('esp32', 'G21')" onmouseleave="resetPin()">
+              <circle cx="29" cy="86" r="4" class="pin-glow p-comm" id="pin-esp-G21" />
+              <circle cx="29" cy="86" r="2.5" fill="#444" />
+            </g>
+            <!-- GND -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('esp32', 'GND1')" onmouseleave="resetPin()">
+              <circle cx="29" cy="126" r="4" class="pin-glow p-gnd" id="pin-esp-GND1" />
+              <circle cx="29" cy="126" r="2.5" fill="#444" />
+            </g>
+
+            <!-- Pins Right -->
+            <!-- 5V / VIN -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('esp32', '5V')" onmouseleave="resetPin()">
+              <circle cx="171" cy="46" r="4" class="pin-glow p-power" id="pin-esp-5V" />
+              <circle cx="171" cy="46" r="2.5" fill="#444" />
+            </g>
+            <!-- GPIO2 (LED / PWM) -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('esp32', 'G2')" onmouseleave="resetPin()">
+              <circle cx="171" cy="66" r="4" class="pin-glow p-pwm" id="pin-esp-G2" />
+              <circle cx="171" cy="66" r="2.5" fill="#444" />
+            </g>
+            <!-- GPIO22 (I2C SCL) -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('esp32', 'G22')" onmouseleave="resetPin()">
+              <circle cx="171" cy="86" r="4" class="pin-glow p-comm" id="pin-esp-G22" />
+              <circle cx="171" cy="86" r="2.5" fill="#444" />
+            </g>
+            <!-- TX2 (UART2) -->
+            <g class="mcu-pin-hoverable" onmouseenter="showPin('esp32', 'TX2')" onmouseleave="resetPin()">
+              <circle cx="171" cy="106" r="4" class="pin-glow p-comm" id="pin-esp-TX2" />
+              <circle cx="171" cy="106" r="2.5" fill="#444" />
+            </g>
+            
+            <text x="100" y="120" fill="#a0aec0" font-size="10" font-family="sans-serif" font-weight="bold" opacity="0.1" text-anchor="middle">ESP32 DEVKIT</text>
+          </svg>
+        `,
+        pins: {
+          "3V3": { name: "Pin de Alimentación 3.3V", desc: "Salida del regulador LDO integrado en la placa. Suministra un voltaje limpio de 3.3V necesario para alimentar los chips lógicos de baja energía y el transceptor Wi-Fi/Bluetooth." },
+          G34: { name: "GPIO 34 (Entrada Analógica - ADC)", desc: "Pin acoplado al ADC de 12 bits de alta resolución del ESP32. Permite leer voltajes analógicos en rangos de 0 a 3.3V, ideal para el divisor de tensión que monitorea el voltaje total de la celda de la batería del UAV." },
+          G21: { name: "GPIO 21 (I2C SDA)", desc: "Línea de datos serie (SDA) por defecto del hardware I2C en el ESP32. Se puede remapear por software a casi cualquier pin GPIO, una gran flexibilidad para el diseño de PCBs de drones." },
+          GND1: { name: "Tierra (Ground)", desc: "Retorno eléctrico y plano de referencia de masa común para todos los circuitos lógicos integrados." },
+          "5V": { name: "Voltaje de Entrada / Salida 5V", desc: "Conectado directamente al conector Micro-USB. Si está alimentado por batería, este pin recibe los 5V estables regulados por el BEC de potencia del dron." },
+          G2: { name: "GPIO 2 (LED Interno / PWM)", desc: "Pin digital conectado al LED azul indicador de estado integrado. Soporta salidas PWM de alta resolución para la modulación directa de actuadores o servos." },
+          G22: { name: "GPIO 22 (I2C SCL)", desc: "Línea de reloj serie (SCL) del bus I2C. Proporciona los pulsos de sincronización para leer magnetómetros o giroscopios secundarios." },
+          TX2: { name: "GPIO 17 (TX2 - UART2)", desc: "Pin de transmisión serie del puerto UART número 2. En drones, se utiliza para entablar comunicación directa con el receptor ExpressLRS o el canal de telemetría del controlador de Mission Planner." }
+        }
+      }
+    };
+
+    function switchMCU(mcuId) {
+      document.getElementById('btnSelectArduino').classList.remove('active');
+      document.getElementById('btnSelectESP32').classList.remove('active');
+      
+      if (mcuId === 'arduino') {
+        document.getElementById('btnSelectArduino').classList.add('active');
+      } else {
+        document.getElementById('btnSelectESP32').classList.add('active');
+      }
+      
+      document.getElementById('mcuSvgContainer').innerHTML = mcuData[mcuId].svg;
+      resetPin();
+    }
+
+    function showPin(mcuId, pinId) {
+      // Highlight pin glow
+      const pinGlow = document.getElementById(`pin-${mcuId === 'arduino' ? 'ard' : 'esp'}-${pinId}`);
+      if (pinGlow) {
+        pinGlow.classList.add('active');
+      }
+      
+      const pinInfo = mcuData[mcuId].pins[pinId];
+      document.getElementById('mcuPinName').innerText = pinInfo.name;
+      document.getElementById('mcuPinDesc').innerText = pinInfo.desc;
+    }
+
+    function resetPin() {
+      document.querySelectorAll('.pin-glow').forEach(el => el.classList.remove('active'));
+      document.getElementById('mcuPinName').innerText = "Pin Seleccionado";
+      document.getElementById('mcuPinDesc').innerText = "Pasa el mouse sobre un pin coloreado para inspeccionar su datasheet y asignación UART/I2C/SPI.";
+    }
+
+    // Default load
+    switchMCU('arduino');
+
+    // =========================================================================
+    // QUIZZES CONTROLLER
+    // =========================================================================
+    // Track selected option per module quiz
+    const selectedOptions = {
+      electronica: null,
+      multimetro: null,
+      componentes: null,
+      soldadura: null,
+      protoboard: null,
+      microcontroladores: null
+    };
+
+    // Quiz solutions (correct index)
+    const quizAnswers = {
+      electronica: 1, // B (18A)
+      multimetro: 1, // B (XT60 continuity)
+      componentes: 1, // B (MOSFETs)
+      soldadura: 1, // B (flux removes oxide)
+      protoboard: 1, // B (central channel divider)
+      microcontroladores: 0 // A (SPI)
+    };
+
+    const quizFeedbacks = {
+      electronica: {
+        correct: "¡Excelente! Aplicando la Ley de Ohm: I = V / R. Con una tensión de 9V y una resistencia de 0.5 Ω, la corriente es I = 9 / 0.5 = 18 Amperios. Esto generará una disipación térmica severa de 162 Watts (P = I² * R), quemando el componente de inmediato.",
+        incorrect: "Incorrecto. Recuerda la fórmula: I = V / R. Intenta hacer las matemáticas dividiendo la tensión de 9V sobre los 0.5 Ω de resistencia interna."
+      },
+      multimetro: {
+        correct: "¡Correcto! Medir la continuidad en el conector XT60 es el protocolo técnico de seguridad obligado. Si pita, indica un cortocircuito franco entre las líneas de fuerza (positivo y tierra), lo que provocaría un chispazo explosivo al conectar una LiPo de alta tasa de descarga.",
+        incorrect: "Incorrecto. Aunque medir celdas de batería o la resistencia del motor es útil, hay un paso crítico inicial de seguridad eléctrica obligado para salvar el hardware de explosiones catastróficas."
+      },
+      componentes: {
+        correct: "¡Excelente! Los motores brushless son excitados trifásicamente por puentes en H formados por MOSFETs de canal N. Si un MOSFET se degrada, su resistencia interna sube o el canal se cortocircuita, enviando corriente asimétrica a las fases, calentando el motor y produciendo tirones bruscos.",
+        incorrect: "Incorrecto. Los capacitores filtran ruido, y los diodos evitan retornos, pero los componentes activos encargados de modular la corriente conmutada y con potencia masiva directo a los devanados del motor son transistores específicos."
+      },
+      soldadura: {
+        correct: "¡Perfecto! El flux es un compuesto ácido-resinoso que se vaporiza al calentarse, limpiando químicamente la superficie del óxido y bajando la tensión superficial del estaño líquido para que fluya hacia los pads de forma capilar y cóncava.",
+        incorrect: "Incorrecto. El flux no varía el punto de fusión de la aleación ni es un aislante protector (ese es el esmalte antisoldante verde de la PCB). Su función ocurre durante la fundición metálica."
+      },
+      protoboard: {
+        correct: "¡Exactamente! El canal central divide los grupos de columnas A-E de las F-J. Los chips integrados (DIP) se colocan cruzando este divisor para que sus pines opuestos se aíslen eléctricamente en distintas pistas verticales y se puedan cablear individualmente.",
+        incorrect: "Incorrecto. Si lo pones en una sola fila vertical o en los buses laterales, unirás eléctricamente pines distintos provocando un cortocircuito total de las patillas lógicas."
+      },
+      microcontroladores: {
+        correct: "¡Magnífico! Los sensores inerciales primarios (IMU/Giroscopio) se enlazan mediante el bus SPI. Esto se debe a su altísima frecuencia de bus (hasta 20 MHz o más), permitiendo leer estados de orientación de la aeronave a velocidades de refresco de microsegundos con latencia despreciable.",
+        incorrect: "Incorrecto. I2C es demasiado lento (generalmente limitado a 400 kHz) para lecturas críticas de actitud de vuelo a frecuencias elevadas, y PWM es una salida analógica de control, no un protocolo de entrada de datos serie."
+      }
+    };
+
+    window.selectQuizOption = function(optionElement, index) {
+      const parent = optionElement.parentElement;
+      const quizBox = parent.parentElement;
+      
+      // If already solved correctly, ignore clicks
+      if (quizBox.classList.contains('solved')) {
+        return;
+      }
+      
+      parent.querySelectorAll('.quiz-option').forEach(el => {
+        el.classList.remove('selected', 'correct', 'incorrect');
+      });
+      
+      optionElement.classList.add('selected');
+      
+      const quizId = quizBox.id.replace('quiz-', '');
+      selectedOptions[quizId] = index;
+      
+      // Clear and hide previous feedback
+      const feedback = document.getElementById(`quiz-feedback-${quizId}`);
+      if (feedback) {
+        feedback.classList.remove('show');
+        feedback.innerHTML = '';
+      }
+      
+      // Enable submit btn
+      quizBox.querySelector('.quiz-submit-btn').disabled = false;
+    };
+
+    window.submitQuiz = function(quizId) {
+      const selectedIdx = selectedOptions[quizId];
+      const correctIdx = quizAnswers[quizId];
+      
+      const quizContainer = document.getElementById(`quiz-${quizId}`);
+      const options = quizContainer.querySelectorAll('.quiz-option');
+      const feedback = document.getElementById(`quiz-feedback-${quizId}`);
+      const submitBtn = quizContainer.querySelector('.quiz-submit-btn');
+
+      options.forEach(el => el.classList.remove('selected'));
+
+      if (selectedIdx === correctIdx) {
+        options[selectedIdx].classList.add('correct');
+        feedback.innerHTML = `<span style="color: var(--accent-green); font-weight:bold;">¡CORRECTO!</span><br>${quizFeedbacks[quizId].correct}`;
+        feedback.style.color = "var(--text-primary)";
+        
+        // Disable further edits by marking it solved
+        quizContainer.classList.add('solved');
+        
+        // Save progress if quiz is correct
+        markModuleAsPassed(quizId);
+      } else {
+        options[selectedIdx].classList.add('incorrect');
+        options[correctIdx].classList.add('correct');
+        feedback.innerHTML = `<span style="color: var(--accent-red); font-weight:bold;">INCORRECTO</span><br>${quizFeedbacks[quizId].incorrect}`;
+        feedback.style.color = "var(--text-secondary)";
+      }
+
+      feedback.classList.add('show');
+      submitBtn.disabled = true;
+    };
+
+    function markModuleAsPassed(moduleId) {
+      // Find matching roadmap task ID to mark complete
+      let taskId = "";
+      if (moduleId === 'electronica') taskId = 'task1';
+      if (moduleId === 'multimetro') taskId = 'task2';
+      if (moduleId === 'componentes') taskId = 'task5'; // maps roughly
+      if (moduleId === 'soldadura') taskId = 'task3';
+      if (moduleId === 'protoboard') taskId = 'task4';
+      if (moduleId === 'microcontroladores') taskId = 'task8';
+      
+      if (taskId && userProgress[taskId] !== true) {
+        toggleTask(taskId);
+        // redraw roadmap checkbox
+        const element = document.getElementById(`item-${taskId}`);
+        if (element) {
+          element.classList.add('checked');
+        }
+      }
+    }
+
+    // =========================================================================
+    // APPLICATION INITIALIZATION
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      // Draw interactive elements
+      drawProtoboardInteractive();
+      updateOhmCalculation();
+      initProgressTracker();
+    });
+
+  </script>
+</body>
+</html>
