@@ -774,3 +774,61 @@ html.light img[src*="AN-logo.png"] {
 html.light #mouseGlow {
     background: radial-gradient(circle, rgba(0, 136, 204, 0.28) 0%, transparent 70%);
 }
+
+/* =========================================================================
+   Portfolio Filtering Styles
+   ========================================================================= */
+.filter-btn {
+    border: 1px solid var(--lang-btn-border);
+    background: var(--lang-btn-bg);
+    color: var(--text-gray-400);
+    cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.filter-btn:hover {
+    border-color: rgba(0, 217, 255, 0.5);
+    color: var(--text-white);
+    background: var(--lang-btn-hover-bg);
+}
+
+.filter-btn.active {
+    background: #00D9FF;
+    color: #0A0A0A !important;
+    border-color: #00D9FF;
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+    font-weight: 700;
+}
+
+html.light .filter-btn.active {
+    background: #0088CC;
+    color: #FFFFFF !important;
+    border-color: #0088CC;
+    box-shadow: 0 0 15px rgba(0, 136, 204, 0.3);
+}
+
+/* Category Transition Wrappers */
+.project-category-wrapper {
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+                margin 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    max-height: 3000px;
+    overflow: visible;
+}
+
+.project-category-wrapper.hidden-filter {
+    opacity: 0;
+    transform: scale(0.96) translateY(20px);
+    max-height: 0;
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    overflow: hidden;
+    pointer-events: none;
+}

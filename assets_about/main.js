@@ -336,7 +336,13 @@ const translations = {
         course2_title: "Basic Electronics",
         course2_desc: "Bridge the gap between hardware and software. Master circuit design, microcontrollers, basic electronic components, and physical computing.",
         course_view_syllabus: "View Syllabus",
-        footer_rights: "All rights reserved."
+        footer_rights: "All rights reserved.",
+        cat_all_filter: "All Projects",
+        cat_cv_filter: "Computer Vision",
+        cat_android_filter: "Android Mobile",
+        cat_web_filter: "Web Apps",
+        cat_data_filter: "Data Science",
+        cat_ml_filter: "Machine Learning"
     },
     es: {
         nav_about: "Nosotros",
@@ -431,7 +437,13 @@ const translations = {
         course2_title: "Electrónica Básica",
         course2_desc: "Cierra la brecha entre el hardware y el software. Domina el diseño de circuitos, microcontroladores, componentes electrónicos básicos y computación física.",
         course_view_syllabus: "Ver Plan de Estudios",
-        footer_rights: "Todos los derechos reservados."
+        footer_rights: "Todos los derechos reservados.",
+        cat_all_filter: "Todos",
+        cat_cv_filter: "Visión Artificial",
+        cat_android_filter: "Android Móvil",
+        cat_web_filter: "Apps Web",
+        cat_data_filter: "Ciencia de Datos",
+        cat_ml_filter: "Machine Learning"
     }
 };
 
@@ -571,6 +583,9 @@ window.addEventListener('DOMContentLoaded', () => {
     if (mobileToggle) {
         mobileToggle.addEventListener('click', toggleTheme);
     }
+    
+    // Initialize project filter listeners
+    initProjectFilters();
 });
 
 // Theme Toggle Logic
@@ -592,4 +607,33 @@ function setTheme(theme) {
 function toggleTheme() {
     const isLight = document.documentElement.classList.contains('light');
     setTheme(isLight ? 'dark' : 'light');
+}
+
+// Project Portfolio Dynamic Filtering Logic
+function initProjectFilters() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const categoryWrappers = document.querySelectorAll('.project-category-wrapper');
+
+    if (filterButtons.length === 0 || categoryWrappers.length === 0) return;
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            button.classList.add('active');
+
+            const filterValue = button.getAttribute('data-filter');
+
+            categoryWrappers.forEach(wrapper => {
+                const category = wrapper.getAttribute('data-category');
+                
+                if (filterValue === 'all' || category === filterValue) {
+                    wrapper.classList.remove('hidden-filter');
+                } else {
+                    wrapper.classList.add('hidden-filter');
+                }
+            });
+        });
+    });
 }
