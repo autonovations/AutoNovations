@@ -224,7 +224,7 @@
       margin-left: 280px;
       flex-grow: 1;
       padding: 2.5rem;
-      max-width: 1200px;
+      max-width: 100%;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -1123,6 +1123,7 @@
     /* Microcontroller Board Pinout CSS and interactive */
     .mcu-selector {
       display: flex;
+      flex-wrap: wrap;
       gap: 12px;
       margin-bottom: 1.5rem;
     }
@@ -1919,31 +1920,6 @@
 
         <div class="module-content-grid">
           <div>
-            <section class="learning-section">
-              <h2>¿Cómo operar el multímetro de forma segura?</h2>
-              <p>El multímetro es los ojos del ingeniero o técnico en electrónica. Se compone de un dial rotativo para seleccionar funciones y dos puntas de prueba: una punta <strong>negra (COM)</strong> y una punta <strong>roja (+)</strong>.</p>
-              
-              <h3>1. Medición de Tensión / Voltaje (V DC)</h3>
-              <p>Para medir tensiones en corriente continua (baterías, reguladores de voltaje). Conecta la punta negra al polo de tierra (GND o negativo) y la roja al nodo a probar en <strong>paralelo</strong>. Si colocas las puntas invertidas, simplemente leerás un valor negativo. ¡Importante! El multímetro no sufrirá daños.</p>
-
-              <h3>2. Medición de Continuidad (¡El Pitido!)</h3>
-              <p>La herramienta número uno para diagnosticar fallas. Mide si existe conexión eléctrica directa (resistencia menor a unos 30-50 Ω) entre dos puntos. Se utiliza para comprobar si un cable no está roto por dentro o para detectar <strong>cortocircuitos críticos</strong>.
-              <br><strong class="accent-red">Regla de Oro:</strong> Antes de alimentar por primera vez tu circuito recién armado, pon el multímetro en continuidad y mide entre el borne positivo y negativo de alimentación. Si pita, hay un cortocircuito que quemaría los componentes instantáneamente al conectar la fuente de poder.</p>
-
-              <h3>3. Medición de Resistencia (Ohmios - Ω)</h3>
-              <p>Permite corroborar el valor de las resistencias de precisión en tu placa o medir la resistencia de bobinas en motores y relés (que suele ser baja, típicamente de pocos ohmios).
-              <br><strong class="accent-amber">Advertencia:</strong> Nunca midas resistencia en un circuito energizado. Podrías quemar el fusible interno del multímetro o dar una lectura errónea.</p>
-            </section>
-            
-            <section class="learning-section">
-              <h2>Práctica Interactiva de Diagnóstico</h2>
-              <p>Utiliza el panel simulador de la derecha. Selecciona la función del multímetro girando el dial del aparato, luego haz clic en los diferentes nodos del circuito para conectar la punta activa.</p>
-              <p><strong>Meta:</strong> Verifica si la batería entrega tensión, comprueba si el interruptor funciona midiendo continuidad, y asegúrate de medir la caída de voltaje en la resistencia limitadora.</p>
-            </section>
-          </div>
-
-          <!-- Interactive multimeter simulator widget -->
-          <div class="sidebar-widgets">
             <div class="multimetro-sim-container">
               <div class="widget-title"><i data-lucide="gauge"></i>Simulador de Multímetro</div>
               
@@ -2071,6 +2047,32 @@
                 </div>
               </div>
             </div>
+            
+            <section class="learning-section">
+              <h2>¿Cómo operar el multímetro de forma segura?</h2>
+              <p>El multímetro es los ojos del ingeniero o técnico en electrónica. Se compone de un dial rotativo para seleccionar funciones y dos puntas de prueba: una punta <strong>negra (COM)</strong> y una punta <strong>roja (+)</strong>.</p>
+              
+              <h3>1. Medición de Tensión / Voltaje (V DC)</h3>
+              <p>Para medir tensiones en corriente continua (baterías, reguladores de voltaje). Conecta la punta negra al polo de tierra (GND o negativo) y la roja al nodo a probar en <strong>paralelo</strong>. Si colocas las puntas invertidas, simplemente leerás un valor negativo. ¡Importante! El multímetro no sufrirá daños.</p>
+
+              <h3>2. Medición de Continuidad (¡El Pitido!)</h3>
+              <p>La herramienta número uno para diagnosticar fallas. Mide si existe conexión eléctrica directa (resistencia menor a unos 30-50 Ω) entre dos puntos. Se utiliza para comprobar si un cable no está roto por dentro o para detectar <strong>cortocircuitos críticos</strong>.
+              <br><strong class="accent-red">Regla de Oro:</strong> Antes de alimentar por primera vez tu circuito recién armado, pon el multímetro en continuidad y mide entre el borne positivo y negativo de alimentación. Si pita, hay un cortocircuito que quemaría los componentes instantáneamente al conectar la fuente de poder.</p>
+
+              <h3>3. Medición de Resistencia (Ohmios - Ω)</h3>
+              <p>Permite corroborar el valor de las resistencias de precisión en tu placa o medir la resistencia de bobinas en motores y relés (que suele ser baja, típicamente de pocos ohmios).
+              <br><strong class="accent-amber">Advertencia:</strong> Nunca midas resistencia en un circuito energizado. Podrías quemar el fusible interno del multímetro o dar una lectura errónea.</p>
+            </section>
+            
+            <section class="learning-section">
+              <h2>Práctica Interactiva de Diagnóstico</h2>
+              <p>Utiliza el panel simulador de la derecha. Selecciona la función del multímetro girando el dial del aparato, luego haz clic en los diferentes nodos del circuito para conectar la punta activa.</p>
+              <p><strong>Meta:</strong> Verifica si la batería entrega tensión, comprueba si el interruptor funciona midiendo continuidad, y asegúrate de medir la caída de voltaje en la resistencia limitadora.</p>
+            </section>
+          </div>
+
+          <!-- Interactive multimeter simulator widget -->
+          <div class="sidebar-widgets">
             
             <!-- Quiz for Module 2 -->
             <div class="quiz-box" id="quiz-multimetro">
@@ -2891,7 +2893,9 @@ void loop() {
 
       // Mode logic
       if (multimeterDialState === 1) { // Voltage DC
-        lcd.innerText = `${voltageDifference.toFixed(2)} V`;
+        let displayVolts = voltageDifference;
+        if (Math.abs(displayVolts) < 0.001) displayVolts = 0;
+        lcd.innerText = `${displayVolts.toFixed(2)} V`;
       } 
       else if (multimeterDialState === 2) { // Resistance Mode
         // R1: between TP2 and TP3 is 1kΩ (1000 ohms)

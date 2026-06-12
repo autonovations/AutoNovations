@@ -224,7 +224,7 @@
       margin-left: 280px;
       flex-grow: 1;
       padding: 2.5rem;
-      max-width: 1200px;
+      max-width: 100%;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -1160,6 +1160,7 @@
     /* Microcontroller Board Pinout CSS and interactive */
     .mcu-selector {
       display: flex;
+      flex-wrap: wrap;
       gap: 12px;
       margin-bottom: 1.5rem;
     }
@@ -1745,6 +1746,9 @@
         <li class="nav-item" data-tab="componentes">
           <button><i data-lucide="orbit"></i><span data-i18n="nav_componentes">ESCs y Motores Brushless</span></button>
         </li>
+        <li class="nav-item" data-tab="simulator">
+          <button><i data-lucide="gamepad-2"></i><span data-i18n="nav_simulator">Simulador Motores</span></button>
+        </li>
         <li class="nav-item" data-tab="soldadura">
           <button><i data-lucide="flame"></i><span data-i18n="nav_soldadura">Soldadura y Filtrado</span></button>
         </li>
@@ -1826,6 +1830,18 @@
               <button class="card-btn" onclick="switchTab('componentes')" data-i18n="btn_explore">Explorar</button>
             </div>
           </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i data-lucide="gamepad-2" class="accent-cyan"></i><span data-i18n="nav_simulator">Simulador Motores</span></div>
+              <span class="card-badge badge-adv" data-i18n="badge_adv">Avanzado</span>
+            </div>
+            <p class="card-desc" data-i18n="card_sim_desc">Simulador interactivo para configuración de motores, sentido de giro y pruebas de inyección de potencia en Betaflight.</p>
+            <div class="card-footer">
+              <div class="card-status"><i data-lucide="clock"></i> <span data-i18n="card_sim_status">Práctica</span></div>
+              <button class="card-btn" onclick="switchTab('simulator')" data-i18n="btn_simulate">Simular</button>
+            </div>
+          </div>
+
 
           <div class="card">
             <div class="card-header">
@@ -1864,6 +1880,220 @@
           </div> <!-- Close card 6 -->
         </div> <!-- Close dashboard-grid -->
       </div> <!-- Close tab-dashboard -->
+
+      <!-- ==================== SIMULADOR PANEL ==================== -->
+      <div id="tab-simulator" class="tab-pane">
+        <div class="content-header">
+          <h1><i data-lucide="gamepad-2" class="accent-cyan"></i><span data-i18n="nav_simulator">Simulador de Vuelo y Configuración</span></h1>
+          <p data-i18n="card_sim_desc">Simulador interactivo para configuración de motores, sentido de giro y pruebas de inyección de potencia en Betaflight.</p>
+        </div>
+        <div class="module-content-grid" style="grid-template-columns: 1fr;">
+          <div>
+            <!-- SECCIÓN NUEVA: SIMULADOR DE DIRECCIÓN DE MOTORES -->
+            <section class="learning-section" style="margin-top: 2rem;">
+              <h2><i data-lucide="compass" class="accent-cyan" style="vertical-align: middle; margin-right: 8px;"></i><span data-i18n="sim_title">Sentido de Giro y Configuración de Motores</span></h2>
+              <p data-i18n="sim_desc">El sentido de giro de los motores es crítico para el correcto vuelo de un UAV. Si un motor gira al revés, la controladora de vuelo intentará compensar y el dron se volcará (flip) inmediatamente al despegar. Ajusta el tipo de rotación en Betaflight y la configuración física en cada ESC (BLHeli) para alinearlos correctamente.</p>
+              
+              <div class="alert-box info" style="margin: 1.5rem 0;">
+                <i data-lucide="info"></i>
+                <div class="alert-box-text" data-i18n="sim_alert">
+                  <strong>Regla de Configuración:</strong> En el modo "Estándar", los motores 1 y 4 giran CW (horario) y los motores 2 y 3 CCW (antihorario). En el modo "Invertido (Props Out)", las direcciones de todos los motores se invierten para alejar la suciedad y ramas de la cámara.
+                </div>
+              </div>
+
+              <!-- Simulator Grid -->
+              <div class="uav-motor-sim-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 1.5rem; background: var(--bg-darker); border: 1px solid var(--border); padding: 1.5rem; border-radius: var(--radius-lg);">
+                
+                <!-- Left: Drone Visualizer -->
+                <div style="position: relative; width: 100%; aspect-ratio: 1.25; background: #070b13; border-radius: var(--radius-md); overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); padding: 10px;">
+                  <img src="../assets_index/images/drone_an.png" style="width: 90%; height: auto; max-width: 380px; display: block; filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.1));" alt="Dron UAV">
+                  
+                  <!-- Motor 4 (Front Left) -->
+                  <div id="sim-motor-4" style="position: absolute; top: 22%; left: 22%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; width: 80px;">
+                    <div class="sim-motor-disk" style="width: 76px; height: 76px; border-radius: 50%; border: 2px dashed rgba(0, 240, 255, 0.2); display: flex; align-items: center; justify-content: center; position: relative;">
+                      <!-- SVG blade spinner overlay -->
+                      <svg class="prop-blade-svg" viewBox="0 0 100 100" style="width: 100%; height: 100%; position: absolute; transition: transform 0.05s linear; transform: rotate(0deg); opacity: 0.15; fill: var(--accent-cyan);">
+                        <path d="M 50 10 C 53 30, 53 45, 50 50 C 47 45, 47 30, 50 10 Z" />
+                        <path d="M 50 90 C 47 70, 47 55, 50 50 C 53 55, 53 70, 50 90 Z" />
+                        <path d="M 10 50 C 30 47, 45 47, 50 50 C 45 53, 30 53, 10 50 Z" />
+                        <path d="M 90 50 C 70 53, 55 53, 50 50 C 55 47, 70 47, 90 50 Z" />
+                        <circle cx="50" cy="50" r="6" fill="#0d121f" stroke="var(--accent-cyan)" stroke-width="2" />
+                      </svg>
+                      
+                      <!-- Direction indicator arrow -->
+                      <div class="dir-arrow-container" style="color: var(--accent-cyan); display: flex; align-items: center; justify-content: center; z-index: 2;">
+                        <i data-lucide="refresh-cw" class="icon-cw" style="width: 24px; height: 24px;"></i>
+                        <i data-lucide="refresh-ccw" class="icon-ccw" style="width: 24px; height: 24px; display: none;"></i>
+                      </div>
+                    </div>
+                    <span style="font-family: var(--font-mono); font-size: 0.65rem; background: var(--bg-card); padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px; color: white; margin-top: 4px; z-index: 5;">M4</span>
+                  </div>
+
+                  <!-- Motor 2 (Front Right) -->
+                  <div id="sim-motor-2" style="position: absolute; top: 22%; right: 22%; transform: translate(50%, -50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; width: 80px;">
+                    <div class="sim-motor-disk" style="width: 76px; height: 76px; border-radius: 50%; border: 2px dashed rgba(0, 240, 255, 0.2); display: flex; align-items: center; justify-content: center; position: relative;">
+                      <!-- SVG blade spinner overlay -->
+                      <svg class="prop-blade-svg" viewBox="0 0 100 100" style="width: 100%; height: 100%; position: absolute; transition: transform 0.05s linear; transform: rotate(0deg); opacity: 0.15; fill: var(--accent-cyan);">
+                        <path d="M 50 10 C 53 30, 53 45, 50 50 C 47 45, 47 30, 50 10 Z" />
+                        <path d="M 50 90 C 47 70, 47 55, 50 50 C 53 55, 53 70, 50 90 Z" />
+                        <path d="M 10 50 C 30 47, 45 47, 50 50 C 45 53, 30 53, 10 50 Z" />
+                        <path d="M 90 50 C 70 53, 55 53, 50 50 C 55 47, 70 47, 90 50 Z" />
+                        <circle cx="50" cy="50" r="6" fill="#0d121f" stroke="var(--accent-cyan)" stroke-width="2" />
+                      </svg>
+                      
+                      <!-- Direction indicator arrow -->
+                      <div class="dir-arrow-container" style="color: var(--accent-cyan); display: flex; align-items: center; justify-content: center; z-index: 2;">
+                        <i data-lucide="refresh-cw" class="icon-cw" style="width: 24px; height: 24px; display: none;"></i>
+                        <i data-lucide="refresh-ccw" class="icon-ccw" style="width: 24px; height: 24px;"></i>
+                      </div>
+                    </div>
+                    <span style="font-family: var(--font-mono); font-size: 0.65rem; background: var(--bg-card); padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px; color: white; margin-top: 4px; z-index: 5;">M2</span>
+                  </div>
+
+                  <!-- Motor 3 (Rear Left) -->
+                  <div id="sim-motor-3" style="position: absolute; bottom: 22%; left: 22%; transform: translate(-50%, 50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; width: 80px;">
+                    <div class="sim-motor-disk" style="width: 76px; height: 76px; border-radius: 50%; border: 2px dashed rgba(0, 240, 255, 0.2); display: flex; align-items: center; justify-content: center; position: relative;">
+                      <!-- SVG blade spinner overlay -->
+                      <svg class="prop-blade-svg" viewBox="0 0 100 100" style="width: 100%; height: 100%; position: absolute; transition: transform 0.05s linear; transform: rotate(0deg); opacity: 0.15; fill: var(--accent-cyan);">
+                        <path d="M 50 10 C 53 30, 53 45, 50 50 C 47 45, 47 30, 50 10 Z" />
+                        <path d="M 50 90 C 47 70, 47 55, 50 50 C 53 55, 53 70, 50 90 Z" />
+                        <path d="M 10 50 C 30 47, 45 47, 50 50 C 45 53, 30 53, 10 50 Z" />
+                        <path d="M 90 50 C 70 53, 55 53, 50 50 C 55 47, 70 47, 90 50 Z" />
+                        <circle cx="50" cy="50" r="6" fill="#0d121f" stroke="var(--accent-cyan)" stroke-width="2" />
+                      </svg>
+                      
+                      <!-- Direction indicator arrow -->
+                      <div class="dir-arrow-container" style="color: var(--accent-cyan); display: flex; align-items: center; justify-content: center; z-index: 2;">
+                        <i data-lucide="refresh-cw" class="icon-cw" style="width: 24px; height: 24px; display: none;"></i>
+                        <i data-lucide="refresh-ccw" class="icon-ccw" style="width: 24px; height: 24px;"></i>
+                      </div>
+                    </div>
+                    <span style="font-family: var(--font-mono); font-size: 0.65rem; background: var(--bg-card); padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px; color: white; margin-top: 4px; z-index: 5;">M3</span>
+                  </div>
+
+                  <!-- Motor 1 (Rear Right) -->
+                  <div id="sim-motor-1" style="position: absolute; bottom: 22%; right: 22%; transform: translate(50%, 50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; width: 80px;">
+                    <div class="sim-motor-disk" style="width: 76px; height: 76px; border-radius: 50%; border: 2px dashed rgba(0, 240, 255, 0.2); display: flex; align-items: center; justify-content: center; position: relative;">
+                      <!-- SVG blade spinner overlay -->
+                      <svg class="prop-blade-svg" viewBox="0 0 100 100" style="width: 100%; height: 100%; position: absolute; transition: transform 0.05s linear; transform: rotate(0deg); opacity: 0.15; fill: var(--accent-cyan);">
+                        <path d="M 50 10 C 53 30, 53 45, 50 50 C 47 45, 47 30, 50 10 Z" />
+                        <path d="M 50 90 C 47 70, 47 55, 50 50 C 53 55, 53 70, 50 90 Z" />
+                        <path d="M 10 50 C 30 47, 45 47, 50 50 C 45 53, 30 53, 10 50 Z" />
+                        <path d="M 90 50 C 70 53, 55 53, 50 50 C 55 47, 70 47, 90 50 Z" />
+                        <circle cx="50" cy="50" r="6" fill="#0d121f" stroke="var(--accent-cyan)" stroke-width="2" />
+                      </svg>
+                      
+                      <!-- Direction indicator arrow -->
+                      <div class="dir-arrow-container" style="color: var(--accent-cyan); display: flex; align-items: center; justify-content: center; z-index: 2;">
+                        <i data-lucide="refresh-cw" class="icon-cw" style="width: 24px; height: 24px;"></i>
+                        <i data-lucide="refresh-ccw" class="icon-ccw" style="width: 24px; height: 24px; display: none;"></i>
+                      </div>
+                    </div>
+                    <span style="font-family: var(--font-mono); font-size: 0.65rem; background: var(--bg-card); padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px; color: white; margin-top: 4px; z-index: 5;">M1</span>
+                  </div>
+                </div>
+
+                <!-- Right: Controls -->
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                  
+                  <!-- Betaflight Config (Props direction) -->
+                  <div style="background: var(--bg-card); border: 1px solid var(--border); padding: 1rem; border-radius: var(--radius-md);">
+                    <h4 style="font-size: 0.9rem; color: var(--text-primary); margin-bottom: 8px; font-family: var(--font-display);" data-i18n="sim_mode_title">Dirección en Controladora (Betaflight)</h4>
+                    <div style="display: flex; gap: 10px;">
+                      <button id="btnPropsNormal" class="schematic-btn active" onclick="setPropsDirection('normal')" style="flex: 1; justify-content: center;" data-i18n="sim_mode_normal">Estándar (Props In)</button>
+                      <button id="btnPropsReversed" class="schematic-btn" onclick="setPropsDirection('reversed')" style="flex: 1; justify-content: center;" data-i18n="sim_mode_reversed">Invertido (Props Out)</button>
+                    </div>
+                  </div>
+                  
+                  <!-- ESC Config (BLHeli) -->
+                  <div style="background: var(--bg-card); border: 1px solid var(--border); padding: 1rem; border-radius: var(--radius-md);">
+                    <h4 style="font-size: 0.9rem; color: var(--text-primary); margin-bottom: 4px; font-family: var(--font-display);" data-i18n="sim_esc_title">Dirección de Giro Física en Variadores (ESC)</h4>
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 10px;" data-i18n="sim_esc_desc">Configura si el firmware del ESC invierte el sentido de giro por hardware:</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                      <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-mono);">ESC Motor 1</label>
+                        <select id="selEsc1" onchange="updateSimCalculation()" style="background: var(--bg-darker); border: 1px solid var(--border); color: var(--text-primary); padding: 4px; border-radius: var(--radius-sm); font-size: 0.8rem;">
+                          <option value="normal" data-i18n="esc_dir_normal">Normal (Default)</option>
+                          <option value="reversed" data-i18n="esc_dir_reversed">Invertido (Reversed)</option>
+                        </select>
+                      </div>
+                      <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-mono);">ESC Motor 2</label>
+                        <select id="selEsc2" onchange="updateSimCalculation()" style="background: var(--bg-darker); border: 1px solid var(--border); color: var(--text-primary); padding: 4px; border-radius: var(--radius-sm); font-size: 0.8rem;">
+                          <option value="normal" data-i18n="esc_dir_normal">Normal (Default)</option>
+                          <option value="reversed" data-i18n="esc_dir_reversed">Invertido (Reversed)</option>
+                        </select>
+                      </div>
+                      <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-mono);">ESC Motor 3</label>
+                        <select id="selEsc3" onchange="updateSimCalculation()" style="background: var(--bg-darker); border: 1px solid var(--border); color: var(--text-primary); padding: 4px; border-radius: var(--radius-sm); font-size: 0.8rem;">
+                          <option value="normal" data-i18n="esc_dir_normal">Normal (Default)</option>
+                          <option value="reversed" data-i18n="esc_dir_reversed">Invertido (Reversed)</option>
+                        </select>
+                      </div>
+                      <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-mono);">ESC Motor 4</label>
+                        <select id="selEsc4" onchange="updateSimCalculation()" style="background: var(--bg-darker); border: 1px solid var(--border); color: var(--text-primary); padding: 4px; border-radius: var(--radius-sm); font-size: 0.8rem;">
+                          <option value="normal" data-i18n="esc_dir_normal">Normal (Default)</option>
+                          <option value="reversed" data-i18n="esc_dir_reversed">Invertido (Reversed)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Motor Testing (Betaflight style) -->
+                  <div style="background: var(--bg-card); border: 1px solid var(--border); padding: 1rem; border-radius: var(--radius-md);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                      <h4 style="font-size: 0.9rem; color: var(--text-primary); margin: 0; font-family: var(--font-display);" data-i18n="sim_test_title">Control e Inyección de Potencia</h4>
+                      <label style="font-size: 0.75rem; color: var(--accent-red); display: flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 600;">
+                        <input type="checkbox" id="chkMotorSafety" onchange="toggleMotorSafety()"> <span data-i18n="sim_safety_label">Activar Control</span>
+                      </label>
+                    </div>
+                    
+                    <div id="simMotorControlGroup" style="opacity: 0.4; pointer-events: none; transition: var(--transition);">
+                      <div class="control-label" style="font-size: 0.8rem;"><span data-i18n="sim_master_label">Control Maestro (Master)</span> <span id="valSimMaster" class="val">0%</span></div>
+                      <input type="range" id="sliderSimMaster" class="slider-input" min="0" max="100" value="0" oninput="setSimMotorPower('master', this.value)">
+                      
+                      <div style="display: flex; justify-content: space-between; gap: 8px; margin-top: 10px;">
+                        <div style="flex: 1; text-align: center; background: var(--bg-darker); padding: 6px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                          <span style="font-size: 0.7rem; color: var(--text-secondary); font-family: var(--font-mono);">M1</span>
+                          <input type="range" class="slider-input" id="sliderSimM1" min="0" max="100" value="0" oninput="setSimMotorPower(1, this.value)" style="width: 12px; height: 70px; -webkit-appearance: slider-vertical; margin: 6px auto; display: block;">
+                          <span id="valSimM1" style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--accent-cyan); display: block;">0%</span>
+                        </div>
+                        <div style="flex: 1; text-align: center; background: var(--bg-darker); padding: 6px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                          <span style="font-size: 0.7rem; color: var(--text-secondary); font-family: var(--font-mono);">M2</span>
+                          <input type="range" class="slider-input" id="sliderSimM2" min="0" max="100" value="0" oninput="setSimMotorPower(2, this.value)" style="width: 12px; height: 70px; -webkit-appearance: slider-vertical; margin: 6px auto; display: block;">
+                          <span id="valSimM2" style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--accent-cyan); display: block;">0%</span>
+                        </div>
+                        <div style="flex: 1; text-align: center; background: var(--bg-darker); padding: 6px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                          <span style="font-size: 0.7rem; color: var(--text-secondary); font-family: var(--font-mono);">M3</span>
+                          <input type="range" class="slider-input" id="sliderSimM3" min="0" max="100" value="0" oninput="setSimMotorPower(3, this.value)" style="width: 12px; height: 70px; -webkit-appearance: slider-vertical; margin: 6px auto; display: block;">
+                          <span id="valSimM3" style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--accent-cyan); display: block;">0%</span>
+                        </div>
+                        <div style="flex: 1; text-align: center; background: var(--bg-darker); padding: 6px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                          <span style="font-size: 0.7rem; color: var(--text-secondary); font-family: var(--font-mono);">M4</span>
+                          <input type="range" class="slider-input" id="sliderSimM4" min="0" max="100" value="0" oninput="setSimMotorPower(4, this.value)" style="width: 12px; height: 70px; -webkit-appearance: slider-vertical; margin: 6px auto; display: block;">
+                          <span id="valSimM4" style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--accent-cyan); display: block;">0%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Diagnostic log panel -->
+                  <div style="background: var(--bg-card); border: 1px solid var(--border); padding: 1rem; border-radius: var(--radius-md);">
+                    <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; font-family: var(--font-display);" data-i18n="sim_diag_title">Diagnóstico en Tiempo Real:</div>
+                    <div id="simDiagnosticStatus" style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--accent-red); transition: var(--transition);" data-i18n="sim_diag_off">
+                      ⚠️ Motores inactivos. Habilita el control de seguridad y sube el acelerador.
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
 
       <!-- ==================== POTENCIA Y LIPO PANEL ==================== -->
       <div id="tab-electronica" class="tab-pane">
@@ -1933,12 +2163,20 @@
                 </div>
                 <div style="display: flex; justify-content: space-around; width: 100%; margin-top: 10px; margin-bottom: 5px;">
                   <div style="text-align: center;">
-                    <div id="propLeft" style="width: 40px; height: 8px; background: var(--accent-cyan); border-radius: 4px; margin: 0 auto; box-shadow: 0 0 8px var(--accent-cyan); transition: transform 0.05s linear;"></div>
-                    <span style="font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 4px;">Motores 1/3</span>
+                    <div id="prop1" style="width: 25px; height: 6px; background: var(--accent-cyan); border-radius: 4px; margin: 0 auto; box-shadow: 0 0 6px var(--accent-cyan); transition: transform 0.05s linear;"></div>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 4px;" data-i18n="motor_1">Motor 1</span>
                   </div>
                   <div style="text-align: center;">
-                    <div id="propRight" style="width: 40px; height: 8px; background: var(--accent-cyan); border-radius: 4px; margin: 0 auto; box-shadow: 0 0 8px var(--accent-cyan); transition: transform 0.05s linear;"></div>
-                    <span style="font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 4px;">Motores 2/4</span>
+                    <div id="prop2" style="width: 25px; height: 6px; background: var(--accent-cyan); border-radius: 4px; margin: 0 auto; box-shadow: 0 0 6px var(--accent-cyan); transition: transform 0.05s linear;"></div>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 4px;" data-i18n="motor_2">Motor 2</span>
+                  </div>
+                  <div style="text-align: center;">
+                    <div id="prop3" style="width: 25px; height: 6px; background: var(--accent-cyan); border-radius: 4px; margin: 0 auto; box-shadow: 0 0 6px var(--accent-cyan); transition: transform 0.05s linear;"></div>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 4px;" data-i18n="motor_3">Motor 3</span>
+                  </div>
+                  <div style="text-align: center;">
+                    <div id="prop4" style="width: 25px; height: 6px; background: var(--accent-cyan); border-radius: 4px; margin: 0 auto; box-shadow: 0 0 6px var(--accent-cyan); transition: transform 0.05s linear;"></div>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 4px;" data-i18n="motor_4">Motor 4</span>
                   </div>
                 </div>
                 <div class="math-display" style="font-size: 1.1rem; width: 100%; text-align: center; display: flex; flex-direction: column; gap: 4px;">
@@ -1973,42 +2211,7 @@
 
         <div class="module-content-grid">
           <div>
-            <section class="learning-section">
-              <h2>Comprobación de las Líneas de Alimentación (BECs)</h2>
-              <p>El multímetro es indispensable para diagnosticar una placa de control muerta o fallas en periféricos. Una controladora de vuelo (FC) típica cuenta con varios reguladores de voltaje internos (BEC) que alimentan componentes clave:</p>
-              
-              <h3>1. Línea de Entrada de Batería (VBAT)</h3>
-              <p>Es la tensión directa de la LiPo (ej. 22.2V en una batería 6S). Alimenta los sensores y reguladores principales. Se mide colocando la punta negra en GND y la roja en el terminal positivo del conector principal.</p>
-
-              <h3>2. Regulador de 5V (BEC 5V)</h3>
-              <p>Esta línea alimenta el receptor de radio (RX), el receptor GPS, la brújula y el zumbador (Buzzer). Si el BEC de 5V está dañado, el receptor no encenderá y el dron no podrá enlazarse a la emisora, aunque los ESCs piten al inicio.</p>
-
-              <h3>3. Regulador de 9V o 12V (BEC 9V)</h3>
-              <p>Diseñado específicamente para alimentar el transmisor de video (VTX) y la cámara FPV, que consumen más corriente y requieren energía filtrada. Un daño en este regulador causa pérdida total de imagen o fallas al acelerar a fondo.</p>
-              
-              <div class="alert-box success">
-                <i data-lucide="shield-check" class="accent-green"></i>
-                <div class="alert-box-text">
-                  <strong>Diagnóstico USB vs Batería:</strong><br>
-                  Si la controladora enciende luces y conecta a la PC por cable USB, pero se apaga por completo al conectar la batería LiPo, el regulador BEC de 5V de la placa está quemado. El puerto USB proporciona los 5V externos bypassando el regulador principal.
-                </div>
-              </div>
-            </section>
-            
-            <section class="learning-section">
-              <h2>Práctica de Diagnóstico con Sondas</h2>
-              <p>Utiliza el simulador de multímetro a la derecha para realizar pruebas eléctricas en la placa:</p>
-              <ul>
-                <li>Gira el dial a <strong>V ⎓ (Voltaje DC)</strong>.</li>
-                <li>Simula conectar la batería usando el botón <strong>"Conectar Batería"</strong>.</li>
-                <li>Haz clic en los puntos de prueba (TP1, TP2, TP3) para posicionar la sonda activa y diagnosticar si los BECs entregan el voltaje correcto.</li>
-              </ul>
-            </section>
-          </div>
-
-          <!-- Interactive multimeter simulator widget -->
-          <div class="sidebar-widgets">
-            <div class="multimetro-sim-container">
+            <div class="multimetro-sim-container" style="margin-bottom: 2rem;">
               <div class="widget-title"><i data-lucide="gauge"></i>Simulador de Multímetro</div>
               
               <div class="multimetro-row">
@@ -2134,6 +2337,42 @@
                 </div>
               </div>
             </div>
+            <section class="learning-section">
+              <h2>Comprobación de las Líneas de Alimentación (BECs)</h2>
+              <p>El multímetro es indispensable para diagnosticar una placa de control muerta o fallas en periféricos. Una controladora de vuelo (FC) típica cuenta con varios reguladores de voltaje internos (BEC) que alimentan componentes clave:</p>
+              
+              <h3>1. Línea de Entrada de Batería (VBAT)</h3>
+              <p>Es la tensión directa de la LiPo (ej. 22.2V en una batería 6S). Alimenta los sensores y reguladores principales. Se mide colocando la punta negra en GND y la roja en el terminal positivo del conector principal.</p>
+
+              <h3>2. Regulador de 5V (BEC 5V)</h3>
+              <p>Esta línea alimenta el receptor de radio (RX), el receptor GPS, la brújula y el zumbador (Buzzer). Si el BEC de 5V está dañado, el receptor no encenderá y el dron no podrá enlazarse a la emisora, aunque los ESCs piten al inicio.</p>
+
+              <h3>3. Regulador de 9V o 12V (BEC 9V)</h3>
+              <p>Diseñado específicamente para alimentar el transmisor de video (VTX) y la cámara FPV, que consumen más corriente y requieren energía filtrada. Un daño en este regulador causa pérdida total de imagen o fallas al acelerar a fondo.</p>
+              
+              <div class="alert-box success">
+                <i data-lucide="shield-check" class="accent-green"></i>
+                <div class="alert-box-text">
+                  <strong>Diagnóstico USB vs Batería:</strong><br>
+                  Si la controladora enciende luces y conecta a la PC por cable USB, pero se apaga por completo al conectar la batería LiPo, el regulador BEC de 5V de la placa está quemado. El puerto USB proporciona los 5V externos bypassando el regulador principal.
+                </div>
+              </div>
+            </section>
+            
+            <section class="learning-section">
+              <h2>Práctica de Diagnóstico con Sondas</h2>
+              <p>Utiliza el simulador de multímetro a la derecha para realizar pruebas eléctricas en la placa:</p>
+              <ul>
+                <li>Gira el dial a <strong>V ⎓ (Voltaje DC)</strong>.</li>
+                <li>Simula conectar la batería usando el botón <strong>"Conectar Batería"</strong>.</li>
+                <li>Haz clic en los puntos de prueba (TP1, TP2, TP3) para posicionar la sonda activa y diagnosticar si los BECs entregan el voltaje correcto.</li>
+              </ul>
+            </section>
+            
+          </div>
+
+          <!-- Interactive multimeter simulator widget -->
+          <div class="sidebar-widgets">
             
             <!-- Quiz for Module 2 -->
             <div class="quiz-box" id="quiz-multimetro">
@@ -2195,6 +2434,7 @@
                 <!-- Injected via Javascript -->
               </div>
             </section>
+
           </div>
 
           <div class="sidebar-widgets">
@@ -2818,8 +3058,10 @@ while True:
         const throttle = parseInt(throttleSlider.value);
         if (throttle > 0) {
           propAngle += throttle * 0.4;
-          document.getElementById('propLeft').style.transform = `rotate(${propAngle}deg)`;
-          document.getElementById('propRight').style.transform = `rotate(${-propAngle}deg)`;
+          document.getElementById('prop1').style.transform = `rotate(${propAngle}deg)`;
+          document.getElementById('prop2').style.transform = `rotate(${-propAngle}deg)`;
+          document.getElementById('prop3').style.transform = `rotate(${-propAngle}deg)`;
+          document.getElementById('prop4').style.transform = `rotate(${propAngle}deg)`;
         }
 
         animationFrameId = requestAnimationFrame(animate);
@@ -3032,7 +3274,9 @@ while True:
 
       // Mode logic
       if (multimeterDialState === 1) { // Voltage DC
-        lcd.innerText = `${voltageDifference.toFixed(2)} V`;
+        let displayVolts = voltageDifference;
+        if (Math.abs(displayVolts) < 0.001) displayVolts = 0;
+        lcd.innerText = `${displayVolts.toFixed(2)} V`;
       } 
       else if (multimeterDialState === 2) { // Resistance Mode
         // TP2 (5V BEC) to GND resistance = 500 Ω
@@ -3043,12 +3287,7 @@ while True:
         } else if ((red === 'TP3' && black === 'GND') || (red === 'GND' && black === 'TP3')) {
           lcd.innerText = "1000 Ω";
         } else if ((red === 'TP1' && black === 'TP2') || (red === 'TP2' && black === 'TP1')) {
-          // Across battery switch
-          if (isCircuitSwitchClosed) {
-            lcd.innerText = "0.1 Ω";
-          } else {
-            lcd.innerText = "O.L"; // Open Loop
-          }
+          lcd.innerText = "O.L"; // Open Loop across regulator
         } else {
           lcd.innerText = "O.L";
         }
@@ -3056,10 +3295,6 @@ while True:
       else if (multimeterDialState === 3) { // Continuity
         if (red === black) {
           lcd.innerText = "0.0 Ω";
-          beepVisual.classList.add('active');
-          playBeepSound();
-        } else if (((red === 'TP1' && black === 'TP2') || (red === 'TP2' && black === 'TP1')) && isCircuitSwitchClosed) {
-          lcd.innerText = "0.1 Ω";
           beepVisual.classList.add('active');
           playBeepSound();
         } else {
@@ -3197,6 +3432,254 @@ while True:
 
     // Initialize module 3 thrust calculation
     calculateUavThrust();
+
+    // =========================================================================
+    // MODULE 3 ADD-ON: BETAFLIGHT MOTOR DIRECTION & CALIBRATION SIMULATOR
+    // =========================================================================
+    let propsDirectionMode = 'normal'; // 'normal' or 'reversed'
+    let simMotorsActive = false;
+    let simMotorPowers = [0, 0, 0, 0, 0]; // 1-indexed, index 0 is unused
+    let simPropAngles = [0, 0, 0, 0, 0];
+    let simAnimId = null;
+
+    function setPropsDirection(mode) {
+      propsDirectionMode = mode;
+      document.getElementById('btnPropsNormal').classList.toggle('active', mode === 'normal');
+      document.getElementById('btnPropsReversed').classList.toggle('active', mode === 'reversed');
+      
+      // Update arrow icons displayed on the drone
+      updateMotorExpectedArrows();
+      updateSimCalculation();
+    }
+
+    function updateMotorExpectedArrows() {
+      // expected rotation for standard configuration: M1=CW, M2=CCW, M3=CCW, M4=CW
+      // expected rotation for reversed configuration: M1=CCW, M2=CW, M3=CW, M4=CCW
+      for (let m = 1; m <= 4; m++) {
+        let isCW = false;
+        if (propsDirectionMode === 'normal') {
+          isCW = (m === 1 || m === 4);
+        } else {
+          isCW = (m === 2 || m === 3);
+        }
+        
+        const motorContainer = document.getElementById(`sim-motor-${m}`);
+        if (motorContainer) {
+          const cwIcon = motorContainer.querySelector('.icon-cw');
+          const ccwIcon = motorContainer.querySelector('.icon-ccw');
+          if (cwIcon && ccwIcon) {
+            cwIcon.style.display = isCW ? 'block' : 'none';
+            ccwIcon.style.display = isCW ? 'none' : 'block';
+          }
+        }
+      }
+    }
+
+    function toggleMotorSafety() {
+      const isChecked = document.getElementById('chkMotorSafety').checked;
+      simMotorsActive = isChecked;
+      const controlGroup = document.getElementById('simMotorControlGroup');
+      if (isChecked) {
+        controlGroup.style.opacity = '1';
+        controlGroup.style.pointerEvents = 'auto';
+      } else {
+        controlGroup.style.opacity = '0.4';
+        controlGroup.style.pointerEvents = 'none';
+        
+        // Reset all sliders and values
+        document.getElementById('sliderSimMaster').value = 0;
+        document.getElementById('valSimMaster').innerText = '0%';
+        for (let m = 1; m <= 4; m++) {
+          document.getElementById(`sliderSimM${m}`).value = 0;
+          document.getElementById(`valSimM${m}`).innerText = '0%';
+          simMotorPowers[m] = 0;
+        }
+      }
+      updateSimCalculation();
+    }
+
+    function setSimMotorPower(motorId, value) {
+      const valInt = parseInt(value);
+      if (motorId === 'master') {
+        document.getElementById('valSimMaster').innerText = `${valInt}%`;
+        for (let m = 1; m <= 4; m++) {
+          document.getElementById(`sliderSimM${m}`).value = valInt;
+          document.getElementById(`valSimM${m}`).innerText = `${valInt}%`;
+          simMotorPowers[m] = valInt;
+        }
+      } else {
+        document.getElementById(`valSimM${motorId}`).innerText = `${valInt}%`;
+        simMotorPowers[motorId] = valInt;
+        
+        // Update master slider value if all are the same, else keep master at current or clear
+        const allSame = (simMotorPowers[1] === simMotorPowers[2] && 
+                         simMotorPowers[2] === simMotorPowers[3] && 
+                         simMotorPowers[3] === simMotorPowers[4]);
+        if (allSame) {
+          document.getElementById('sliderSimMaster').value = simMotorPowers[1];
+          document.getElementById('valSimMaster').innerText = `${simMotorPowers[1]}%`;
+        }
+      }
+      updateSimCalculation();
+    }
+
+    function updateSimCalculation() {
+      if (!simMotorsActive) {
+        const statusEl = document.getElementById('simDiagnosticStatus');
+        statusEl.style.color = 'var(--text-muted)';
+        const currentLang = localStorage.getItem('preferredLang') || 'es';
+        if (currentLang === 'es') {
+          statusEl.innerHTML = '⚠️ Motores inactivos. Habilita el control de seguridad y sube el acelerador.';
+        } else {
+          statusEl.innerHTML = '⚠️ Motors off. Enable the safety switch and raise the throttle.';
+        }
+        resetPropsDisks();
+        return;
+      }
+
+      // Check if any motor is spinning
+      const isAnySpinning = simMotorPowers.slice(1).some(p => p > 0);
+      if (!isAnySpinning) {
+        const statusEl = document.getElementById('simDiagnosticStatus');
+        statusEl.style.color = 'var(--text-muted)';
+        const currentLang = localStorage.getItem('preferredLang') || 'es';
+        if (currentLang === 'es') {
+          statusEl.innerHTML = '⚠️ Motores apagados (0% de potencia). Aumenta el acelerador para iniciar la prueba.';
+        } else {
+          statusEl.innerHTML = '⚠️ Motors idle (0% power). Raise throttle to start testing.';
+        }
+        resetPropsDisks();
+        return;
+      }
+
+      // We have active motors. Validate their directions!
+      // expected rotation (CW = true, CCW = false)
+      let expectedCW = [];
+      if (propsDirectionMode === 'normal') {
+        expectedCW = [null, true, false, false, true]; // M1=CW, M2=CCW, M3=CCW, M4=CW
+      } else {
+        expectedCW = [null, false, true, true, false]; // M1=CCW, M2=CW, M3=CW, M4=CCW
+      }
+
+      // Hardware rotation based on ESC configuration
+      // M1, M4 default CW. So normal = CW, reversed = CCW
+      // M2, M3 default CCW. So normal = CCW, reversed = CW
+      let escReversed = [
+        null,
+        document.getElementById('selEsc1').value === 'reversed',
+        document.getElementById('selEsc2').value === 'reversed',
+        document.getElementById('selEsc3').value === 'reversed',
+        document.getElementById('selEsc4').value === 'reversed'
+      ];
+
+      let actualCW = [null];
+      actualCW.push(!escReversed[1]);
+      actualCW.push(escReversed[2]);
+      actualCW.push(escReversed[3]);
+      actualCW.push(!escReversed[4]);
+
+      // Check for errors
+      let errors = [];
+      for (let m = 1; m <= 4; m++) {
+        if (simMotorPowers[m] > 0) {
+          const correct = (actualCW[m] === expectedCW[m]);
+          const disk = document.querySelector(`#sim-motor-${m} .sim-motor-disk`);
+          if (correct) {
+            disk.style.borderColor = 'var(--accent-green)';
+            disk.style.boxShadow = `0 0 10px rgba(57, 255, 20, 0.2)`;
+          } else {
+            disk.style.borderColor = 'var(--accent-red)';
+            disk.style.boxShadow = `0 0 10px rgba(255, 51, 102, 0.2)`;
+            errors.push(m);
+          }
+        } else {
+          const disk = document.querySelector(`#sim-motor-${m} .sim-motor-disk`);
+          disk.style.borderColor = 'rgba(0, 240, 255, 0.2)';
+          disk.style.boxShadow = 'none';
+        }
+      }
+
+      const statusEl = document.getElementById('simDiagnosticStatus');
+      const currentLang = localStorage.getItem('preferredLang') || 'es';
+      if (errors.length > 0) {
+        statusEl.style.color = 'var(--accent-red)';
+        if (currentLang === 'es') {
+          statusEl.innerHTML = `❌ <strong>¡Peligro de Volcado!</strong> El Motor ${errors.join(', ')} gira en sentido contrario al esperado por Betaflight. Invierte la dirección del ESC del motor afectado.`;
+        } else {
+          statusEl.innerHTML = `❌ <strong>Flip-over Danger!</strong> Motor ${errors.join(', ')} is spinning in the opposite direction expected by Betaflight. Reverse the ESC setting for that motor.`;
+        }
+      } else {
+        statusEl.style.color = 'var(--accent-green)';
+        if (currentLang === 'es') {
+          statusEl.innerHTML = `✅ <strong>Alineación Correcta.</strong> Todos los motores activos giran en el sentido correcto. ¡El dron despegaría de forma estable!`;
+        } else {
+          statusEl.innerHTML = `✅ <strong>Correct Alignment.</strong> All active motors are spinning in the correct direction. The drone would lift off stably!`;
+        }
+      }
+
+      // Start animation loop if not running
+      if (!simAnimId) {
+        animateSimProps();
+      }
+    }
+
+    function resetPropsDisks() {
+      for (let m = 1; m <= 4; m++) {
+        const disk = document.querySelector(`#sim-motor-${m} .sim-motor-disk`);
+        if (disk) {
+          disk.style.borderColor = 'rgba(0, 240, 255, 0.2)';
+          disk.style.boxShadow = 'none';
+          const svg = disk.querySelector('.prop-blade-svg');
+          if (svg) svg.style.opacity = '0.15';
+        }
+      }
+      if (simAnimId) {
+        cancelAnimationFrame(simAnimId);
+        simAnimId = null;
+      }
+    }
+
+    function animateSimProps() {
+      let anySpinning = false;
+      for (let m = 1; m <= 4; m++) {
+        const power = simMotorPowers[m];
+        if (power > 0 && simMotorsActive) {
+          anySpinning = true;
+          const speed = power * 0.4;
+          
+          let escReversed = document.getElementById(`selEsc${m}`).value === 'reversed';
+          let isCW = false;
+          if (m === 1 || m === 4) {
+            isCW = !escReversed;
+          } else {
+            isCW = escReversed;
+          }
+          
+          if (isCW) {
+            simPropAngles[m] += speed;
+          } else {
+            simPropAngles[m] -= speed;
+          }
+          
+          const svg = document.querySelector(`#sim-motor-${m} .prop-blade-svg`);
+          if (svg) {
+            svg.style.transform = `rotate(${simPropAngles[m]}deg)`;
+            svg.style.opacity = `${0.15 + (power / 100) * 0.65}`;
+          }
+        } else {
+          const svg = document.querySelector(`#sim-motor-${m} .prop-blade-svg`);
+          if (svg) {
+            svg.style.opacity = '0.15';
+          }
+        }
+      }
+      
+      if (anySpinning && simMotorsActive) {
+        simAnimId = requestAnimationFrame(animateSimProps);
+      } else {
+        simAnimId = null;
+      }
+    }
 
     // =========================================================================
     // MODULE 4: SOLDERING INTERACTIVE GUIDE & GALLERY (CAPACITOR SOLDERING)
@@ -3709,6 +4192,7 @@ while True:
         nav_electronica: "Power Systems & LiPo",
         nav_multimetro: "Flight Controllers",
         nav_componentes: "ESCs & Motors",
+        nav_simulator: "Motor Simulator",
         nav_soldadura: "Soldering & Filtering",
         nav_protoboard: "Wiring Connections",
         nav_microcontroladores: "Firmware & Software",
@@ -3733,6 +4217,9 @@ while True:
         card_cpu_desc: "Understand three-phase brushless motor commutation. Calculate theoretical loaded RPM and estimated thrust in real time.",
         card_cpu_status: "approx. 10 hours",
         btn_explore: "Explore",
+        card_sim_desc: "Interactive simulator for motor configuration, rotation direction, and Betaflight power injection testing.",
+        card_sim_status: "Practice",
+        btn_simulate: "Simulate",
 
         card_flame_title: "Soldering & Filtering",
         card_flame_desc: "Learn high-current XT60 wire joint preparation and soldering Low-ESR capacitors for electrical noise filtering.",
@@ -3750,7 +4237,27 @@ while True:
         btn_program: "Configure",
 
         badge_core: "Core",
-        badge_adv: "Advanced"
+        badge_adv: "Advanced",
+        // Betaflight Motor Sim
+        sim_title: "Motor Rotation & Configuration (Betaflight)",
+        sim_desc: "The rotation direction of the motors is critical for proper UAV flight. If a motor spins backwards, the flight controller will try to compensate, and the drone will flip immediately upon takeoff. Adjust the rotation mode in Betaflight and the physical ESC hardware configuration (BLHeli) to align them correctly.",
+        sim_alert: "<strong>Configuration Rule:</strong> In 'Standard' mode, Motors 1 and 4 spin CW (clockwise) and Motors 2 and 3 CCW (counter-clockwise). In 'Reversed (Props Out)' mode, the direction of all motors is inverted to push dirt and twigs away from the camera lens.",
+        sim_mode_title: "Flight Controller Configuration (Betaflight)",
+        sim_mode_normal: "Standard (Props In)",
+        sim_mode_reversed: "Reversed (Props Out)",
+        sim_esc_title: "Physical Rotation Direction in ESCs",
+        sim_esc_desc: "Configure if the ESC firmware reverses the motor spin direction via hardware:",
+        esc_dir_normal: "Normal (Default)",
+        esc_dir_reversed: "Inverted (Reversed)",
+        sim_test_title: "Motor Power Injection Test",
+        sim_safety_label: "Enable Control",
+        sim_master_label: "Master Throttle",
+        sim_diag_title: "Real-time Diagnostics:",
+        sim_diag_off: "⚠️ Motors inactive. Enable the safety switch and raise the throttle.",
+        motor_1: "Motor 1",
+        motor_2: "Motor 2",
+        motor_3: "Motor 3",
+        motor_4: "Motor 4"
       },
       es: {
         lang_en: "Inglés",
@@ -3759,6 +4266,7 @@ while True:
         nav_electronica: "Potencia y Baterías LiPo",
         nav_multimetro: "Controladoras de Vuelo",
         nav_componentes: "ESCs y Motores Brushless",
+        nav_simulator: "Simulador Motores",
         nav_soldadura: "Soldadura y Filtrado",
         nav_protoboard: "Mapeo de Conexiones",
         nav_microcontroladores: "Firmware y Configuración",
@@ -3776,32 +4284,55 @@ while True:
         card_gauge_desc: "Diagnostica circuitos de alimentación regulados de 5V y 9V en placas de control real utilizando multímetro virtual.",
         card_gauge_status: "8 horas aprox.",
         btn_measure: "Medir",
-
+ 
         card_cpu_title: "ESCs y Motores Brushless",
         card_cpu_desc: "Conoce el funcionamiento trifásico de los variadores y motores brushless. Calcula el empuje y las RPM estimadas en tiempo real.",
         card_cpu_status: "10 horas aprox.",
         btn_explore: "Explorar",
-
+        card_sim_desc: "Simulador interactivo para configuración de motores, sentido de giro y pruebas de inyección de potencia en Betaflight.",
+        card_sim_status: "Práctica",
+        btn_simulate: "Simular",
+ 
         card_flame_title: "Soldadura y Filtrado",
         card_flame_desc: "Aprende la técnica de soldadura de conectores XT60 y soldadura de condensadores de filtrado de ruido de baja ESR.",
         card_flame_status: "15 horas aprox.",
         btn_solder: "Soldar",
-
+ 
         card_grid_title: "Mapeo de Conexiones",
         card_grid_desc: "Mapea esquemas del receptor, GPS/brújula, cámara y VTX a las almohadillas físicas del controlador de vuelo.",
         card_grid_status: "6 horas aprox.",
         btn_design: "Mapear",
-
+ 
         card_terminal_title: "Firmware y Configuración",
         card_terminal_desc: "Aprende a configurar parámetros de vuelo en Betaflight o ArduPilot. Explora el mapeo de puertos UART y telemetría.",
         card_terminal_status: "20 horas aprox.",
         btn_program: "Configurar",
-
+ 
         badge_core: "Core",
-        badge_adv: "Avanzado"
+        badge_adv: "Avanzado",
+        // Betaflight Motor Sim
+        sim_title: "Sentido de Giro y Configuración de Motores (Betaflight)",
+        sim_desc: "El sentido de giro de los motores es crítico para el correcto vuelo de un UAV. Si un motor gira al revés, la controladora de vuelo intentará compensar y el dron se volcará (flip) inmediatamente al despegar. Ajusta el tipo de rotación en Betaflight y la configuración física en cada ESC (BLHeli) para alinearlos correctamente.",
+        sim_alert: "<strong>Regla de Configuración:</strong> En el modo 'Estándar', los motores 1 y 4 giran CW (horario) y los motores 2 y 3 CCW (antihorario). En el modo 'Invertido (Props Out)', las direcciones de todos los motores se invierten para alejar la suciedad y ramas de la cámara.",
+        sim_mode_title: "Dirección en Controladora (Betaflight)",
+        sim_mode_normal: "Estándar (Props In)",
+        sim_mode_reversed: "Invertido (Props Out)",
+        sim_esc_title: "Dirección de Giro Física en Variadores (ESC)",
+        sim_esc_desc: "Configura si el firmware del ESC invierte el sentido de giro por hardware:",
+        esc_dir_normal: "Normal (Predeterminado)",
+        esc_dir_reversed: "Invertido (Reversed)",
+        sim_test_title: "Prueba e Inyección de Potencia",
+        sim_safety_label: "Activar Control",
+        sim_master_label: "Acelerador Maestro (Master)",
+        sim_diag_title: "Diagnóstico en Tiempo Real:",
+        sim_diag_off: "⚠️ Motores inactivos. Habilita el control de seguridad y sube el acelerador.",
+        motor_1: "Motor 1",
+        motor_2: "Motor 2",
+        motor_3: "Motor 3",
+        motor_4: "Motor 4"
       }
     };
-
+ 
     function setTheme(theme) {
       if (theme === 'light') {
         document.documentElement.classList.add('light');
@@ -3813,38 +4344,43 @@ while True:
         window.lucide.createIcons();
       }
     }
-
+ 
     function toggleTheme() {
       const isLight = document.documentElement.classList.contains('light');
       setTheme(isLight ? 'dark' : 'light');
     }
-
+ 
     function setLanguage(lang) {
       const flagUrl = lang === 'es' ? 'https://flagcdn.com/w40/co.png' : 'https://flagcdn.com/w40/us.png';
       const currentFlag = document.getElementById('currentFlag');
       if (currentFlag) currentFlag.src = flagUrl;
-
+ 
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (translations[lang] && translations[lang][key]) {
           el.innerHTML = translations[lang][key];
         }
       });
-
+ 
       document.querySelectorAll('.lang-option').forEach(btn => {
         btn.classList.remove('active');
         if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(`'${lang}'`)) {
           btn.classList.add('active');
         }
       });
-
+ 
       localStorage.setItem('preferredLang', lang);
       updateGlobalProgressUI();
-    }
 
+      // Update simulator diagnostics text lang
+      if (typeof updateSimCalculation === 'function') {
+        updateSimCalculation();
+      }
+    }
+ 
     window.setLanguage = setLanguage;
     window.toggleTheme = toggleTheme;
-
+ 
     // =========================================================================
     // APPLICATION INITIALIZATION
     // =========================================================================
@@ -3853,13 +4389,20 @@ while True:
       initUavWiringMap();
       updateOhmCalculation();
       initProgressTracker();
+ 
+      // Reset safety checkbox and initialize simulator arrows
+      const chk = document.getElementById('chkMotorSafety');
+      if (chk) chk.checked = false;
+      if (typeof updateMotorExpectedArrows === 'function') {
+        updateMotorExpectedArrows();
+      }
 
       // Load saved language and theme
       const savedLang = localStorage.getItem('preferredLang') || 'es';
       setLanguage(savedLang);
       const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
       setTheme(savedTheme);
-
+ 
       const desktopToggle = document.getElementById('themeToggleBtn');
       if (desktopToggle) {
         desktopToggle.addEventListener('click', toggleTheme);
