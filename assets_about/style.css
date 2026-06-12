@@ -706,8 +706,16 @@ html.light .text-white {
     color: #0F172A !important;
 }
 
+html.light .text-gray-300 {
+    color: #334155 !important;
+}
+
 html.light .text-gray-400 {
     color: #475569 !important;
+}
+
+html.light .text-gray-600 {
+    color: #94A3B8 !important;
 }
 
 html.light .bg-dark\/30 {
@@ -759,7 +767,7 @@ html.light .hover\:text-white:hover {
 }
 
 /* Ensure images with white accents look premium in light mode */
-html.light img[src*="logo"] {
+html.light img[src*="AN-logo.png"] {
     filter: brightness(0.1) contrast(1.5) drop-shadow(0 0 1px rgba(0, 0, 0, 0.3));
 }
 

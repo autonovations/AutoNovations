@@ -1120,6 +1120,43 @@
       dominant-baseline: middle;
     }
 
+    /* UAV Connection Map Styles */
+    .fc-pad {
+      fill: #cbd5e0;
+      stroke: #718096;
+      stroke-width: 1;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .fc-pad:hover, .fc-pad.active {
+      fill: var(--accent-cyan);
+      stroke: var(--accent-cyan);
+      filter: drop-shadow(0 0 4px var(--accent-cyan));
+    }
+    .wire-path {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: var(--transition);
+      opacity: 0.35;
+    }
+    .wire-path.active {
+      opacity: 1;
+      stroke-width: 3.5;
+    }
+    .wire-path.wire-power { stroke: var(--accent-red); }
+    .wire-path.wire-power.active { filter: drop-shadow(0 0 4px var(--accent-red)); }
+    .wire-path.wire-gnd { stroke: #cbd5e0; }
+    .wire-path.wire-gnd.active { stroke: #ffffff; filter: drop-shadow(0 0 4px #ffffff); }
+    .wire-path.wire-tx { stroke: var(--accent-cyan); }
+    .wire-path.wire-tx.active { filter: drop-shadow(0 0 4px var(--accent-cyan)); }
+    .wire-path.wire-rx { stroke: var(--accent-amber); }
+    .wire-path.wire-rx.active { filter: drop-shadow(0 0 4px var(--accent-amber)); }
+    .wire-path.wire-signal { stroke: var(--accent-green); }
+    .wire-path.wire-signal.active { filter: drop-shadow(0 0 4px var(--accent-green)); }
+
     /* Microcontroller Board Pinout CSS and interactive */
     .mcu-selector {
       display: flex;
@@ -1700,22 +1737,22 @@
           <button><i data-lucide="layout-dashboard"></i><span data-i18n="nav_dashboard">Dashboard</span></button>
         </li>
         <li class="nav-item" data-tab="electronica">
-          <button><i data-lucide="zap"></i><span data-i18n="nav_electronica">Electrónica Básica</span></button>
+          <button><i data-lucide="zap"></i><span data-i18n="nav_electronica">Potencia y Baterías LiPo</span></button>
         </li>
         <li class="nav-item" data-tab="multimetro">
-          <button><i data-lucide="gauge"></i><span data-i18n="nav_multimetro">El Multímetro</span></button>
+          <button><i data-lucide="activity"></i><span data-i18n="nav_multimetro">Controladoras de Vuelo</span></button>
         </li>
         <li class="nav-item" data-tab="componentes">
-          <button><i data-lucide="cpu"></i><span data-i18n="nav_componentes">Componentes</span></button>
+          <button><i data-lucide="orbit"></i><span data-i18n="nav_componentes">ESCs y Motores Brushless</span></button>
         </li>
         <li class="nav-item" data-tab="soldadura">
-          <button><i data-lucide="flame"></i><span data-i18n="nav_soldadura">Soldadura</span></button>
+          <button><i data-lucide="flame"></i><span data-i18n="nav_soldadura">Soldadura y Filtrado</span></button>
         </li>
         <li class="nav-item" data-tab="protoboard">
-          <button><i data-lucide="grid"></i><span data-i18n="nav_protoboard">Protoboard y PCB</span></button>
+          <button><i data-lucide="git-branch"></i><span data-i18n="nav_protoboard">Mapeo de Conexiones</span></button>
         </li>
         <li class="nav-item" data-tab="microcontroladores">
-          <button><i data-lucide="terminal"></i><span data-i18n="nav_microcontroladores">Microcontroladores</span></button>
+          <button><i data-lucide="terminal"></i><span data-i18n="nav_microcontroladores">Firmware y Configuración</span></button>
         </li>
         <li class="nav-item" data-tab="ruta">
           <button><i data-lucide="map"></i><span data-i18n="nav_ruta">Mi Ruta de Estudio</span></button>
@@ -1756,10 +1793,10 @@
         <div class="dashboard-grid">
           <div class="card">
             <div class="card-header">
-              <div class="card-title"><i data-lucide="zap" class="accent-cyan"></i><span data-i18n="card_zap_title">Electrónica Básica</span></div>
+              <div class="card-title"><i data-lucide="zap" class="accent-cyan"></i><span data-i18n="card_zap_title">Potencia y Baterías LiPo</span></div>
               <span class="card-badge badge-core" data-i18n="badge_core">Core</span>
             </div>
-            <p class="card-desc" data-i18n="card_zap_desc">Domina voltaje, corriente y resistencia. Explora la ley de Ohm interactivamente y visualiza el flujo de electrones en tiempo real.</p>
+            <p class="card-desc" data-i18n="card_zap_desc">Domina la química LiPo, celdas (S/P) y ratios C. Utiliza el estimador interactivo para calcular consumo y autonomía del dron.</p>
             <div class="card-footer">
               <div class="card-status"><i data-lucide="clock"></i> <span data-i18n="card_zap_status">5 horas aprox.</span></div>
               <button class="card-btn" onclick="switchTab('electronica')" data-i18n="btn_study">Estudiar</button>
@@ -1768,10 +1805,10 @@
 
           <div class="card">
             <div class="card-header">
-              <div class="card-title"><i data-lucide="gauge" class="accent-cyan"></i><span data-i18n="card_gauge_title">El Multímetro</span></div>
+              <div class="card-title"><i data-lucide="activity" class="accent-cyan"></i><span data-i18n="card_gauge_title">Controladoras de Vuelo</span></div>
               <span class="card-badge badge-core" data-i18n="badge_core">Core</span>
             </div>
-            <p class="card-desc" data-i18n="card_gauge_desc">Simula mediciones reales de tensión, resistencia y continuidad sobre un circuito interactivo de drones con puntas de prueba.</p>
+            <p class="card-desc" data-i18n="card_gauge_desc">Diagnostica circuitos de alimentación regulados de 5V y 9V en placas de control real utilizando multímetro virtual.</p>
             <div class="card-footer">
               <div class="card-status"><i data-lucide="clock"></i> <span data-i18n="card_gauge_status">8 horas aprox.</span></div>
               <button class="card-btn" onclick="switchTab('multimetro')" data-i18n="btn_measure">Medir</button>
@@ -1780,10 +1817,10 @@
 
           <div class="card">
             <div class="card-header">
-              <div class="card-title"><i data-lucide="cpu" class="accent-cyan"></i><span data-i18n="card_cpu_title">Componentes</span></div>
+              <div class="card-title"><i data-lucide="orbit" class="accent-cyan"></i><span data-i18n="card_cpu_title">ESCs y Motores Brushless</span></div>
               <span class="card-badge badge-core" data-i18n="badge_core">Core</span>
             </div>
-            <p class="card-desc" data-i18n="card_cpu_desc">Enciclopedia técnica de resistencias, capacitores, transistores y MOSFETs, incluyendo guías paso a paso para testearlos.</p>
+            <p class="card-desc" data-i18n="card_cpu_desc">Conoce el funcionamiento trifásico de los variadores y motores brushless. Calcula el empuje y las RPM estimadas en tiempo real.</p>
             <div class="card-footer">
               <div class="card-status"><i data-lucide="clock"></i> <span data-i18n="card_cpu_status">10 horas aprox.</span></div>
               <button class="card-btn" onclick="switchTab('componentes')" data-i18n="btn_explore">Explorar</button>
@@ -1792,10 +1829,10 @@
 
           <div class="card">
             <div class="card-header">
-              <div class="card-title"><i data-lucide="flame" class="accent-cyan"></i><span data-i18n="card_flame_title">Soldadura SMD/THT</span></div>
+              <div class="card-title"><i data-lucide="flame" class="accent-cyan"></i><span data-i18n="card_flame_title">Soldadura y Filtrado</span></div>
               <span class="card-badge badge-core" data-i18n="badge_core">Core</span>
             </div>
-            <p class="card-desc" data-i18n="card_flame_desc">Simulador secuencial que enseña a aplicar calor y flux correctamente para lograr juntas de calidad militar sin dañar placas.</p>
+            <p class="card-desc" data-i18n="card_flame_desc">Aprende la técnica de soldadura de conectores XT60 y soldadura de condensadores de filtrado de ruido de baja ESR.</p>
             <div class="card-footer">
               <div class="card-status"><i data-lucide="clock"></i> <span data-i18n="card_flame_status">15 horas aprox.</span></div>
               <button class="card-btn" onclick="switchTab('soldadura')" data-i18n="btn_solder">Soldar</button>
@@ -1804,10 +1841,10 @@
 
           <div class="card">
             <div class="card-header">
-              <div class="card-title"><i data-lucide="grid" class="accent-cyan"></i><span data-i18n="card_grid_title">Protoboard y PCB</span></div>
+              <div class="card-title"><i data-lucide="git-branch" class="accent-cyan"></i><span data-i18n="card_grid_title">Mapeo de Conexiones</span></div>
               <span class="card-badge badge-core" data-i18n="badge_core">Core</span>
             </div>
-            <p class="card-desc" data-i18n="card_grid_desc">Aprende a cablear circuitos en protoboard mediante resaltados de buses y a mapear esquemáticos eléctricos reales de drones.</p>
+            <p class="card-desc" data-i18n="card_grid_desc">Mapea esquemas del receptor, GPS/brújula, cámara y VTX a las patillas y almohadillas físicas del controlador de vuelo.</p>
             <div class="card-footer">
               <div class="card-status"><i data-lucide="clock"></i> <span data-i18n="card_grid_status">6 horas aprox.</span></div>
               <button class="card-btn" onclick="switchTab('protoboard')" data-i18n="btn_design">Diseñar</button>
@@ -1816,92 +1853,109 @@
 
           <div class="card">
             <div class="card-header">
-              <div class="card-title"><i data-lucide="terminal" class="accent-cyan"></i><span data-i18n="card_terminal_title">Microcontroladores</span></div>
+              <div class="card-title"><i data-lucide="terminal" class="accent-cyan"></i><span data-i18n="card_terminal_title">Firmware y Configuración</span></div>
               <span class="card-badge badge-adv" data-i18n="badge_adv">Avanzado</span>
             </div>
-            <p class="card-desc" data-i18n="card_terminal_desc">Explora de forma interactiva los pinouts y arquitecturas de Arduino y ESP32. Estudia la programación de telemetría y sensores.</p>
+            <p class="card-desc" data-i18n="card_terminal_desc">Explora de forma interactiva las interfaces de software como Betaflight y ArduPilot. Estudia los puertos UART de comunicación.</p>
             <div class="card-footer">
               <div class="card-status"><i data-lucide="clock"></i> <span data-i18n="card_terminal_status">20 horas aprox.</span></div>
               <button class="card-btn" onclick="switchTab('microcontroladores')" data-i18n="btn_program">Programar</button>
             </div>
-          </div>
-        </div>
-      </div>
+          </div> <!-- Close card 6 -->
+        </div> <!-- Close dashboard-grid -->
+      </div> <!-- Close tab-dashboard -->
 
-      <!-- ==================== ELECTRONICA BASICA PANEL ==================== -->
+      <!-- ==================== POTENCIA Y LIPO PANEL ==================== -->
       <div id="tab-electronica" class="tab-pane">
         <div class="content-header">
-          <h1><i data-lucide="zap" class="accent-cyan"></i>Electrónica Básica</h1>
-          <p>Los principios fundamentales que gobiernan los circuitos de potencia y control de un UAV.</p>
+          <h1><i data-lucide="zap" class="accent-cyan"></i>Sistemas de Potencia y Baterías LiPo</h1>
+          <p>Los principios físicos de la energía a bordo de un UAV y su correcto dimensionamiento.</p>
         </div>
 
         <div class="module-content-grid">
           <div>
             <section class="learning-section">
-              <h2>Magnitudes Eléctricas y la Ley de Ohm</h2>
-              <p>Para trabajar en drones, no puedes omitir la física elemental. La corriente eléctrica es el flujo ordenado de electrones que recorre un circuito bajo una diferencia de potencial.</p>
+              <h2>Química LiPo y Configuración de Celdas</h2>
+              <p>Las baterías de Polímero de Litio (LiPo) son el estándar en UAVs debido a su gran densidad energética y su alta tasa de descarga. Entender su composición eléctrica es fundamental para proteger la aeronave.</p>
               
-              <h3>1. Voltaje (Tensión - V)</h3>
-              <p>Medido en <strong>Voltios (V)</strong>. Es la fuerza electromotriz que "empuja" a los electrones a través del conductor. En un dron de carreras convencional de 5 pulgadas, la tensión nominal suele ser de 14.8V (4 celdas LiPo) o 22.2V (6 celdas LiPo). Una medición correcta garantiza que tus componentes no se quemen por sobretensión o fallen por subtensión.</p>
+              <h3>1. Tensión de Celda (S)</h3>
+              <p>Una celda LiPo tiene un voltaje nominal de <strong>3.7V</strong>. Completamente cargada llega a <strong>4.2V</strong>, y nunca debe descargarse por debajo de <strong>3.3V</strong> (límite de daño químico irreversible). La "S" representa el número de celdas en serie: una batería 4S tiene un voltaje nominal de 14.8V (4 × 3.7V), mientras que una 6S ofrece 22.2V.</p>
 
-              <h3>2. Corriente (Intensidad - I)</h3>
-              <p>Medida en <strong>Amperios (A)</strong>. Es el caudal o volumen de electrones que circula por segundo. Un motor brushless a máxima potencia puede succionar más de 30-40 amperios de forma continua de tu batería. Es por esto que los ESCs de potencia del dron requieren cables gruesos (calibre AWG 12 o 14) y soldaduras masivas.</p>
+              <h3>2. Capacidad (mAh)</h3>
+              <p>Mide la cantidad de energía almacenada. Una batería de 1500 mAh (Miliamperios-hora) puede suministrar 1.5 Amperios continuos durante una hora entera. A mayor capacidad, más energía disponible, pero también mayor peso para levantar.</p>
 
-              <h3>3. Resistencia (R)</h3>
-              <p>Medida en <strong>Ohmios (Ω)</strong>. Es la oposición natural de los materiales al paso de la corriente. Cables muy delgados o soldaduras frías actúan como resistencias indeseadas, convirtiendo la preciada energía de la batería en calor, lo cual puede fundir cables en pleno vuelo.</p>
+              <h3>3. Tasa de Descarga (C-Rating)</h3>
+              <p>Representa la corriente máxima que la batería puede entregar de forma segura sin dañarse. Se calcula multiplicando la capacidad por el factor "C". Por ejemplo, una batería de 1500 mAh (1.5 Ah) con una tasa de 100C puede entregar hasta 150 Amperios continuos (1.5 × 100 = 150 A).</p>
               
               <div class="alert-box warn">
                 <i data-lucide="alert-triangle" class="accent-amber"></i>
                 <div class="alert-box-text">
-                  <strong>Ley de Ohm: V = I × R</strong><br>
-                  A mayor voltaje, mayor corriente fluirá. A mayor resistencia en el camino, menor será la corriente que logre pasar. ¡Entender esto evita incendiar componentes!
+                  <strong>Seguridad con LiPos:</strong><br>
+                  Una descarga excesiva por debajo de 3.0V por celda puede inflar la batería, inutilizándola. Además, cortocircuitar los bornes XT60 libera toda la energía instantáneamente, provocando incendios de alta temperatura. ¡Manejar con precaución extrema!
                 </div>
               </div>
             </section>
             
             <section class="learning-section">
-              <h2>Leyes de Kirchhoff</h2>
-              <p>Los esquemáticos de los flight controllers son redes complejas. Las leyes de Kirchhoff nos permiten analizar cómo se ramifica la energía:</p>
+              <h2>Distribución y Regulación de Voltaje (PDB y BEC)</h2>
+              <p>Los motores del dron consumen el voltaje bruto de la batería. Sin embargo, los componentes lógicos (FC, receptor de radio, cámara) operan a voltajes menores y limpios de ruido:</p>
               <ul>
-                <li><strong>Primera Ley (Corriente):</strong> La suma de corrientes que entran a un nodo es igual a la suma de corrientes que salen. Toda la corriente que la batería bombea hacia los ESCs debe regresar exactamente igual por el borne negativo.</li>
-                <li><strong>Segunda Ley (Tensión):</strong> En una malla cerrada, la suma de las caídas de tensión es igual al voltaje aplicado. Si tu regulador de voltaje de 5V alimenta un chip de video y una cámara, ambos consumirán voltaje de forma que las caídas a lo largo del regulador equivalgan a los 5V suministrados.</li>
+                <li><strong>PDB (Power Distribution Board):</strong> Placa de distribución de potencia. Conecta la batería principal directo a los 4 variadores ESC a través de pistas masivas de cobre.</li>
+                <li><strong>BEC (Battery Eliminator Circuit):</strong> Regulador de voltaje conmutado o lineal integrado en el FC o ESC que toma la tensión de la LiPo (ej. 22.2V) y la reduce de forma estable a <strong>5V</strong> (para receptor de radio y LED) y <strong>9V/12V</strong> (para el sistema de video FPV).</li>
               </ul>
             </section>
           </div>
 
-          <!-- Interactive ohm's law simulator widget -->
+          <!-- Interactive UAV Power simulator widget -->
           <div class="sidebar-widgets">
             <div class="interactive-widget">
-              <div class="widget-title"><i data-lucide="sliders" class="accent-cyan"></i>Simulador Ley de Ohm</div>
+              <div class="widget-title"><i data-lucide="sliders" class="accent-cyan"></i>Estimador de Consumo y Autonomía</div>
               
               <div class="control-group">
-                <div class="control-label">Tensión (Voltaje) <span id="ohmVals-V" class="val">9.0 V</span></div>
-                <input id="ohmSlider-V" class="slider-input" type="range" min="1" max="24" step="0.5" value="9">
+                <div class="control-label">Configuración LiPo <span id="ohmVals-V" class="val">4S (14.8 V)</span></div>
+                <input id="ohmSlider-V" class="slider-input" type="range" min="3" max="6" step="1" value="4">
               </div>
 
               <div class="control-group">
-                <div class="control-label">Resistencia <span id="ohmVals-R" class="val">100 Ω</span></div>
-                <input id="ohmSlider-R" class="slider-input" type="range" min="10" max="1000" step="10" value="100">
+                <div class="control-label">Capacidad de Batería <span id="ohmVals-R" class="val">1500 mAh</span></div>
+                <input id="ohmSlider-R" class="slider-input" type="range" min="500" max="5000" step="100" value="1500">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label">Acelerador (Throttle) <span id="uavThrottleVal" class="val" style="color:var(--accent-cyan);">50%</span></div>
+                <input id="ohmSlider-Throttle" class="slider-input" type="range" min="0" max="100" step="5" value="50">
               </div>
 
               <div class="ohm-viz">
-                <div class="widget-title"><i data-lucide="activity"></i>Visualización de Corriente</div>
+                <div class="widget-title"><i data-lucide="activity"></i>Simulación del Consumo y Motores</div>
                 <div class="circuit-wire" id="wireContainer">
                   <!-- Electrons animated inside via JS -->
                 </div>
-                <div class="math-display">
-                  I = <span id="ohmCalcResult" class="result">0.090 A</span> (90 mA)
+                <div style="display: flex; justify-content: space-around; width: 100%; margin-top: 10px; margin-bottom: 5px;">
+                  <div style="text-align: center;">
+                    <div id="propLeft" style="width: 40px; height: 8px; background: var(--accent-cyan); border-radius: 4px; margin: 0 auto; box-shadow: 0 0 8px var(--accent-cyan); transition: transform 0.05s linear;"></div>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 4px;">Motores 1/3</span>
+                  </div>
+                  <div style="text-align: center;">
+                    <div id="propRight" style="width: 40px; height: 8px; background: var(--accent-cyan); border-radius: 4px; margin: 0 auto; box-shadow: 0 0 8px var(--accent-cyan); transition: transform 0.05s linear;"></div>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 4px;">Motores 2/4</span>
+                  </div>
+                </div>
+                <div class="math-display" style="font-size: 1.1rem; width: 100%; text-align: center; display: flex; flex-direction: column; gap: 4px;">
+                  <div>Corriente: <span id="ohmCalcResult" class="result">0.00 A</span></div>
+                  <div style="font-size: 0.85rem; color: var(--text-secondary);">Potencia Total: <span id="uavTotalPower" class="accent-cyan" style="color:var(--accent-cyan); font-weight:bold;">0 W</span></div>
+                  <div style="font-size: 0.9rem; color: var(--accent-green); font-weight: bold; text-shadow: 0 0 8px rgba(57,255,20,0.2); margin-top: 2px;">Tiempo de Vuelo: <span id="uavFlightTime" class="result">0.0 min</span></div>
                 </div>
               </div>
             </div>
             
             <!-- Quiz for Module 1 -->
             <div class="quiz-box" id="quiz-electronica">
-              <div class="quiz-question">Si medimos una caída de tensión de 9V a través de un puente térmico con una resistencia interna anómala de 0.5 Ω, ¿qué cantidad de corriente está disipándose en forma de calor?</div>
+              <div class="quiz-question">Si un dron de carreras con batería LiPo 4S (14.8V nominales) consume un promedio de 25 Amperios en vuelo estacionario (hover) y utiliza una batería de 1500 mAh, ¿cuál es el tiempo de vuelo estimado antes de llegar al límite seguro del 20% de capacidad restante (consumiendo 1200 mAh)?</div>
               <div class="quiz-options">
-                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. 4.5 Amperios</div>
-                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. 18 Amperios</div>
-                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. 0.05 Amperios</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. 2.16 minutos</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. 2.88 minutos</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. 3.60 minutos</div>
               </div>
               <div class="quiz-feedback" id="quiz-feedback-electronica"></div>
               <button class="quiz-submit-btn" onclick="submitQuiz('electronica', 1)" disabled>Enviar Respuesta</button>
@@ -1913,32 +1967,42 @@
       <!-- ==================== EL MULTIMETRO PANEL ==================== -->
       <div id="tab-multimetro" class="tab-pane">
         <div class="content-header">
-          <h1><i data-lucide="gauge" class="accent-cyan"></i>Uso y Diagnóstico con el Multímetro</h1>
-          <p>Aprende a diagnosticar, rastrear continuidad y detectar cortocircuitos en un dron.</p>
+          <h1><i data-lucide="gauge" class="accent-cyan"></i>Diagnóstico de Voltaje en Controladoras de Vuelo</h1>
+          <p>Aprende a comprobar los reguladores BEC y a verificar las líneas de voltaje críticas de una controladora de vuelo (FC).</p>
         </div>
 
         <div class="module-content-grid">
           <div>
             <section class="learning-section">
-              <h2>¿Cómo operar el multímetro de forma segura?</h2>
-              <p>El multímetro es los ojos del técnico de UAV. Se compone de un dial rotativo para seleccionar funciones y dos cables (puntas de prueba): una punta <strong>negra (COM)</strong> y una punta <strong>roja (+)</strong>.</p>
+              <h2>Comprobación de las Líneas de Alimentación (BECs)</h2>
+              <p>El multímetro es indispensable para diagnosticar una placa de control muerta o fallas en periféricos. Una controladora de vuelo (FC) típica cuenta con varios reguladores de voltaje internos (BEC) que alimentan componentes clave:</p>
               
-              <h3>1. Medición de Tensión / Voltaje (V DC)</h3>
-              <p>Para medir tensiones en circuitos continuos (baterías, reguladores del FC). Conecta la punta negra al polo de tierra (GND o negativo) y la roja al nodo a probar en <strong>paralelo</strong>. Si colocas las puntas invertidas, simplemente leerás un valor negativo. ¡Importante! El multímetro no sufrirá daños.</p>
+              <h3>1. Línea de Entrada de Batería (VBAT)</h3>
+              <p>Es la tensión directa de la LiPo (ej. 22.2V en una batería 6S). Alimenta los sensores y reguladores principales. Se mide colocando la punta negra en GND y la roja en el terminal positivo del conector principal.</p>
 
-              <h3>2. Medición de Continuidad (¡El Pitido!)</h3>
-              <p>La herramienta número uno para diagnosticar. Mide si existe conexión directa (resistencia menor a unos 30-50 Ω) entre dos puntos. Se utiliza para comprobar si un cable no está roto por dentro o para detectar <strong>cortocircuitos críticos</strong>.
-              <br><strong class="accent-red">Regla de Oro:</strong> Antes de conectar una batería nueva a tu dron recién armado, pon el multímetro en continuidad y mide entre el borne positivo y negativo del conector XT60. Si pita, hay un cortocircuito que quemaría el dron instantáneamente al conectarle energía.</p>
+              <h3>2. Regulador de 5V (BEC 5V)</h3>
+              <p>Esta línea alimenta el receptor de radio (RX), el receptor GPS, la brújula y el zumbador (Buzzer). Si el BEC de 5V está dañado, el receptor no encenderá y el dron no podrá enlazarse a la emisora, aunque los ESCs piten al inicio.</p>
 
-              <h3>3. Medición de Resistencia (Ohmios - Ω)</h3>
-              <p>Permite corroborar el valor de las resistencias de precisión en tu PCB o medir el embobinado interno de los motores brushless (que suele ser sumamente bajo, de 0.1 a 0.5 ohmios).
-              <br><strong class="accent-amber">Advertencia:</strong> Nunca midas resistencia en un circuito energizado. Podrías quemar el fusible interno del multímetro o dar una lectura errónea.</p>
+              <h3>3. Regulador de 9V o 12V (BEC 9V)</h3>
+              <p>Diseñado específicamente para alimentar el transmisor de video (VTX) y la cámara FPV, que consumen más corriente y requieren energía filtrada. Un daño en este regulador causa pérdida total de imagen o fallas al acelerar a fondo.</p>
+              
+              <div class="alert-box success">
+                <i data-lucide="shield-check" class="accent-green"></i>
+                <div class="alert-box-text">
+                  <strong>Diagnóstico USB vs Batería:</strong><br>
+                  Si la controladora enciende luces y conecta a la PC por cable USB, pero se apaga por completo al conectar la batería LiPo, el regulador BEC de 5V de la placa está quemado. El puerto USB proporciona los 5V externos bypassando el regulador principal.
+                </div>
+              </div>
             </section>
             
             <section class="learning-section">
-              <h2>Práctica Interactiva de Diagnóstico</h2>
-              <p>Utiliza el panel simulador de la derecha. Selecciona la función del multímetro girando el dial del aparato, luego haz clic en los diferentes nodos del circuito de la placa para conectar la punta activa.</p>
-              <p><strong>Meta:</strong> Verifica si la batería entrega tensión, comprueba si el interruptor funciona midiendo continuidad, y asegúrate de medir la caída de voltaje en la resistencia limitadora.</p>
+              <h2>Práctica de Diagnóstico con Sondas</h2>
+              <p>Utiliza el simulador de multímetro a la derecha para realizar pruebas eléctricas en la placa:</p>
+              <ul>
+                <li>Gira el dial a <strong>V ⎓ (Voltaje DC)</strong>.</li>
+                <li>Simula conectar la batería usando el botón <strong>"Conectar Batería"</strong>.</li>
+                <li>Haz clic en los puntos de prueba (TP1, TP2, TP3) para posicionar la sonda activa y diagnosticar si los BECs entregan el voltaje correcto.</li>
+              </ul>
             </section>
           </div>
 
@@ -2002,43 +2066,42 @@
                       <!-- Connections / wires -->
                       <path d="M 50 150 L 50 50 L 100 50 M 150 50 L 200 50 M 200 50 L 200 70 M 200 90 L 200 150 L 50 150" fill="none" stroke="#3182ce" stroke-width="3" />
                       
-                      <!-- Battery 9V -->
+                      <!-- Battery LiPo -->
                       <rect x="35" y="80" width="30" height="40" fill="#2d3748" stroke="#4a5568" stroke-width="2" rx="3" />
                       <line x1="35" y1="90" x2="25" y2="90" stroke="#ff3366" stroke-width="2" />
-                      <text x="50" y="105" fill="white" font-size="10" text-anchor="middle">9V</text>
+                      <text x="50" y="105" fill="white" font-size="7" text-anchor="middle">LiPo 6S</text>
                       <text x="38" y="93" fill="#ff3366" font-size="10" font-weight="bold">+</text>
                       <text x="38" y="117" fill="#cbd5e0" font-size="10" font-weight="bold">-</text>
 
-                      <!-- Switch (Open or Closed) -->
+                      <!-- Switch / Conector (Open or Closed) -->
                       <g id="switchGraphic" class="circuit-component">
                         <circle cx="100" cy="50" r="4" fill="white" />
                         <circle cx="150" cy="50" r="4" fill="white" />
                         <line id="switchLever" x1="100" y1="50" x2="145" y2="30" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
                       </g>
-                      <text x="125" y="25" fill="#a0aec0" font-size="8" text-anchor="middle">SW1 (Pulsador)</text>
+                      <text x="125" y="25" fill="#a0aec0" font-size="8" text-anchor="middle">CONECTOR BATERÍA</text>
 
-                      <!-- Resistor 1k -->
+                      <!-- BEC Regulator -->
                       <g class="circuit-component">
                         <rect x="185" y="70" width="30" height="20" fill="#2d3748" stroke="#dd6b20" stroke-width="2" rx="2" />
-                        <!-- color bands -->
-                        <rect x="190" y="70" width="3" height="20" fill="#744210" />
-                        <rect x="196" y="70" width="3" height="20" fill="black" />
-                        <rect x="202" y="70" width="3" height="20" fill="red" />
+                        <rect x="190" y="70" width="3" height="20" fill="#00f0ff" />
+                        <rect x="198" y="70" width="3" height="20" fill="black" />
+                        <rect x="206" y="70" width="3" height="20" fill="#39ff14" />
                       </g>
-                      <text x="230" y="82" fill="#a0aec0" font-size="8">R1 (1 kΩ)</text>
+                      <text x="225" y="82" fill="#a0aec0" font-size="8">BEC 5V/9V</text>
 
                       <!-- Test Node Dots to click -->
                       <!-- Node 1: Bat + -->
                       <circle cx="50" cy="50" r="6" fill="#e53e3e" class="test-node" onclick="selectNodeForActiveProbe('TP1', 50, 50)" />
                       <text x="50" y="42" class="node-label">TP1 (BAT+)</text>
 
-                      <!-- Node 2: After switch -->
+                      <!-- Node 2: 5V BEC -->
                       <circle cx="160" cy="50" r="6" fill="#319795" class="test-node" onclick="selectNodeForActiveProbe('TP2', 160, 50)" />
-                      <text x="175" y="45" class="node-label">TP2 (V_SW)</text>
+                      <text x="175" y="45" class="node-label">TP2 (5V_BEC)</text>
 
-                      <!-- Node 3: After Resistor / Before Ground -->
+                      <!-- Node 3: 9V BEC -->
                       <circle cx="200" cy="110" r="6" fill="#ecc94b" class="test-node" onclick="selectNodeForActiveProbe('TP3', 200, 110)" />
-                      <text x="215" y="114" class="node-label">TP3 (R_OUT)</text>
+                      <text x="215" y="114" class="node-label">TP3 (9V_BEC)</text>
 
                       <!-- Node 4: Ground (Black lead target by default) -->
                       <circle cx="120" cy="150" r="6" fill="#4a5568" class="test-node" onclick="selectNodeForActiveProbe('GND', 120, 150)" />
@@ -2058,7 +2121,7 @@
                   
                   <div class="schematic-controls">
                     <button class="schematic-btn" id="btnToggleSwitch" onclick="toggleSimSwitch()">
-                      <i data-lucide="toggle-left"></i> Cerrar Interruptor
+                      <i data-lucide="toggle-left"></i> Conectar Batería
                     </button>
                     
                     <div class="beep-visualizer" id="beepVisual">
@@ -2074,11 +2137,11 @@
             
             <!-- Quiz for Module 2 -->
             <div class="quiz-box" id="quiz-multimetro">
-              <div class="quiz-question">¿Cuál es la primera medición recomendada que debe realizar un técnico antes de alimentar por primera vez un dron recién armado?</div>
+              <div class="quiz-question">¿Cuál es el primer paso recomendado que debe realizar un técnico al encontrar que una controladora de vuelo (FC) no enciende al conectar la batería, pero sí enciende correctamente al conectarse por USB a la computadora?</div>
               <div class="quiz-options">
-                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. Medir el voltaje de la celda de la batería LiPo.</div>
-                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. Comprobar la continuidad en el borne XT60 para verificar ausencia de cortos.</div>
-                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. Medir la resistencia del motor de cola en vacío.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. Cambiar el procesador principal STM32 por sospecha de falla de software.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. Medir la entrada y salida del regulador BEC de 5V para verificar si se quemó.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. Desoldar y cambiar los motores brushless por sospecha de corto.</div>
               </div>
               <div class="quiz-feedback" id="quiz-feedback-multimetro"></div>
               <button class="quiz-submit-btn" onclick="submitQuiz('multimetro', 1)" disabled>Enviar Respuesta</button>
@@ -2087,43 +2150,43 @@
         </div>
       </div>
 
-      <!-- ==================== COMPONENTES PANEL ==================== -->
+      <!-- ==================== ESC Y MOTORES PANEL ==================== -->
       <div id="tab-componentes" class="tab-pane">
         <div class="content-header">
-          <h1><i data-lucide="cpu" class="accent-cyan"></i>Componentes Electrónicos Básicos y Avanzados</h1>
-          <p>Enciclopedia interactiva de los ladrillos lógicos que constituyen las placas del UAV.</p>
+          <h1><i data-lucide="orbit" class="accent-cyan"></i>Sistemas de Propulsión: ESCs y Motores Brushless</h1>
+          <p>Comprende la física de los motores trifásicos sin escobillas y la conmutación electrónica de los variadores.</p>
         </div>
 
         <div class="module-content-grid">
           <div>
             <section class="learning-section">
-              <h2>Biblioteca de Componentes</h2>
-              <p>Selecciona un componente de la cuadrícula superior para estudiar su símbolo esquemático, su comportamiento, su uso directo en sistemas de aeronaves no tripuladas y el protocolo técnico para testear su estado con el multímetro.</p>
+              <h2>Biblioteca de Componentes de Propulsión</h2>
+              <p>Selecciona un elemento de la cuadrícula superior para estudiar su comportamiento, su integración y la metodología para testear su estado eléctrico en el laboratorio.</p>
               
               <div class="comp-grid">
                 <div class="comp-thumbnail active" onclick="showComponent('resistencia')">
-                  <div class="comp-thumbnail-icon accent-amber"><i data-lucide="activity"></i></div>
-                  <div class="comp-thumbnail-name">Resistencia</div>
+                  <div class="comp-thumbnail-icon accent-amber"><i data-lucide="zap"></i></div>
+                  <div class="comp-thumbnail-name">MOSFETs de ESC</div>
                 </div>
                 <div class="comp-thumbnail" onclick="showComponent('capacitor')">
                   <div class="comp-thumbnail-icon accent-cyan"><i data-lucide="battery"></i></div>
-                  <div class="comp-thumbnail-name">Capacitor</div>
+                  <div class="comp-thumbnail-name">Condensador Filtro</div>
                 </div>
                 <div class="comp-thumbnail" onclick="showComponent('diodo')">
-                  <div class="comp-thumbnail-icon accent-green"><i data-lucide="arrow-right-left"></i></div>
-                  <div class="comp-thumbnail-name">Diodo y LED</div>
+                  <div class="comp-thumbnail-icon accent-green"><i data-lucide="shuffle"></i></div>
+                  <div class="comp-thumbnail-name">Diodo TVS</div>
                 </div>
                 <div class="comp-thumbnail" onclick="showComponent('mosfet')">
-                  <div class="comp-thumbnail-icon accent-red"><i data-lucide="toggle-right"></i></div>
-                  <div class="comp-thumbnail-name">MOSFET</div>
+                  <div class="comp-thumbnail-icon accent-red"><i data-lucide="orbit"></i></div>
+                  <div class="comp-thumbnail-name">Motor Brushless</div>
                 </div>
                 <div class="comp-thumbnail" onclick="showComponent('regulador')">
-                  <div class="comp-thumbnail-icon accent-cyan"><i data-lucide="shuffle"></i></div>
-                  <div class="comp-thumbnail-name">Regulador LDO</div>
+                  <div class="comp-thumbnail-icon accent-cyan"><i data-lucide="activity"></i></div>
+                  <div class="comp-thumbnail-name">Shunt de Corriente</div>
                 </div>
                 <div class="comp-thumbnail" onclick="showComponent('esc')">
-                  <div class="comp-thumbnail-icon accent-amber"><i data-lucide="orbit"></i></div>
-                  <div class="comp-thumbnail-name">FETs de ESC</div>
+                  <div class="comp-thumbnail-icon accent-amber"><i data-lucide="cpu"></i></div>
+                  <div class="comp-thumbnail-name">Gate Driver</div>
                 </div>
               </div>
 
@@ -2136,16 +2199,21 @@
 
           <div class="sidebar-widgets">
             <div class="interactive-widget">
-              <div class="widget-title"><i data-lucide="help-circle"></i>Identificación de Código</div>
+              <div class="widget-title"><i data-lucide="calculator"></i>Calculadora de Empuje y RPM</div>
               <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom: 10px;">
-                Las resistencias SMD usan códigos de 3 dígitos (ej: 102 = 10 + 2 ceros = 1000 Ω = 1kΩ).
+                Estima las RPM y el empuje de tus motores brushless según el KV y la tensión aplicada.
               </p>
               <div class="control-group">
-                <label class="control-label">Ingresa el código SMD: </label>
-                <input type="text" id="smdCodeInput" placeholder="Ej: 472" style="background:var(--bg-dark); border:1px solid var(--border); padding:8px; border-radius:var(--radius-md); color:white; width:100%; font-family:var(--font-mono); font-size:1rem;" oninput="decodeSMDResistor()">
+                <label class="control-label">KV del Motor: <span id="mcuKVVal" class="val">2400 KV</span></label>
+                <input type="range" id="uavMotorKV" class="slider-input" min="1000" max="3000" step="100" value="2400" oninput="calculateUavThrust()">
               </div>
-              <div style="background:#060a12; border:1px dashed var(--border); padding:10px; border-radius:var(--radius-md); font-family:var(--font-mono); font-size:0.9rem; text-align:center;">
-                Valor: <span id="smdResultText" style="color:var(--accent-cyan); font-weight:bold;">Ingrese código</span>
+              <div class="control-group">
+                <label class="control-label">Tensión (Batería): <span id="mcuVoltVal" class="val">14.8 V (4S)</span></label>
+                <input type="range" id="uavMotorVolt" class="slider-input" min="11.1" max="22.2" step="3.7" value="14.8" oninput="calculateUavThrust()">
+              </div>
+              <div style="background:var(--bg-dark); border:1px dashed var(--border); padding:12px; border-radius:var(--radius-md); font-family:var(--font-mono); font-size:0.85rem; display:flex; flex-direction:column; gap:6px;">
+                <div>RPM Teóricas: <span id="uavRpmText" style="color:var(--accent-cyan); font-weight:bold;">0</span></div>
+                <div>Empuje Est. por Motor: <span id="uavThrustText" style="color:var(--accent-green); font-weight:bold;">0 g</span></div>
               </div>
             </div>
             
@@ -2164,28 +2232,28 @@
         </div>
       </div>
 
-      <!-- ==================== SOLDADURA PANEL ==================== -->
+      <!-- ==================== SOLDADURA Y FILTRADO PANEL ==================== -->
       <div id="tab-soldadura" class="tab-pane">
         <div class="content-header">
-          <h1><i data-lucide="flame" class="accent-cyan"></i>Soldadura THT y SMD de Calidad Militar</h1>
-          <p>El arte de unir metales a nivel molecular para resistir vibraciones extremas.</p>
+          <h1><i data-lucide="flame" class="accent-cyan"></i>Soldadura de Potencia y Filtrado de Ruido</h1>
+          <p>La técnica para realizar conexiones de alta corriente y soldar condensadores de protección contra vibraciones.</p>
         </div>
 
         <div class="module-content-grid">
           <div>
             <section class="learning-section">
-              <h2>Soldadura de Componentes Electrónicos</h2>
-              <p>Los drones experimentan vibraciones severas por los motores girando a más de 25,000 RPM. Una soldadura defectuosa ("soldadura fría" o junta fracturada) fallará inevitablemente en el aire, provocando una pérdida catastrófica del dron.</p>
+              <h2>Soldadura FPV y el Reto de las Vibraciones</h2>
+              <p>Los drones de carreras y de carga experimentan fuerzas mecánicas brutales y vibraciones a frecuencias altísimas. Una mala unión soldada se agrietará rápidamente, resultando en fallas intermitentes o en una pérdida total de control en pleno vuelo.</p>
               
-              <h3>Tipos de Tecnologías</h3>
-              <ul>
-                <li><strong>THT (Through-Hole Technology):</strong> Los pines de los componentes (como condensadores grandes o cables XT60) atraviesan la placa. Requieren puntas de soldador gruesas para transferir calor suficiente a las tierras masivas de cobre.</li>
-                <li><strong>SMD (Surface Mount Device):</strong> Componentes de montaje superficial directos sobre pads de cobre (resistencias minúsculas, microcontroladores, giroscopios). Requieren pulso firme, estaño fino (0.8mm o menor) y abundante <strong>flux</strong> (pasta decapante que remueve óxidos y canaliza la aleación).</li>
-              </ul>
+              <h3>XT60 y Cables de Alta Potencia</h3>
+              <p>Soldar el conector de la batería (XT60) al ESC requiere calentar cables gruesos calibre AWG 12 o 14. Se necesita un cautín con punta ancha ajustado a unos 380°C para transferir suficiente calor rápidamente antes de derretir el aislante de silicona.</p>
+
+              <h3>Condensadores de Filtrado Low-ESR</h3>
+              <p>Los motores brushless frenan y aceleran de forma instantánea induciendo picos de voltaje masivos (de más de 30V en sistemas de 4S). Para absorber esta energía de retorno y evitar que destruya los BECs y raye el video de la cámara, se suelda un condensador electrolítico Low-ESR en paralelo con los pads de alimentación del ESC.</p>
             </section>
             
             <section class="learning-section">
-              <h2>Galería Interactiva de uniones de Soldadura</h2>
+              <h2>Galería Interactiva de Soldadura en ESCs</h2>
               <p>Haz clic en los tipos de uniones para ver sus perfiles e inspeccionar si cumplen con la especificación industrial IPC-A-610.</p>
               
               <div class="solder-gallery">
@@ -2207,10 +2275,10 @@
                     <!-- Cold blob -->
                     <circle cx="50" cy="50" r="14" fill="#718096" />
                   </svg>
-                  <div class="gallery-item-name">Junta Fría (Globo)</div>
+                  <div class="gallery-item-name">Junta Fría (Opaca)</div>
                   <div class="gallery-item-status status-bad">Rechazada</div>
                 </div>
-
+ 
                 <div class="gallery-item" onclick="selectSolderGallery('insufficient')">
                   <svg viewBox="0 0 100 80">
                     <rect x="10" y="60" width="80" height="10" fill="#2d3748" />
@@ -2221,7 +2289,7 @@
                   <div class="gallery-item-name">Insuficiente</div>
                   <div class="gallery-item-status status-bad">Rechazada</div>
                 </div>
-
+ 
                 <div class="gallery-item" onclick="selectSolderGallery('bridge')">
                   <svg viewBox="0 0 100 80">
                     <rect x="10" y="60" width="80" height="10" fill="#2d3748" />
@@ -2230,7 +2298,7 @@
                     <!-- Bridge blob -->
                     <rect x="25" y="45" width="50" height="18" rx="6" fill="#cbd5e0" />
                   </svg>
-                  <div class="gallery-item-name">Puente (Corto)</div>
+                  <div class="gallery-item-name">Puente (+ y -)</div>
                   <div class="gallery-item-status status-bad">Rechazada</div>
                 </div>
               </div>
@@ -2244,7 +2312,7 @@
           <!-- Interactive soldering guide widget -->
           <div class="sidebar-widgets">
             <div class="interactive-widget">
-              <div class="widget-title"><i data-lucide="play" class="accent-cyan"></i>Pasos para Soldar Correctamente</div>
+              <div class="widget-title"><i data-lucide="play" class="accent-cyan"></i>Soldadura de Condensador en ESC</div>
               
               <div class="solder-steps-container">
                 <div class="solder-visual">
@@ -2282,7 +2350,7 @@
                     <div class="solder-dot" id="sdot-4"></div>
                   </div>
                   <div style="font-size:0.85rem; color:var(--text-secondary); text-align:center; min-height: 4.5em;" id="solderStepDesc">
-                    <strong>Paso 1: Precalentar.</strong> Coloca la punta del soldador (a unos 350°C) de modo que toque simultáneamente el pad de cobre y el pin metálico del componente por 1-2 segundos.
+                    <strong>Paso 1: Precalentar el Pad del ESC.</strong> Coloca la punta del soldador a 380°C tocando el pad de alimentación de cobre grueso del ESC y la pata del condensador por 2-3 segundos.
                   </div>
                   <div class="step-nav">
                     <button class="step-nav-btn" id="solderPrevBtn" onclick="navigateSolderStep(-1)" disabled>Anterior</button>
@@ -2294,11 +2362,11 @@
             
             <!-- Quiz for Module 4 -->
             <div class="quiz-box" id="quiz-soldadura">
-              <div class="quiz-question">¿Cuál es el propósito del flux químico en la soldadura electrónica SMD de drones?</div>
+              <div class="quiz-question">¿Cuál es el propósito del flux químico en la soldadura electrónica de drones?</div>
               <div class="quiz-options">
                 <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. Aumentar la temperatura de fusión del estaño para resistir motores más potentes.</div>
-                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. Limpiar químicamente los óxidos de los metales calientes y reducir la tensión superficial para que el estaño fluya de forma fluida.</div>
-                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. Actuar como un aislante eléctrico protector sobre la junta.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. Limpiar químicamente los óxidos de los metales calientes y reducir la tensión superficial para que el estaño fluya y humecte los pads.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. Actuar como un aislante protector térmico.</div>
               </div>
               <div class="quiz-feedback" id="quiz-feedback-soldadura"></div>
               <button class="quiz-submit-btn" onclick="submitQuiz('soldadura', 1)" disabled>Enviar Respuesta</button>
@@ -2307,79 +2375,147 @@
         </div>
       </div>
 
-      <!-- ==================== PROTOBOARD Y PCB PANEL ==================== -->
+      <!-- ==================== MAPEO DE CONEXIONES PANEL ==================== -->
       <div id="tab-protoboard" class="tab-pane">
         <div class="content-header">
-          <h1><i data-lucide="grid" class="accent-cyan"></i>Prototipado en Protoboard y Lectura de PCBs</h1>
-          <p>Aprende a cablear circuitos experimentales y a interpretar mapas eléctricos complejos.</p>
+          <h1><i data-lucide="git-branch" class="accent-cyan"></i>Mapeo de Conexiones del Dron</h1>
+          <p>Aprende a cablear correctamente los componentes del dron y a interpretar mapas de soldadura.</p>
         </div>
 
         <div class="module-content-grid">
           <div>
             <section class="learning-section">
-              <h2>¿Cómo funciona la Protoboard (Breadboard)?</h2>
-              <p>Antes de diseñar un PCB permanente o fabricar una tarjeta, se prueban los circuitos en una protoboard. Esta placa está repleta de clips metálicos internos que conectan mecánicamente las filas y columnas.</p>
+              <h2>Arquitectura del Cableado de un Dron FPV/UAV</h2>
+              <p>El cableado de un UAV moderno requiere precisión extrema. Cada periférico debe soldarse a pads específicos del controlador de vuelo (FC) respetando los voltajes de trabajo y cruzando adecuadamente los buses de comunicación serial.</p>
               
-              <h3>Estructura Interna de Conexiones</h3>
+              <h3>Buses de Comunicación Serial (UARTs)</h3>
+              <p>Las FCs cuentan con puertos UART (Universal Asynchronous Receiver-Transmitter). Cada UART consta de dos pines:</p>
               <ul>
-                <li><strong>Líneas de alimentación (Buses):</strong> Corren de forma horizontal a lo largo de los extremos superior e inferior. Marcados en rojo (+) y azul (-). Sirven para distribuir voltaje a cualquier parte del circuito.</li>
-                <li><strong>Columnas de prototipado (Terminales):</strong> Corren verticalmente en grupos de 5 agujeros (ej: A-B-C-D-E están unidos internamente). La canaleta central separa el lado superior del inferior, lo que permite insertar circuitos integrados (como MCUs) sin cortocircuitar sus pines opuestos.</li>
+                <li><strong>TX (Transmit):</strong> Envía datos del dispositivo. Debe soldarse al pin <strong>RX</strong> del periférico correspondiente.</li>
+                <li><strong>RX (Receive):</strong> Recibe datos. Debe soldarse al pin <strong>TX</strong> del periférico.</li>
+                <li><strong>¡Regla de oro!:</strong> TX siempre va cruzado a RX, y viceversa. Si sueldas TX con TX y RX con RX, los equipos no se comunicarán.</li>
               </ul>
               
               <div class="alert-box info">
-                <i data-lucide="help-circle" class="accent-cyan"></i>
+                <i data-lucide="info" class="accent-cyan"></i>
                 <div class="alert-box-text">
-                  <strong>Pista Interactiva:</strong> Pasa el puntero del mouse sobre cualquier agujero de la protoboard de la derecha para resaltar en verde todos los agujeros conectados eléctricamente por debajo.
+                  <strong>Guía de Color Estándar:</strong> Aunque puedes usar cualquier color, el estándar industrial de FPV sugiere: Rojo para alimentación (+5V/+9V), Negro para Tierra (GND), Amarillo para Video, Blanco para Audio/Telemetría y Verde/Azul para señales de control y puertos RX/TX.
                 </div>
               </div>
             </section>
             
             <section class="learning-section">
-              <h2>Mapeo y Lectura de Diagramas Esquemáticos</h2>
-              <p>Un esquemático es el plano teórico de un circuito. Como técnico de UAVs, debes ser capaz de tomar el esquemático oficial de un controlador de vuelo (ej: Matek o SpeedyBee) y localizar los terminales críticos.</p>
-              
-              <h3>Puntos de Control Clave en Drones</h3>
+              <h2>Integración de Periféricos Críticos</h2>
+              <p>Cada módulo periférico tiene requisitos de energía y comunicación específicos:</p>
               <ul>
-                <li><strong>PDB (Power Distribution Board):</strong> Es el sistema de venas de corriente. El esquemático mostrará pistas anchas que enlazan el conector de la batería directo a las bobinas del filtro LC y a los reguladores reductores (Buck Regulators) de 5V y 9V.</li>
-                <li><strong>Filtros LC:</strong> Integrados por un inductor (L) y un capacitor (C). Se encargan de suavizar los picos de voltaje inducidos por el frenado regenerativo de los motores, limpiando el suministro eléctrico para que la señal de video no tenga líneas de interferencia.</li>
+                <li><strong>Receptor de Radio (RX):</strong> Generalmente funciona con 5V estables. Se conecta a una UART (ej. UART1) para enviar las señales de control de los sticks (Aileron, Elevator, Throttle, Rudder) al procesador del dron.</li>
+                <li><strong>Transmisor de Video (VTX):</strong> Genera calor y ruido eléctrico masivo. Se conecta habitualmente al BEC de 9V (o tensión directa de batería con condensador) y a la salida de video VO. Su configuración se controla remotamente conectando su pin SmartAudio/Tramp a un pad TX libre de la FC.</li>
+                <li><strong>Variador ESC 4-en-1:</strong> Se conecta a la FC mediante un mazo de cables que transporta las 4 señales de control de los motores (M1-M4), telemetría del ESC y la tensión de batería (VBAT) para monitorear el consumo.</li>
               </ul>
             </section>
           </div>
 
           <div class="sidebar-widgets">
-            <div class="proto-container">
-              <div class="widget-title"><i data-lucide="layers"></i>Visualizador de Protoboard</div>
-              <div class="proto-board-wrapper">
-                <!-- SVG Half-size Breadboard -->
-                <svg class="proto-svg" viewBox="0 0 340 130" id="protoBoardSvg">
-                  <!-- Breadboard body -->
-                  <rect x="5" y="5" width="330" height="120" fill="#e2e8f0" stroke="#cbd5e0" stroke-width="2" rx="4" />
-                  <rect x="5" y="60" width="330" height="10" fill="#a0aec0" /> <!-- Separator ridge -->
+            <div class="proto-container" style="width: 100%;">
+              <div class="widget-title"><i data-lucide="git-branch"></i>Mapa de Conexiones del Dron</div>
+              <p style="font-size:0.75rem; color:var(--text-secondary); text-align:center; margin-bottom: 10px;">
+                Pasa el mouse sobre las almohadillas (pads) del controlador de vuelo central para ver su cableado hacia los periféricos.
+              </p>
+              <div class="proto-board-wrapper" style="overflow: visible;">
+                <svg class="proto-svg" viewBox="0 0 340 220" id="uavWiringSvg" style="width: 100%; height: auto;">
+                  <!-- Flight Controller (Center) -->
+                  <rect x="110" y="50" width="120" height="110" fill="#1b4d3e" stroke="#2e7d32" stroke-width="2" rx="8" />
+                  <text x="170" y="105" fill="white" font-size="10" font-family="monospace" text-anchor="middle" font-weight="bold">FLIGHT CONTROLLER</text>
                   
-                  <!-- Labels -->
-                  <text x="170" y="66" class="proto-label-text" fill="white">CANALETA CENTRAL DE SEPARACIÓN IC</text>
+                  <!-- Left side pads (for Receiver / Radio RX) -->
+                  <rect x="110" y="60" width="12" height="6" fill="#718096" rx="1" class="fc-pad" data-pad="rx-gnd" />
+                  <text x="126" y="65" fill="#a0aec0" font-size="6" font-family="monospace">GND</text>
                   
-                  <!-- Draw rows and columns of holes -->
-                  <!-- Power rails top: + (red line), - (blue line) -->
-                  <line x1="20" y1="12" x2="320" y2="12" stroke="#ff3366" stroke-width="1.5" />
-                  <line x1="20" y1="22" x2="320" y2="22" stroke="#3182ce" stroke-width="1.5" />
+                  <rect x="110" y="72" width="12" height="6" fill="#ff3366" rx="1" class="fc-pad" data-pad="rx-5v" />
+                  <text x="126" y="77" fill="#ff3366" font-size="6" font-family="monospace">5V</text>
                   
-                  <!-- Power rails bottom: + (red line), - (blue line) -->
-                  <line x1="20" y1="108" x2="320" y2="108" stroke="#ff3366" stroke-width="1.5" />
-                  <line x1="20" y1="118" x2="320" y2="118" stroke="#3182ce" stroke-width="1.5" />
+                  <rect x="110" y="84" width="12" height="6" fill="#ff9d00" rx="1" class="fc-pad" data-pad="rx-rx1" />
+                  <text x="126" y="89" fill="#ff9d00" font-size="6" font-family="monospace">RX1</text>
                   
-                  <!-- Dynamically rendered pins in JS loop to keep code clean -->
+                  <rect x="110" y="96" width="12" height="6" fill="#00f0ff" rx="1" class="fc-pad" data-pad="rx-tx1" />
+                  <text x="126" y="101" fill="#00f0ff" font-size="6" font-family="monospace">TX1</text>
+                  
+                  <!-- Right side pads (for VTX / Video Transmitter) -->
+                  <rect x="218" y="60" width="12" height="6" fill="#718096" rx="1" class="fc-pad" data-pad="vtx-gnd" />
+                  <text x="214" y="65" fill="#a0aec0" font-size="6" font-family="monospace" text-anchor="end">GND</text>
+                  
+                  <rect x="218" y="72" width="12" height="6" fill="#ff3366" rx="1" class="fc-pad" data-pad="vtx-9v" />
+                  <text x="214" y="77" fill="#ff3366" font-size="6" font-family="monospace" text-anchor="end">9V</text>
+                  
+                  <rect x="218" y="84" width="12" height="6" fill="#39ff14" rx="1" class="fc-pad" data-pad="vtx-vo" />
+                  <text x="214" y="89" fill="#39ff14" font-size="6" font-family="monospace" text-anchor="end">VO</text>
+                  
+                  <rect x="218" y="96" width="12" height="6" fill="#00f0ff" rx="1" class="fc-pad" data-pad="vtx-tx2" />
+                  <text x="214" y="101" fill="#00f0ff" font-size="6" font-family="monospace" text-anchor="end">TX2</text>
+                  
+                  <!-- Bottom side pads (for ESC) -->
+                  <rect x="125" y="154" width="18" height="6" fill="#ff3366" rx="1" class="fc-pad" data-pad="esc-bat" />
+                  <text x="134" y="150" fill="#ff3366" font-size="6" font-family="monospace" text-anchor="middle">BAT+</text>
+                  
+                  <rect x="148" y="154" width="18" height="6" fill="#718096" rx="1" class="fc-pad" data-pad="esc-gnd" />
+                  <text x="157" y="150" fill="#a0aec0" font-size="6" font-family="monospace" text-anchor="middle">GND</text>
+                  
+                  <rect x="175" y="154" width="40" height="6" fill="#39ff14" rx="1" class="fc-pad" data-pad="esc-signal" />
+                  <text x="195" y="150" fill="#39ff14" font-size="6" font-family="monospace" text-anchor="middle">M1-M4</text>
+                  
+                  <!-- Peripherals -->
+                  <!-- Radio RX (Left) -->
+                  <rect x="10" y="58" width="55" height="50" fill="#2d3748" stroke="#4a5568" stroke-width="1.5" rx="4" />
+                  <text x="37" y="86" fill="white" font-size="8" font-family="monospace" text-anchor="middle" font-weight="bold">RX ELRS</text>
+                  <circle cx="65" cy="63" r="2.5" fill="#718096" />
+                  <circle cx="65" cy="75" r="2.5" fill="#ff3366" />
+                  <circle cx="65" cy="87" r="2.5" fill="#00f0ff" /> <!-- TX on receiver -->
+                  <circle cx="65" cy="99" r="2.5" fill="#ff9d00" /> <!-- RX on receiver -->
+                  
+                  <!-- Video VTX (Right) -->
+                  <rect x="275" y="58" width="55" height="50" fill="#2d3748" stroke="#4a5568" stroke-width="1.5" rx="4" />
+                  <text x="302" y="86" fill="white" font-size="8" font-family="monospace" text-anchor="middle" font-weight="bold">VTX FPV</text>
+                  <circle cx="275" cy="63" r="2.5" fill="#718096" />
+                  <circle cx="275" cy="75" r="2.5" fill="#ff3366" />
+                  <circle cx="275" cy="87" r="2.5" fill="#39ff14" />
+                  <circle cx="275" cy="99" r="2.5" fill="#ff9d00" />
+                  
+                  <!-- ESC / Power (Bottom) -->
+                  <rect x="100" y="180" width="140" height="26" fill="#2d3748" stroke="#4a5568" stroke-width="1.5" rx="4" />
+                  <text x="170" y="196" fill="white" font-size="9" font-family="monospace" text-anchor="middle" font-weight="bold">ESC 4-en-1</text>
+                  <circle cx="134" cy="180" r="2.5" fill="#ff3366" />
+                  <circle cx="157" cy="180" r="2.5" fill="#718096" />
+                  <circle cx="195" cy="180" r="2.5" fill="#39ff14" />
+                  
+                  <!-- Connections (Paths) -->
+                  <path d="M 65 63 L 90 63 Q 100 63 100 63 L 110 63" class="wire-path wire-gnd" id="wire-rx-gnd" stroke-dasharray="2,2" />
+                  <path d="M 65 75 L 90 75 Q 100 72 100 72 L 110 72" class="wire-path wire-power" id="wire-rx-5v" />
+                  <path d="M 65 87 L 90 87 Q 100 84 100 84 L 110 84" class="wire-path wire-tx" id="wire-rx-rx1" /> <!-- RX pin TX connects to FC RX1 -->
+                  <path d="M 65 99 L 90 99 Q 100 96 100 96 L 110 96" class="wire-path wire-rx" id="wire-rx-tx1" /> <!-- RX pin RX connects to FC TX1 -->
+                  
+                  <path d="M 275 63 L 250 63 Q 230 63 230 63 L 230 63" class="wire-path wire-gnd" id="wire-vtx-gnd" stroke-dasharray="2,2" />
+                  <path d="M 275 75 L 250 75 Q 230 72 230 72 L 230 72" class="wire-path wire-power" id="wire-vtx-9v" />
+                  <path d="M 275 87 L 250 87 Q 230 84 230 84 L 230 84" class="wire-path wire-signal" id="wire-vtx-vo" />
+                  <path d="M 275 99 L 250 99 Q 230 96 230 96 L 230 96" class="wire-path wire-rx" id="wire-vtx-tx2" /> <!-- VTX smartaudio RX connects to FC TX2 -->
+                  
+                  <path d="M 134 180 L 134 160" class="wire-path wire-power" id="wire-esc-bat" />
+                  <path d="M 157 180 L 157 160" class="wire-path wire-gnd" id="wire-esc-gnd" />
+                  <path d="M 195 180 L 195 160" class="wire-path wire-signal" id="wire-esc-signal" />
                 </svg>
+              </div>
+              <div class="pin-info-overlay" style="width: 100%; text-align: left; min-height: 70px; margin-top: 10px;">
+                <div class="pin-info-title" id="wiringPinName">Selecciona una conexión</div>
+                <div class="pin-info-desc" id="wiringPinDesc">Pasa el mouse sobre cualquiera de las almohadillas (pads) del Flight Controller para verificar la descripción y ver el trazado del cableado en el mapa.</div>
               </div>
             </div>
             
             <!-- Quiz for Module 5 -->
             <div class="quiz-box" id="quiz-protoboard">
-              <div class="quiz-question">Si quieres colocar un circuito integrado tipo temporizador (por ejemplo, el NE555) en una protoboard para pruebas, ¿dónde debes posicionarlo exactamente?</div>
+              <div class="quiz-question">Al conectar un receptor de radio RX tipo ExpressLRS a la controladora de vuelo (FC), ¿cómo deben cruzarse los pines de datos seriales UART?</div>
               <div class="quiz-options">
-                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. A lo largo de cualquiera de las pistas de buses de alimentación laterales (+ o -).</div>
-                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. Cruzando la canaleta divisoria central, de modo que sus filas de pines opuestas queden en columnas separadas (e.g. fila E y fila F).</div>
-                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. Completamente alineado en una sola fila de 5 agujeros verticales.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. El pin TX del receptor se debe soldar al pin TX de la FC, y el pin RX del receptor al pin RX de la FC.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. El pin TX del receptor se debe soldar al pin RX de un puerto UART libre en la FC, y el pin RX del receptor al pin TX de ese mismo puerto UART.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. Ambos pines TX y RX del receptor se deben puentear y soldar juntos en un pad de sensor analógico ADC.</div>
               </div>
               <div class="quiz-feedback" id="quiz-feedback-protoboard"></div>
               <button class="quiz-submit-btn" onclick="submitQuiz('protoboard', 1)" disabled>Enviar Respuesta</button>
@@ -2388,68 +2524,62 @@
         </div>
       </div>
 
-      <!-- ==================== MICROCONTROLADORES PANEL ==================== -->
+      <!-- ==================== FIRMWARE Y CONFIGURACION PANEL ==================== -->
       <div id="tab-microcontroladores" class="tab-pane">
         <div class="content-header">
-          <h1><i data-lucide="terminal" class="accent-cyan"></i>Microcontroladores (MCU) - Arduino y ESP32</h1>
-          <p>Los procesadores encargados de computar la navegación y control dinámico del UAV.</p>
+          <h1><i data-lucide="terminal" class="accent-cyan"></i>Firmware y Configuración de Software</h1>
+          <p>Los sistemas operativos de vuelo (Betaflight, ArduPilot) y los parámetros lógicos del piloto automático.</p>
         </div>
 
         <div class="module-content-grid">
           <div>
             <section class="learning-section">
-              <h2>¿Qué es un Microcontrolador en UAVs?</h2>
-              <p>El microcontrolador (MCU) es el procesador principal de tu Flight Controller. Recibe mediciones a velocidades de microsegundos de sensores inerciales (giroscopio/acelerómetro), calcula la orientación física del dron usando algoritmos de lazo cerrado (PID) y envía comandos de velocidad a los 4 ESCs para estabilizar el vuelo.</p>
+              <h2>Sistemas Operativos de Vuelo (Firmwares)</h2>
+              <p>El firmware cargado en la controladora determina el comportamiento del UAV. Existen dos ecosistemas dominantes:</p>
               
-              <h3>Modelos Clave</h3>
-              <ul>
-                <li><strong>Arduino (ATmega328P):</strong> El micro de 8 bits clásico. Muy robusto, ideal para comprender los fundamentos de puertos de entrada y salida digital, convertidores analógicos y protocolos de comunicación UART.</li>
-                <li><strong>ESP32 (WROOM / Dual Core):</strong> Procesador ultrarrápido de 32 bits a 240 MHz con Wi-Fi y Bluetooth nativos. Muy empleado en sistemas de telemetría secundaria, procesamiento de enlace de control y micro-drones.</li>
-                <li><strong>STM32 (F4 / F7 / H7):</strong> Los chips industriales de alto rendimiento estándar para ArduPilot y Betaflight. Soportan cálculos de punto flotante pesados a frecuencias de refresco inerciales extremas de hasta 8kHz.</li>
-              </ul>
+              <h3>1. Betaflight (Drones Multirrotores y Carreras)</h3>
+              <p>Optimizado para un rendimiento acrobático extremo. Su bucle de control calcula ajustes de actitud a frecuencias altísimas (hasta 8 kHz). Es ideal para vuelo manual de alta velocidad.</p>
+              
+              <h3>2. ArduPilot (UAVs Autónomos y de Misión)</h3>
+              <p>Un sistema robusto y completo diseñado para navegación autónoma avanzada (waypoints, misiones complejas, topografía). Soporta aviones, helicópteros, vehículos terrestres y multirrotores de gran porte.</p>
             </section>
             
             <section class="learning-section">
-              <h2>Comunicaciones y Buses de Datos</h2>
-              <p>Un controlador no opera aislado. Conecta múltiples periféricos mediante buses serie:</p>
+              <h2>Parámetros Críticos de Configuración</h2>
+              <p>Antes del primer vuelo, el técnico debe calibrar y verificar múltiples aspectos en el configurador:</p>
               <ul>
-                <li><strong>PWM (Pulse Width Modulation):</strong> Impulsos digitales de ancho variable. Controlan la posición de servomotores y la velocidad de los ESCs más antiguos.</li>
-                <li><strong>I2C (SDA/SCL):</strong> Protocolo de dos cables. Conecta sensores lentos como barómetros (medición de altitud) y brújulas electrónicas (magnetómetro).</li>
-                <li><strong>SPI (MOSI/MISO/SCK/CS):</strong> Bus serie de alta velocidad. Conecta el giroscopio e IMU primario para evitar latencias de lectura.</li>
-                <li><strong>UART (TX/RX):</strong> Comunicación serie punto a punto. Se utiliza para enlazar el GPS, la telemetría ExpressLRS y la telemetría del OSD de video.</li>
+                <li><strong>Mapeo de Canales (Channel Map):</strong> Define el orden de las señales enviadas por los sticks de la emisora. El estándar más común es <strong>AETR1234</strong> (Aileron, Elevator, Throttle, Rudder, canales Auxiliares).</li>
+                <li><strong>Failsafe:</strong> Configuración de seguridad obligatoria. Si el dron pierde la señal de radio con el control, debe programarse para apagar motores de inmediato (Drop) o activar el retorno autónomo a casa por GPS (GPS Rescue).</li>
+                <li><strong>Filtros y Bucle PID:</strong> Conjunto de algoritmos matemáticos que corrigen la trayectoria del dron comparando la orden del piloto con la lectura del giroscopio.</li>
               </ul>
 
-              <h3>Ejemplo de Código: Lectura de Canal del Receptor (PWM)</h3>
-              <pre><code class="language-cpp">
-// Código Arduino básico para leer pulsos de servo del receptor
-const int pinReceptor = 5; // Pin de entrada digital
-unsigned long duracionPulso;
+              <h3>Ejemplo de Configuración de Telemetría (MAVLink API / Python)</h3>
+              <pre><code class="language-python">
+# Script para conectarse a un autopiloto ArduPilot mediante MAVLink
+from pymavlink import mavutil
 
-void setup() {
-  pinMode(pinReceptor, INPUT);
-  Serial.begin(9600);
-}
+# Crear conexión serial o de red
+conection = mavutil.mavlink_connection('udpin:localhost:14550')
+conection.wait_heartbeat()
+print("¡Conexión establecida con el piloto automático!")
 
-void loop() {
-  // Mide el ancho del pulso en microsegundos (normalmente entre 1000 y 2000 us)
-  duracionPulso = pulseIn(pinReceptor, HIGH);
-  Serial.print("Canal UAV: ");
-  Serial.println(duracionPulso);
-  delay(100);
-}
+while True:
+    # Leer datos de actitud (Pitch, Roll, Yaw)
+    msg = conection.recv_match(type='ATTITUDE', blocking=True)
+    print(f"Roll: {msg.roll:.2f} rad, Pitch: {msg.pitch:.2f} rad")
               </code></pre>
             </section>
           </div>
 
           <div class="sidebar-widgets">
             <div class="mcu-selector">
-              <button id="btnSelectArduino" class="mcu-btn active" onclick="switchMCU('arduino')">Arduino Uno</button>
-              <button id="btnSelectESP32" class="mcu-btn" onclick="switchMCU('esp32')">ESP32 DevKit</button>
+              <button id="btnSelectArduino" class="mcu-btn active" onclick="switchMCU('arduino')">Betaflight F405 FC</button>
+              <button id="btnSelectESP32" class="mcu-btn" onclick="switchMCU('esp32')">ArduPilot H743 FC</button>
             </div>
             
             <div class="mcu-display">
-              <div class="widget-title"><i data-lucide="cpu"></i>Mapa Pinout Interactivo</div>
-              <p style="font-size:0.75rem; color:var(--text-secondary); text-align:center;">Pasa el mouse sobre los pines marcados en color para revelar sus funciones específicas de comunicación y potencia.</p>
+              <div class="widget-title"><i data-lucide="cpu"></i>Pinout de Controladoras de Vuelo</div>
+              <p style="font-size:0.75rem; color:var(--text-secondary); text-align:center;">Pasa el mouse sobre los pines marcados en color para revelar sus funciones de telemetría, potencia y señal.</p>
               
               <div class="mcu-svg-container" id="mcuSvgContainer">
                 <!-- SVG of board dynamically updated -->
@@ -2463,11 +2593,11 @@ void loop() {
             
             <!-- Quiz for Module 6 -->
             <div class="quiz-box" id="quiz-microcontroladores">
-              <div class="quiz-question">¿Por qué protocolo de comunicación digital en serie se conecta habitualmente el giroscopio e IMU principal a la controladora de vuelo de un dron?</div>
+              <div class="quiz-question">Al configurar un dron en Betaflight, si los canales de tu transmisor de radio están invertidos (por ejemplo, el stick de acelerador mueve el eje de yaw/guiñada), ¿qué configuración debes verificar en la pestaña del Receptor?</div>
               <div class="quiz-options">
-                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. A través del bus SPI debido a su altísima velocidad de reloj y mínima latencia.</div>
-                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. Vía bus analógico I2C por su simplicidad de direccionamiento por software.</div>
-                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. Usando un enlace analógico directo por PWM de un solo pin.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. El mapeo del orden de canales (Channel Map), asegurando que coincida con el formato del transmisor (e.g. AETR1234).</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. La calibración del lazo PID de estabilización inercial de la aeronave.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. El protocolo de telemetría de retorno, cambiándolo a SmartPort.</div>
               </div>
               <div class="quiz-feedback" id="quiz-feedback-microcontroladores"></div>
               <button class="quiz-submit-btn" onclick="submitQuiz('microcontroladores', 0)" disabled>Enviar Respuesta</button>
@@ -2527,22 +2657,17 @@ void loop() {
     document.getElementById('menuToggle').addEventListener('click', () => {
       document.getElementById('sidebar').classList.toggle('open');
     });
-
-    // =========================================================================
-    // PROGRESS TRACKING & LOCALSTORAGE
-    // =========================================================================
-    // List of roadmap tasks from the documents
     const roadmapTasks = [
-      { id: "task1", phase: "Fase 1", title: "Fundamentos de Ley de Ohm", desc: "Aprender voltaje, corriente, resistencia y calcular a mano circuitos serie/paralelo." },
-      { id: "task2", phase: "Fase 1", title: "Entrenamiento de Multímetro", desc: "Aprender a medir caídas de voltaje en DC, resistencia de componentes y buscar cortos usando continuidad." },
-      { id: "task3", phase: "Fase 1", title: "Primeras 100 soldaduras de práctica", desc: "Adquirir placa SMD de entrenamiento y soldar conectores, resistencias y capacitores baratos." },
-      { id: "task4", phase: "Fase 1", title: "Lectura de Esquemáticos", desc: "Entender símbolos ANSI e IEC y descargar el esquemático de un Flight Controller real (e.g. Matek F405)." },
-      { id: "task5", phase: "Fase 2", title: "Anatomía de Sistemas UAV", desc: "Estudiar la función del Flight Controller (FC), Variadores de velocidad (ESCs), Motores brushless y baterías LiPo." },
-      { id: "task6", phase: "Fase 2", title: "Reparación de un ESC dañado", desc: "Diagnosticar reguladores quemados o FETs fundidos con multímetro y realizar desoldadura SMD." },
-      { id: "task7", phase: "Fase 2", title: "Ensamble Completo de Dron 5\"", desc: "Comprar frame, motores y pila. Soldar todo el mazo de cables y configurar Betaflight de inicio a fin." },
-      { id: "task8", phase: "Fase 3", title: "Simulación de Autopiloto en SITL", desc: "Instalar Mission Planner, flashear ArduPilot y definir misiones autónomas simuladas con waypoints." },
-      { id: "task9", phase: "Fase 3", title: "Programación en Python con pymavlink", desc: "Desarrollar un script simple en Python para conectarse al simulador MAVLink y leer telemetría en consola." },
-      { id: "task10", phase: "Fase 3", title: "Modernización y Blackbox", desc: "Instalar módulo GPS para failsafe de rescate, configurar ExpressLRS y analizar logs con Blackbox Explorer." }
+      { id: "task1", phase: "Fase 1", title: "Sistemas de Potencia y Baterías LiPo", desc: "Aprender el cálculo de voltaje nominal, celdas S/P y tasa de descarga (C-rating) de baterías LiPo." },
+      { id: "task2", phase: "Fase 1", title: "Diagnóstico de BEC en FC", desc: "Comprobar con el multímetro las salidas estables del regulador BEC de 5V y 9V para telemetría y video." },
+      { id: "task3", phase: "Fase 1", title: "Cálculo de Empuje y RPM", desc: "Calcular teóricamente las RPM cargadas y el empuje estático en gramos de un motor según su KV y paso de hélice." },
+      { id: "task4", phase: "Fase 1", title: "Soldadura de Filtro de Ruido", desc: "Soldar un condensador Low-ESR en paralelo a los terminales de potencia del ESC para absorber picos de tensión." },
+      { id: "task5", phase: "Fase 2", title: "Mapeo y Puertos UART", desc: "Conectar los pines TX y RX de los periféricos cruzados en las UART correspondientes de la controladora de vuelo." },
+      { id: "task6", phase: "Fase 2", title: "Configuración Inicial Betaflight", desc: "Establecer la tabla de puertos, configurar el Channel Map (AETR1234) y comprobar el sentido de giro de los motores." },
+      { id: "task7", phase: "Fase 2", title: "Failsafe y Modos de Vuelo", desc: "Configurar el comportamiento seguro del dron ante pérdida de enlace (GPS Rescue o caída controlada)." },
+      { id: "task8", phase: "Fase 3", title: "Análisis de Caja Negra (Blackbox)", desc: "Estudiar logs del giroscopio para ajustar filtros dinámicos contra ruidos mecánicos de alta frecuencia." },
+      { id: "task9", phase: "Fase 3", title: "Navegación Autónoma SITL", desc: "Configurar y volar misiones simuladas autónomas con autopiloto ArduPilot usando Mission Planner." },
+      { id: "task10", phase: "Fase 3", title: "Control MAVLink con Python", desc: "Desarrollar un script en Python usando pymavlink para leer actitud y telemetría de vuelo en tiempo real." }
     ];
 
     let userProgress = {};
@@ -2620,25 +2745,40 @@ void loop() {
     }
 
     // =========================================================================
-    // MODULE 1: OHM'S LAW SIMULATOR
+    // MODULE 1: UAV POWER & FLIGHT TIME ESTIMATOR
     // =========================================================================
     const vSlider = document.getElementById('ohmSlider-V');
     const rSlider = document.getElementById('ohmSlider-R');
+    const throttleSlider = document.getElementById('ohmSlider-Throttle');
     const wireContainer = document.getElementById('wireContainer');
 
-    function updateOhmCalculation() {
-      const v = parseFloat(vSlider.value);
-      const r = parseFloat(rSlider.value);
-      const i = v / r; // Amps
-      
-      document.getElementById('ohmVals-V').innerText = `${v.toFixed(1)} V`;
-      document.getElementById('ohmVals-R').innerText = `${r} Ω`;
-      
-      const ma = i * 1000;
-      document.getElementById('ohmCalcResult').innerText = `${i.toFixed(3)} A (${ma.toFixed(0)} mA)`;
+    let propAngle = 0;
 
-      // Animate electrons inside container based on current
-      updateElectronFlow(i);
+    function updateOhmCalculation() {
+      const cells = parseInt(vSlider.value);
+      const capacity = parseInt(rSlider.value);
+      const throttle = parseInt(throttleSlider.value);
+
+      const voltage = cells * 3.7;
+      
+      document.getElementById('ohmVals-V').innerText = `${cells}S (${voltage.toFixed(1)} V)`;
+      document.getElementById('ohmVals-R').innerText = `${capacity} mAh`;
+      document.getElementById('uavThrottleVal').innerText = `${throttle}%`;
+
+      // Current draw calculation formula: standby + throttle scaling
+      const current = 0.8 + (cells * 20 - 0.8) * Math.pow(throttle / 100, 2.2);
+      const power = current * voltage;
+
+      // Flight time (using 80% of capacity for battery safety)
+      const flightTimeMin = current > 0 ? ((capacity * 0.8) / 1000 / current) * 60 : 99.9;
+      const formattedTime = flightTimeMin > 99.9 ? "99.9+ min" : `${flightTimeMin.toFixed(1)} min`;
+
+      document.getElementById('ohmCalcResult').innerText = `${current.toFixed(2)} A`;
+      document.getElementById('uavTotalPower').innerText = `${Math.round(power)} W`;
+      document.getElementById('uavFlightTime').innerText = formattedTime;
+
+      // Update electron flow speed dynamically
+      updateElectronFlow(current);
     }
 
     // Spawn electrons
@@ -2657,9 +2797,10 @@ void loop() {
     let animationFrameId;
     function updateElectronFlow(current) {
       // Speed multiplier based on current
-      const baseSpeed = current * 5;
+      const baseSpeed = current * 0.35;
       
       function animate() {
+        // Move electrons
         electrons.forEach(elObj => {
           elObj.pos += baseSpeed;
           if (elObj.pos > 100) {
@@ -2667,12 +2808,20 @@ void loop() {
           }
           elObj.element.style.left = `${elObj.pos}%`;
           
-          // Width of electron changes slightly based on resistance (constriction)
-          const resistanceVal = parseFloat(rSlider.value);
-          const size = Math.max(4, 12 - (resistanceVal / 120));
+          // Width of electron changes slightly based on current
+          const size = Math.max(5, Math.min(10, 4 + current * 0.1));
           elObj.element.style.width = `${size}px`;
           elObj.element.style.height = `${size}px`;
         });
+
+        // Rotate propellers based on throttle
+        const throttle = parseInt(throttleSlider.value);
+        if (throttle > 0) {
+          propAngle += throttle * 0.4;
+          document.getElementById('propLeft').style.transform = `rotate(${propAngle}deg)`;
+          document.getElementById('propRight').style.transform = `rotate(${-propAngle}deg)`;
+        }
+
         animationFrameId = requestAnimationFrame(animate);
       }
       
@@ -2684,9 +2833,10 @@ void loop() {
 
     vSlider.addEventListener('input', updateOhmCalculation);
     rSlider.addEventListener('input', updateOhmCalculation);
+    throttleSlider.addEventListener('input', updateOhmCalculation);
 
     // =========================================================================
-    // MODULE 2: MULTIMETER SIMULATOR
+    // MODULE 2: MULTIMETER SIMULATOR (FC POWER RAILS DIAGNOSTICS)
     // =========================================================================
     let multimeterDialState = 0; // 0: OFF, 1: VDC, 2: OHMS, 3: CONTINUITY
     let isCircuitSwitchClosed = false;
@@ -2726,12 +2876,12 @@ void loop() {
       const lever = document.getElementById('switchLever');
       
       if (isCircuitSwitchClosed) {
-        btn.innerHTML = `<i data-lucide="toggle-right"></i> Abrir Interruptor`;
+        btn.innerHTML = `<i data-lucide="toggle-right"></i> Desconectar Batería`;
         btn.classList.add('active');
         lever.setAttribute('x2', '145');
         lever.setAttribute('y2', '50'); // flat
       } else {
-        btn.innerHTML = `<i data-lucide="toggle-left"></i> Cerrar Interruptor`;
+        btn.innerHTML = `<i data-lucide="toggle-left"></i> Conectar Batería`;
         btn.classList.remove('active');
         lever.setAttribute('x2', '145');
         lever.setAttribute('y2', '30'); // angled open
@@ -2850,38 +3000,29 @@ void loop() {
       let vRed = 0;
       let vBlack = 0;
 
-      // Calculate potentials based on switch state
+      // Calculate potentials based on battery connection
       if (isCircuitSwitchClosed) {
-        // Closed: Battery connects to resistor, LED is active
-        // LED forward voltage is roughly 2.0V
-        // Battery is 9.0V
-        // Node potentials vs GND:
-        // TP1 (BAT+): 9V
-        // TP2 (V_SW): 9V (closed switch)
-        // TP3 (R_OUT): 2.0V (drop across resistor from 9V to 2V, 7V drop across 1kΩ)
-        // GND (TP4): 0V
-        if (red === 'TP1') vRed = 9.0;
-        if (red === 'TP2') vRed = 9.0;
-        if (red === 'TP3') vRed = 2.0;
+        // TP1 (BAT+): 22.2V (6S nominal)
+        // TP2 (5V_BEC): 5.0V
+        // TP3 (9V_BEC): 9.0V
+        // GND: 0V
+        if (red === 'TP1') vRed = 22.2;
+        if (red === 'TP2') vRed = 5.0;
+        if (red === 'TP3') vRed = 9.0;
         if (red === 'GND') vRed = 0.0;
         
-        if (black === 'TP1') vBlack = 9.0;
-        if (black === 'TP2') vBlack = 9.0;
-        if (black === 'TP3') vBlack = 2.0;
+        if (black === 'TP1') vBlack = 22.2;
+        if (black === 'TP2') vBlack = 5.0;
+        if (black === 'TP3') vBlack = 9.0;
         if (black === 'GND') vBlack = 0.0;
       } else {
-        // Open switch: No current flows. LED voltage drops to 0.
-        // Node potentials vs GND:
-        // TP1 (BAT+): 9V
-        // TP2 (V_SW): 0V (disconnected)
-        // TP3 (R_OUT): 0V (no current)
-        // GND (TP4): 0V
-        if (red === 'TP1') vRed = 9.0;
+        // Unpowered: all voltages are 0.
+        if (red === 'TP1') vRed = 0.0;
         if (red === 'TP2') vRed = 0.0;
         if (red === 'TP3') vRed = 0.0;
         if (red === 'GND') vRed = 0.0;
 
-        if (black === 'TP1') vBlack = 9.0;
+        if (black === 'TP1') vBlack = 0.0;
         if (black === 'TP2') vBlack = 0.0;
         if (black === 'TP3') vBlack = 0.0;
         if (black === 'GND') vBlack = 0.0;
@@ -2894,17 +3035,17 @@ void loop() {
         lcd.innerText = `${voltageDifference.toFixed(2)} V`;
       } 
       else if (multimeterDialState === 2) { // Resistance Mode
-        // Circuit must be unenergized or it displays error
-        // Let's assume user measures resistances
-        // (For simplicity we assume they measure components directly)
-        
-        // R1: between TP2 and TP3 is 1kΩ (1000 ohms)
-        if ((red === 'TP2' && black === 'TP3') || (red === 'TP3' && black === 'TP2')) {
+        // TP2 (5V BEC) to GND resistance = 500 Ω
+        // TP3 (9V BEC) to GND resistance = 1000 Ω
+        // TP1 (BAT+) to TP2/TP3 is open loop or high
+        if ((red === 'TP2' && black === 'GND') || (red === 'GND' && black === 'TP2')) {
+          lcd.innerText = "500 Ω";
+        } else if ((red === 'TP3' && black === 'GND') || (red === 'GND' && black === 'TP3')) {
           lcd.innerText = "1000 Ω";
         } else if ((red === 'TP1' && black === 'TP2') || (red === 'TP2' && black === 'TP1')) {
-          // Across switch
+          // Across battery switch
           if (isCircuitSwitchClosed) {
-            lcd.innerText = "0.2 Ω";
+            lcd.innerText = "0.1 Ω";
           } else {
             lcd.innerText = "O.L"; // Open Loop
           }
@@ -2913,19 +3054,12 @@ void loop() {
         }
       } 
       else if (multimeterDialState === 3) { // Continuity
-        // Pushes a small test current, beeps if resistance is under ~50 ohms
-        if ((red === 'TP1' && black === 'TP2') || (red === 'TP2' && black === 'TP1')) {
-          // Across switch
-          if (isCircuitSwitchClosed) {
-            lcd.innerText = "0.2 Ω";
-            beepVisual.classList.add('active');
-            playBeepSound();
-          } else {
-            lcd.innerText = "O.L";
-          }
-        } else if (red === black) {
-          // Same point
+        if (red === black) {
           lcd.innerText = "0.0 Ω";
+          beepVisual.classList.add('active');
+          playBeepSound();
+        } else if (((red === 'TP1' && black === 'TP2') || (red === 'TP2' && black === 'TP1')) && isCircuitSwitchClosed) {
+          lcd.innerText = "0.1 Ω";
           beepVisual.classList.add('active');
           playBeepSound();
         } else {
@@ -2938,61 +3072,61 @@ void loop() {
     placeProbe('black', 'GND', 120, 150);
 
     // =========================================================================
-    // MODULE 3: COMPONENT ENCYCLOPEDIA
+    // MODULE 3: PROPULSION COMPONENT ENCYCLOPEDIA & THRUST CALCULATOR
     // =========================================================================
     const compData = {
       resistencia: {
-        title: "La Resistencia (R)",
-        type: "Básico / Pasivo",
+        title: "MOSFETs de ESC (Transistores de Potencia)",
+        type: "Componente Crítico / Activo",
         color: "var(--accent-amber)",
-        desc: "Limita o regula el flujo de corriente en un circuito y produce caídas controladas de tensión. Su valor se mide en Ohmios (Ω).",
-        useCase: "En drones, se usan resistencias 'pull-up' en los pines de sensores I2C para estabilizar las señales de comunicación digital, y resistencias shunt de valores bajísimos (e.g. 0.001 Ω) en el PDB para censar el consumo total de corriente (Telemetría de Amperios).",
-        testProcedure: "Pon el multímetro en modo Ohmios (Ω). Coloca una sonda a cada extremo del resistor (sin que el circuito tenga energía). Compara la lectura con las bandas de colores o el código impreso en la superficie SMD.",
-        symbolSvg: `<svg viewBox="0 0 60 40"><path d="M 5 20 L 15 20 L 18 12 L 24 28 L 30 12 L 36 28 L 42 12 L 45 20 L 55 20" fill="none" stroke="var(--accent-amber)" stroke-width="2" /></svg>`
+        desc: "Interruptor electrónico de estado sólido. Conmuta corrientes altísimas de la batería a las tres fases del motor brushless a velocidades extremas.",
+        useCase: "En drones, 6 MOSFETs configuran un puente trifásico por cada motor. El variador ESC abre y cierra sus canales para inducir la rotación electromagnética del motor.",
+        testProcedure: "Pon el multímetro en modo Diodo. Mide entre el terminal de fase del motor y el pad negativo de entrada del ESC; la caída típica del diodo de retorno debe rondar los 0.5V. Un cortocircuito franco a 0.0V indica un MOSFET quemado.",
+        symbolSvg: `<svg viewBox="0 0 60 40"><path d="M 5 20 L 20 20 M 20 10 L 20 30 M 24 10 L 24 18 M 24 22 L 24 30 M 24 15 L 35 15 L 35 20 M 24 25 L 35 25 L 35 20 M 35 20 L 55 20" fill="none" stroke="var(--accent-amber)" stroke-width="2" /></svg>`
       },
       capacitor: {
-        title: "El Capacitor (Condensador - C)",
-        type: "Básico / Pasivo",
+        title: "Condensador de Filtrado Low-ESR",
+        type: "Filtrado / Pasivo",
         color: "var(--accent-cyan)",
-        desc: "Almacena energía en un campo eléctrico y bloquea la corriente continua mientras deja pasar las señales alternas de ruido de alta frecuencia.",
-        useCase: "En drones FPV, se suelda un capacitor electrolítico grande (e.g. 1000µF 35V Low ESR) directamente a las terminales de alimentación XT60 de los ESCs. Esto actúa como amortiguador para absolver el ruido eléctrico de conmutación del motor brushless, evitando que se raye o distorsione la señal de la cámara de video.",
-        testProcedure: "Pon el multímetro en modo Capacitancia (F). Toca las patillas (respetando polaridad en electrolíticos). El display subirá mientras carga y te dará el valor en microfaradios. Para ver si está quemado o en corto, usa continuidad: si pita, el dieléctrico interno falló.",
+        desc: "Capacitor electrolítico diseñado con baja resistencia serial equivalente (ESR). Actúa como un amortiguador de picos de voltaje residuales en las líneas de potencia.",
+        useCase: "Se suelda directamente a los bornes positivo/negativo de entrada del ESC. Filtra el ruido e interferencia eléctrica de conmutación para estabilizar los BEC y evitar interferencia en la señal de video analógica.",
+        testProcedure: "Desconecta la energía del dron. Usa continuidad en las puntas de alimentación principal. Escucharás un pitido inicial breve que cesará de inmediato mientras el capacitor se carga. Si pita continuamente, existe un cortocircuito en el capacitor o el ESC.",
         symbolSvg: `<svg viewBox="0 0 60 40"><path d="M 5 20 L 25 20 M 35 20 L 55 20 M 25 8 L 25 32 M 35 8 L 35 32" fill="none" stroke="var(--accent-cyan)" stroke-width="2" /></svg>`
       },
       diodo: {
-        title: "El Diodo y LED (D)",
-        type: "Básico / Semiconductor",
+        title: "Diodo de Supresión TVS",
+        type: "Protección / Semiconductor",
         color: "var(--accent-green)",
-        desc: "Permite el paso de la corriente en un solo sentido (polarización directa) y lo bloquea en el opuesto (polarización inversa). Los LEDs emiten fotones de luz al conducir.",
-        useCase: "Se usan diodos rectificadores (Schottky) para proteger el microcontrolador del dron contra inversiones accidentales de polaridad en el puerto USB, o LEDs integrados para indicar el estado del GPS (fijación de satélites) y advertencias de batería baja.",
-        testProcedure: "Pon el multímetro en Modo Diodo (símbolo de flecha con barra). Conecta la punta roja al ánodo (+) y la negra al cátodo (-). Deberás medir una caída de tensión típica de 0.5V a 0.7V. Invierte las puntas: debe marcar O.L (sin conducción).",
+        desc: "Diodo diseñado para desviar picos de voltaje transitorios inducidos por el frenado regenerativo y giros inerciales de los motores brushless.",
+        useCase: "Soldado en paralelo en la entrada de potencia principal, absorbe sobretensiones repentinas de más de 26V (en sistemas 6S) y las deriva a tierra para salvar la controladora de vuelo.",
+        testProcedure: "Usa el modo diodo. En polarización directa (ánodo en positivo, cátodo en negativo) marcará la caída de conducción típica de 0.6V. En sentido inverso, marcará circuito abierto (O.L).",
         symbolSvg: `<svg viewBox="0 0 60 40"><path d="M 5 20 L 20 20 M 35 20 L 55 20 M 20 10 L 20 30 M 30 10 L 30 30 M 20 20 L 30 10 L 30 30 Z" fill="none" stroke="var(--accent-green)" stroke-width="2" /></svg>`
       },
       mosfet: {
-        title: "El MOSFET (Transistor de Potencia)",
-        type: "Avanzado / Activo",
+        title: "Motor Brushless (Sin Escobillas)",
+        type: "Propulsión / Electromecánico",
         color: "var(--accent-red)",
-        desc: "Interruptor electrónico ultrarrápido controlado por voltaje. Al aplicar tensión en su pin de compuerta (Gate), permite el paso de enormes corrientes entre Drenador (Drain) y Fuente (Source).",
-        useCase: "Son las piezas fundamentales en los ESCs de potencia. Cada motor brushless es controlado por 6 MOSFETs agrupados en 3 puentes H que conmutan corrientes de hasta 60A miles de veces por segundo para excitar las bobinas electromagnéticas.",
-        testProcedure: "Usa el modo Diodo. Mide entre Drenador (pin central/pestaña trasera) y Fuente (pin derecho). Deberás medir el diodo de protección interna (~0.5V). Al tocar momentáneamente Gate con la punta roja, el canal se 'activa' y marcará continuidad entre Drain y Source.",
+        desc: "Actuador que genera fuerza de sustentación mediante imanes permanentes y bobinas magnéticas estáticas excitadas de forma secuencial por el variador ESC.",
+        useCase: "Elemento de propulsión fundamental. La relación de KV define cuántas revoluciones gira por cada voltio aplicado sin carga de hélice.",
+        testProcedure: "Mide la resistencia entre las tres fases del motor usando un multímetro de alta precisión. La resistencia debe ser bajísima (ej. 0.05 Ω) e idéntica en las tres combinaciones de pines. Cero resistencia o circuito abierto indica bobina dañada.",
         symbolSvg: `<svg viewBox="0 0 60 40"><path d="M 5 20 L 20 20 M 20 10 L 20 30 M 24 10 L 24 18 M 24 22 L 24 30 M 24 15 L 35 15 L 35 20 M 24 25 L 35 25 L 35 20 M 35 20 L 55 20" fill="none" stroke="var(--accent-red)" stroke-width="2" /></svg>`
       },
       regulador: {
-        title: "Regulador Lineal (LDO)",
-        type: "Avanzado / Integrado",
+        title: "Shunt de Corriente (Amperímetro)",
+        type: "Medición / Pasivo",
         color: "var(--accent-cyan)",
-        desc: "Dispositivo integrado que toma una tensión de entrada variable y ruidosa y entrega un voltaje de salida perfectamente regulado y limpio (típicamente 5V o 3.3V) a costa de disipar la diferencia como calor.",
-        useCase: "En el Flight Controller, se usa un LDO para tomar los 5V de entrada de la placa de distribución y reducirlos a 3.3V ultraestables que alimentan exclusivamente los giroscopios y el procesador STM32, evitando interferencias de potencia.",
-        testProcedure: "Con el circuito energizado, pon el multímetro en Voltaje DC. Mide entre el pin de salida (OUT) y GND. Debe dar exactamente el voltaje especificado (e.g. 3.30V ±0.05V). Si marca el voltaje de entrada, el chip está cortocircuitado y dañará los sensores.",
+        desc: "Resistencia de precisión de valor bajísimo (típicamente 0.0005 Ω) diseñada para tolerar altísimas intensidades de corriente.",
+        useCase: "Colocada en serie con la batería en el ESC o PDB. El procesador mide la caída microscópica de tensión a través de ella para calcular el consumo exacto de corriente en vuelo (telemetría de miliamperios).",
+        testProcedure: "Usa Ohmios. Debido a su bajísima resistencia, un multímetro común marcará continuidad y un valor cercano a 0.0 Ω. Verifica visualmente que no tenga grietas ni quemaduras.",
         symbolSvg: `<svg viewBox="0 0 60 40"><rect x="15" y="10" width="30" height="20" fill="none" stroke="var(--accent-cyan)" stroke-width="2" /><path d="M 5 20 L 15 20 M 45 20 L 55 20 M 30 30 L 30 38" fill="none" stroke="var(--accent-cyan)" stroke-width="2" /></svg>`
       },
       esc: {
-        title: "FETs del Variador (ESC)",
-        type: "Componente UAV",
+        title: "Controlador de Compuerta (Gate Driver)",
+        type: "Control / Circuito Integrado",
         color: "var(--accent-amber)",
-        desc: "Módulo integrado en los ESCs modernos compuesto por un driver de compuerta (gate driver) y transistores MOSFET que decodifican la señal DSHOT del procesador de vuelo para girar el motor brushless.",
-        useCase: "Se encarga del posicionamiento angular del rotor. En caso de impacto o si el motor se bloquea con pasto, el motor exige corriente máxima hasta fundir la estructura interna de estos MOSFETs, dejando el motor inservible o echando humo.",
-        testProcedure: "Coloca el multímetro en resistencia o diodo. Mide la impedancia entre las terminales de fase de salida del motor (los 3 cables) y los terminales de alimentación positivo/negativo de la batería. Si la resistencia está cercana a 0 ohms, ese canal del ESC está quemado.",
+        desc: "Circuito integrado que actúa como amplificador analógico. Recibe las señales lógicas débiles de la FC y bombea la tensión y corriente necesarias para abrir rápidamente las compuertas de los MOSFETs de potencia.",
+        useCase: "Se sitúa en la placa del ESC entre el procesador principal (ej. STM32G0) y las compuertas de los transistores del puente H.",
+        testProcedure: "Comprueba el voltaje de alimentación del gate driver (típicamente de 10V a 12V regulados internamente). Si se calienta en exceso al conectar la batería, el integrado ha fallado.",
         symbolSvg: `<svg viewBox="0 0 60 40"><circle cx="30" cy="20" r="10" fill="none" stroke="var(--accent-amber)" stroke-width="2" /><path d="M 5 20 L 20 20 M 40 20 L 55 20" fill="none" stroke="var(--accent-amber)" stroke-width="2" /></svg>`
       }
     };
@@ -3038,66 +3172,64 @@ void loop() {
     // Default load
     showComponent('resistencia');
 
-    function decodeSMDResistor() {
-      const code = document.getElementById('smdCodeInput').value.trim();
-      const result = document.getElementById('smdResultText');
+    function calculateUavThrust() {
+      const kv = parseFloat(document.getElementById('uavMotorKV').value);
+      const volt = parseFloat(document.getElementById('uavMotorVolt').value);
       
-      if (code.length < 3 || isNaN(code)) {
-        result.innerText = "Código Inválido";
-        result.style.color = "var(--accent-red)";
-        return;
-      }
+      document.getElementById('mcuKVVal').innerText = `${kv} KV`;
       
-      const digits = code.substring(0, code.length - 1);
-      const multiplier = parseInt(code.charAt(code.length - 1));
+      let batteryLabel = "3S";
+      if (volt > 20) batteryLabel = "6S";
+      else if (volt > 16) batteryLabel = "5S";
+      else if (volt > 12) batteryLabel = "4S";
+      document.getElementById('mcuVoltVal').innerText = `${volt.toFixed(1)} V (${batteryLabel})`;
+
+      // Loaded RPM calculation (under prop load ~83% efficiency)
+      const theoreticalRpm = kv * volt;
+      const loadedRpm = theoreticalRpm * 0.83;
       
-      const val = parseInt(digits) * Math.pow(10, multiplier);
-      
-      let formattedVal = "";
-      if (val >= 1000000) {
-        formattedVal = `${(val / 1000000).toFixed(1)} MΩ`;
-      } else if (val >= 1000) {
-        formattedVal = `${(val / 1000).toFixed(1)} kΩ`;
-      } else {
-        formattedVal = `${val} Ω`;
-      }
-      
-      result.innerText = formattedVal;
-      result.style.color = "var(--accent-cyan)";
+      // Empirical thrust estimation per motor based on RPM
+      const thrust = Math.pow(loadedRpm / 10000, 2.2) * 120;
+
+      document.getElementById('uavRpmText').innerText = `${Math.round(theoreticalRpm).toLocaleString()} RPM (${Math.round(loadedRpm).toLocaleString()} cargadas)`;
+      document.getElementById('uavThrustText').innerText = `${Math.round(thrust)} g (por motor)`;
     }
 
+    // Initialize module 3 thrust calculation
+    calculateUavThrust();
+
     // =========================================================================
-    // MODULE 4: SOLDERING INTERACTIVE GUIDE & GALLERY
+    // MODULE 4: SOLDERING INTERACTIVE GUIDE & GALLERY (CAPACITOR SOLDERING)
     // =========================================================================
     let currentSolderStep = 1;
     const solderSteps = [
       {
-        desc: "<strong>Paso 1: Precalentar.</strong> Coloca la punta del soldador (ajustado a unos 350°C) de modo que toque simultáneamente el pad de cobre y el pin metálico del componente por 1-2 segundos.",
+        desc: "<strong>Paso 1: Precalentar el Pad del ESC.</strong> Ajusta el cautín a 380°C. Coloca la punta plana tocando simultáneamente el pad de cobre grueso de la alimentación del ESC y la pata metálica del condensador por 2-3 segundos.",
         ironTouch: true,
         ironHot: true,
         wireTouch: false,
         liquidFlow: false
       },
       {
-        desc: "<strong>Paso 2: Aplicar Estaño.</strong> Introduce el alambre de estaño (aleación 63/37 preferiblemente con núcleo de resina) en el punto de contacto opuesto al cautín, no directamente a la punta. Deja fundir la cantidad adecuada.",
+        desc: "<strong>Paso 2: Alimentar estaño.</strong> Introduce el hilo de estaño directamente en el punto caliente de contacto opuesto al cautín. Deja fundir el estaño suficiente para envolver la pata del condensador y rellenar el pad.",
         ironTouch: true,
         ironHot: true,
         wireTouch: true,
         liquidFlow: true
       },
       {
-        desc: "<strong>Paso 3: Retirar el Estaño.</strong> Retira primero el alambre de estaño para evitar que se quede pegado al enfriarse, pero mantén el soldador apoyado una fracción de segundo para asegurar la humectación en toda la superficie.",
+        desc: "<strong>Paso 3: Retirar el estaño primero.</strong> Retira el alambre de estaño rápidamente para evitar que se solidifique en frío, pero deja el cautín por medio segundo extra para que los vapores del flux limpien óxidos residuales.",
         ironTouch: true,
         ironHot: true,
         wireTouch: false,
         liquidFlow: true
       },
       {
-        desc: "<strong>Paso 4: Dejar Enfriar.</strong> Retira el soldador. No muevas la pieza ni soples la junta mientras se solidifica (toma 2-3 segundos). Una buena soldadura debe ser brillante, cóncava y cubrir el pad por completo.",
+        desc: "<strong>Paso 4: Enfriar y solidificar.</strong> Retira el cautín. Mantén inmóvil la placa y el condensador por 3 segundos. Una soldadura bien hecha debe verse brillante, cóncava y cubrir el pad perimetralmente con forma de volcán.",
         ironTouch: false,
         ironHot: false,
         wireTouch: false,
-        liquidFlow: true // solid solidified shape now
+        liquidFlow: true
       }
     ];
 
@@ -3146,10 +3278,10 @@ void loop() {
     }
 
     const solderGalleryDetails = {
-      perfect: "<strong>Concavidad Ideal (Junta Brillante):</strong> El estaño fluyó perfectamente cubriendo tanto el pad de la pista como el pin del componente en forma de cono cóncavo. Indica calor correcto y uso de flux. Máxima resistencia a vibraciones.",
-      cold: "<strong>Junta Fría (Soldadura Opaca/Agrietada):</strong> Se produce si el soldador no calentó lo suficiente la pieza o si ésta se movió mientras se enfriaba. Tiene pésima conductividad mecánica y eléctrica. Se repara aplicando flux y recalentando con el cautín.",
-      insufficient: "<strong>Estaño Insuficiente:</strong> La junta carece de soporte mecánico. No envolvió el pin del componente. Se soluciona aplicando un aporte extra de estaño con la punta del cautín caliente.",
-      bridge: "<strong>Puente de Estaño (Cortocircuito):</strong> Ocurre al aplicar estaño en exceso, uniendo eléctricamente dos pads independientes. En un regulador o ESC, esto provocará una explosión al conectar la batería. Se retira usando malla desoldadora o extractor."
+      perfect: "<strong>Concavidad Ideal (Junta Brillante):</strong> El estaño fluyó perfectamente cubriendo tanto el pad de la pista como el pin del condensador. Ofrece la máxima resistencia mecánica ante las intensas vibraciones dinámicas de los motores.",
+      cold: "<strong>Junta Fría (Junta Opaca/Rugosa):</strong> Ocurre si la placa disipó demasiado rápido el calor o la pieza se movió al enfriarse. Ofrece una conductividad precaria y fallas intermitentes de alimentación. Se repara con flux y recalentando.",
+      insufficient: "<strong>Estaño Insuficiente:</strong> La junta carece de soporte físico adecuado y puede quebrarse por fatiga de material. Se soluciona aplicando estaño adicional y calentando de forma envolvente.",
+      bridge: "<strong>Puente de Estaño (Cortocircuito):</strong> Exceso de estaño que une el pad positivo (+) con el pad negativo (-) del ESC. <strong>¡PELIGRO!</strong> Generará un chispazo explosivo al conectar la batería. Debe retirarse inmediatamente con malla desoldadora."
     };
 
     function selectSolderGallery(type) {
@@ -3157,230 +3289,245 @@ void loop() {
     }
 
     // =========================================================================
-    // MODULE 5: PROTOBOARD DRAW & HIGHLIGHTS
+    // MODULE 5: INTERACTIVE DRONE WIRING MAP
     // =========================================================================
-    function drawProtoboardInteractive() {
-      const svg = document.getElementById('protoBoardSvg');
-      
-      // We will draw the pins programmatically to avoid heavy HTML.
-      // Columns: 30 columns.
-      // Rails: Top (+ and -), Bottom (+ and -).
-      // Main area: 5 holes on top (A, B, C, D, E) and 5 holes on bottom (F, G, H, I, J) per column.
-      
-      // Draw top bus holes (+)
-      let rowHtml = "";
-      for (let c = 1; c <= 30; c++) {
-        const x = 20 + (c * 10);
-        // Top positive bus
-        rowHtml += `<circle cx="${x}" cy="12" r="2.5" class="proto-hole" data-connection="top-pos" />`;
-        // Top negative bus
-        rowHtml += `<circle cx="${x}" cy="22" r="2.5" class="proto-hole" data-connection="top-neg" />`;
-        
-        // Bottom positive bus
-        rowHtml += `<circle cx="${x}" cy="108" r="2.5" class="proto-hole" data-connection="bot-pos" />`;
-        // Bottom negative bus
-        rowHtml += `<circle cx="${x}" cy="118" r="2.5" class="proto-hole" data-connection="bot-neg" />`;
-      }
-      
-      // Draw terminal columns
-      const rowLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-      for (let c = 1; c <= 30; c++) {
-        const x = 20 + (c * 10);
-        
-        // Top half (A to E) -> Connected vertically
-        for (let r = 0; r < 5; r++) {
-          const y = 32 + (r * 5);
-          rowHtml += `<circle cx="${x}" cy="${y}" r="2.2" class="proto-hole" data-connection="col-top-${c}" />`;
+    function initUavWiringMap() {
+      const pads = document.querySelectorAll('.fc-pad');
+      const wiringDetails = {
+        'rx-gnd': {
+          name: "Tierra del Receptor (GND) / Receiver Ground",
+          desc: "Conexión de masa común para cerrar el circuito eléctrico del receptor. Debe ir al pad GND de la controladora más cercano al puerto UART1.<br><strong style='color:var(--accent-cyan);'>English:</strong> Common ground reference to complete the receiver's electrical circuit. Must go to the FC GND pad closest to the UART1 port."
+        },
+        'rx-5v': {
+          name: "Alimentación del Receptor (5V) / Receiver Power",
+          desc: "Suministra energía estable de 5V regulada por el BEC de la FC para alimentar el receptor ExpressLRS.<br><strong style='color:var(--accent-cyan);'>English:</strong> Supplies stable 5V power regulated by the FC's internal BEC to power the ExpressLRS receiver."
+        },
+        'rx-rx1': {
+          name: "UART 1 RX (Recepción de Datos) / UART 1 RX",
+          desc: "Pad de recepción de datos del puerto UART 1. Debe conectarse al pin <strong>TX (Transmisión)</strong> del receptor de radio.<br><strong style='color:var(--accent-cyan);'>English:</strong> Data reception pad for UART port 1. Must connect to the <strong>TX (Transmit)</strong> pin of the radio receiver."
+        },
+        'rx-tx1': {
+          name: "UART 1 TX (Transmisión de Datos) / UART 1 TX",
+          desc: "Pad de transmisión de datos del puerto UART 1. Debe conectarse al pin <strong>RX (Recepción)</strong> del receptor de radio para telemetría.<br><strong style='color:var(--accent-cyan);'>English:</strong> Data transmission pad for UART port 1. Must connect to the <strong>RX (Receive)</strong> pin of the radio receiver for telemetry."
+        },
+        'vtx-gnd': {
+          name: "Tierra del Transmisor de Video (GND) / VTX Ground",
+          desc: "Conexión de retorno eléctrico para el VTX. Soldar a un pad GND de video para evitar bucles de masa que induzcan ruido visual en la señal.<br><strong style='color:var(--accent-cyan);'>English:</strong> Return path for the VTX. Solder to a video GND pad to prevent ground loops that induce visual noise."
+        },
+        'vtx-9v': {
+          name: "Alimentación del Transmisor de Video (9V) / VTX Power",
+          desc: "Suministra voltaje filtrado de 9V proveniente del BEC de video. Protege al VTX contra los picos inductivos de los motores de alta potencia.<br><strong style='color:var(--accent-cyan);'>English:</strong> Supplies filtered 9V voltage from the video BEC. Protects the VTX from high-power motor voltage spikes."
+        },
+        'vtx-vo': {
+          name: "Salida de Video FPV (VO - Video Out) / Video Output",
+          desc: "Direcciona la señal de video analógica con el OSD (telemetría en pantalla) superpuesto por el chip de la FC directo al pad de entrada de video del VTX.<br><strong style='color:var(--accent-cyan);'>English:</strong> Carries the video signal with OSD (on-screen display overlay) directly from the FC to the VTX input."
+        },
+        'vtx-tx2': {
+          name: "UART 2 TX (Telemetría SmartAudio) / SmartAudio Telemetry",
+          desc: "Se conecta al pin de telemetría/SmartAudio del VTX para permitir cambiar canales, banda y potencia de transmisión desde el menú de la radio FPV.<br><strong style='color:var(--accent-cyan);'>English:</strong> Connects to the VTX SmartAudio/telemetry pin. Allows changing channels, band, and power from the FPV radio menu."
+        },
+        'esc-bat': {
+          name: "Tensión de Batería (BAT+ / VBAT) / Battery Voltage",
+          desc: "Conexión directa al borne positivo del ESC para suministrar la energía bruta de la LiPo y alimentar los reguladores BEC de la FC.<br><strong style='color:var(--accent-cyan);'>English:</strong> Direct connection to the positive ESC terminal to supply raw LiPo power and feed the FC's voltage regulators."
+        },
+        'esc-gnd': {
+          name: "Tierra de Potencia (GND) / Power Ground",
+          desc: "Retorno de potencia principal hacia el ESC. Requiere cable grueso de alta capacidad y soldadura perfecta para soportar altas corrientes.<br><strong style='color:var(--accent-cyan);'>English:</strong> Main power return to the ESC. Requires high-capacity gauge wire and a perfect solder joint to support high currents."
+        },
+        'esc-signal': {
+          name: "Señales de Motores (M1-M4) / Motor Signal Wires",
+          desc: "Líneas de control digital DShot que transmiten la señal de aceleración de la FC a los 4 variadores integrados del ESC.<br><strong style='color:var(--accent-cyan);'>English:</strong> DShot digital control lines transmitting throttle signals from the FC to the ESC's 4 integrated motor channels."
         }
-        
-        // Bottom half (F to J) -> Connected vertically
-        for (let r = 5; r < 10; r++) {
-          const y = 47 + (r * 5); // offsets down for Central divider ridge
-          rowHtml += `<circle cx="${x}" cy="${y}" r="2.2" class="proto-hole" data-connection="col-bot-${c}" />`;
-        }
-      }
-      
-      svg.insertAdjacentHTML('beforeend', rowHtml);
-      
-      // Add event listeners for hover highlight
-      document.querySelectorAll('.proto-hole').forEach(hole => {
-        hole.addEventListener('mouseenter', () => {
-          const conn = hole.getAttribute('data-connection');
-          document.querySelectorAll(`.proto-hole[data-connection="${conn}"]`).forEach(connectedHole => {
-            connectedHole.classList.add('connected');
-          });
+      };
+
+      pads.forEach(pad => {
+        pad.addEventListener('mouseenter', () => {
+          const padId = pad.getAttribute('data-pad');
+          
+          // Highlight pad and path
+          pad.classList.add('active');
+          const path = document.getElementById(`wire-${padId}`);
+          if (path) {
+            path.classList.add('active');
+          }
+          
+          // Update info
+          if (wiringDetails[padId]) {
+            document.getElementById('wiringPinName').innerText = wiringDetails[padId].name;
+            document.getElementById('wiringPinDesc').innerHTML = wiringDetails[padId].desc;
+          }
         });
-        
-        hole.addEventListener('mouseleave', () => {
-          const conn = hole.getAttribute('data-connection');
-          document.querySelectorAll(`.proto-hole[data-connection="${conn}"]`).forEach(connectedHole => {
-            connectedHole.classList.remove('connected');
-          });
+
+        pad.addEventListener('mouseleave', () => {
+          const padId = pad.getAttribute('data-pad');
+          pad.classList.remove('active');
+          const path = document.getElementById(`wire-${padId}`);
+          if (path) {
+            path.classList.remove('active');
+          }
+          
+          // Reset info
+          document.getElementById('wiringPinName').innerText = "Selecciona una conexión";
+          document.getElementById('wiringPinDesc').innerHTML = "Pasa el mouse sobre cualquiera de las almohadillas (pads) del Flight Controller para verificar la descripción y ver el trazado del cableado en el mapa.<br><strong style='color:var(--accent-cyan);'>English:</strong> Hover over any pad on the Flight Controller to read its description and highlight its wire route.";
         });
       });
     }
 
     // =========================================================================
-    // MODULE 6: MICROCONTROLLERS PINOUT EXPLORER
+    // MODULE 6: FLIGHT CONTROLLER CHIPSET & UART EXPLORER
     // =========================================================================
     const mcuData = {
       arduino: {
         svg: `
           <svg viewBox="0 0 200 160" class="mcu-board">
-            <!-- Board body -->
-            <rect x="10" y="10" width="180" height="140" fill="#005b82" stroke="#003d59" stroke-width="2" rx="6" />
-            <!-- ATmega chip -->
-            <rect x="70" y="55" width="80" height="20" fill="#202020" rx="1" />
-            <text x="110" y="68" fill="#a0a0a0" font-size="8" font-family="monospace" text-anchor="middle">ATmega328P</text>
-            <!-- Crystal oscillator -->
-            <rect x="40" y="45" width="12" height="6" fill="#cccccc" rx="1" />
-            <!-- USB Port -->
-            <rect x="2" y="20" width="30" height="24" fill="#cbd5e0" rx="2" />
-            <!-- Power Jack -->
-            <rect x="2" y="110" width="36" height="28" fill="#1a1a1a" rx="2" />
+            <!-- Board body (green PCB) -->
+            <rect x="25" y="10" width="150" height="140" fill="#1b4d3e" stroke="#2e7d32" stroke-width="2" rx="8" />
+            <!-- STM32F405 chip -->
+            <rect x="75" y="55" width="50" height="50" fill="#202020" rx="2" />
+            <text x="100" y="83" fill="#ffffff" font-size="7" font-family="monospace" text-anchor="middle" font-weight="bold">STM32F405</text>
+            <!-- MPU6000 IMU -->
+            <rect x="50" y="45" width="16" height="16" fill="#111" rx="1" />
+            <text x="58" y="55" fill="#888" font-size="5" font-family="monospace" text-anchor="middle">IMU</text>
             
-            <!-- Headers Top (Digital) -->
-            <rect x="50" y="14" width="130" height="8" fill="#2b2b2b" />
-            <!-- Headers Bottom (Power/Analog) -->
-            <rect x="50" y="138" width="120" height="8" fill="#2b2b2b" />
+            <!-- Pads Left (UART1 and I2C) -->
+            <rect x="30" y="25" width="10" height="100" fill="#2b2b2b" />
             
-            <!-- Hoverable Pins -->
-            <!-- D13 (SPI SCK) -->
+            <!-- Hoverable pins F405 -->
+            <!-- D13 (M1) -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', 'D13')" onmouseleave="resetPin()">
-              <circle cx="172" cy="18" r="4" class="pin-glow p-comm" id="pin-ard-D13" />
-              <circle cx="172" cy="18" r="2.5" fill="#333" />
+              <circle cx="35" cy="35" r="4" class="pin-glow p-pwm" id="pin-ard-D13" />
+              <circle cx="35" cy="35" r="2.5" fill="#333" />
             </g>
-            <!-- D11 (SPI MOSI / PWM) -->
+            <!-- D11 (TX1) -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', 'D11')" onmouseleave="resetPin()">
-              <circle cx="152" cy="18" r="4" class="pin-glow p-pwm" id="pin-ard-D11" />
-              <circle cx="152" cy="18" r="2.5" fill="#333" />
+              <circle cx="35" cy="55" r="4" class="pin-glow p-comm" id="pin-ard-D11" />
+              <circle cx="35" cy="55" r="2.5" fill="#333" />
             </g>
-            <!-- D9 (PWM) -->
+            <!-- D9 (RX1) -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', 'D9')" onmouseleave="resetPin()">
-              <circle cx="132" cy="18" r="4" class="pin-glow p-pwm" id="pin-ard-D9" />
-              <circle cx="132" cy="18" r="2.5" fill="#333" />
+              <circle cx="35" cy="75" r="4" class="pin-glow p-comm" id="pin-ard-D9" />
+              <circle cx="35" cy="75" r="2.5" fill="#333" />
             </g>
-            <!-- D3 (PWM / Interrupt) -->
+            <!-- D3 (SDA) -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', 'D3')" onmouseleave="resetPin()">
-              <circle cx="92" cy="18" r="4" class="pin-glow p-pwm" id="pin-ard-D3" />
-              <circle cx="92" cy="18" r="2.5" fill="#333" />
+              <circle cx="35" cy="95" r="4" class="pin-glow p-comm" id="pin-ard-D3" />
+              <circle cx="35" cy="95" r="2.5" fill="#333" />
             </g>
-            <!-- TX / D1 -->
+            <!-- D1 (SCL) -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', 'D1')" onmouseleave="resetPin()">
-              <circle cx="72" cy="18" r="4" class="pin-glow p-comm" id="pin-ard-D1" />
-              <circle cx="72" cy="18" r="2.5" fill="#333" />
+              <circle cx="35" cy="115" r="4" class="pin-glow p-comm" id="pin-ard-D1" />
+              <circle cx="35" cy="115" r="2.5" fill="#333" />
             </g>
             
-            <!-- Power 5V (Bottom) -->
+            <!-- Pads Right (Power & Telemetry) -->
+            <rect x="160" y="25" width="10" height="100" fill="#2b2b2b" />
+            <!-- 5V -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', '5V')" onmouseleave="resetPin()">
-              <circle cx="82" cy="142" r="4" class="pin-glow p-power" id="pin-ard-5V" />
-              <circle cx="82" cy="142" r="2.5" fill="#333" />
+              <circle cx="165" cy="35" r="4" class="pin-glow p-power" id="pin-ard-5V" />
+              <circle cx="165" cy="35" r="2.5" fill="#333" />
             </g>
-            <!-- GND (Bottom) -->
+            <!-- GND -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', 'GND')" onmouseleave="resetPin()">
-              <circle cx="102" cy="142" r="4" class="pin-glow p-gnd" id="pin-ard-GND" />
-              <circle cx="102" cy="142" r="2.5" fill="#333" />
+              <circle cx="165" cy="55" r="4" class="pin-glow p-gnd" id="pin-ard-GND" />
+              <circle cx="165" cy="55" r="2.5" fill="#333" />
             </g>
-            <!-- A0 (Analog Input) -->
+            <!-- A0 (CURR) -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', 'A0')" onmouseleave="resetPin()">
-              <circle cx="122" cy="142" r="4" class="pin-glow p-adc" id="pin-ard-A0" />
-              <circle cx="122" cy="142" r="2.5" fill="#333" />
+              <circle cx="165" cy="75" r="4" class="pin-glow p-adc" id="pin-ard-A0" />
+              <circle cx="165" cy="75" r="2.5" fill="#333" />
             </g>
-            <!-- A4 (I2C SDA) -->
+            <!-- A4 (VBAT) -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('arduino', 'A4')" onmouseleave="resetPin()">
-              <circle cx="152" cy="142" r="4" class="pin-glow p-comm" id="pin-ard-A4" />
-              <circle cx="152" cy="142" r="2.5" fill="#333" />
+              <circle cx="165" cy="95" r="4" class="pin-glow p-power" id="pin-ard-A4" />
+              <circle cx="165" cy="95" r="2.5" fill="#333" />
             </g>
             
-            <text x="110" y="100" fill="#003d59" font-size="12" font-family="sans-serif" font-weight="bold" opacity="0.3" text-anchor="middle">ARDUINO UNO</text>
+            <text x="100" y="142" fill="#ffffff" font-size="10" font-family="sans-serif" font-weight="bold" opacity="0.2" text-anchor="middle">BETAFLIGHT F405</text>
           </svg>
         `,
         pins: {
-          D13: { name: "Pin Digital 13 (SCK)", desc: "Pin digital estándar. En bus SPI actúa como Serial Clock (SCK), dictando el ritmo de transmisión de datos hacia periféricos de alta velocidad (como la ranura de tarjeta SD de caja negra en el FC)." },
-          D11: { name: "Pin Digital 11 (MOSI / PWM)", desc: "Soporta salida analógica simulada por modulación de ancho de pulso (PWM) para modular velocidad de variadores. En buses SPI funciona como Master Out Slave In (MOSI)." },
-          D9: { name: "Pin Digital 9 (PWM)", desc: "Salida PWM pura de 8 bits. Altamente empleado en drones para controlar la señal de posición angular de servomotores en frames gimbal de cámara o aletas de planeadores UAV." },
-          D3: { name: "Pin Digital 3 (PWM / INT1)", desc: "Soporta interrupciones externas por hardware. Esto permite al procesador detener inmediatamente sus cálculos para atender una señal de alta prioridad, como el eco de un sensor ultrasónico de proximidad." },
-          D1: { name: "Pin Digital 1 (TX - UART)", desc: "Pin de transmisión serie (Transmitter). Se utiliza para volcar datos de telemetría a la computadora de control en tierra a través del chip convertidor USB-a-Serie integrado." },
-          "5V": { name: "Pin de Alimentación 5V", desc: "Entrega voltaje regulado a 5.0 Voltios directo desde la fuente USB o el regulador LDO interno. Se usa para alimentar sensores primarios y módulos receptores de radio." },
-          GND: { name: "Tierra (Ground)", desc: "El punto de referencia común de 0 Voltios de todo el sistema eléctrico. Toda corriente que sale de los pines de salida debe retornar obligatoriamente a GND." },
-          A0: { name: "Pin Analógico 0 (ADC)", desc: "Puerto de entrada acoplado a un Convertidor Analógico-Digital (ADC) de 10 bits. Convierte voltajes analógicos continuos (0V a 5V) a números enteros (0 a 1023). Útil para sensores de temperatura analógicos." },
-          A4: { name: "Pin Analógico 4 (SDA - I2C)", desc: "Actúa como bus de datos serial (Serial Data) del protocolo I2C. Permite conectar sensores barométricos o magnetómetros en paralelo compartiendo una sola línea." }
+          D13: { name: "Motor 1 (M1 / PWM)", desc: "Señal de salida para el motor 1. Envía comandos digitales de aceleración DShot del bucle PID directo a la fase correspondiente del ESC." },
+          D11: { name: "UART 1 TX (Transmisión)", desc: "Pin de salida del bus de datos UART1. Utilizado habitualmente en Betaflight para enviar telemetría a la emisora de radio mediante protocolos como FPort." },
+          D9: { name: "UART 1 RX (Recepción)", desc: "Pin de entrada del bus de datos UART1. Recibe los comandos del stick del control de radio codificados por el receptor (ExpressLRS/Crossfire)." },
+          D3: { name: "I2C SDA (Datos del Compás)", desc: "Línea de datos del bus I2C. Conecta en paralelo sensores inerciales secundarios y el magnetómetro (brújula) montado en el GPS." },
+          D1: { name: "I2C SCL (Reloj de Sincronización)", desc: "Línea de reloj de sincronización del bus I2C, encargada de pautar la frecuencia de refresco de los sensores inerciales complementarios." },
+          "5V": { name: "Alimentación Regulada 5V", desc: "Entrega tensión constante de 5.0 Voltios proveniente de los BEC. Alimenta el receptor RX, GPS y zumbadores sonoros." },
+          GND: { name: "Tierra (Ground 0V)", desc: "Referencia común de potencial cero para toda la alimentación y electrónica de control." },
+          A0: { name: "Sensor de Corriente (CURR)", desc: "Entrada analógica ADC dedicada a censar el voltaje de la resistencia shunt de potencia del variador ESC para telemetría de amperaje total." },
+          A4: { name: "Monitoreo de Batería (VBAT)", desc: "Conexión directa de voltaje de batería (filtrada por divisor resistivo) que permite a la FC medir y mostrar el estado de la batería mediante el OSD de video." }
         }
       },
       esp32: {
         svg: `
           <svg viewBox="0 0 200 160" class="mcu-board">
-            <!-- Board body -->
-            <rect x="15" y="10" width="170" height="140" fill="#1a1a1a" stroke="#333" stroke-width="2" rx="4" />
-            <!-- ESP32 Module chip -->
-            <rect x="75" y="15" width="50" height="40" fill="#2d3748" rx="2" />
-            <!-- Metal shield lines -->
-            <rect x="80" y="20" width="40" height="30" fill="none" stroke="#a0aec0" stroke-width="1.5" />
-            <text x="100" y="38" fill="white" font-size="7" font-family="monospace" text-anchor="middle">ESP32-WROOM</text>
-            <!-- Antenna pattern -->
-            <path d="M 80 14 L 85 14 L 85 18 L 90 18 L 90 14 L 95 14" fill="none" stroke="#d4af37" stroke-width="2" />
+            <!-- Board body (black PCB) -->
+            <rect x="25" y="10" width="150" height="140" fill="#1a1a1a" stroke="#333" stroke-width="2" rx="8" />
+            <!-- STM32H743 chip -->
+            <rect x="75" y="55" width="50" height="50" fill="#2d3748" rx="2" />
+            <!-- Metal shield design -->
+            <rect x="80" y="60" width="40" height="40" fill="none" stroke="#a0aec0" stroke-width="1.5" />
+            <text x="100" y="83" fill="white" font-size="7" font-family="monospace" text-anchor="middle" font-weight="bold">STM32H743</text>
             
             <!-- Headers Left -->
-            <rect x="25" y="40" width="8" height="100" fill="#2b2b2b" />
-            <!-- Headers Right -->
-            <rect x="167" y="40" width="8" height="100" fill="#2b2b2b" />
-            
+            <rect x="30" y="25" width="10" height="100" fill="#2b2b2b" />
             <!-- Pins Left -->
             <!-- 3V3 -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('esp32', '3V3')" onmouseleave="resetPin()">
-              <circle cx="29" cy="46" r="4" class="pin-glow p-power" id="pin-esp-3V3" />
-              <circle cx="29" cy="46" r="2.5" fill="#444" />
+              <circle cx="35" cy="35" r="4" class="pin-glow p-power" id="pin-esp-3V3" />
+              <circle cx="35" cy="35" r="2.5" fill="#444" />
             </g>
-            <!-- GPIO34 (ADC) -->
+            <!-- CAN1 TX -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('esp32', 'G34')" onmouseleave="resetPin()">
-              <circle cx="29" cy="66" r="4" class="pin-glow p-adc" id="pin-esp-G34" />
-              <circle cx="29" cy="66" r="2.5" fill="#444" />
+              <circle cx="35" cy="55" r="4" class="pin-glow p-comm" id="pin-esp-G34" />
+              <circle cx="35" cy="55" r="2.5" fill="#444" />
             </g>
-            <!-- GPIO21 (I2C SDA) -->
+            <!-- CAN1 RX -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('esp32', 'G21')" onmouseleave="resetPin()">
-              <circle cx="29" cy="86" r="4" class="pin-glow p-comm" id="pin-esp-G21" />
-              <circle cx="29" cy="86" r="2.5" fill="#444" />
+              <circle cx="35" cy="75" r="4" class="pin-glow p-comm" id="pin-esp-G21" />
+              <circle cx="35" cy="75" r="2.5" fill="#444" />
             </g>
             <!-- GND -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('esp32', 'GND1')" onmouseleave="resetPin()">
-              <circle cx="29" cy="126" r="4" class="pin-glow p-gnd" id="pin-esp-GND1" />
-              <circle cx="29" cy="126" r="2.5" fill="#444" />
+              <circle cx="35" cy="115" r="4" class="pin-glow p-gnd" id="pin-esp-GND1" />
+              <circle cx="35" cy="115" r="2.5" fill="#444" />
             </g>
 
+            <!-- Headers Right -->
+            <rect x="160" y="25" width="10" height="100" fill="#2b2b2b" />
             <!-- Pins Right -->
-            <!-- 5V / VIN -->
+            <!-- 5V -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('esp32', '5V')" onmouseleave="resetPin()">
-              <circle cx="171" cy="46" r="4" class="pin-glow p-power" id="pin-esp-5V" />
-              <circle cx="171" cy="46" r="2.5" fill="#444" />
+              <circle cx="165" cy="35" r="4" class="pin-glow p-power" id="pin-esp-5V" />
+              <circle cx="165" cy="35" r="2.5" fill="#444" />
             </g>
-            <!-- GPIO2 (LED / PWM) -->
+            <!-- USART2 TX -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('esp32', 'G2')" onmouseleave="resetPin()">
-              <circle cx="171" cy="66" r="4" class="pin-glow p-pwm" id="pin-esp-G2" />
-              <circle cx="171" cy="66" r="2.5" fill="#444" />
+              <circle cx="165" cy="55" r="4" class="pin-glow p-comm" id="pin-esp-G2" />
+              <circle cx="165" cy="55" r="2.5" fill="#444" />
             </g>
-            <!-- GPIO22 (I2C SCL) -->
+            <!-- USART2 RX -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('esp32', 'G22')" onmouseleave="resetPin()">
-              <circle cx="171" cy="86" r="4" class="pin-glow p-comm" id="pin-esp-G22" />
-              <circle cx="171" cy="86" r="2.5" fill="#444" />
+              <circle cx="165" cy="75" r="4" class="pin-glow p-comm" id="pin-esp-G22" />
+              <circle cx="165" cy="75" r="2.5" fill="#444" />
             </g>
-            <!-- TX2 (UART2) -->
+            <!-- I2C SDA2 -->
             <g class="mcu-pin-hoverable" onmouseenter="showPin('esp32', 'TX2')" onmouseleave="resetPin()">
-              <circle cx="171" cy="106" r="4" class="pin-glow p-comm" id="pin-esp-TX2" />
-              <circle cx="171" cy="106" r="2.5" fill="#444" />
+              <circle cx="165" cy="95" r="4" class="pin-glow p-comm" id="pin-esp-TX2" />
+              <circle cx="165" cy="95" r="2.5" fill="#444" />
             </g>
             
-            <text x="100" y="120" fill="#a0aec0" font-size="10" font-family="sans-serif" font-weight="bold" opacity="0.1" text-anchor="middle">ESP32 DEVKIT</text>
+            <text x="100" y="142" fill="#a0aec0" font-size="10" font-family="sans-serif" font-weight="bold" opacity="0.1" text-anchor="middle">ARDUPILOT H743</text>
           </svg>
         `,
         pins: {
-          "3V3": { name: "Pin de Alimentación 3.3V", desc: "Salida del regulador LDO integrado en la placa. Suministra un voltaje limpio de 3.3V necesario para alimentar los chips lógicos de baja energía y el transceptor Wi-Fi/Bluetooth." },
-          G34: { name: "GPIO 34 (Entrada Analógica - ADC)", desc: "Pin acoplado al ADC de 12 bits de alta resolución del ESP32. Permite leer voltajes analógicos en rangos de 0 a 3.3V, ideal para el divisor de tensión que monitorea el voltaje total de la celda de la batería del UAV." },
-          G21: { name: "GPIO 21 (I2C SDA)", desc: "Línea de datos serie (SDA) por defecto del hardware I2C en el ESP32. Se puede remapear por software a casi cualquier pin GPIO, una gran flexibilidad para el diseño de PCBs de drones." },
-          GND1: { name: "Tierra (Ground)", desc: "Retorno eléctrico y plano de referencia de masa común para todos los circuitos lógicos integrados." },
-          "5V": { name: "Voltaje de Entrada / Salida 5V", desc: "Conectado directamente al conector Micro-USB. Si está alimentado por batería, este pin recibe los 5V estables regulados por el BEC de potencia del dron." },
-          G2: { name: "GPIO 2 (LED Interno / PWM)", desc: "Pin digital conectado al LED azul indicador de estado integrado. Soporta salidas PWM de alta resolución para la modulación directa de actuadores o servos." },
-          G22: { name: "GPIO 22 (I2C SCL)", desc: "Línea de reloj serie (SCL) del bus I2C. Proporciona los pulsos de sincronización para leer magnetómetros o giroscopios secundarios." },
-          TX2: { name: "GPIO 17 (TX2 - UART2)", desc: "Pin de transmisión serie del puerto UART número 2. En drones, se utiliza para entablar comunicación directa con el receptor ExpressLRS o el canal de telemetría del controlador de Mission Planner." }
+          "3V3": { name: "Salida Regulada 3.3V", desc: "Suministra un voltaje limpio de 3.3V necesario para alimentar sensores barométricos, magnetómetros y transceptores de radio integrados de baja tensión." },
+          G34: { name: "CAN Bus 1 TX (Transmisión)", desc: "Pin de transmisión del bus diferencial CAN. Permite conectar periféricos profesionales de nivel aeronáutico con alta tolerancia al ruido electromagnético." },
+          G21: { name: "CAN Bus 1 RX (Recepción)", desc: "Pin de recepción de datos del bus CAN para la telemetría integrada de actuadores inteligentes, altímetros lidar y ESCs." },
+          GND1: { name: "Tierra Común (GND 0V)", desc: "Retorno de potencia lógica y referencia común de voltaje." },
+          "5V": { name: "Entrada/Salida 5V VCC", desc: "Línea de alimentación principal de 5V para alimentar módulos GPS, transmisores de telemetría de largo alcance o receptores de control remoto." },
+          G2: { name: "USART 2 TX (Transmisión Telemetría)", desc: "Pin de salida serie del puerto USART2, habitualmente configurado para transmitir telemetría MAVLink a la emisora terrestre a 915 MHz." },
+          G22: { name: "USART 2 RX (Recepción Telemetría)", desc: "Pin de entrada serie del puerto USART2, recibe rutas de vuelo autónomas cargadas desde el software de control en tierra." },
+          TX2: { name: "I2C SDA 2 (Datos GPS)", desc: "Línea de datos del bus secundario I2C. Empleado de forma dedicada en ArduPilot para recibir telemetría del sensor magnético del mástil del GPS." }
         }
       }
     };
@@ -3423,7 +3570,6 @@ void loop() {
     // =========================================================================
     // QUIZZES CONTROLLER
     // =========================================================================
-    // Track selected option per module quiz
     const selectedOptions = {
       electronica: null,
       multimetro: null,
@@ -3433,40 +3579,40 @@ void loop() {
       microcontroladores: null
     };
 
-    // Quiz solutions (correct index)
+    // Quiz solutions (correct index array: 1, 1, 1, 1, 1, 0)
     const quizAnswers = {
-      electronica: 1, // B (18A)
-      multimetro: 1, // B (XT60 continuity)
+      electronica: 1, // B (2.88 minutos)
+      multimetro: 1, // B (Medir regulador BEC)
       componentes: 1, // B (MOSFETs)
-      soldadura: 1, // B (flux removes oxide)
-      protoboard: 1, // B (central channel divider)
-      microcontroladores: 0 // A (SPI)
+      soldadura: 1, // B (Flux limpia)
+      protoboard: 1, // B (TX a RX cruzado)
+      microcontroladores: 0 // A (Channel Map / Mapeo)
     };
 
     const quizFeedbacks = {
       electronica: {
-        correct: "¡Excelente! Aplicando la Ley de Ohm: I = V / R. Con una tensión de 9V y una resistencia de 0.5 Ω, la corriente es I = 9 / 0.5 = 18 Amperios. Esto generará una disipación térmica severa de 162 Watts (P = I² * R), quemando el componente de inmediato.",
-        incorrect: "Incorrecto. Recuerda la fórmula: I = V / R. Intenta hacer las matemáticas dividiendo la tensión de 9V sobre los 0.5 Ω de resistencia interna."
+        correct: "¡Excelente! Utilizando el 80% de capacidad: 1200 mAh = 1.2 Ah. A un consumo continuo de 25 Amperios, el tiempo estimado es: Tiempo = 1.2 Ah / 25 A = 0.048 horas. Multiplicado por 60 minutos, da exactamente 2.88 minutos. Es crítico aterrizar en este punto para preservar la batería.",
+        incorrect: "Incorrecto. Recuerda calcular la capacidad útil real (1.2 Ah) y dividirla por el consumo de corriente (25 A), convirtiendo luego las horas a minutos."
       },
       multimetro: {
-        correct: "¡Correcto! Medir la continuidad en el conector XT60 es el protocolo técnico de seguridad obligado. Si pita, indica un cortocircuito franco entre las líneas de fuerza (positivo y tierra), lo que provocaría un chispazo explosivo al conectar una LiPo de alta tasa de descarga.",
-        incorrect: "Incorrecto. Aunque medir celdas de batería o la resistencia del motor es útil, hay un paso crítico inicial de seguridad eléctrica obligado para salvar el hardware de explosiones catastróficas."
+        correct: "¡Correcto! Si la controladora enciende al conectarse a la PC por cable USB, pero se apaga al conectar la batería, indica que el regulador BEC de 5V está dañado. El puerto USB proporciona los 5V externos bypassando el regulador principal.",
+        incorrect: "Incorrecto. Cambiar componentes complejos o desoldar no es lo recomendado inicialmente. Analiza por qué la placa funciona con los 5V del USB pero no responde con la batería de alto voltaje."
       },
       componentes: {
-        correct: "¡Excelente! Los motores brushless son excitados trifásicamente por puentes en H formados por MOSFETs de canal N. Si un MOSFET se degrada, su resistencia interna sube o el canal se cortocircuita, enviando corriente asimétrica a las fases, calentando el motor y produciendo tirones bruscos.",
-        incorrect: "Incorrecto. Los capacitores filtran ruido, y los diodos evitan retornos, pero los componentes activos encargados de modular la corriente conmutada y con potencia masiva directo a los devanados del motor son transistores específicos."
+        correct: "¡Excelente! Los MOSFETs son transistores rápidos que conmutan la potencia para formar corriente alterna trifásica. Si se dañan, las fases se desbalancean induciendo calentamiento severo, vibraciones anómalas e inestabilidad en bajas revoluciones.",
+        incorrect: "Incorrecto. Los capacitores reducen ruido eléctrico y los diodos evitan retornos destructivos, pero la conmutación y modulación de potencia directa al motor recae sobre los transistores activos."
       },
       soldadura: {
-        correct: "¡Perfecto! El flux es un compuesto ácido-resinoso que se vaporiza al calentarse, limpiando químicamente la superficie del óxido y bajando la tensión superficial del estaño líquido para que fluya hacia los pads de forma capilar y cóncava.",
-        incorrect: "Incorrecto. El flux no varía el punto de fusión de la aleación ni es un aislante protector (ese es el esmalte antisoldante verde de la PCB). Su función ocurre durante la fundición metálica."
+        correct: "¡Perfecto! El flux es un compuesto ácido resinoso que elimina la oxidación de los metales calientes durante la fundición y reduce la tensión superficial del estaño líquido para lograr una junta capilar perfectamente cóncava y resistente a la tracción mecánica.",
+        incorrect: "Incorrecto. El flux no eleva el punto de fusión del estaño ni es un recubrimiento protector permanente. Su acción química ocurre durante la fusión térmica del estaño."
       },
       protoboard: {
-        correct: "¡Exactamente! El canal central divide los grupos de columnas A-E de las F-J. Los chips integrados (DIP) se colocan cruzando este divisor para que sus pines opuestos se aíslen eléctricamente en distintas pistas verticales y se puedan cablear individualmente.",
-        incorrect: "Incorrecto. Si lo pones en una sola fila vertical o en los buses laterales, unirás eléctricamente pines distintos provocando un cortocircuito total de las patillas lógicas."
+        correct: "¡Excelente! Las líneas UART son de comunicación bidireccional punto a punto. La salida TX (transmisión) de un equipo debe comunicarse obligatoriamente con la entrada RX (recepción) del otro, cruzando las señales para que circulen los datos.",
+        incorrect: "Incorrecto. Si sueldas TX con TX o juntas ambas señales lógicas en un pin analógico ADC, la comunicación serial fallará por cortocircuito de señales de datos."
       },
       microcontroladores: {
-        correct: "¡Magnífico! Los sensores inerciales primarios (IMU/Giroscopio) se enlazan mediante el bus SPI. Esto se debe a su altísima frecuencia de bus (hasta 20 MHz o más), permitiendo leer estados de orientación de la aeronave a velocidades de refresco de microsegundos con latencia despreciable.",
-        incorrect: "Incorrecto. I2C es demasiado lento (generalmente limitado a 400 kHz) para lecturas críticas de actitud de vuelo a frecuencias elevadas, y PWM es una salida analógica de control, no un protocolo de entrada de datos serie."
+        correct: "¡Magnífico! El mapeo de canales (Channel Map) define cómo decodifica Betaflight el orden de los canales enviados por el transmisor. Si están cruzados (como el acelerador controlando yaw), cambiar el formato del orden de los canales (e.g. de TAER a AETR) soluciona el problema.",
+        incorrect: "Incorrecto. Los lazos PID de estabilización o los protocolos de telemetría de retorno no tienen influencia sobre la correspondencia directa de los sticks de control del piloto."
       }
     };
 
@@ -3536,10 +3682,10 @@ void loop() {
       let taskId = "";
       if (moduleId === 'electronica') taskId = 'task1';
       if (moduleId === 'multimetro') taskId = 'task2';
-      if (moduleId === 'componentes') taskId = 'task5'; // maps roughly
-      if (moduleId === 'soldadura') taskId = 'task3';
-      if (moduleId === 'protoboard') taskId = 'task4';
-      if (moduleId === 'microcontroladores') taskId = 'task8';
+      if (moduleId === 'componentes') taskId = 'task3';
+      if (moduleId === 'soldadura') taskId = 'task4';
+      if (moduleId === 'protoboard') taskId = 'task5';
+      if (moduleId === 'microcontroladores') taskId = 'task6';
       
       if (taskId && userProgress[taskId] !== true) {
         toggleTask(taskId);
@@ -3560,48 +3706,48 @@ void loop() {
         lang_es: "Spanish",
         // Sidebar & UI elements
         nav_dashboard: "Dashboard",
-        nav_electronica: "Basic Electronics",
-        nav_multimetro: "The Multimeter",
-        nav_componentes: "Components",
-        nav_soldadura: "Soldering",
-        nav_protoboard: "Protoboard & PCB",
-        nav_microcontroladores: "Microcontrollers",
+        nav_electronica: "Power Systems & LiPo",
+        nav_multimetro: "Flight Controllers",
+        nav_componentes: "ESCs & Motors",
+        nav_soldadura: "Soldering & Filtering",
+        nav_protoboard: "Wiring Connections",
+        nav_microcontroladores: "Firmware & Software",
         nav_ruta: "My Study Roadmap",
         course_progress: "Course Progress",
         // Header & Alert in Dashboard
         lab_title: "UAV Technical Lab",
-        lab_subtitle: "Your integrated technical training center from scratch to expert.",
-        welcome_text: "<strong>Welcome to the UAV Training Portal.</strong> This interactive system is designed to provide you with the skills required by aviation technology regiments. Explore the simulators in each section and use the 'My Study Roadmap' tab to track your progress. Your progress will be saved automatically.",
+        lab_subtitle: "Your specialized training center for UAV electronics and inertial guidance systems.",
+        welcome_text: "<strong>Welcome to the UAV Training Portal.</strong> This interactive system is designed to provide you with advanced skills in UAV electronics. Explore the simulators in each section and use the 'My Study Roadmap' tab to track your progress.",
         // Dashboard cards
-        card_zap_title: "Basic Electronics",
-        card_zap_desc: "Master voltage, current, and resistance. Explore Ohm's law interactively and visualize the electron flow in real time.",
+        card_zap_title: "Power Systems & LiPo",
+        card_zap_desc: "Master LiPo chemistry, cell configurations (S/P), and C-ratings. Use the estimator to calculate UAV current draw and flight time.",
         card_zap_status: "approx. 5 hours",
         btn_study: "Study",
         
-        card_gauge_title: "The Multimeter",
-        card_gauge_desc: "Simulate real measurements of voltage, resistance, and continuity on an interactive drone circuit with test probes.",
+        card_gauge_title: "Flight Controllers",
+        card_gauge_desc: "Diagnose 5V and 9V regulated voltage rails on physical flight controller boards using the virtual multimeter.",
         card_gauge_status: "approx. 8 hours",
         btn_measure: "Measure",
 
-        card_cpu_title: "Components",
-        card_cpu_desc: "Technical encyclopedia of resistors, capacitors, transistors, and MOSFETs, including step-by-step guides to test them.",
+        card_cpu_title: "ESCs & Motors",
+        card_cpu_desc: "Understand three-phase brushless motor commutation. Calculate theoretical loaded RPM and estimated thrust in real time.",
         card_cpu_status: "approx. 10 hours",
         btn_explore: "Explore",
 
-        card_flame_title: "SMD/THT Soldering",
-        card_flame_desc: "Sequential simulator that teaches you to apply heat and flux correctly to achieve military-grade joints without damaging boards.",
+        card_flame_title: "Soldering & Filtering",
+        card_flame_desc: "Learn high-current XT60 wire joint preparation and soldering Low-ESR capacitors for electrical noise filtering.",
         card_flame_status: "approx. 15 hours",
         btn_solder: "Solder",
 
-        card_grid_title: "Protoboard & PCB",
-        card_grid_desc: "Learn to wire circuits on protoboard via bus highlighting and map real drone electrical schematics.",
+        card_grid_title: "Wiring Connections",
+        card_grid_desc: "Map receiver, GPS/compass, camera, and VTX schematics to the physical pads of the flight controller board.",
         card_grid_status: "approx. 6 hours",
-        btn_design: "Design",
+        btn_design: "Map",
 
-        card_terminal_title: "Microcontrollers",
-        card_terminal_desc: "Explore interactively the pinouts and architectures of Arduino and ESP32. Study telemetry and sensor programming.",
+        card_terminal_title: "Firmware & Tuning",
+        card_terminal_desc: "Configure flight parameters in Betaflight or ArduPilot. Explore UART serial port mapping and telemetry settings.",
         card_terminal_status: "approx. 20 hours",
-        btn_program: "Program",
+        btn_program: "Configure",
 
         badge_core: "Core",
         badge_adv: "Advanced"
@@ -3610,46 +3756,46 @@ void loop() {
         lang_en: "Inglés",
         lang_es: "Español",
         nav_dashboard: "Dashboard",
-        nav_electronica: "Electrónica Básica",
-        nav_multimetro: "El Multímetro",
-        nav_componentes: "Componentes",
-        nav_soldadura: "Soldadura",
-        nav_protoboard: "Protoboard y PCB",
-        nav_microcontroladores: "Microcontroladores",
+        nav_electronica: "Potencia y Baterías LiPo",
+        nav_multimetro: "Controladoras de Vuelo",
+        nav_componentes: "ESCs y Motores Brushless",
+        nav_soldadura: "Soldadura y Filtrado",
+        nav_protoboard: "Mapeo de Conexiones",
+        nav_microcontroladores: "Firmware y Configuración",
         nav_ruta: "Mi Ruta de Estudio",
         course_progress: "Progreso del Curso",
         lab_title: "Laboratorio Técnico UAV",
-        lab_subtitle: "Tu centro integrado de formación técnica y entrenamiento de laboratorio desde cero hasta experto.",
-        welcome_text: "<strong>Bienvenido al Portal de Entrenamiento UAV.</strong> Este sistema interactivo está diseñado para entregarte las competencias que exigen los regimientos tecnológicos de operaciones aéreas. Explora los simuladores de cada sección y utiliza la pestaña <strong>\"Mi Ruta de Estudio\"</strong> para rastrear tu avance. Tu progreso se guardará automáticamente.",
-        card_zap_title: "Electrónica Básica",
-        card_zap_desc: "Domina voltaje, corriente y resistencia. Explora la ley de Ohm interactivamente y visualiza el flujo de electrones en tiempo real.",
+        lab_subtitle: "Tu centro de formación especializada en electrónica de UAVs y sistemas inerciales.",
+        welcome_text: "<strong>Bienvenido al Portal de Entrenamiento UAV.</strong> Este sistema interactivo está diseñado para entregarte las competencias avanzadas en electrónica aplicada a UAVs. Explora los simuladores de cada sección y utiliza la pestaña <strong>\"Mi Ruta de Estudio\"</strong> para rastrear tu avance.",
+        card_zap_title: "Potencia y Baterías LiPo",
+        card_zap_desc: "Domina la química LiPo, celdas (S/P) y ratios C. Utiliza el estimador interactivo para calcular consumo y autonomía del dron.",
         card_zap_status: "5 horas aprox.",
         btn_study: "Estudiar",
         
-        card_gauge_title: "El Multímetro",
-        card_gauge_desc: "Simula mediciones reales de tensión, resistencia y continuidad sobre un circuito interactivo de drones con puntas de prueba.",
+        card_gauge_title: "Controladoras de Vuelo",
+        card_gauge_desc: "Diagnostica circuitos de alimentación regulados de 5V y 9V en placas de control real utilizando multímetro virtual.",
         card_gauge_status: "8 horas aprox.",
         btn_measure: "Medir",
 
-        card_cpu_title: "Componentes",
-        card_cpu_desc: "Enciclopedia técnica de resistencias, capacitores, transistores y MOSFETs, incluyendo guías paso a paso para testearlos.",
+        card_cpu_title: "ESCs y Motores Brushless",
+        card_cpu_desc: "Conoce el funcionamiento trifásico de los variadores y motores brushless. Calcula el empuje y las RPM estimadas en tiempo real.",
         card_cpu_status: "10 horas aprox.",
         btn_explore: "Explorar",
 
-        card_flame_title: "Soldadura SMD/THT",
-        card_flame_desc: "Simulador secuencial que enseña a aplicar calor y flux correctamente para lograr juntas de calidad militar sin dañar placas.",
+        card_flame_title: "Soldadura y Filtrado",
+        card_flame_desc: "Aprende la técnica de soldadura de conectores XT60 y soldadura de condensadores de filtrado de ruido de baja ESR.",
         card_flame_status: "15 horas aprox.",
         btn_solder: "Soldar",
 
-        card_grid_title: "Protoboard y PCB",
-        card_grid_desc: "Aprende a cablear circuitos en protoboard mediante resaltados de buses y a mapear esquemáticos eléctricos reales de drones.",
+        card_grid_title: "Mapeo de Conexiones",
+        card_grid_desc: "Mapea esquemas del receptor, GPS/brújula, cámara y VTX a las almohadillas físicas del controlador de vuelo.",
         card_grid_status: "6 horas aprox.",
-        btn_design: "Diseñar",
+        btn_design: "Mapear",
 
-        card_terminal_title: "Microcontroladores",
-        card_terminal_desc: "Explora de forma interactiva los pinouts y arquitecturas de Arduino y ESP32. Estudia la programación de telemetría y sensores.",
+        card_terminal_title: "Firmware y Configuración",
+        card_terminal_desc: "Aprende a configurar parámetros de vuelo en Betaflight o ArduPilot. Explora el mapeo de puertos UART y telemetría.",
         card_terminal_status: "20 horas aprox.",
-        btn_program: "Programar",
+        btn_program: "Configurar",
 
         badge_core: "Core",
         badge_adv: "Avanzado"
@@ -3704,7 +3850,7 @@ void loop() {
     // =========================================================================
     window.addEventListener('DOMContentLoaded', () => {
       // Draw interactive elements
-      drawProtoboardInteractive();
+      initUavWiringMap();
       updateOhmCalculation();
       initProgressTracker();
 
