@@ -34,56 +34,73 @@ tailwind.config = {
 // Initialize Icons
 lucide.createIcons();
 
-// Particles.js configuration
-particlesJS('particles-js', {
-    "particles": {
-        "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-        "color": { "value": "#00D9FF" },
-        "shape": {
-            "type": "polygon",
-            "polygon": { "nb_sides": 6 }
+// Particles.js dynamic configuration based on theme
+function initParticles(theme) {
+    const container = document.getElementById('particles-js');
+    if (!container) return;
+    
+    // Clear container to clean up any existing canvas instances safely
+    container.innerHTML = '';
+    
+    const isLight = theme === 'light';
+    const particleColor = '#00D9FF'; // Always keep the signature neon cyan for the nodes
+    const lineColor = isLight ? '#0047AB' : '#00D9FF'; // High contrast lines in light mode (royal blue), neon cyan in dark mode
+    const particleOpacity = isLight ? 0.8 : 0.55; // Higher opacity in light mode so the neon cyan nodes stand out clearly
+    const minOpacity = isLight ? 0.4 : 0.2;
+    const lineOpacity = isLight ? 0.35 : 0.4;
+    const lineWidth = 1.8;
+    const particleSize = 4.5;
+
+    particlesJS('particles-js', {
+        "particles": {
+            "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+            "color": { "value": particleColor },
+            "shape": {
+                "type": "polygon",
+                "polygon": { "nb_sides": 6 }
+            },
+            "opacity": {
+                "value": particleOpacity,
+                "random": true,
+                "anim": { "enable": true, "speed": 1, "opacity_min": minOpacity, "sync": false }
+            },
+            "size": {
+                "value": particleSize,
+                "random": true,
+                "anim": { "enable": true, "speed": 4, "size_min": 0.3, "sync": false }
+            },
+            "line_linked": {
+                "enable": true,
+                "distance": 150,
+                "color": lineColor,
+                "opacity": lineOpacity,
+                "width": lineWidth
+            },
+            "move": {
+                "enable": true,
+                "speed": 2,
+                "direction": "none",
+                "random": true,
+                "straight": false,
+                "out_mode": "out",
+                "bounce": false,
+            }
         },
-        "opacity": {
-            "value": 0.3,
-            "random": true,
-            "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false }
+        "interactivity": {
+            "detect_on": "canvas",
+            "events": {
+                "onhover": { "enable": true, "mode": "bubble" },
+                "onclick": { "enable": true, "mode": "push" }
+            },
+            "modes": {
+                "grab": { "distance": 200, "line_linked": { "opacity": 0.4 } },
+                "bubble": { "distance": 200, "size": 8, "duration": 2, "opacity": 0.85, "speed": 3 },
+                "push": { "particles_nb": 4 }
+            }
         },
-        "size": {
-            "value": 4,
-            "random": true,
-            "anim": { "enable": true, "speed": 4, "size_min": 0.3, "sync": false }
-        },
-        "line_linked": {
-            "enable": true,
-            "distance": 150,
-            "color": "#00D9FF",
-            "opacity": 0.2,
-            "width": 1.5
-        },
-        "move": {
-            "enable": true,
-            "speed": 2,
-            "direction": "none",
-            "random": true,
-            "straight": false,
-            "out_mode": "out",
-            "bounce": false,
-        }
-    },
-    "interactivity": {
-        "detect_on": "canvas",
-        "events": {
-            "onhover": { "enable": true, "mode": "bubble" },
-            "onclick": { "enable": true, "mode": "push" }
-        },
-        "modes": {
-            "grab": { "distance": 200, "line_linked": { "opacity": 0.4 } },
-            "bubble": { "distance": 200, "size": 8, "duration": 2, "opacity": 0.8, "speed": 3 },
-            "push": { "particles_nb": 4 }
-        }
-    },
-    "retina_detect": true
-});
+        "retina_detect": true
+    });
+}
 
 // Mouse Glow Effect
 const mouseGlow = document.getElementById('mouseGlow');
@@ -494,6 +511,8 @@ function setTheme(theme) {
     if (window.lucide) {
         window.lucide.createIcons();
     }
+    // Re-initialize particles with the theme colors and contrast
+    initParticles(theme);
 }
 
 function toggleTheme() {
