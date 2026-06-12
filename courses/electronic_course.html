@@ -4,6 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ElectroTech Lab - Portal de Aprendizaje e Ingeniería Electrónica</title>
+  <script>
+    (function() {
+        const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+        if (savedTheme === 'light') {
+            document.documentElement.classList.add('light');
+        } else {
+            document.documentElement.classList.remove('light');
+        }
+    })();
+  </script>
   <!-- SEO Meta Tags -->
   <meta name="description" content="Portal interactivo de electrónica y robótica. Aprende ley de Ohm, uso del multímetro, soldadura, protoboard, PCBs y microcontroladores Arduino/ESP32.">
   <meta name="keywords" content="Robótica, Electrónica, Multímetro, Soldadura, Arduino, ESP32, Protoboard, PCB, Componentes">
@@ -1423,6 +1433,223 @@
         display: flex;
       }
     }
+
+    /* Language Dropdown & Theme Toggle Container */
+    .nav-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Language Dropdown Styles */
+    .lang-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .lang-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      border: 1px solid var(--lang-btn-border);
+      background: var(--lang-btn-bg);
+      color: var(--lang-btn-color);
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .lang-btn:hover {
+      border-color: var(--accent-cyan);
+      background: var(--lang-btn-hover-bg);
+    }
+    .lang-options {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      background: var(--lang-options-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--lang-options-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: var(--transition);
+      z-index: 1000;
+      min-width: 150px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+    .lang-dropdown:hover .lang-options {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .lang-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      width: 100%;
+      background: none;
+      border: none;
+      outline: none;
+      text-align: left;
+      color: var(--lang-option-color);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .lang-option:hover {
+      background: var(--accent-cyan-dim);
+      color: var(--accent-cyan);
+    }
+    .lang-option.active {
+      color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.05);
+    }
+    .flag-icon {
+      width: 18px;
+      height: 12px;
+      object-fit: cover;
+      border-radius: 1px;
+    }
+
+    /* Theme Toggle Button Styles */
+    .theme-toggle-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--lang-btn-border);
+      background: var(--lang-btn-bg);
+      color: var(--lang-btn-color);
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .theme-toggle-btn:hover {
+      border-color: var(--accent-cyan);
+      background: var(--lang-btn-hover-bg);
+      transform: scale(1.05);
+    }
+    .theme-toggle-btn:active {
+      transform: scale(0.95);
+    }
+    .theme-toggle-btn i {
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    }
+    /* In dark mode (default) */
+    html:not(.light) .theme-toggle-btn .sun-icon {
+      opacity: 1;
+      transform: rotate(0) scale(1);
+    }
+    html:not(.light) .theme-toggle-btn .moon-icon {
+      opacity: 0;
+      transform: rotate(90deg) scale(0);
+      position: absolute;
+    }
+    /* In light mode */
+    html.light .theme-toggle-btn .sun-icon {
+      opacity: 0;
+      transform: rotate(-90deg) scale(0);
+      position: absolute;
+    }
+    html.light .theme-toggle-btn .moon-icon {
+      opacity: 1;
+      transform: rotate(0) scale(1);
+    }
+
+    /* CSS variables initialization for controls in root */
+    :root {
+      --lang-btn-bg: rgba(21, 28, 45, 0.4);
+      --lang-btn-color: var(--text-primary);
+      --lang-btn-border: var(--border);
+      --lang-btn-hover-bg: rgba(30, 40, 63, 0.6);
+      --lang-options-bg: rgba(13, 18, 31, 0.95);
+      --lang-options-border: rgba(255, 255, 255, 0.1);
+      --lang-option-color: var(--text-secondary);
+    }
+
+    /* Light Mode Variables Override */
+    html.light {
+      --bg-darker: #f8fafc; /* Slate-50 */
+      --bg-dark: #ffffff;
+      --bg-card: #f1f5f9; /* Slate-100 */
+      --bg-card-hover: #e2e8f0; /* Slate-200 */
+      --border: #cbd5e1; /* Slate-300 */
+      --border-focus: #0088cc;
+      
+      --accent-cyan: #0088cc;
+      --accent-cyan-dim: rgba(0, 136, 204, 0.15);
+      --accent-amber: #d97706; /* Amber-600 */
+      --accent-amber-dim: rgba(217, 119, 6, 0.15);
+      --accent-green: #16a34a; /* Green-600 */
+      --accent-green-dim: rgba(22, 163, 74, 0.15);
+      --accent-red: #dc2626; /* Red-600 */
+      --accent-red-dim: rgba(220, 38, 38, 0.15);
+      
+      --text-primary: #0f172a; /* Slate-900 */
+      --text-secondary: #475569; /* Slate-600 */
+      --text-muted: #64748b; /* Slate-500 */
+
+      --lang-btn-bg: rgba(255, 255, 255, 0.8);
+      --lang-btn-color: #0f172a;
+      --lang-btn-border: rgba(0, 136, 204, 0.3);
+      --lang-btn-hover-bg: rgba(255, 255, 255, 1);
+      --lang-options-bg: rgba(255, 255, 255, 0.98);
+      --lang-options-border: rgba(0, 136, 204, 0.2);
+      --lang-option-color: #475569;
+    }
+
+    /* Light Mode overrides for specific hardcoded dark colors */
+    html.light .schematic-box {
+      background: #e2e8f0;
+    }
+    html.light .multimetro-sim-container {
+      background: #f1f5f9;
+    }
+    html.light .ohm-viz {
+      background: #e2e8f0;
+    }
+    html.light .circuit-wire {
+      background: #e2e8f0;
+      border-color: #cbd5e1;
+    }
+    html.light pre {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+    html.light .dial-knob {
+      background: #cbd5e1;
+    }
+    html.light .dial-outer {
+      background: #e2e8f0;
+    }
+    html.light .comp-thumbnail {
+      background: #ffffff;
+    }
+    html.light .comp-thumbnail:hover {
+      background: #e2e8f0;
+    }
+    html.light .comp-thumbnail.active {
+      background: var(--accent-cyan-dim);
+    }
+    html.light .comp-detail-panel {
+      background: #ffffff;
+    }
+    html.light .comp-symbol-box {
+      background: #f1f5f9;
+    }
   </style>
 </head>
 <body>
@@ -1440,37 +1667,64 @@
         <i data-lucide="cpu" class="accent-cyan"></i>
         <span>ElectroTech Lab</span>
       </div>
+
+      <!-- Navigation Controls -->
+      <div class="nav-controls">
+        <!-- Language Dropdown -->
+        <div class="lang-dropdown">
+          <button class="lang-btn" id="currentLangBtn">
+            <img src="https://flagcdn.com/w40/co.png" alt="Español" class="flag-icon" id="currentFlag">
+            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+          </button>
+          <div class="lang-options">
+            <button class="lang-option" onclick="setLanguage('en')">
+              <img src="https://flagcdn.com/w40/us.png" alt="English" class="flag-icon">
+              <span data-i18n="lang_en">English</span>
+            </button>
+            <button class="lang-option active" onclick="setLanguage('es')">
+              <img src="https://flagcdn.com/w40/co.png" alt="Español" class="flag-icon">
+              <span data-i18n="lang_es">Spanish</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Theme Toggle Button -->
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle Theme">
+          <i data-lucide="sun" class="w-5 h-5 sun-icon"></i>
+          <i data-lucide="moon" class="w-5 h-5 moon-icon"></i>
+        </button>
+      </div>
       
       <ul class="nav-list">
         <li class="nav-item active" data-tab="dashboard">
-          <button><i data-lucide="layout-dashboard"></i>Dashboard</button>
+          <button><i data-lucide="layout-dashboard"></i><span data-i18n="nav_dashboard">Dashboard</span></button>
         </li>
         <li class="nav-item" data-tab="electronica">
-          <button><i data-lucide="zap"></i>Electrónica Básica</button>
+          <button><i data-lucide="zap"></i><span data-i18n="nav_electronica">Electrónica Básica</span></button>
         </li>
         <li class="nav-item" data-tab="multimetro">
-          <button><i data-lucide="gauge"></i>El Multímetro</button>
+          <button><i data-lucide="gauge"></i><span data-i18n="nav_multimetro">El Multímetro</span></button>
         </li>
         <li class="nav-item" data-tab="componentes">
-          <button><i data-lucide="cpu"></i>Componentes</button>
+          <button><i data-lucide="cpu"></i><span data-i18n="nav_componentes">Componentes</span></button>
         </li>
         <li class="nav-item" data-tab="soldadura">
-          <button><i data-lucide="flame"></i>Soldadura</button>
+          <button><i data-lucide="flame"></i><span data-i18n="nav_soldadura">Soldadura</span></button>
         </li>
         <li class="nav-item" data-tab="protoboard">
-          <button><i data-lucide="grid"></i>Protoboard y PCB</button>
+          <button><i data-lucide="grid"></i><span data-i18n="nav_protoboard">Protoboard y PCB</span></button>
         </li>
         <li class="nav-item" data-tab="microcontroladores">
-          <button><i data-lucide="terminal"></i>Microcontroladores</button>
+          <button><i data-lucide="terminal"></i><span data-i18n="nav_microcontroladores">Microcontroladores</span></button>
         </li>
         <li class="nav-item" data-tab="ruta">
-          <button><i data-lucide="map"></i>Mi Ruta de Estudio</button>
+          <button><i data-lucide="map"></i><span data-i18n="nav_ruta">Mi Ruta de Estudio</span></button>
         </li>
       </ul>
       
       <!-- User study progress dashboard widget -->
       <div class="progress-box">
-        <div class="progress-box-title">Progreso del Curso</div>
+        <div class="progress-box-title" data-i18n="course_progress">Progreso del Curso</div>
         <div class="progress-circle-wrapper">
           <svg class="progress-svg">
             <circle class="progress-bg-circle" cx="50" cy="50" r="45"></circle>
@@ -1488,13 +1742,13 @@
       <!-- ==================== DASHBOARD PANEL ==================== -->
       <div id="tab-dashboard" class="tab-pane active">
         <div class="content-header">
-          <h1><i data-lucide="layout-dashboard" class="accent-cyan"></i>Laboratorio de Electrónica y Robótica</h1>
-          <p>Tu centro integrado de formación técnica y entrenamiento de laboratorio desde cero hasta experto.</p>
+          <h1><i data-lucide="layout-dashboard" class="accent-cyan"></i><span data-i18n="lab_title">Laboratorio de Electrónica y Robótica</span></h1>
+          <p data-i18n="lab_subtitle">Tu centro integrado de formación técnica y entrenamiento de laboratorio desde cero hasta experto.</p>
         </div>
         
         <div class="alert-box info">
           <i data-lucide="info" class="accent-cyan"></i>
-          <div class="alert-box-text">
+          <div class="alert-box-text" data-i18n="welcome_text">
             <strong>Bienvenido al Portal de Entrenamiento en Electrónica y Robótica.</strong> Este sistema interactivo está diseñado para entregarte las competencias teóricas y prácticas que exigen el diseño de circuitos y la construcción de sistemas autónomos. Explora los simuladores de cada sección y utiliza la pestaña <strong>"Mi Ruta de Estudio"</strong> para rastrear tu avance. Tu progreso se guardará automáticamente.
           </div>
         </div>
@@ -1502,73 +1756,73 @@
         <div class="dashboard-grid">
           <div class="card">
             <div class="card-header">
-              <div class="card-title"><i data-lucide="zap" class="accent-cyan"></i>Electrónica Básica</div>
-              <span class="card-badge badge-core">Core</span>
+              <div class="card-title"><i data-lucide="zap" class="accent-cyan"></i><span data-i18n="card_zap_title">Electrónica Básica</span></div>
+              <span class="card-badge badge-core" data-i18n="badge_core">Core</span>
             </div>
-            <p class="card-desc">Domina voltaje, corriente y resistencia. Explora la ley de Ohm interactivamente y visualiza el flujo de electrones en tiempo real.</p>
+            <p class="card-desc" data-i18n="card_zap_desc">Domina voltaje, corriente y resistencia. Explora la ley de Ohm interactivamente y visualiza el flujo de electrones en tiempo real.</p>
             <div class="card-footer">
-              <div class="card-status"><i data-lucide="clock"></i> 5 horas aprox.</div>
-              <button class="card-btn" onclick="switchTab('electronica')">Estudiar</button>
+              <div class="card-status"><i data-lucide="clock"></i> <span data-i18n="card_zap_status">5 horas aprox.</span></div>
+              <button class="card-btn" onclick="switchTab('electronica')" data-i18n="btn_study">Estudiar</button>
             </div>
           </div>
 
           <div class="card">
             <div class="card-header">
-              <div class="card-title"><i data-lucide="gauge" class="accent-cyan"></i>El Multímetro</div>
-              <span class="card-badge badge-core">Core</span>
+              <div class="card-title"><i data-lucide="gauge" class="accent-cyan"></i><span data-i18n="card_gauge_title">El Multímetro</span></div>
+              <span class="card-badge badge-core" data-i18n="badge_core">Core</span>
             </div>
-            <p class="card-desc">Simula mediciones reales de tensión, resistencia y continuidad sobre un circuito electrónico interactivo con puntas de prueba.</p>
+            <p class="card-desc" data-i18n="card_gauge_desc">Simula mediciones reales de tensión, resistencia y continuidad sobre un circuito electrónico interactivo con puntas de prueba.</p>
             <div class="card-footer">
-              <div class="card-status"><i data-lucide="clock"></i> 8 horas aprox.</div>
-              <button class="card-btn" onclick="switchTab('multimetro')">Medir</button>
+              <div class="card-status"><i data-lucide="clock"></i> <span data-i18n="card_gauge_status">8 horas aprox.</span></div>
+              <button class="card-btn" onclick="switchTab('multimetro')" data-i18n="btn_measure">Medir</button>
             </div>
           </div>
 
           <div class="card">
             <div class="card-header">
-              <div class="card-title"><i data-lucide="cpu" class="accent-cyan"></i>Componentes</div>
-              <span class="card-badge badge-core">Core</span>
+              <div class="card-title"><i data-lucide="cpu" class="accent-cyan"></i><span data-i18n="card_cpu_title">Componentes</span></div>
+              <span class="card-badge badge-core" data-i18n="badge_core">Core</span>
             </div>
-            <p class="card-desc">Enciclopedia técnica de resistencias, capacitores, diodos, MOSFETs y puentes H, incluyendo guías paso a paso para testearlos.</p>
+            <p class="card-desc" data-i18n="card_cpu_desc">Enciclopedia técnica de resistencias, capacitores, diodos, MOSFETs y puentes H, incluyendo guías paso a paso para testearlos.</p>
             <div class="card-footer">
-              <div class="card-status"><i data-lucide="clock"></i> 10 horas aprox.</div>
-              <button class="card-btn" onclick="switchTab('componentes')">Explorar</button>
+              <div class="card-status"><i data-lucide="clock"></i> <span data-i18n="card_cpu_status">10 horas aprox.</span></div>
+              <button class="card-btn" onclick="switchTab('componentes')" data-i18n="btn_explore">Explorar</button>
             </div>
           </div>
 
           <div class="card">
             <div class="card-header">
-              <div class="card-title"><i data-lucide="flame" class="accent-cyan"></i>Soldadura SMD/THT</div>
-              <span class="card-badge badge-core">Core</span>
+              <div class="card-title"><i data-lucide="flame" class="accent-cyan"></i><span data-i18n="card_flame_title">Soldadura SMD/THT</span></div>
+              <span class="card-badge badge-core" data-i18n="badge_core">Core</span>
             </div>
-            <p class="card-desc">Simulador secuencial que enseña a aplicar calor y flux correctamente para lograr juntas de excelente calidad sin dañar componentes.</p>
+            <p class="card-desc" data-i18n="card_flame_desc">Simulador secuencial que enseña a aplicar calor y flux correctamente para lograr juntas de excelente calidad sin dañar componentes.</p>
             <div class="card-footer">
-              <div class="card-status"><i data-lucide="clock"></i> 15 horas aprox.</div>
-              <button class="card-btn" onclick="switchTab('soldadura')">Soldar</button>
+              <div class="card-status"><i data-lucide="clock"></i> <span data-i18n="card_flame_status">15 horas aprox.</span></div>
+              <button class="card-btn" onclick="switchTab('soldadura')" data-i18n="btn_solder">Soldar</button>
             </div>
           </div>
 
           <div class="card">
             <div class="card-header">
-              <div class="card-title"><i data-lucide="grid" class="accent-cyan"></i>Protoboard y PCB</div>
-              <span class="card-badge badge-core">Core</span>
+              <div class="card-title"><i data-lucide="grid" class="accent-cyan"></i><span data-i18n="card_grid_title">Protoboard y PCB</span></div>
+              <span class="card-badge badge-core" data-i18n="badge_core">Core</span>
             </div>
-            <p class="card-desc">Aprende a cablear circuitos en protoboard mediante resaltados de buses y a mapear e interpretar esquemáticos eléctricos reales.</p>
+            <p class="card-desc" data-i18n="card_grid_desc">Aprende a cablear circuitos en protoboard mediante resaltados de buses y a mapear e interpretar esquemáticos eléctricos reales.</p>
             <div class="card-footer">
-              <div class="card-status"><i data-lucide="clock"></i> 6 horas aprox.</div>
-              <button class="card-btn" onclick="switchTab('protoboard')">Diseñar</button>
+              <div class="card-status"><i data-lucide="clock"></i> <span data-i18n="card_grid_status">6 horas aprox.</span></div>
+              <button class="card-btn" onclick="switchTab('protoboard')" data-i18n="btn_design">Diseñar</button>
             </div>
           </div>
 
           <div class="card">
             <div class="card-header">
-              <div class="card-title"><i data-lucide="terminal" class="accent-cyan"></i>Microcontroladores</div>
-              <span class="card-badge badge-adv">Avanzado</span>
+              <div class="card-title"><i data-lucide="terminal" class="accent-cyan"></i><span data-i18n="card_terminal_title">Microcontroladores</span></div>
+              <span class="card-badge badge-adv" data-i18n="badge_adv">Avanzado</span>
             </div>
-            <p class="card-desc">Explora de forma interactiva los pinouts y arquitecturas de Arduino y ESP32. Estudia la programación de sensores y actuadores.</p>
+            <p class="card-desc" data-i18n="card_terminal_desc">Explora de forma interactiva los pinouts y arquitecturas de Arduino y ESP32. Estudia la programación de sensores y actuadores.</p>
             <div class="card-footer">
-              <div class="card-status"><i data-lucide="clock"></i> 20 horas aprox.</div>
-              <button class="card-btn" onclick="switchTab('microcontroladores')">Programar</button>
+              <div class="card-status"><i data-lucide="clock"></i> <span data-i18n="card_terminal_status">20 horas aprox.</span></div>
+              <button class="card-btn" onclick="switchTab('microcontroladores')" data-i18n="btn_program">Programar</button>
             </div>
           </div>
         </div>
@@ -3285,6 +3539,154 @@ void loop() {
     }
 
     // =========================================================================
+    // THEME & LANGUAGE TRANSLATION LOGIC
+    // =========================================================================
+    const translations = {
+      en: {
+        lang_en: "English",
+        lang_es: "Spanish",
+        // Sidebar & UI elements
+        nav_dashboard: "Dashboard",
+        nav_electronica: "Basic Electronics",
+        nav_multimetro: "The Multimeter",
+        nav_componentes: "Components",
+        nav_soldadura: "Soldering",
+        nav_protoboard: "Protoboard & PCB",
+        nav_microcontroladores: "Microcontrollers",
+        nav_ruta: "My Study Roadmap",
+        course_progress: "Course Progress",
+        // Header & Alert in Dashboard
+        lab_title: "Electronics & Robotics Lab",
+        lab_subtitle: "Your integrated technical training center from scratch to expert.",
+        welcome_text: "<strong>Welcome to the Electronics and Robotics Training Portal.</strong> This interactive system is designed to provide you with the theoretical and practical skills required by circuit design and the construction of autonomous systems. Explore the simulators in each section and use the 'My Study Roadmap' tab to track your progress. Your progress will be saved automatically.",
+        // Dashboard cards
+        card_zap_title: "Basic Electronics",
+        card_zap_desc: "Master voltage, current, and resistance. Explore Ohm's law interactively and visualize the electron flow in real time.",
+        card_zap_status: "approx. 5 hours",
+        btn_study: "Study",
+        
+        card_gauge_title: "The Multimeter",
+        card_gauge_desc: "Simulate real measurements of voltage, resistance, and continuity on an interactive electronic circuit with test probes.",
+        card_gauge_status: "approx. 8 hours",
+        btn_measure: "Measure",
+
+        card_cpu_title: "Components",
+        card_cpu_desc: "Technical encyclopedia of resistors, capacitors, diodes, MOSFETs, and H-bridges, including step-by-step guides to test them.",
+        card_cpu_status: "approx. 10 hours",
+        btn_explore: "Explore",
+
+        card_flame_title: "SMD/THT Soldering",
+        card_flame_desc: "Sequential simulator that teaches you to apply heat and flux correctly to achieve excellent quality joints without damaging components.",
+        card_flame_status: "approx. 15 hours",
+        btn_solder: "Solder",
+
+        card_grid_title: "Protoboard & PCB",
+        card_grid_desc: "Learn to wire circuits on protoboard via bus highlighting and map and interpret real electrical schematics.",
+        card_grid_status: "approx. 6 hours",
+        btn_design: "Design",
+
+        card_terminal_title: "Microcontrollers",
+        card_terminal_desc: "Explore interactively the pinouts and architectures of Arduino and ESP32. Study sensor and actuator programming.",
+        card_terminal_status: "approx. 20 hours",
+        btn_program: "Program",
+
+        badge_core: "Core",
+        badge_adv: "Advanced"
+      },
+      es: {
+        lang_en: "Inglés",
+        lang_es: "Español",
+        nav_dashboard: "Dashboard",
+        nav_electronica: "Electrónica Básica",
+        nav_multimetro: "El Multímetro",
+        nav_componentes: "Componentes",
+        nav_soldadura: "Soldadura",
+        nav_protoboard: "Protoboard y PCB",
+        nav_microcontroladores: "Microcontroladores",
+        nav_ruta: "Mi Ruta de Estudio",
+        course_progress: "Progreso del Curso",
+        lab_title: "Laboratorio de Electrónica y Robótica",
+        lab_subtitle: "Tu centro integrado de formación técnica y entrenamiento de laboratorio desde cero hasta experto.",
+        welcome_text: "<strong>Bienvenido al Portal de Entrenamiento en Electrónica y Robótica.</strong> Este sistema interactivo está diseñado para entregarte las competencias teóricas y prácticas que exigen el diseño de circuitos y la construcción de sistemas autónomos. Explora los simuladores de cada sección y utiliza la pestaña <strong>\"Mi Ruta de Estudio\"</strong> para rastrear tu avance. Tu progreso se guardará automáticamente.",
+        card_zap_title: "Electrónica Básica",
+        card_zap_desc: "Domina voltaje, corriente y resistencia. Explora la ley de Ohm interactivamente y visualiza el flujo de electrones en tiempo real.",
+        card_zap_status: "5 horas aprox.",
+        btn_study: "Estudiar",
+        
+        card_gauge_title: "El Multímetro",
+        card_gauge_desc: "Simula mediciones reales de tensión, resistencia y continuidad sobre un circuito electrónico interactivo con puntas de prueba.",
+        card_gauge_status: "8 horas aprox.",
+        btn_measure: "Medir",
+
+        card_cpu_title: "Componentes",
+        card_cpu_desc: "Enciclopedia técnica de resistencias, capacitores, diodos, MOSFETs y puentes H, incluyendo guías paso a paso para testearlos.",
+        card_cpu_status: "10 horas aprox.",
+        btn_explore: "Explorar",
+
+        card_flame_title: "Soldadura SMD/THT",
+        card_flame_desc: "Simulador secuencial que enseña a aplicar calor y flux correctamente para lograr juntas de excelente calidad sin dañar componentes.",
+        card_flame_status: "15 horas aprox.",
+        btn_solder: "Soldar",
+
+        card_grid_title: "Protoboard y PCB",
+        card_grid_desc: "Aprende a cablear circuitos en protoboard mediante resaltados de buses y a mapear e interpretar esquemáticos eléctricos reales.",
+        card_grid_status: "6 horas aprox.",
+        btn_design: "Diseñar",
+
+        card_terminal_title: "Microcontroladores",
+        card_terminal_desc: "Explora de forma interactiva los pinouts y arquitecturas de Arduino y ESP32. Estudia la programación de sensores y actuadores.",
+        card_terminal_status: "20 horas aprox.",
+        btn_program: "Programar",
+
+        badge_core: "Core",
+        badge_adv: "Avanzado"
+      }
+    };
+
+    function setTheme(theme) {
+      if (theme === 'light') {
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.remove('light');
+      }
+      localStorage.setItem('preferredTheme', theme);
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    }
+
+    function toggleTheme() {
+      const isLight = document.documentElement.classList.contains('light');
+      setTheme(isLight ? 'dark' : 'light');
+    }
+
+    function setLanguage(lang) {
+      const flagUrl = lang === 'es' ? 'https://flagcdn.com/w40/co.png' : 'https://flagcdn.com/w40/us.png';
+      const currentFlag = document.getElementById('currentFlag');
+      if (currentFlag) currentFlag.src = flagUrl;
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+          el.innerHTML = translations[lang][key];
+        }
+      });
+
+      document.querySelectorAll('.lang-option').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(`'${lang}'`)) {
+          btn.classList.add('active');
+        }
+      });
+
+      localStorage.setItem('preferredLang', lang);
+      updateGlobalProgressUI();
+    }
+
+    window.setLanguage = setLanguage;
+    window.toggleTheme = toggleTheme;
+
+    // =========================================================================
     // APPLICATION INITIALIZATION
     // =========================================================================
     window.addEventListener('DOMContentLoaded', () => {
@@ -3292,6 +3694,17 @@ void loop() {
       drawProtoboardInteractive();
       updateOhmCalculation();
       initProgressTracker();
+
+      // Load saved language and theme
+      const savedLang = localStorage.getItem('preferredLang') || 'es';
+      setLanguage(savedLang);
+      const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+      setTheme(savedTheme);
+
+      const desktopToggle = document.getElementById('themeToggleBtn');
+      if (desktopToggle) {
+        desktopToggle.addEventListener('click', toggleTheme);
+      }
     });
 
   </script>

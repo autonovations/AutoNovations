@@ -9,8 +9,8 @@ tailwind.config = {
             colors: {
                 primary: '#00D9FF',
                 secondary: '#0047AB',
-                dark: '#0A0A0A',
-                panel: '#121212',
+                dark: 'var(--color-dark)',
+                panel: 'var(--color-panel)',
                 neon: '#00D9FF',
             },
             animation: {
@@ -284,7 +284,13 @@ const translations = {
         footer_newsletter_placeholder: "Enter your email",
         footer_newsletter_btn: "Subscribe",
         footer_location: "Silicon Valley | Remote Operations",
-        footer_about_me: "Founder & CEO"
+        footer_about_me: "Founder & CEO",
+        nav_academy: "Academy",
+        course1_title: "UAV Electronic Engineering",
+        course1_desc: "Learn to design, build, and program autonomous aerial drones (UAVs). Master the integration of sensors, flight controllers, ESCs, and communication systems.",
+        course2_title: "Basic Electronics",
+        course2_desc: "Bridge the gap between hardware and software. Master circuit design, microcontrollers, basic electronic components, and physical computing.",
+        course_view_syllabus: "View Syllabus"
     },
     es: {
         nav_about: "Nosotros",
@@ -347,7 +353,13 @@ const translations = {
         footer_newsletter_placeholder: "Ingresa tu correo",
         footer_newsletter_btn: "Suscribirse",
         footer_location: "Silicon Valley | Operaciones Remotas",
-        footer_about_me: "Fundador y CEO"
+        footer_about_me: "Fundador y CEO",
+        nav_academy: "Academia",
+        course1_title: "Ingeniería Electrónica de UAV",
+        course1_desc: "Aprende a diseñar, construir y programar drones aéreos autónomos (UAVs). Domina la integración de sensores, controladores de vuelo, ESCs y sistemas de comunicación.",
+        course2_title: "Electrónica Básica",
+        course2_desc: "Cierra la brecha entre el hardware y el software. Domina el diseño de circuitos, microcontroladores, componentes electrónicos básicos y computación física.",
+        course_view_syllabus: "Ver Plan de Estudios"
     }
 };
 
@@ -470,7 +482,40 @@ if (heroSection && terminalElement) {
     heroObserver.observe(heroSection);
 }
 
+// Theme Toggle Logic
+function setTheme(theme) {
+    if (theme === 'light') {
+        document.documentElement.classList.add('light');
+    } else {
+        document.documentElement.classList.remove('light');
+    }
+    localStorage.setItem('preferredTheme', theme);
+    // Refresh icons so Lucide switches between sun/moon SVGs correctly
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+}
+
+function toggleTheme() {
+    const isLight = document.documentElement.classList.contains('light');
+    setTheme(isLight ? 'dark' : 'light');
+}
+
 window.addEventListener('DOMContentLoaded', () => {
     const savedLang = localStorage.getItem('preferredLang') || 'en';
     setLanguage(savedLang);
+
+    // Initial theme set to handle lucide icons properly on load
+    const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+    setTheme(savedTheme);
+
+    const desktopToggle = document.getElementById('themeToggleBtn');
+    const mobileToggle = document.getElementById('mobileThemeToggleBtn');
+
+    if (desktopToggle) {
+        desktopToggle.addEventListener('click', toggleTheme);
+    }
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', toggleTheme);
+    }
 });

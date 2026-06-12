@@ -36,6 +36,16 @@
     <link rel="stylesheet" href="assets_index/style.css">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="assets_index/main.js" defer></script>
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+            if (savedTheme === 'light') {
+                document.documentElement.classList.add('light');
+            } else {
+                document.documentElement.classList.remove('light');
+            }
+        })();
+    </script>
 </head>
 
 <body class="antialiased selection:bg-neon selection:text-dark">
@@ -83,6 +93,12 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- Theme Toggle Button -->
+                <button id="themeToggleBtn" class="theme-toggle-btn ml-4" aria-label="Toggle Theme">
+                    <i data-lucide="sun" class="w-5 h-5 sun-icon"></i>
+                    <i data-lucide="moon" class="w-5 h-5 moon-icon"></i>
+                </button>
             </div>
             <div class="flex md:hidden items-center gap-4">
                 <div class="lang-dropdown">
@@ -101,6 +117,11 @@
                         </button>
                     </div>
                 </div>
+                <!-- Mobile Theme Toggle Button -->
+                <button id="mobileThemeToggleBtn" class="theme-toggle-btn text-neon" aria-label="Toggle Theme">
+                    <i data-lucide="sun" class="w-5 h-5 sun-icon"></i>
+                    <i data-lucide="moon" class="w-5 h-5 moon-icon"></i>
+                </button>
                 <button class="text-neon" id="menuBtn">
                     <i data-lucide="menu"></i>
                 </button>
@@ -457,19 +478,19 @@
                 <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-white/10 hover:border-neon/50 transition-all duration-500 shadow-lg">
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
                         <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
-                        <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80" alt="AUV Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <img src="assets_index/images/uav_course_cover.png" alt="UAV Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
                             <div class="flex flex-wrap gap-2 mb-4">
                                 <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Robotics</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">AUV</span>
+                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">UAV</span>
                             </div>
-                            <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech">Autonomous Underwater Vehicles</h4>
-                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed">Learn to design, build, and program autonomous drones for underwater exploration. Master the integration of sensors, control systems, and AI in aquatic environments.</p>
+                            <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech"><span data-i18n="course1_title">UAV Electronic Engineering</span></h4>
+                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span data-i18n="course1_desc">Learn to design, build, and program autonomous aerial drones (UAVs). Master the integration of sensors, flight controllers, ESCs, and communication systems.</span></p>
                         </div>
                         <a href="courses/auv_course.html" class="inline-flex items-center gap-2 text-sm text-neon font-tech uppercase tracking-wider hover:text-white transition-colors mt-auto w-fit group/btn">
-                            View Syllabus <i data-lucide="arrow-right" class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
+                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="arrow-right" class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
                 </div>
@@ -478,19 +499,19 @@
                 <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-100 group cursor-pointer overflow-hidden flex flex-col h-full border border-white/10 hover:border-neon/50 transition-all duration-500 shadow-lg">
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
                         <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
-                        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80" alt="Electronics Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <img src="assets_index/images/electronic_course_cover.png" alt="Electronics Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
                             <div class="flex flex-wrap gap-2 mb-4">
                                 <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Electronics</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">AI Integration</span>
+                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Circuit Design</span>
                             </div>
-                            <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech">Electronic & AI Engineering</h4>
-                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed">Bridge the gap between hardware and software. Master circuit design, microcontrollers, and deploying machine learning models directly to edge devices.</p>
+                            <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech"><span data-i18n="course2_title">Basic Electronics</span></h4>
+                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span data-i18n="course2_desc">Bridge the gap between hardware and software. Master circuit design, microcontrollers, basic electronic components, and physical computing.</span></p>
                         </div>
                         <a href="courses/electronic_course.html" class="inline-flex items-center gap-2 text-sm text-neon font-tech uppercase tracking-wider hover:text-white transition-colors mt-auto w-fit group/btn">
-                            View Syllabus <i data-lucide="arrow-right" class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
+                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="arrow-right" class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
                 </div>

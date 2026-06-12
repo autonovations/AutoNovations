@@ -9,8 +9,8 @@ tailwind.config = {
             colors: {
                 primary: '#00D9FF',
                 secondary: '#0047AB',
-                dark: '#0A0A0A',
-                panel: '#121212',
+                dark: 'var(--color-dark)',
+                panel: 'var(--color-panel)',
                 neon: '#00D9FF',
             },
             animation: {
@@ -282,7 +282,44 @@ const translations = {
         footer_newsletter_placeholder: "Enter your email",
         footer_newsletter_btn: "Subscribe",
         footer_location: "Silicon Valley | Remote Operations",
-        footer_about_me: "Founder & CEO"
+        footer_about_me: "Founder & CEO",
+        // Profile Page specific translations
+        nav_profile: "Profile",
+        nav_academy: "Academy",
+        profile_badge: "System Designer & Creator",
+        profile_dev: "Developer",
+        profile_data: "Data Engineer",
+        profile_aiot: "Artificial Intelligence of Things",
+        profile_desc: "Passionate about building the future through code, machine learning, and interconnected autonomous systems. Bridging the gap between software algorithms and physical devices to solve real-world problems.",
+        profile_view_projects: "View Projects",
+        profile_portfolio_title: 'Project <span class="text-neon">Portfolio</span>',
+        profile_portfolio_desc: "Showcasing a diverse range of projects spanning Computer Vision, Mobile Development, Web Technologies, and Data Science.",
+        cat_cv: "Computer Vision & Ultralytics",
+        cat_android: "Android & Jetpack Compose",
+        cat_web: "Real-time & Web Apps",
+        cat_data: "Data Science & Python",
+        cat_ml: "Machine Learning",
+        proj_railway_title: "Railway Tracking",
+        proj_traffic_title: "City Traffic Analysis",
+        proj_ocr_title: "OCR System",
+        proj_tictactoe_title: "Tic Tac Toe",
+        proj_dice_title: "Dice Roller",
+        proj_mlhumans_title: "ML for Humans",
+        proj_signatures_title: "Digital Signatures",
+        proj_railytics_ht_title: "Railytics HT",
+        proj_railytics_up_title: "Railytics UP",
+        proj_celsius_title: "Celsius to Fahrenheit",
+        proj_draw_title: "Draw a Number",
+        proj_catsdogs_title: "Cats vs Dogs",
+        proj_view_btn: "View Project",
+        profile_courses_title: "My Courses",
+        profile_courses_desc: "Join my specialized academy and learn how to build the next generation of autonomous and electronic systems.",
+        course1_title: "UAV Electronic Engineering",
+        course1_desc: "Learn to design, build, and program autonomous aerial drones (UAVs). Master the integration of sensors, flight controllers, ESCs, and communication systems.",
+        course2_title: "Basic Electronics",
+        course2_desc: "Bridge the gap between hardware and software. Master circuit design, microcontrollers, basic electronic components, and physical computing.",
+        course_view_syllabus: "View Syllabus",
+        footer_rights: "All rights reserved."
     },
     es: {
         nav_about: "Nosotros",
@@ -340,7 +377,44 @@ const translations = {
         footer_newsletter_placeholder: "Ingresa tu correo",
         footer_newsletter_btn: "Suscribirse",
         footer_location: "Silicon Valley | Operaciones Remotas",
-        footer_about_me: "Fundador y CEO"
+        footer_about_me: "Fundador y CEO",
+        // Profile Page specific translations
+        nav_profile: "Perfil",
+        nav_academy: "Academia",
+        profile_badge: "Diseñador y Creador de Sistemas",
+        profile_dev: "Desarrollador",
+        profile_data: "Ingeniero de Datos",
+        profile_aiot: "Inteligencia Artificial de las Cosas",
+        profile_desc: "Apasionado por construir el futuro a través del código, el aprendizaje automático y los sistemas autónomos interconectados. Cerrando la brecha entre los algoritmos de software y los dispositivos físicos para resolver problemas del mundo real.",
+        profile_view_projects: "Ver Proyectos",
+        profile_portfolio_title: 'Portafolio de <span class="text-neon">Proyectos</span>',
+        profile_portfolio_desc: "Mostrando una amplia gama de proyectos que abarcan Visión Computacional, Desarrollo Móvil, Tecnologías Web y Ciencia de Datos.",
+        cat_cv: "Visión Computacional y Ultralytics",
+        cat_android: "Android y Jetpack Compose",
+        cat_web: "Aplicaciones Web y en Tiempo Real",
+        cat_data: "Ciencia de Datos y Python",
+        cat_ml: "Aprendizaje Automático",
+        proj_railway_title: "Monitoreo Ferroviario",
+        proj_traffic_title: "Análisis de Tráfico Urbano",
+        proj_ocr_title: "Sistema OCR",
+        proj_tictactoe_title: "Tres en Raya",
+        proj_dice_title: "Lanzador de Dados",
+        proj_mlhumans_title: "ML para Humanos",
+        proj_signatures_title: "Firmas Digitales",
+        proj_railytics_ht_title: "Railytics HT",
+        proj_railytics_up_title: "Railytics UP",
+        proj_celsius_title: "Celsius a Fahrenheit",
+        proj_draw_title: "Dibujar un Número",
+        proj_catsdogs_title: "Gatos vs Perros",
+        proj_view_btn: "Ver Proyecto",
+        profile_courses_title: "Mis Cursos",
+        profile_courses_desc: "Únete a mi academia especializada y aprende a construir la próxima generación de sistemas autónomos y electrónicos.",
+        course1_title: "Ingeniería Electrónica de UAV",
+        course1_desc: "Aprende a diseñar, construir y programar drones aéreos autónomos (UAVs). Domina la integración de sensores, controladores de vuelo, ESCs y sistemas de comunicación.",
+        course2_title: "Electrónica Básica",
+        course2_desc: "Cierra la brecha entre el hardware y el software. Domina el diseño de circuitos, microcontroladores, componentes electrónicos básicos y computación física.",
+        course_view_syllabus: "Ver Plan de Estudios",
+        footer_rights: "Todos los derechos reservados."
     }
 };
 
@@ -466,4 +540,37 @@ if (heroSection && terminalElement) {
 window.addEventListener('DOMContentLoaded', () => {
     const savedLang = localStorage.getItem('preferredLang') || 'en';
     setLanguage(savedLang);
+
+    // Initial theme set to handle lucide icons properly on load
+    const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+    setTheme(savedTheme);
+
+    const desktopToggle = document.getElementById('themeToggleBtn');
+    const mobileToggle = document.getElementById('mobileThemeToggleBtn');
+
+    if (desktopToggle) {
+        desktopToggle.addEventListener('click', toggleTheme);
+    }
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', toggleTheme);
+    }
 });
+
+// Theme Toggle Logic
+function setTheme(theme) {
+    if (theme === 'light') {
+        document.documentElement.classList.add('light');
+    } else {
+        document.documentElement.classList.remove('light');
+    }
+    localStorage.setItem('preferredTheme', theme);
+    // Refresh icons so Lucide switches between sun/moon SVGs correctly
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+}
+
+function toggleTheme() {
+    const isLight = document.documentElement.classList.contains('light');
+    setTheme(isLight ? 'dark' : 'light');
+}
