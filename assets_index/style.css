@@ -785,3 +785,104 @@ html.light .terminal-window .terminal-line {
 html.light .terminal-window .terminal-line.text-gray-500 {
     color: rgba(255, 255, 255, 0.5) !important;
 }
+
+/* =========================================================================
+   Header Navbar Contrast & Readability Enhancements
+   ========================================================================= */
+#navbar {
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease, py 0.3s ease !important;
+}
+
+/* Dark Mode - Opaque Navbar Backgrounds */
+#navbar.bg-dark\/30,
+#navbar.md\:bg-dark\/30 {
+    background-color: rgba(2, 5, 4, 0.6) !important;
+}
+#navbar.bg-dark\/50,
+#navbar.md\:bg-dark\/50 {
+    background-color: rgba(2, 5, 4, 0.75) !important;
+}
+#navbar.bg-dark\/60,
+#navbar.md\:bg-dark\/60 {
+    background-color: rgba(2, 5, 4, 0.85) !important;
+}
+#navbar.bg-dark\/80,
+#navbar.md\:bg-dark\/80 {
+    background-color: rgba(2, 5, 4, 0.92) !important;
+}
+
+/* Dark Mode - Menu Links Default Contrast */
+#navbar a:not(.glow-button),
+#navbar .lang-btn {
+    color: #e2e8f0 !important; /* Brighter gray for default state */
+    font-weight: 500;
+}
+
+#navbar a:not(.glow-button):hover,
+#navbar .lang-btn:hover {
+    color: #00D9FF !important; /* Premium neon cyan hover */
+}
+
+/* Active links in dark mode */
+#navbar .text-neon,
+#mobileMenu .text-neon {
+    color: #00D9FF !important;
+    text-shadow: 0 0 8px rgba(0, 217, 255, 0.3);
+}
+
+/* Light Mode - Opaque Navbar Backgrounds */
+html.light #navbar.bg-dark\/30,
+html.light #navbar.md\:bg-dark\/30 {
+    background-color: rgba(255, 255, 255, 0.7) !important;
+}
+html.light #navbar.bg-dark\/50,
+html.light #navbar.md\:bg-dark\/50 {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+}
+html.light #navbar.bg-dark\/60,
+html.light #navbar.md\:bg-dark\/60 {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+}
+html.light #navbar.bg-dark\/80,
+html.light #navbar.md\:bg-dark\/80 {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Light Mode - Menu Links Default Contrast */
+html.light #navbar a:not(.glow-button),
+html.light #navbar .lang-btn {
+    color: #0F172A !important; /* Slate-900 for high contrast */
+    font-weight: 600;
+}
+
+html.light #navbar a:not(.glow-button):hover,
+html.light #navbar .lang-btn:hover {
+    color: #0088CC !important; /* Premium dark blue-cyan for hover */
+}
+
+/* Active links in light mode */
+html.light #navbar .text-neon,
+html.light #mobileMenu .text-neon {
+    color: #0088CC !important;
+    text-shadow: none !important;
+}
+
+/* Light Mode Controls Contrast */
+html.light #menuBtn,
+html.light #mobileThemeToggleBtn {
+    color: #0F172A !important;
+}
+
+/* Light Mode Active link borders & Hover button backgrounds */
+html.light .border-neon {
+    border-color: #0088CC !important;
+}
+html.light .border-neon\/50 {
+    border-color: rgba(0, 136, 204, 0.5) !important;
+}
+html.light .hover\:bg-neon:hover {
+    background-color: #0088CC !important;
+    color: #FFFFFF !important;
+}

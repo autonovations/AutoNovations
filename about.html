@@ -39,14 +39,14 @@
     <script src="assets_about/main.js" defer></script>
     <script src="assets_index/cursor.js" defer></script>
     <script>
-        (function() {
-            const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
-            if (savedTheme === 'light') {
-                document.documentElement.classList.add('light');
-            } else {
-                document.documentElement.classList.remove('light');
-            }
-        })();
+            (function () {
+                const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+                if (savedTheme === 'light') {
+                    document.documentElement.classList.add('light');
+                } else {
+                    document.documentElement.classList.remove('light');
+                }
+            })();
     </script>
 </head>
 
@@ -66,10 +66,13 @@
                     class="font-tech font-bold text-2xl tracking-wider text-white hidden sm:block">AUTONOVATIONS</span>
             </a>
             <div class="hidden md:flex gap-8 text-sm font-medium tracking-widest uppercase items-center">
-                <a href="#projects" class="text-gray-400 hover:text-neon transition-colors duration-300" data-i18n="nav_projects">Projects</a>
-                <a href="#courses" class="text-gray-400 hover:text-neon transition-colors duration-300" data-i18n="nav_academy">Academy</a>
+                <a href="#projects" class="text-gray-400 hover:text-neon transition-colors duration-300"
+                    data-i18n="nav_projects">Projects</a>
+                <a href="#courses" class="text-gray-400 hover:text-neon transition-colors duration-300"
+                    data-i18n="nav_academy">Academy</a>
                 <a href="about.html"
-                    class="text-neon transition-colors duration-300 font-bold border-b-2 border-neon pb-1" data-i18n="nav_profile">Profile</a>
+                    class="text-neon transition-colors duration-300 font-bold border-b-2 border-neon pb-1"
+                    data-i18n="nav_profile">Profile</a>
 
                 <!-- Language Dropdown -->
                 <div class="lang-dropdown ml-4">
@@ -128,11 +131,12 @@
     <!-- Mobile Menu -->
     <div class="fixed inset-0 bg-dark/95 z-40 hidden flex-col items-center justify-center gap-8 backdrop-blur-xl"
         id="mobileMenu">
-        <a href="#projects"
-            class="text-3xl font-tech text-white hover:text-neon transition-all menu-link" data-i18n="nav_projects">Projects</a>
-        <a href="#courses"
-            class="text-3xl font-tech text-white hover:text-neon transition-all menu-link" data-i18n="nav_academy">Academy</a>
-        <a href="about.html" class="text-3xl font-tech text-neon font-bold menu-link" data-i18n="nav_profile">Profile</a>
+        <a href="#projects" class="text-3xl font-tech text-white hover:text-neon transition-all menu-link"
+            data-i18n="nav_projects">Projects</a>
+        <a href="#courses" class="text-3xl font-tech text-white hover:text-neon transition-all menu-link"
+            data-i18n="nav_academy">Academy</a>
+        <a href="about.html" class="text-3xl font-tech text-neon font-bold menu-link"
+            data-i18n="nav_profile">Profile</a>
     </div>
 
     <!-- Profile Section -->
@@ -159,6 +163,7 @@
                                 class="w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80 rounded-lg border-4 border-neon/30 overflow-hidden relative z-10 p-2 bg-dark/50 shadow-[0_0_50px_rgba(0,217,255,0.2)] group-hover:shadow-[0_0_80px_rgba(0,217,255,0.4)] transition-shadow duration-500 mx-auto">
                                 <img src="assets_about/images/profile.jpg" alt="Felipe Profile"
                                     class="w-full h-full object-cover rounded-lg border border-white/10"
+                                    style="object-position: center 35%;"
                                     onerror="this.src='https://placehold.co/400x400/00D9FF/FFFFFF?text=Felipe'">
                             </div>
                         </div>
@@ -169,7 +174,8 @@
                         <div
                             class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neon/30 bg-neon/5 backdrop-blur-sm mb-4">
                             <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span>
-                            <span class="text-neon text-sm font-tech tracking-widest uppercase" data-i18n="profile_badge">System Designer &
+                            <span class="text-neon text-sm font-tech tracking-widest uppercase"
+                                data-i18n="profile_badge">System Designer &
                                 Creator</span>
                         </div>
 
@@ -180,21 +186,25 @@
                         <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6 text-lg">
                             <h3
                                 class="font-tech text-gray-300 flex items-center gap-2 justify-center hover:text-neon transition-colors duration-300">
-                                <i data-lucide="code" class="text-neon w-5 h-5"></i> <span data-i18n="profile_dev">Developer</span>
+                                <i data-lucide="code" class="text-neon w-5 h-5"></i> <span
+                                    data-i18n="profile_dev">Developer</span>
                             </h3>
                             <span class="hidden sm:block text-gray-600">|</span>
                             <h3
                                 class="font-tech text-gray-300 flex items-center gap-2 justify-center hover:text-neon transition-colors duration-300">
-                                <i data-lucide="brain-circuit" class="text-neon w-5 h-5"></i> <span data-i18n="profile_data">Data Engineer</span>
+                                <i data-lucide="brain-circuit" class="text-neon w-5 h-5"></i> <span
+                                    data-i18n="profile_data">Data Engineer</span>
                             </h3>
                             <span class="hidden sm:block text-gray-600">|</span>
                             <h3
                                 class="font-tech text-gray-300 flex items-center gap-2 justify-center hover:text-neon transition-colors duration-300">
-                                <i data-lucide="cpu" class="text-neon w-5 h-5"></i> <span data-i18n="profile_aiot">Artificial Intelligence of Things</span>
+                                <i data-lucide="cpu" class="text-neon w-5 h-5"></i> <span
+                                    data-i18n="profile_aiot">Artificial Intelligence of Things</span>
                             </h3>
                         </div>
 
-                        <p class="max-w-2xl mx-auto lg:mx-0 text-gray-400 text-base md:text-lg mb-8 leading-relaxed" data-i18n="profile_desc">
+                        <p class="max-w-2xl mx-auto lg:mx-0 text-gray-400 text-base md:text-lg mb-8 leading-relaxed"
+                            data-i18n="profile_desc">
                             Passionate about building the future through code, machine learning, and interconnected
                             autonomous systems. Bridging the gap between software algorithms and physical devices to
                             solve real-world problems.
@@ -369,27 +379,42 @@
     <section id="projects" class="relative py-20 px-6 z-10 border-t border-white/5 bg-[#020504]">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-8">
-                <h2 class="font-tech text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg" data-i18n="profile_portfolio_title">
+                <h2 class="font-tech text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg"
+                    data-i18n="profile_portfolio_title">
                     Project Portfolio
                 </h2>
-                <p class="text-gray-400 max-w-2xl mx-auto" data-i18n="profile_portfolio_desc">Showcasing a diverse range of projects spanning Computer
+                <p class="text-gray-400 max-w-2xl mx-auto" data-i18n="profile_portfolio_desc">Showcasing a diverse range
+                    of projects spanning Computer
                     Vision, Mobile Development, Web Technologies, and Data Science.</p>
             </div>
 
             <!-- Project Filter Tabs -->
             <div class="flex flex-wrap justify-center gap-3 md:gap-4 mb-16" id="projectFilters">
-                <button class="px-5 md:px-6 py-2 rounded-full border text-xs md:text-sm font-tech tracking-wider uppercase transition-all duration-300 hover:scale-105 filter-btn active" data-filter="all" data-i18n="cat_all_filter">All Projects</button>
-                <button class="px-5 md:px-6 py-2 rounded-full border text-xs md:text-sm font-tech tracking-wider uppercase transition-all duration-300 hover:scale-105 filter-btn" data-filter="cv" data-i18n="cat_cv_filter">Computer Vision</button>
-                <button class="px-5 md:px-6 py-2 rounded-full border text-xs md:text-sm font-tech tracking-wider uppercase transition-all duration-300 hover:scale-105 filter-btn" data-filter="android" data-i18n="cat_android_filter">Android Mobile</button>
-                <button class="px-5 md:px-6 py-2 rounded-full border text-xs md:text-sm font-tech tracking-wider uppercase transition-all duration-300 hover:scale-105 filter-btn" data-filter="web" data-i18n="cat_web_filter">Web Apps</button>
-                <button class="px-5 md:px-6 py-2 rounded-full border text-xs md:text-sm font-tech tracking-wider uppercase transition-all duration-300 hover:scale-105 filter-btn" data-filter="data" data-i18n="cat_data_filter">Data Science</button>
-                <button class="px-5 md:px-6 py-2 rounded-full border text-xs md:text-sm font-tech tracking-wider uppercase transition-all duration-300 hover:scale-105 filter-btn" data-filter="ml" data-i18n="cat_ml_filter">Machine Learning</button>
+                <button
+                    class="px-5 md:px-6 py-2 rounded-full border text-xs md:text-sm font-tech tracking-wider uppercase transition-all duration-300 hover:scale-105 filter-btn active"
+                    data-filter="all" data-i18n="cat_all_filter">All Projects</button>
+                <button
+                    class="px-5 md:px-6 py-2 rounded-full border text-xs md:text-sm font-tech tracking-wider uppercase transition-all duration-300 hover:scale-105 filter-btn"
+                    data-filter="cv" data-i18n="cat_cv_filter">Computer Vision</button>
+                <button
+                    class="px-5 md:px-6 py-2 rounded-full border text-xs md:text-sm font-tech tracking-wider uppercase transition-all duration-300 hover:scale-105 filter-btn"
+                    data-filter="android" data-i18n="cat_android_filter">Android Mobile</button>
+                <button
+                    class="px-5 md:px-6 py-2 rounded-full border text-xs md:text-sm font-tech tracking-wider uppercase transition-all duration-300 hover:scale-105 filter-btn"
+                    data-filter="web" data-i18n="cat_web_filter">Web Apps</button>
+                <button
+                    class="px-5 md:px-6 py-2 rounded-full border text-xs md:text-sm font-tech tracking-wider uppercase transition-all duration-300 hover:scale-105 filter-btn"
+                    data-filter="data" data-i18n="cat_data_filter">Data Science</button>
+                <button
+                    class="px-5 md:px-6 py-2 rounded-full border text-xs md:text-sm font-tech tracking-wider uppercase transition-all duration-300 hover:scale-105 filter-btn"
+                    data-filter="ml" data-i18n="cat_ml_filter">Machine Learning</button>
             </div>
 
             <!-- Category 1 -->
             <div class="mb-16 project-category-wrapper" data-category="cv">
                 <h3 class="text-2xl font-tech text-white mb-8 border-l-4 border-neon pl-4 flex items-center gap-3">
-                    <i data-lucide="eye" class="text-neon w-6 h-6"></i> <span data-i18n="cat_cv">Computer Vision & Ultralytics</span>
+                    <i data-lucide="eye" class="text-neon w-6 h-6"></i> <span data-i18n="cat_cv">Computer Vision &
+                        Ultralytics</span>
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- Project 1 -->
@@ -407,7 +432,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_railway_title">Railway Tracking</span></h4>
+                                    <span data-i18n="proj_railway_title">Railway Tracking</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Computer
@@ -418,7 +444,8 @@
                             </div>
                             <a href="https://www.youtube.com/watch?v=kLDdtMyUBlQ" target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -437,7 +464,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_traffic_title">City Traffic Analysis</span></h4>
+                                    <span data-i18n="proj_traffic_title">City Traffic Analysis</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Computer
@@ -448,7 +476,8 @@
                             </div>
                             <a href="https://www.youtube.com/watch?v=FkpC0mtweeI" target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -467,7 +496,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_ocr_title">OCR System</span></h4>
+                                    <span data-i18n="proj_ocr_title">OCR System</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">OCR</span>
@@ -477,7 +507,8 @@
                             </div>
                             <a href="https://www.youtube.com/watch?v=SrdHhUE2yx0" target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -487,7 +518,8 @@
             <!-- Category 2 -->
             <div class="mb-16 project-category-wrapper" data-category="android">
                 <h3 class="text-2xl font-tech text-white mb-8 border-l-4 border-neon pl-4 flex items-center gap-3">
-                    <i data-lucide="smartphone" class="text-neon w-6 h-6"></i> <span data-i18n="cat_android">Android & Jetpack Compose</span>
+                    <i data-lucide="smartphone" class="text-neon w-6 h-6"></i> <span data-i18n="cat_android">Android &
+                        Jetpack Compose</span>
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- Project 4 -->
@@ -505,7 +537,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_tictactoe_title">Tic Tac Toe</span></h4>
+                                    <span data-i18n="proj_tictactoe_title">Tic Tac Toe</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Android</span>
@@ -517,7 +550,8 @@
                             <a href="https://play.google.com/store/apps/details?id=com.factordev.tic_tac_toe_game&pcampaignid=web_share"
                                 target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -536,7 +570,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_dice_title">Dice Roller</span></h4>
+                                    <span data-i18n="proj_dice_title">Dice Roller</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Android</span>
@@ -548,7 +583,8 @@
                             <a href="https://play.google.com/store/apps/details?id=com.factordev.diceroller&pcampaignid=web_share"
                                 target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -567,7 +603,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_mlhumans_title">ML for Humans</span></h4>
+                                    <span data-i18n="proj_mlhumans_title">ML for Humans</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Android</span>
@@ -579,7 +616,8 @@
                             <a href="https://play.google.com/store/apps/details?id=com.factordev.ml_models&pcampaignid=web_share"
                                 target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -589,7 +627,8 @@
             <!-- Category 3 -->
             <div class="mb-16 project-category-wrapper" data-category="web">
                 <h3 class="text-2xl font-tech text-white mb-8 border-l-4 border-neon pl-4 flex items-center gap-3">
-                    <i data-lucide="globe" class="text-neon w-6 h-6"></i> <span data-i18n="cat_web">Real-time & Web Apps</span>
+                    <i data-lucide="globe" class="text-neon w-6 h-6"></i> <span data-i18n="cat_web">Real-time & Web
+                        Apps</span>
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- Project 7 -->
@@ -607,7 +646,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_signatures_title">Digital Signatures</span></h4>
+                                    <span data-i18n="proj_signatures_title">Digital Signatures</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">NodeJS</span>
@@ -617,7 +657,8 @@
                             </div>
                             <a href="https://firmasdigitales.fly.dev/" target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -636,7 +677,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_railytics_ht_title">Railytics HT</span></h4>
+                                    <span data-i18n="proj_railytics_ht_title">Railytics HT</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Simulation</span>
@@ -647,7 +689,8 @@
                             <a href="https://railytics-realtime-tracker-913941087.development.catalystserverless.com/app/index.html"
                                 target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -668,7 +711,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_railytics_up_title">Railytics UP</span></h4>
+                                    <span data-i18n="proj_railytics_up_title">Railytics UP</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Simulation</span>
@@ -680,7 +724,8 @@
                             <a href="https://railytics-union-pacific-913941087.development.catalystserverless.com/app/"
                                 target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -690,7 +735,8 @@
             <!-- Category 4 -->
             <div class="mb-16 project-category-wrapper" data-category="data">
                 <h3 class="text-2xl font-tech text-white mb-8 border-l-4 border-neon pl-4 flex items-center gap-3">
-                    <i data-lucide="database" class="text-neon w-6 h-6"></i> <span data-i18n="cat_data">Data Science & Python</span>
+                    <i data-lucide="database" class="text-neon w-6 h-6"></i> <span data-i18n="cat_data">Data Science &
+                        Python</span>
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
@@ -709,7 +755,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_pandas_title">Intro Pandas</span></h4>
+                                    <span data-i18n="proj_pandas_title">Intro Pandas</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Python</span>
@@ -720,7 +767,8 @@
                             <a href="https://colab.research.google.com/drive/1pw7PwIA4QCa8T7oIZbtYEyAi_Oh7MQFe?usp=sharing"
                                 target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -739,7 +787,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_numpy_title">Intro Numpy</span></h4>
+                                    <span data-i18n="proj_numpy_title">Intro Numpy</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Python</span>
@@ -750,7 +799,8 @@
                             <a href="https://colab.research.google.com/drive/1s6AgYfHTNpFStqH4omzcslXw_rOFeBzD?usp=sharing"
                                 target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -769,7 +819,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_matplotlib_title">Intro Matplotlib</span></h4>
+                                    <span data-i18n="proj_matplotlib_title">Intro Matplotlib</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Python</span>
@@ -780,7 +831,8 @@
                             <a href="https://colab.research.google.com/drive/1YzxgAVk83CrR13Fsr_vqROD7QRxz_plO?usp=sharing"
                                 target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -802,7 +854,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_snake_title">Snake Game</span></h4>
+                                    <span data-i18n="proj_snake_title">Snake Game</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Python</span>
@@ -810,7 +863,8 @@
                             </div>
                             <a href="https://factordeveloper.github.io/snake_game_python_tutle/" target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -829,7 +883,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_rna_title">RNA Activation Functions</span></h4>
+                                    <span data-i18n="proj_rna_title">RNA Activation Functions</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Python</span>
@@ -840,7 +895,8 @@
                             <a href="https://colab.research.google.com/drive/1NN3GwdTRFGPe5NR_Cafmt_WmHJNqyeLX?usp=sharing"
                                 target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -859,7 +915,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_connect4_title">Connect 4</span></h4>
+                                    <span data-i18n="proj_connect4_title">Connect 4</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Python</span>
@@ -869,7 +926,8 @@
                             </div>
                             <a href="https://factordeveloper.github.io/cuatro_en_raya_python_jupyter/" target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -880,7 +938,8 @@
             <!-- Category 5 -->
             <div class="mb-16 project-category-wrapper" data-category="ml">
                 <h3 class="text-2xl font-tech text-white mb-8 border-l-4 border-neon pl-4 flex items-center gap-3">
-                    <i data-lucide="brain-circuit" class="text-neon w-6 h-6"></i> <span data-i18n="cat_ml">Machine Learning</span>
+                    <i data-lucide="brain-circuit" class="text-neon w-6 h-6"></i> <span data-i18n="cat_ml">Machine
+                        Learning</span>
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- Project 15 -->
@@ -898,7 +957,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_celsius_title">Celsius to Fahrenheit</span></h4>
+                                    <span data-i18n="proj_celsius_title">Celsius to Fahrenheit</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Machine
@@ -910,7 +970,8 @@
                             <a href="https://factordeveloper.github.io/ML_Trainee_project_celsius_farenheit/"
                                 target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -929,7 +990,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_draw_title">Draw a Number</span></h4>
+                                    <span data-i18n="proj_draw_title">Draw a Number</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Machine
@@ -941,7 +1003,8 @@
                             <a href="https://factordeveloper.github.io/ML_Trainee_project_dibujar_numero/"
                                 target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -960,7 +1023,8 @@
                             <div>
                                 <h4
                                     class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_catsdogs_title">Cats vs Dogs</span></h4>
+                                    <span data-i18n="proj_catsdogs_title">Cats vs Dogs</span>
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     <span
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Machine
@@ -971,7 +1035,8 @@
                             </div>
                             <a href="https://factordeveloper.github.io/ML_Trainee_project_cat_vs_dogs/" target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
+                                    class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -984,59 +1049,98 @@
     <section id="courses" class="relative py-20 px-6 z-10 border-t border-white/5 bg-[#020504]">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16">
-                <h2 class="font-tech text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg" data-i18n="profile_courses_title">
+                <h2 class="font-tech text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg"
+                    data-i18n="profile_courses_title">
                     My Courses
                 </h2>
-                <p class="text-gray-400 max-w-2xl mx-auto" data-i18n="profile_courses_desc">Join my specialized academy and learn how to build the next generation of autonomous and electronic systems.</p>
+                <p class="text-gray-400 max-w-2xl mx-auto" data-i18n="profile_courses_desc">Join my specialized academy
+                    and learn how to build the next generation of autonomous and electronic systems.</p>
             </div>
 
             <div class="grid md:grid-cols-2 gap-8">
                 <!-- Course 1 -->
-                <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
-                    <div class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                <div
+                    class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                    <div
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
                         1
                     </div>
                     <div class="relative h-56 overflow-hidden bg-black/50">
-                        <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
-                        <img src="assets_about/images/electronic_course_cover.png" alt="Electronics Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div
+                            class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
+                        </div>
+                        <img src="assets_about/images/electronic_course_cover.png" alt="Electronics Course"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
-                    <div class="p-8 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                    <div
+                        class="p-8 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
                         <div>
                             <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="text-xs px-2 py-1 bg-green-500/10 text-green-400 rounded-md border border-green-500/20 font-tech uppercase" data-i18n="course_level_beginner">Level 1: Beginner</span>
-                                <span class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Electronics</span>
-                                <span class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Circuit Design</span>
+                                <span
+                                    class="text-xs px-2 py-1 bg-green-500/10 text-green-400 rounded-md border border-green-500/20 font-tech uppercase"
+                                    data-i18n="course_level_beginner">Level 1: Beginner</span>
+                                <span
+                                    class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Electronics</span>
+                                <span
+                                    class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Circuit
+                                    Design</span>
                             </div>
-                            <h4 class="text-2xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors"><span data-i18n="course2_title">Basic Electronics</span></h4>
-                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span data-i18n="course2_desc">Bridge the gap between hardware and software. Master circuit design, microcontrollers, basic electronic components, and physical computing.</span></p>
+                            <h4
+                                class="text-2xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
+                                <span data-i18n="course2_title">Basic Electronics</span>
+                            </h4>
+                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span
+                                    data-i18n="course2_desc">Bridge the gap between hardware and software. Master
+                                    circuit design, microcontrollers, basic electronic components, and physical
+                                    computing.</span></p>
                         </div>
-                        <a href="courses/electronic_course.html" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit group/btn">
-                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="external-link" class="w-4 h-4 group-hover/btn:-translate-y-1 group-hover/btn:translate-x-1 transition-transform"></i>
+                        <a href="courses/electronic_course.html" target="_blank"
+                            class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit group/btn">
+                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="external-link"
+                                class="w-4 h-4 group-hover/btn:-translate-y-1 group-hover/btn:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
                 </div>
 
                 <!-- Course 2 -->
-                <div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
-                    <div class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                <div
+                    class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                    <div
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
                         2
                     </div>
                     <div class="relative h-56 overflow-hidden bg-black/50">
-                        <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
-                        <img src="assets_about/images/uav_course_cover.png" alt="UAV Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div
+                            class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
+                        </div>
+                        <img src="assets_about/images/uav_course_cover.png" alt="UAV Course"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
-                    <div class="p-8 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
+                    <div
+                        class="p-8 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
                         <div>
                             <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="text-xs px-2 py-1 bg-orange-500/10 text-orange-400 rounded-md border border-orange-500/20 font-tech uppercase" data-i18n="course_level_advanced">Level 2: Advanced</span>
-                                <span class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Robotics</span>
-                                <span class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">UAV</span>
+                                <span
+                                    class="text-xs px-2 py-1 bg-orange-500/10 text-orange-400 rounded-md border border-orange-500/20 font-tech uppercase"
+                                    data-i18n="course_level_advanced">Level 2: Advanced</span>
+                                <span
+                                    class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Robotics</span>
+                                <span
+                                    class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">UAV</span>
                             </div>
-                            <h4 class="text-2xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors"><span data-i18n="course1_title">UAV Electronic Engineering</span></h4>
-                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span data-i18n="course1_desc">Learn to design, build, and program autonomous aerial drones (UAVs). Master the integration of sensors, flight controllers, ESCs, and communication systems.</span></p>
+                            <h4
+                                class="text-2xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
+                                <span data-i18n="course1_title">UAV Electronic Engineering</span>
+                            </h4>
+                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span
+                                    data-i18n="course1_desc">Learn to design, build, and program autonomous aerial
+                                    drones (UAVs). Master the integration of sensors, flight controllers, ESCs, and
+                                    communication systems.</span></p>
                         </div>
-                        <a href="courses/auv_course.html" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit group/btn">
-                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="external-link" class="w-4 h-4 group-hover/btn:-translate-y-1 group-hover/btn:translate-x-1 transition-transform"></i>
+                        <a href="courses/auv_course.html" target="_blank"
+                            class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit group/btn">
+                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="external-link"
+                                class="w-4 h-4 group-hover/btn:-translate-y-1 group-hover/btn:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
                 </div>
