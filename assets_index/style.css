@@ -119,7 +119,7 @@ body {
     position: fixed;
     width: 800px;
     height: 800px;
-    background: radial-gradient(circle, rgba(0, 217, 255, 0.08) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(0, 217, 255, 0.25) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none;
     z-index: -1;
@@ -764,7 +764,7 @@ html.light img[src*="logo"] {
 }
 
 html.light #mouseGlow {
-    background: radial-gradient(circle, rgba(0, 136, 204, 0.12) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(0, 136, 204, 0.28) 0%, transparent 70%);
 }
 
 html.light .terminal-window {
