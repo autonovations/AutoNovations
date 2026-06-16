@@ -1,0 +1,3358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuantStation - Curso de Trading Básico desde Cero</title>
+  <script>
+    (function() {
+        const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+        if (savedTheme === 'light') {
+            document.documentElement.classList.add('light');
+        } else {
+            document.documentElement.classList.remove('light');
+        }
+    })();
+  </script>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Aprende trading desde cero hasta un nivel medio-avanzado. Simuladores interactivos de gráficos, indicadores técnicos, velas japonesas y gestión de riesgo.">
+  <meta name="keywords" content="Trading Básico, Análisis Técnico, Velas Japonesas, Heikin Ashi, Renko, Simulador de Trading">
+  <meta name="author" content="AutoNovations Academy">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      /* Palette: Cyber-Finance Dark Mode */
+      --bg-darker: #06090f;
+      --bg-dark: #0a0e17;
+      --bg-card: #111827;
+      --bg-card-hover: #1b263b;
+      --border: #1e293b;
+      --border-focus: #00f0ff;
+      
+      --accent-cyan: #00f0ff;
+      --accent-cyan-dim: rgba(0, 240, 255, 0.12);
+      --accent-green: #10b981;
+      --accent-green-neon: #39ff14;
+      --accent-green-dim: rgba(16, 185, 129, 0.15);
+      --accent-red: #ef4444;
+      --accent-red-neon: #ff3366;
+      --accent-red-dim: rgba(239, 68, 68, 0.15);
+      --accent-amber: #f59e0b;
+      --accent-amber-neon: #ff9d00;
+      --accent-amber-dim: rgba(245, 158, 11, 0.15);
+      --accent-purple: #8b5cf6;
+      --accent-purple-dim: rgba(139, 92, 246, 0.12);
+
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Palette: Cyber-Finance Light Mode */
+    html.light {
+      --bg-darker: #f3f4f6;
+      --bg-dark: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f9fafb;
+      --border: #e5e7eb;
+      --border-focus: #3b82f6;
+
+      --accent-cyan: #2563eb;
+      --accent-cyan-dim: rgba(37, 99, 235, 0.1);
+      --accent-green: #059669;
+      --accent-green-neon: #10b981;
+      --accent-green-dim: rgba(5, 150, 105, 0.1);
+      --accent-red: #dc2626;
+      --accent-red-neon: #ef4444;
+      --accent-red-dim: rgba(220, 38, 38, 0.1);
+      --accent-amber: #d97706;
+      --accent-amber-neon: #f59e0b;
+      --accent-amber-dim: rgba(217, 119, 6, 0.1);
+      --accent-purple: #7c3aed;
+      --accent-purple-dim: rgba(124, 58, 237, 0.1);
+
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-muted: #9ca3af;
+    }
+
+    /* Base Reset & Scrollbars */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg-darker);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-darker);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: var(--radius-sm);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-cyan);
+    }
+
+    /* Layout */
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background-color: var(--bg-dark);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      padding: 1.5rem;
+      transition: width 0.3s, transform 0.3s;
+    }
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      letter-spacing: 0.05em;
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+    }
+    .sidebar-brand i {
+      animation: pulse-cyan 3s infinite ease-in-out;
+    }
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+    .nav-item button {
+      width: 100%;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      font-weight: 500;
+      text-align: left;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: var(--transition);
+      border: 1px solid transparent;
+    }
+    .nav-item button:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-primary);
+    }
+    .nav-item.active button {
+      background-color: var(--accent-cyan-dim);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.03);
+    }
+
+    /* Circular Progress Box */
+    .progress-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+    .progress-box-title {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .progress-circle-wrapper {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 10px auto;
+    }
+    .progress-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .progress-bg-circle {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 8;
+    }
+    .progress-bar-circle {
+      fill: none;
+      stroke: var(--accent-cyan);
+      stroke-width: 8;
+      stroke-dasharray: 283;
+      stroke-dashoffset: 283;
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      stroke-linecap: round;
+    }
+    .progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+    .progress-details {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 280px;
+      flex-grow: 1;
+      padding: 2.5rem;
+      max-width: calc(100% - 280px);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: margin-left 0.3s, max-width 0.3s;
+    }
+
+    /* Header */
+    .content-header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .content-header h1 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .content-header p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .theme-toggle-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    .theme-toggle-btn:hover {
+      border-color: var(--accent-cyan);
+      background: var(--bg-card-hover);
+    }
+
+    /* Tabs */
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Dashboard Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background-color: var(--border);
+      transition: var(--transition);
+    }
+    .card:hover {
+      background-color: var(--bg-card-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    }
+    .card:hover::before {
+      background-color: var(--accent-cyan);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-badge {
+      font-size: 0.7rem;
+      padding: 3px 6px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-beg { background-color: var(--accent-green-dim); color: var(--accent-green); }
+    .badge-int { background-color: var(--accent-amber-dim); color: var(--accent-amber); }
+    .badge-adv { background-color: var(--accent-purple-dim); color: var(--accent-purple); }
+
+    .card-desc {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+      margin-top: auto;
+    }
+    .card-status {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .card-status.completed {
+      color: var(--accent-green);
+    }
+    .card-btn {
+      background-color: transparent;
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .card-btn:hover {
+      background-color: var(--accent-cyan);
+      color: #06090f;
+    }
+
+    /* Certificate Box */
+    .certificate-card {
+      background: linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(10, 14, 23, 0.95)), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54 48c-2 0-3 1.7-3 3.5s1 3.5 3 3.5 3-1.7 3-3.5-1-3.5-3-3.5zm-48 0c-2 0-3 1.7-3 3.5s1 3.5 3 3.5 3-1.7 3-3.5-1-3.5-3-3.5zM30 20c-8.8 0-16 7.2-16 16s7.2 16 16 16 16-7.2 16-16-7.2-16-16-16zm0 2c7.7 0 14 6.3 14 14s-6.3 14-14 14-14-6.3-14-14 6.3-14 14-14z' fill='%231e293b' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      margin-top: 2rem;
+      text-align: center;
+      position: relative;
+      display: none;
+      animation: pulse-border 4s infinite alternate;
+    }
+    .certificate-card.unlocked {
+      display: block;
+    }
+    .cert-icon {
+      color: var(--accent-amber);
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: rotate-gold 6s infinite linear;
+    }
+    .cert-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+    .cert-text {
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 1.5rem auto;
+      font-size: 0.95rem;
+    }
+    .cert-print-btn {
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green-neon));
+      border: none;
+      color: #070b13;
+      padding: 10px 24px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3);
+      transition: var(--transition);
+    }
+    .cert-print-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 240, 255, 0.5);
+    }
+
+    /* Modules Grid & Layout */
+    .module-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 2rem;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main-content {
+        margin-left: 0;
+        max-width: 100%;
+      }
+      .module-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Learning Section Content Styling */
+    .learning-section {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .learning-section h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      margin-bottom: 1.25rem;
+      color: var(--accent-cyan);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .learning-section h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      margin: 1.75rem 0 0.75rem 0;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .learning-section p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 1.25rem;
+      line-height: 1.7;
+    }
+    .learning-section ul {
+      margin-left: 1.5rem;
+      margin-bottom: 1.25rem;
+      color: var(--text-secondary);
+    }
+    .learning-section li {
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+    .definition-box {
+      background-color: var(--bg-darker);
+      border-left: 3px solid var(--accent-cyan);
+      padding: 1rem;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      margin: 1rem 0;
+    }
+    .definition-term {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--accent-cyan);
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .definition-desc {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Chart Comparison Cards */
+    .chart-types-showcase {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .chart-type-card {
+      background-color: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .ct-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .ct-desc {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .ct-draw {
+      height: 100px;
+      background: var(--bg-dark);
+      border-radius: var(--radius-sm);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    /* Alert boxes */
+    .alert-box {
+      padding: 1.25rem;
+      border-radius: var(--radius-lg);
+      margin: 1.5rem 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      border: 1px solid transparent;
+    }
+    .alert-box.info {
+      background-color: var(--accent-cyan-dim);
+      border-color: rgba(0, 240, 255, 0.2);
+      color: var(--text-primary);
+    }
+    .alert-box.info i { color: var(--accent-cyan); }
+    .alert-box.warn {
+      background-color: var(--accent-amber-dim);
+      border-color: rgba(255, 157, 0, 0.2);
+      color: var(--text-primary);
+    }
+    .alert-box.warn i { color: var(--accent-amber); }
+    .alert-box-text {
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    /* Interactive Widgets Base */
+    .interactive-widget {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .widget-title {
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    /* Quiz Panel */
+    .quiz-panel {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      position: sticky;
+      top: 20px;
+    }
+    .quiz-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--accent-cyan);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .quiz-question {
+      margin-bottom: 1.5rem;
+    }
+    .q-text {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .q-options {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .q-option {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-align: left;
+      transition: var(--transition);
+    }
+    .q-option:hover {
+      border-color: var(--accent-cyan);
+      color: var(--text-primary);
+    }
+    .q-option.correct {
+      background-color: var(--accent-green-dim);
+      border-color: var(--accent-green);
+      color: var(--accent-green-neon);
+    }
+    .q-option.incorrect {
+      background-color: var(--accent-red-dim);
+      border-color: var(--accent-red);
+      color: var(--accent-red-neon);
+    }
+    .quiz-success-msg {
+      background-color: var(--accent-green-dim);
+      border: 1px solid var(--accent-green);
+      color: var(--accent-green-neon);
+      padding: 10px;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      text-align: center;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    /* Bottom Actions Row */
+    .module-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+    }
+    .action-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+    .action-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    .action-btn.primary {
+      background: var(--accent-cyan-dim);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    .action-btn.primary:hover {
+      background: var(--accent-cyan);
+      color: #06090f;
+    }
+
+    /* Progress Checkbox Container */
+    .read-confirmation {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+    }
+    .read-checkbox {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--accent-cyan);
+    }
+    .read-label {
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    /* Simulator Arena Elements */
+    .sim-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 1.5rem;
+    }
+    @media (max-width: 900px) {
+      .sim-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    .sim-chart-pane {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .sim-chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .sim-chart-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .ticker-badge {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background-color: var(--accent-cyan-dim);
+      color: var(--accent-cyan);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+    }
+    .chart-controls-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn-select {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 6px 10px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-select:hover {
+      border-color: var(--accent-cyan);
+      color: var(--text-primary);
+    }
+    .btn-select.active {
+      background-color: var(--accent-cyan-dim);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    
+    .canvas-container {
+      position: relative;
+      background: #020509;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      width: 100%;
+      height: 380px;
+    }
+    .sim-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+    .price-tooltip {
+      position: absolute;
+      background: rgba(10, 14, 23, 0.95);
+      border: 1px solid var(--accent-cyan);
+      color: var(--text-primary);
+      padding: 6px 10px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      pointer-events: none;
+      display: none;
+      z-index: 10;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    /* Simulator Order form */
+    .sim-order-pane {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .sim-metric-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+    }
+    .sim-metric-card {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px;
+      text-align: center;
+    }
+    .sim-metric-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+    .sim-metric-val {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-top: 2px;
+    }
+    .sim-metric-val.profit { color: var(--accent-green-neon); }
+    .sim-metric-val.loss { color: var(--accent-red-neon); }
+
+    .control-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+      display: block;
+    }
+    .btn-group-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .toggle-btn {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 8px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: var(--transition);
+      text-align: center;
+    }
+    .toggle-btn.active.buy {
+      background: var(--accent-green-dim);
+      color: var(--accent-green-neon);
+      border-color: var(--accent-green);
+    }
+    .toggle-btn.active.sell {
+      background: var(--accent-red-dim);
+      color: var(--accent-red-neon);
+      border-color: var(--accent-red);
+    }
+    .toggle-btn.active.type {
+      background: var(--accent-cyan-dim);
+      color: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+    }
+    .input-field {
+      width: 100%;
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      outline: none;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      transition: var(--transition);
+    }
+    .input-field:focus {
+      border-color: var(--accent-cyan);
+    }
+    .input-container {
+      position: relative;
+    }
+    .input-suffix {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+    
+    .execute-order-btn {
+      width: 100%;
+      background: var(--accent-cyan);
+      color: #06090f;
+      border: none;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .execute-order-btn:hover {
+      box-shadow: 0 0 15px var(--accent-cyan);
+      transform: translateY(-1px);
+    }
+
+    /* Positions & History Section */
+    .positions-pane {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .pane-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .pane-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pane-badge {
+      background-color: var(--border);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+    .table-sim {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      text-align: left;
+    }
+    .table-sim th {
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+    }
+    .table-sim td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+    .text-buy { color: var(--accent-green-neon) !important; font-weight: 600; }
+    .text-sell { color: var(--accent-red-neon) !important; font-weight: 600; }
+    
+    .close-trade-btn {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--accent-red);
+      color: var(--accent-red-neon);
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .close-trade-btn:hover {
+      background: var(--accent-red);
+      color: #06090f;
+    }
+    .no-trades-msg {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      padding: 1.5rem 0;
+    }
+
+    /* Mobile view widgets */
+    .mobile-nav-toggle {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Animations & Utilities */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-cyan {
+      0%, 100% { filter: drop-shadow(0 0 2px var(--accent-cyan)); }
+      50% { filter: drop-shadow(0 0 8px var(--accent-cyan)); }
+    }
+    @keyframes pulse-border {
+      0% { border-color: var(--border); }
+      100% { border-color: var(--accent-cyan); }
+    }
+    @keyframes rotate-gold {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(12deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    /* Print Layout for Certificate */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #certificate-box, #certificate-box * {
+        visibility: visible;
+      }
+      #certificate-box {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        border: 4px double #000;
+        background: #fff !important;
+        color: #000 !important;
+        padding: 4rem;
+        box-shadow: none;
+        display: block !important;
+      }
+      .cert-text, .cert-title {
+        color: #000 !important;
+      }
+      .cert-print-btn {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <i data-lucide="trending-up"></i>
+        <span>TraderCore</span>
+      </div>
+      
+      <nav class="nav-list">
+        <li class="nav-item active" data-tab="tab-dashboard">
+          <button><i data-lucide="layout-dashboard"></i> Resumen del Curso</button>
+        </li>
+        <li class="nav-item" data-tab="tab-module1">
+          <button><i data-lucide="book-open"></i> Mod 1: Fundamentos</button>
+        </li>
+        <li class="nav-item" data-tab="tab-module2">
+          <button><i data-lucide="bar-chart-2"></i> Mod 2: Tipos de Gráficos</button>
+        </li>
+        <li class="nav-item" data-tab="tab-module3">
+          <button><i data-lucide="line-chart"></i> Mod 3: Análisis Técnico</button>
+        </li>
+        <li class="nav-item" data-tab="tab-module4">
+          <button><i data-lucide="play-circle"></i> Mod 4: Arena Simulador</button>
+        </li>
+      </nav>
+
+      <!-- Circular progress circle -->
+      <div class="progress-box">
+        <div class="progress-box-title">Progreso Total</div>
+        <div class="progress-circle-wrapper">
+          <svg class="progress-svg">
+            <circle class="progress-bg-circle" cx="50" cy="50" r="45"></circle>
+            <circle class="progress-bar-circle" id="course-progress-circle" cx="50" cy="50" r="45"></circle>
+          </svg>
+          <div class="progress-text" id="course-progress-pct">0%</div>
+        </div>
+        <div class="progress-details" id="course-progress-details">0 de 8 completados</div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Header -->
+      <header class="content-header">
+        <div>
+          <h1 id="main-title"><i data-lucide="graduation-cap"></i> Portal de Trading Básico</h1>
+          <p id="main-subtitle">Aprende los fundamentos del mercado y domina el análisis técnico con simulaciones en vivo.</p>
+        </div>
+        <div class="header-actions">
+          <button class="mobile-nav-toggle" id="sidebar-toggle"><i data-lucide="menu"></i></button>
+          <button class="theme-toggle-btn" id="theme-toggle" title="Cambiar tema">
+            <i data-lucide="sun" id="theme-icon-sun" style="display:none;"></i>
+            <i data-lucide="moon" id="theme-icon-moon"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- TAB 0: DASHBOARD / OVERVIEW -->
+      <div class="tab-pane active" id="tab-dashboard">
+        
+        <!-- Welcome banner -->
+        <div class="learning-section" style="background: linear-gradient(135deg, var(--bg-card), var(--accent-cyan-dim)); border-color: rgba(0, 240, 255, 0.25);">
+          <h2>¡Bienvenido al Curso de Iniciación Financiera!</h2>
+          <p>
+            Esta plataforma interactiva está diseñada para llevarte de la mano desde los conceptos fundamentales del mercado hasta la correcta interpretación visual del precio y la ejecución disciplinada de órdenes simuladas.
+          </p>
+          <p style="font-weight: 600; color: var(--accent-cyan);">
+            Estudia la teoría en cada módulo, aprueba los 4 cuestionarios correspondientes y opera activamente en la Arena de Simulación para desbloquear tu Certificado de Competencia en Trading de AutoNovations.
+          </p>
+        </div>
+
+        <h2 style="font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 1rem;">Módulos del Curso</h2>
+
+        <!-- Module Cards Grid -->
+        <div class="dashboard-grid">
+          
+          <!-- Card 1 -->
+          <div class="card">
+            <div>
+              <div class="card-header">
+                <span class="card-badge badge-beg">Principiante</span>
+                <i data-lucide="book-open" style="color: var(--accent-green-neon);"></i>
+              </div>
+              <div class="card-title">1. Fundamentos de Mercado</div>
+              <p class="card-desc">Qué es el trading, quiénes participan en los mercados, qué activos existen y qué significan términos como Bid, Ask, Spread y Apalancamiento.</p>
+            </div>
+            <div class="card-footer">
+              <div class="card-status" id="status-mod1"><i data-lucide="circle"></i> Pendiente</div>
+              <button class="card-btn" onclick="switchTab('tab-module1')">Comenzar</button>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="card">
+            <div>
+              <div class="card-header">
+                <span class="card-badge badge-beg">Principiante</span>
+                <i data-lucide="bar-chart-2" style="color: var(--accent-cyan);"></i>
+              </div>
+              <div class="card-title">2. Tipos de Gráficos</div>
+              <p class="card-desc">Descubre todos los métodos de visualización del precio: Líneas, Barras (OHLC), Velas Japonesas, Heikin Ashi, Renko y Puntos & Figuras.</p>
+            </div>
+            <div class="card-footer">
+              <div class="card-status" id="status-mod2"><i data-lucide="circle"></i> Pendiente</div>
+              <button class="card-btn" onclick="switchTab('tab-module2')">Comenzar</button>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="card">
+            <div>
+              <div class="card-header">
+                <span class="card-badge badge-int">Intermedio</span>
+                <i data-lucide="line-chart" style="color: var(--accent-amber-neon);"></i>
+              </div>
+              <div class="card-title">3. Análisis Técnico</div>
+              <p class="card-desc">Aprende a trazar Soportes, Resistencias, Canales y a identificar patrones visuales clave de reversión y continuidad.</p>
+            </div>
+            <div class="card-footer">
+              <div class="card-status" id="status-mod3"><i data-lucide="circle"></i> Pendiente</div>
+              <button class="card-btn" onclick="switchTab('tab-module3')">Comenzar</button>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="card">
+            <div>
+              <div class="card-header">
+                <span class="card-badge badge-adv">Avanzado</span>
+                <i data-lucide="play-circle" style="color: var(--accent-purple);"></i>
+              </div>
+              <div class="card-title">4. Arena Simulador</div>
+              <p class="card-desc">Pon en práctica tus conocimientos en un simulador gráfico en vivo. Configura indicadores, ejecuta órdenes de compra/venta y gestiona tu riesgo.</p>
+            </div>
+            <div class="card-footer">
+              <div class="card-status" id="status-mod4"><i data-lucide="circle"></i> Pendiente</div>
+              <button class="card-btn" onclick="switchTab('tab-module4')">Comenzar</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Hidden Certificate -->
+        <div class="certificate-card" id="certificate-box">
+          <i class="cert-icon" data-lucide="award"></i>
+          <h3 class="cert-title">Certificado de Operaciones Financieras</h3>
+          <p class="cert-text">
+            Otorgado a: <strong style="color: var(--accent-cyan);">Operador Financiero Junior</strong><br>
+            Por completar exitosamente todos los módulos teóricos, evaluaciones interactivas y registrar operaciones de control de riesgo en el simulador del <strong>Curso de Trading Básico y Análisis de Gráficos de AutoNovations</strong>.
+          </p>
+          <button class="cert-print-btn" onclick="window.print()"><i data-lucide="printer"></i> Imprimir Certificado</button>
+        </div>
+
+      </div>
+
+      <!-- TAB 1: MODULE 1 -->
+      <div class="tab-pane" id="tab-module1">
+        <div class="module-grid">
+          
+          <!-- Theory and Simulator Column -->
+          <div class="module-left">
+            <div class="learning-section">
+              <h2><i data-lucide="book-open"></i> Módulo 1: Fundamentos de Mercado y Trading</h2>
+              <p>
+                El **Trading** financiero es el arte y la disciplina de comprar y vender activos en los mercados con el objetivo de generar una ganancia por la diferencia de precios. A diferencia de la inversión a largo plazo, el trading se enfoca en movimientos temporales de precios en distintas escalas de tiempo (minutos, horas, días).
+              </p>
+              
+              <h3>Conceptos de Microestructura del Mercado</h3>
+              <p>
+                Para comprender cómo fluctúa el precio de las acciones, criptomonedas o divisas, debemos desglosar los términos clave de microestructura:
+              </p>
+              
+              <div class="definition-box">
+                <div class="definition-term">Bid (Precio de Compra / Demanda)</div>
+                <div class="definition-desc">El precio más alto que los compradores están dispuestos a pagar por el activo en un momento determinado.</div>
+              </div>
+
+              <div class="definition-box">
+                <div class="definition-term">Ask (Precio de Venta / Oferta)</div>
+                <div class="definition-desc">El precio más bajo al que los vendedores están dispuestos a entregar el activo.</div>
+              </div>
+
+              <div class="definition-box">
+                <div class="definition-term">Spread (Diferencial)</div>
+                <div class="definition-desc">La diferencia matemática entre el Bid y el Ask (Spread = Ask - Bid). Es el costo inmediato por entrar al mercado y representa la liquidez del activo: a menor spread, mayor liquidez.</div>
+              </div>
+
+              <h3>Participantes del Mercado</h3>
+              <p>
+                Los mercados están constituidos por tres tipos principales de participantes cuyas interacciones definen el precio:
+              </p>
+              <ul>
+                <li><strong>Creadores de Mercado (Market Makers):</strong> Instituciones financieras que proveen liquidez de forma constante colocando órdenes Bid y Ask. Ganancia a través del spread.</li>
+                <li><strong>Institucionales (Smart Money):</strong> Fondos de cobertura (Hedge Funds), bancos de inversión y fondos de pensiones. Mueven grandes volúmenes y determinan las tendencias macro.</li>
+                <li><strong>Traders Minoristas (Retail Traders):</strong> Operadores individuales que acceden a los mercados a través de brokers. Operamos con capitales pequeños buscando sumarnos a los movimientos institucionales.</li>
+              </ul>
+
+              <h3>Activos Financieros Principales</h3>
+              <p>
+                Podemos especular en diversas categorías de activos según su volatilidad y naturaleza:
+              </p>
+              <ul>
+                <li><strong>Acciones (Stocks):</strong> Fracciones de propiedad de empresas públicas (ej. Apple, Tesla). Su valor depende de fundamentales financieros y macroeconomía.</li>
+                <li><strong>Divisas (Forex):</strong> Intercambio de monedas globales en pares (ej. EUR/USD, GBP/USD). Es el mercado más grande y líquido del mundo.</li>
+                <li><strong>Criptomonedas:</strong> Activos digitales basados en criptografía (ej. Bitcoin, Ethereum). Operan 24/7 y se caracterizan por una volatilidad extremadamente alta.</li>
+                <li><strong>Commodities (Materias Primas):</strong> Bienes físicos de gran valor como Oro, Plata, Petróleo y Granos. Muy sensibles a factores geopolíticos y climáticos.</li>
+              </ul>
+
+              <h3>Mecánica de Operación: Apalancamiento y Margen</h3>
+              <p>
+                El <strong>Apalancamiento (Leverage)</strong> permite operar posiciones más grandes que el capital depositado. Por ejemplo, con un apalancamiento de 1:10, puedes abrir una posición de $10,000 con solo $1,000.
+              </p>
+              <div class="alert-box warn">
+                <i data-lucide="alert-triangle"></i>
+                <div class="alert-box-text">
+                  <strong>¡Peligro!</strong> El apalancamiento aumenta exponencialmente tanto el potencial de ganancias como el de pérdidas. Una pequeña variación en contra del precio puede liquidar el <strong>Margen</strong> (capital de garantía necesario) y provocar un cierre forzoso de tu posición.
+                </div>
+              </div>
+
+              <!-- Read Confirmation Checkbox -->
+              <div class="read-confirmation">
+                <input type="checkbox" id="read-mod1" class="read-checkbox" onchange="toggleReadCheck('mod1')">
+                <label for="read-mod1" class="read-label">He leído y comprendido los Fundamentos de Mercado</label>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Quiz Column -->
+          <div class="module-right">
+            <div class="quiz-panel" id="quiz-mod1">
+              <div class="quiz-title">
+                <i data-lucide="check-square"></i> Evaluación Módulo 1
+              </div>
+              
+              <div class="quiz-question" data-qid="q1_1">
+                <div class="q-text">1. ¿Qué representa la métrica del Spread en el mercado?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q1_1')">A) El precio promedio de las últimas 24 horas.</button>
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q1_1')">B) La diferencia matemática entre el precio Ask y el precio Bid.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q1_1')">C) La comisión cobrada por el gobierno en cada transacción.</button>
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="q1_2">
+                <div class="q-text">2. Si opero con un apalancamiento de 1:50, ¿qué ocurre con el riesgo?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q1_2')">A) El riesgo disminuye porque tengo más capital de respaldo.</button>
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q1_2')">B) Aumenta exponencialmente, requiriendo menor movimiento adverso para perder mi capital.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q1_2')">C) Permanece igual, el apalancamiento solo cambia las comisiones.</button>
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="q1_3">
+                <div class="q-text">3. ¿Quiénes proveen liquidez constante colocando órdenes a ambos lados del libro?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q1_3')">A) Creadores de Mercado (Market Makers).</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q1_3')">B) Traders minoristas individuales.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q1_3')">C) Agencias calificadoras de riesgo.</button>
+                </div>
+              </div>
+
+              <div class="quiz-success-msg" id="msg-quiz-mod1">
+                ¡Enhorabuena! Has respondido correctamente todas las preguntas de este módulo.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-actions">
+          <button class="action-btn" onclick="switchTab('tab-dashboard')"><i data-lucide="arrow-left"></i> Resumen</button>
+          <button class="action-btn primary" onclick="switchTab('tab-module2')">Siguiente Módulo <i data-lucide="arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- TAB 2: MODULE 2 -->
+      <div class="tab-pane" id="tab-module2">
+        <div class="module-grid">
+          
+          <div class="module-left">
+            <div class="learning-section">
+              <h2><i data-lucide="bar-chart-2"></i> Módulo 2: Visualización del Precio y Tipos de Gráficos</h2>
+              <p>
+                El gráfico es el mapa del trader. Representa el registro histórico de las decisiones tomadas por los compradores y vendedores expresado en coordenadas de precio (eje Y) y tiempo (eje X). Existen diferentes filosofías para graficar el precio: algunas priorizan el flujo temporal continuo, mientras que otras descartan el tiempo para centrarse exclusivamente en la magnitud del movimiento.
+              </p>
+
+              <h3>Los 6 Tipos de Gráficos en Trading</h3>
+              <p>
+                A continuación se describen los tipos de gráficos más importantes utilizados a nivel profesional y cómo interpretarlos:
+              </p>
+
+              <div class="chart-types-showcase">
+                <!-- Line -->
+                <div class="chart-type-card">
+                  <div class="ct-title">1. Gráfico de Líneas (Line)</div>
+                  <div class="ct-draw"><canvas id="mini-chart-line"></canvas></div>
+                  <div class="ct-desc">Conecta únicamente los <strong>precios de cierre</strong> de cada periodo con una línea continua. Filtra el "ruido" intradía (altos y bajos) proporcionando una vista muy simplificada de la tendencia macro. Sin embargo, carece de información detallada de la volatilidad extrema.</div>
+                </div>
+
+                <!-- Bar -->
+                <div class="chart-type-card">
+                  <div class="ct-title">2. Gráfico de Barras (OHLC)</div>
+                  <div class="ct-draw"><canvas id="mini-chart-bar"></canvas></div>
+                  <div class="ct-desc">Cada periodo se dibuja con una barra vertical. La parte superior e inferior representan el Máximo (High) y Mínimo (Low). Una pestaña a la izquierda indica el precio de Apertura (Open) y una a la derecha indica el de Cierre (Close). Excelente para ver la volatilidad total de cada sesión.</div>
+                </div>
+
+                <!-- Candle -->
+                <div class="chart-type-card">
+                  <div class="ct-title">3. Velas Japonesas (Candlesticks)</div>
+                  <div class="ct-draw"><canvas id="mini-chart-candle"></canvas></div>
+                  <div class="ct-desc">Es el estándar de la industria. Cada vela consta de un <strong>cuerpo real</strong> (el rango entre apertura y cierre) y **mechas/sombras** (el recorrido del precio hacia máximos y mínimos). Si el cierre es superior a la apertura es una vela alcista (normalmente verde/blanca); si cierra por debajo es bajista (roja/negra).</div>
+                </div>
+
+                <!-- Heikin Ashi -->
+                <div class="chart-type-card">
+                  <div class="ct-title">4. Velas Heikin Ashi (Suavizado)</div>
+                  <div class="ct-draw"><canvas id="mini-chart-heikin"></canvas></div>
+                  <div class="ct-desc">Utilizan fórmulas promedio para modificar el precio de apertura y cierre con el fin de filtrar el ruido y suavizar la visualización de la tendencia. En tendencias alcistas fuertes las velas no tienen mechas inferiores; en tendencias bajistas no tienen mechas superiores.</div>
+                </div>
+
+                <!-- Renko -->
+                <div class="chart-type-card">
+                  <div class="ct-title">5. Gráfico Renko (Ladrillos)</div>
+                  <div class="ct-draw"><canvas id="mini-chart-renko"></canvas></div>
+                  <div class="ct-desc">Proviene de "renga" (ladrillo en japonés). Este gráfico <strong>ignora el tiempo</strong>. Solo dibuja un nuevo ladrillo verde o rojo cuando el precio se mueve una distancia preestablecida (ej. $1.00). Si el precio oscila lateralmente sin superar la caja, el gráfico se congela, eliminando el ruido lateral.</div>
+                </div>
+
+                <!-- Point and Figure -->
+                <div class="chart-type-card">
+                  <div class="ct-title">6. Puntos y Figuras (Point & Figure)</div>
+                  <div class="ct-draw"><canvas id="mini-chart-pf"></canvas></div>
+                  <div class="ct-desc">Basado exclusivamente en precio y giros de tendencia. Dibuja columnas de **X** cuando el precio sube y columnas de **O** cuando baja. Solo cambia de columna (reversión) si el precio retrocede una distancia específica (comúnmente 3 cajas). Ideal para ver soportes históricos clave.</div>
+                </div>
+              </div>
+
+              <h3>Anatomía Detallada de una Vela Japonesa</h3>
+              <p>
+                Para dominar la acción del precio debemos comprender qué nos transmite cada vela. La mecha superior representa el rechazo de los compradores: el precio subió pero los vendedores empujaron hacia abajo. La mecha inferior representa el rechazo de los vendedores. Un cuerpo pequeño con mechas muy largas en ambos extremos indica indecisión total (Vela Doji).
+              </p>
+              
+              <div class="alert-box info">
+                <i data-lucide="info"></i>
+                <div class="alert-box-text">
+                  <strong>Fórmulas de Heikin Ashi:</strong><br>
+                  • Cierre HA = (Apertura + Máximo + Mínimo + Cierre) / 4<br>
+                  • Apertura HA = (Apertura anterior HA + Cierre anterior HA) / 2<br>
+                  • Máximo HA = Max(Máximo, Apertura HA, Cierre HA)<br>
+                  • Mínimo HA = Min(Mínimo, Apertura HA, Cierre HA)
+                </div>
+              </div>
+
+              <div class="read-confirmation">
+                <input type="checkbox" id="read-mod2" class="read-checkbox" onchange="toggleReadCheck('mod2')">
+                <label for="read-mod2" class="read-label">He comprendido los tipos de gráficos y su interpretación</label>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Quiz Column -->
+          <div class="module-right">
+            <div class="quiz-panel" id="quiz-mod2">
+              <div class="quiz-title">
+                <i data-lucide="check-square"></i> Evaluación Módulo 2
+              </div>
+              
+              <div class="quiz-question" data-qid="q2_1">
+                <div class="q-text">1. ¿Qué característica fundamental diferencia a los gráficos Renko del resto?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q2_1')">A) Se calculan usando únicamente volúmenes de transacciones.</button>
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q2_1')">B) Ignoran la variable del tiempo y solo grafican movimientos de tamaño fijo.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q2_1')">C) Solo están disponibles para el mercado de commodities.</button>
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="q2_2">
+                <div class="q-text">2. En el gráfico de Barras (OHLC), ¿qué indica la pestaña horizontal izquierda?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q2_2')">A) El volumen operado.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q2_2')">B) El precio de Cierre (Close).</button>
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q2_2')">C) El precio de Apertura (Open).</button>
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="q2_3">
+                <div class="q-text">3. ¿Qué representa una vela japonesa con cuerpo real pequeño e hilos muy largos a ambos lados?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q2_3')">A) Indecisión en el mercado (como una vela Doji).</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q2_3')">B) Tendencia alcista ininterrumpida.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q2_3')">C) Cierre inminente del mercado por falta de volumen.</button>
+                </div>
+              </div>
+
+              <div class="quiz-success-msg" id="msg-quiz-mod2">
+                ¡Excelente! Has superado el cuestionario de visualización gráfica de precios.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-actions">
+          <button class="action-btn" onclick="switchTab('tab-module1')"><i data-lucide="arrow-left"></i> Mod 1</button>
+          <button class="action-btn primary" onclick="switchTab('tab-module3')">Siguiente Módulo <i data-lucide="arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- TAB 3: MODULE 3 -->
+      <div class="tab-pane" id="tab-module3">
+        <div class="module-grid">
+          
+          <div class="module-left">
+            <div class="learning-section">
+              <h2><i data-lucide="line-chart"></i> Módulo 3: Análisis Técnico y Patrones Geométricos</h2>
+              <p>
+                El **Análisis Técnico** es el estudio de la acción del precio para predecir futuros movimientos a través de patrones repetitivos en el comportamiento humano de los inversores. Dado que los seres humanos actúan por miedo o codicia en niveles similares, los gráficos reflejan estructuras predecibles.
+              </p>
+
+              <h3>Soporte y Resistencia (Las zonas de rebote)</h3>
+              <p>
+                Son los cimientos del análisis técnico. No son líneas exactas, sino **zonas de precios** donde históricamente la oferta y la demanda han cambiado su equilibrio:
+              </p>
+              <ul>
+                <li><strong>Soporte (Piso):</strong> Nivel inferior donde el interés comprador supera la presión vendedora, provocando que la caída se detenga y el precio rebote al alza.</li>
+                <li><strong>Resistencia (Techo):</strong> Nivel superior donde el interés vendedor supera la presión compradora, deteniendo la subida y provocando una caída.</li>
+                <li><strong>Principio de Polaridad:</strong> Cuando un soporte fuerte es roto a la baja, suele convertirse en una resistencia futura. Lo mismo ocurre en techos superados al alza.</li>
+              </ul>
+
+              <h3>Líneas de Tendencia y Canales</h3>
+              <p>
+                Una tendencia alcista se traza conectando mínimos crecientes (Línea de Tendencia Alcista) y sirve como soporte dinámico. Una tendencia bajista conecta máximos decrecientes. Si duplicamos la línea de tendencia y la colocamos en paralelo en los extremos opuestos, creamos un **Canal de Precios**, definiendo los límites de oscilación normales.
+              </p>
+
+              <h3>Patrones de Reversión de Tendencia</h3>
+              <p>
+                Estructuras que anuncian el agotamiento de la fuerza dominante y un cambio de dirección:
+              </p>
+              <ul>
+                <li><strong>Hombro-Cabeza-Hombro (HCH):</strong> Consta de tres picos: el del medio es el más alto (Cabeza) y los laterales son más bajos (Hombros). La ruptura de la línea de cuello (soporte inferior) confirma un cambio de alcista a bajista.</li>
+                <li><strong>Doble Techo y Doble Suelo:</strong> El precio ataca un nivel clave dos veces pero es rechazado con fuerza en ambas. Es una señal clásica de incapacidad del precio para continuar su tendencia previa.</li>
+              </ul>
+
+              <h3>Patrones de Continuidad de Tendencia</h3>
+              <p>
+                Indican pausas temporales en el mercado para absorber ganancias antes de continuar la tendencia dominante:
+              </p>
+              <ul>
+                <li><strong>Banderas (Flags):</strong> Canales rectangulares cortos que van en contra de la tendencia principal. Representan retrocesos sanos y su ruptura a favor de la tendencia suele ser muy violenta.</li>
+                <li><strong>Triángulos Simétricos:</strong> Mínimos crecientes y máximos decrecientes convergen en una punta. Reflejan compresión del precio y acumulación antes de estallar hacia el lado dominante.</li>
+              </ul>
+
+              <div class="read-confirmation">
+                <input type="checkbox" id="read-mod3" class="read-checkbox" onchange="toggleReadCheck('mod3')">
+                <label for="read-mod3" class="read-label">He comprendido los conceptos de soporte, resistencia y patrones técnicos</label>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Quiz Column -->
+          <div class="module-right">
+            <div class="quiz-panel" id="quiz-mod3">
+              <div class="quiz-title">
+                <i data-lucide="check-square"></i> Evaluación Módulo 3
+              </div>
+              
+              <div class="quiz-question" data-qid="q3_1">
+                <div class="q-text">1. ¿En qué consiste el principio de polaridad en análisis técnico?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q3_1')">A) Una resistencia rota al alza tiende a actuar como soporte en el futuro.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q3_1')">B) Las tendencias alcistas solo ocurren en invierno y las bajistas en verano.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q3_1')">C) La correlación negativa obligatoria entre el oro y el petróleo.</button>
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="q3_2">
+                <div class="q-text">2. ¿Qué tipo de patrón es el Hombro-Cabeza-Hombro (HCH)?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q3_2')">A) Un indicador matemático de momentum.</button>
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q3_2')">B) Un patrón chartista clásico de reversión de tendencia.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q3_2')">C) Un patrón de continuidad alcista de alta frecuencia.</button>
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="q3_3">
+                <div class="q-text">3. ¿Qué representa una bandera (flag) en el gráfico?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q3_3')">A) La bandera de país de origen del emisor del activo.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q3_3')">B) Una señal de reversión bajista obligatoria.</button>
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q3_3')">C) Una pausa temporal (consolidación) en una tendencia fuerte antes de continuarla.</button>
+                </div>
+              </div>
+
+              <div class="quiz-success-msg" id="msg-quiz-mod3">
+                ¡Impresionante! Has dominado los fundamentos del análisis técnico chartista.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-actions">
+          <button class="action-btn" onclick="switchTab('tab-module2')"><i data-lucide="arrow-left"></i> Mod 2</button>
+          <button class="action-btn primary" onclick="switchTab('tab-module4')">Siguiente Módulo <i data-lucide="arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- TAB 4: MODULE 4 (THE SIMULATOR) -->
+      <div class="tab-pane" id="tab-module4">
+        
+        <div class="learning-section" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+          <h2><i data-lucide="play-circle"></i> Arena de Práctica y Gestión Monetaria</h2>
+          <p>
+            Bienvenido a la Arena de Práctica de AutoNovations. Aquí pondrás a prueba la teoría operando en tiempo real. 
+            <strong>Reglas del simulador:</strong> Tu saldo de operaciones inicial es de **$10,000 virtuales**. Puedes habilitar indicadores técnicos como **SMA**, **EMA** o **RSI** para guiar tus decisiones. Recuerda colocar siempre órdenes con **Stop Loss** para proteger tu capital de pérdidas excesivas y **Take Profit** para cerrar la operación en ganancia automáticamente.
+          </p>
+        </div>
+
+        <div class="sim-layout">
+          <!-- Live Chart Pane -->
+          <div class="sim-chart-pane">
+            
+            <div class="sim-chart-header">
+              <div class="sim-chart-title">
+                <i data-lucide="activity" class="text-neon" style="color:var(--accent-cyan);"></i>
+                Cotización de Acciones AUTN
+                <span class="ticker-badge" id="sim-live-price">$100.00</span>
+                <span id="sim-price-change" style="font-size:0.8rem; font-family:var(--font-mono); font-weight:600;">+0.00%</span>
+              </div>
+              
+              <!-- Style Selector & Indicator toggles -->
+              <div class="chart-controls-row">
+                <button class="btn-select active" data-style="candle" onclick="setChartStyle('candle')">Vel. Japonesas</button>
+                <button class="btn-select" data-style="bar" onclick="setChartStyle('bar')">Barras</button>
+                <button class="btn-select" data-style="line" onclick="setChartStyle('line')">Línea</button>
+                <button class="btn-select" data-style="heikin" onclick="setChartStyle('heikin')">Heikin Ashi</button>
+                <button class="btn-select" data-style="renko" onclick="setChartStyle('renko')">Renko</button>
+                <button class="btn-select" data-style="pf" onclick="setChartStyle('pf')">P&F</button>
+                
+                <span style="color:var(--border); margin:0 4px;">|</span>
+                
+                <button class="btn-select" id="btn-toggle-sma" onclick="toggleIndicator('sma')">SMA(20)</button>
+                <button class="btn-select" id="btn-toggle-ema" onclick="toggleIndicator('ema')">EMA(9)</button>
+                <button class="btn-select" id="btn-toggle-rsi" onclick="toggleIndicator('rsi')">Oscilador RSI</button>
+              </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="canvas-container" id="chart-canvas-container">
+              <canvas class="sim-canvas" id="main-chart"></canvas>
+              <div class="price-tooltip" id="chart-tooltip"></div>
+            </div>
+
+          </div>
+
+          <!-- Order Execution Panel -->
+          <div class="sim-order-pane">
+            <div class="widget-title" style="margin-bottom:0.5rem; border:none; padding:0;">
+              <i data-lucide="sliders"></i> Gestión de Órdenes
+            </div>
+
+            <!-- Portfolio Metrics -->
+            <div class="sim-metric-row">
+              <div class="sim-metric-card">
+                <div class="sim-metric-label">Balance</div>
+                <div class="sim-metric-val" id="port-balance">$10,000.00</div>
+              </div>
+              <div class="sim-metric-card">
+                <div class="sim-metric-label">Equity (Valor)</div>
+                <div class="sim-metric-val" id="port-equity">$10,000.00</div>
+              </div>
+              <div class="sim-metric-card" style="grid-column: span 2; margin-top: 6px;">
+                <div class="sim-metric-label">PnL Abierto Total</div>
+                <div class="sim-metric-val" id="port-pnl">$0.00</div>
+              </div>
+            </div>
+
+            <!-- Trade form -->
+            <div>
+              <label class="control-label">Dirección</label>
+              <div class="btn-group-row">
+                <button class="toggle-btn active buy" id="order-side-buy" onclick="setOrderSide('BUY')">COMPRAR</button>
+                <button class="toggle-btn sell" id="order-side-sell" onclick="setOrderSide('VENDER')">VENDER</button>
+              </div>
+            </div>
+
+            <div>
+              <label class="control-label">Tipo de Orden</label>
+              <div class="btn-group-row">
+                <button class="toggle-btn active type" id="order-type-mkt" onclick="setOrderType('MKT')">MERCADO</button>
+                <button class="toggle-btn type" id="order-type-lim" onclick="setOrderType('LIMIT')">LÍMITE</button>
+              </div>
+            </div>
+
+            <!-- Limit Price Field -->
+            <div id="limit-price-group" style="display:none;">
+              <label class="control-label" for="order-limit-price">Precio Límite ($)</label>
+              <input type="number" id="order-limit-price" class="input-field" value="100.00" step="0.05">
+            </div>
+
+            <div>
+              <label class="control-label" for="order-size">Tamaño (Contratos / Acciones)</label>
+              <div class="input-container">
+                <input type="number" id="order-size" class="input-field" value="10" min="1" max="1000">
+                <span class="input-suffix">u</span>
+              </div>
+            </div>
+
+            <!-- Risk Management Toggles -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div>
+                <label class="control-label" for="order-sl">Stop Loss (SL) ($)</label>
+                <input type="number" id="order-sl" class="input-field" value="95.00" step="0.1">
+              </div>
+              <div>
+                <label class="control-label" for="order-tp">Take Profit (TP) ($)</label>
+                <input type="number" id="order-tp" class="input-field" value="110.00" step="0.1">
+              </div>
+            </div>
+
+            <button class="execute-order-btn" onclick="executeOrder()">
+              <i data-lucide="zap"></i> Enviar Orden
+            </button>
+
+          </div>
+        </div>
+
+        <!-- Open Positions Section -->
+        <div class="positions-pane">
+          <div class="pane-header">
+            <div class="pane-title"><i data-lucide="folder-open"></i> Posiciones Abiertas</div>
+            <div class="pane-badge" id="open-positions-count">0 posiciones</div>
+          </div>
+          <div class="table-container">
+            <table class="table-sim">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Tipo</th>
+                  <th>Tamaño</th>
+                  <th>P. Entrada</th>
+                  <th>P. Actual</th>
+                  <th>Stop Loss</th>
+                  <th>Take Profit</th>
+                  <th>PnL Abierto</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="open-positions-list">
+                <!-- Executing positions list here -->
+              </tbody>
+            </table>
+            <div class="no-trades-msg" id="no-positions-msg">No hay posiciones activas en este momento.</div>
+          </div>
+        </div>
+
+        <!-- History Log Section -->
+        <div class="positions-pane">
+          <div class="pane-header">
+            <div class="pane-title"><i data-lucide="history"></i> Historial de Operaciones Cerradas</div>
+            <div class="pane-badge" id="closed-trades-count">0 cerradas</div>
+          </div>
+          <div class="table-container">
+            <table class="table-sim">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Tipo</th>
+                  <th>Tamaño</th>
+                  <th>P. Entrada</th>
+                  <th>P. Salida</th>
+                  <th>PnL Realizado</th>
+                  <th>Fecha/Hora</th>
+                </tr>
+              </thead>
+              <tbody id="closed-trades-list">
+                <!-- Closed trades printed here -->
+              </tbody>
+            </table>
+            <div class="no-trades-msg" id="no-history-msg">Aún no has cerrado ninguna operación.</div>
+          </div>
+        </div>
+
+        <!-- Reading & Quiz Panel Grid -->
+        <div class="module-grid" style="margin-top:2rem;">
+          <div class="module-left">
+            <div class="learning-section">
+              <h2><i data-lucide="award"></i> Módulo 4: Gestión de Riesgo y Operaciones</h2>
+              <p>
+                La **Gestión del Riesgo** es el único factor común entre todos los traders rentables en el largo plazo. Nadie puede predecir el futuro con 100% de exactitud; por lo tanto, el trading es un juego de probabilidades estadísticas.
+              </p>
+              
+              <h3>Conceptos de Supervivencia Financiera</h3>
+              <p>
+                Antes de arriesgar dinero real, debes memorizar estas leyes:
+              </p>
+              
+              <div class="definition-box">
+                <div class="definition-term">Stop Loss (Freno de Pérdidas)</div>
+                <div class="definition-desc">La orden de salida incondicional colocada para cerrar la posición en una pequeña pérdida si el mercado se mueve en contra. Define el "Riesgo de la Posición".</div>
+              </div>
+
+              <div class="definition-box">
+                <div class="definition-term">Take Profit (Toma de Ganancias)</div>
+                <div class="definition-desc">La orden que cierra la posición automáticamente al alcanzar un objetivo de ganancias establecido previamente.</div>
+              </div>
+
+              <div class="definition-box">
+                <div class="definition-term">Relación Riesgo-Beneficio (Risk-to-Reward Ratio)</div>
+                <div class="definition-desc">La proporción entre la pérdida potencial y el beneficio potencial (ej. 1:2 o 1:3). Si arriesgas $10 para ganar $30, tienes un ratio 1:3. Con este ratio, solo necesitas ganar el 30% de tus operaciones para ser rentable globalmente.</div>
+              </div>
+
+              <div class="read-confirmation">
+                <input type="checkbox" id="read-mod4" class="read-checkbox" onchange="toggleReadCheck('mod4')">
+                <label for="read-mod4" class="read-label">He operado en el simulador y comprendido el control de riesgo</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="module-right">
+            <div class="quiz-panel" id="quiz-mod4">
+              <div class="quiz-title">
+                <i data-lucide="check-square"></i> Evaluación Módulo 4
+              </div>
+              
+              <div class="quiz-question" data-qid="q4_1">
+                <div class="q-text">1. Si abro un trade arriesgando $100 con un objetivo de ganar $300, ¿cuál es mi relación Riesgo-Beneficio?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_1')">A) Relación 1:1.</button>
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q4_1')">B) Relación 1:3.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_1')">C) Relación 3:1.</button>
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="q4_2">
+                <div class="q-text">2. ¿Cuál es el principal propósito de colocar una orden Stop Loss?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_2')">A) Bloquear el sistema para evitar que el broker gane dinero.</button>
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q4_2')">B) Limitar la pérdida máxima en caso de que el mercado se mueva en nuestra contra.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_2')">C) Garantizar que cobremos una ganancia fija al final del día.</button>
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="q4_3">
+                <div class="q-text">3. Si tu cuenta de trading sufre un "margin call", ¿qué significa?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q4_3')">A) Que tu margen libre ha caído por debajo del límite mínimo y el broker cerrará tus posiciones abiertas.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_3')">B) Que has duplicado tu capital y has calificado para un bono.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_3')">C) Que el broker te ofrece un crédito sin intereses para seguir operando.</button>
+                </div>
+              </div>
+
+              <div class="quiz-success-msg" id="msg-quiz-mod4">
+                ¡Brillante! Has culminado de forma satisfactoria todos los cuestionarios teóricos de la academia.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-actions">
+          <button class="action-btn" onclick="switchTab('tab-module3')"><i data-lucide="arrow-left"></i> Mod 3</button>
+          <button class="action-btn primary" onclick="switchTab('tab-dashboard')">Finalizar Curso <i data-lucide="check-circle"></i></button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // State management
+    const appState = {
+      // Progress trackers
+      progressCheckpoints: {
+        read_mod1: false,
+        read_mod2: false,
+        read_mod3: false,
+        read_mod4: false,
+        quiz_mod1: false,
+        quiz_mod2: false,
+        quiz_mod3: false,
+        quiz_mod4: false,
+        sim_trade: false
+      },
+      currentTab: 'tab-dashboard',
+      
+      // Simulator variables
+      portfolio: {
+        balance: 10000.00,
+        equity: 10000.00,
+        margin: 0.00,
+        pnl: 0.00
+      },
+      currentPrice: 100.00,
+      priceHistory: [],
+      renkoHistory: [],
+      pfColumns: [],
+      chartStyle: 'candle', // candle, bar, line, heikin, renko, pf
+      indicators: {
+        sma: false,
+        ema: false,
+        rsi: false
+      },
+      openPositions: [],
+      closedTrades: [],
+      orderSide: 'BUY',
+      orderType: 'MKT',
+      tradeCounter: 0
+    };
+
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Load initial states from LocalStorage
+    function loadSavedState() {
+      const savedProgress = localStorage.getItem('bt_course_progress');
+      if (savedProgress) {
+        Object.assign(appState.progressCheckpoints, JSON.parse(savedProgress));
+        // Check local checkboxes
+        for (const key in appState.progressCheckpoints) {
+          if (key.startsWith('read_')) {
+            const checkbox = document.getElementById('read-' + key.replace('read_', ''));
+            if (checkbox) checkbox.checked = appState.progressCheckpoints[key];
+          }
+        }
+      }
+      
+      // Load simulator history if saved
+      const savedBalance = localStorage.getItem('bt_sim_balance');
+      if (savedBalance) appState.portfolio.balance = parseFloat(savedBalance);
+      
+      const savedHistory = localStorage.getItem('bt_sim_history');
+      if (savedHistory) {
+        appState.closedTrades = JSON.parse(savedHistory);
+        updateHistoryTable();
+      }
+
+      updateProgressUI();
+    }
+
+    function saveState() {
+      localStorage.setItem('bt_course_progress', JSON.stringify(appState.progressCheckpoints));
+      localStorage.setItem('bt_sim_balance', appState.portfolio.balance.toString());
+      localStorage.setItem('bt_sim_history', JSON.stringify(appState.closedTrades));
+    }
+
+    // Toggle Tab view
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+      const activeTab = document.getElementById(tabId);
+      if (activeTab) activeTab.classList.add('active');
+
+      document.querySelectorAll('.nav-item').forEach(el => {
+        el.classList.remove('active');
+        if (el.getAttribute('data-tab') === tabId) {
+          el.classList.add('active');
+        }
+      });
+
+      appState.currentTab = tabId;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Resize simulator canvas if switching to module 4
+      if (tabId === 'tab-module4') {
+        setTimeout(initSimulatorCanvas, 100);
+      }
+
+      // Render mini visual charts if switching to module 2
+      if (tabId === 'tab-module2') {
+        setTimeout(initMiniCharts, 100);
+      }
+    }
+
+    // Draw mini visual charts in Module 2 cards
+    function initMiniCharts() {
+      const miniData = [
+        { open: 10, high: 12, low: 9, close: 11 },
+        { open: 11, high: 14, low: 10, close: 13 },
+        { open: 13, high: 13, low: 11, close: 12 },
+        { open: 12, high: 15, low: 12, close: 14 },
+        { open: 14, high: 16, low: 13, close: 15 },
+        { open: 15, high: 15, low: 12, close: 13 },
+        { open: 13, high: 14, low: 11, close: 12 },
+        { open: 12, high: 13, low: 9, close: 10 },
+        { open: 10, high: 12, low: 10, close: 11 },
+        { open: 11, high: 14, low: 11, close: 13 },
+        { open: 13, high: 16, low: 12, close: 15 },
+        { open: 15, high: 17, low: 14, close: 16 }
+      ];
+
+      const isLight = document.documentElement.classList.contains('light');
+      
+      const upStroke = '#10b981';
+      const upFill = 'rgba(16, 185, 129, 0.4)';
+      const downStroke = '#ef4444';
+      const downFill = 'rgba(239, 68, 68, 0.4)';
+      const lineStroke = '#00f0ff';
+      const lineFill = 'rgba(0, 240, 255, 0.05)';
+
+      const charts = ['line', 'bar', 'candle', 'heikin', 'renko', 'pf'];
+
+      charts.forEach(type => {
+        const canvas = document.getElementById('mini-chart-' + type);
+        if (!canvas) return;
+
+        // adjust size
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+
+        // clear bg
+        ctx.fillStyle = isLight ? '#f9fafb' : '#020509';
+        ctx.fillRect(0, 0, w, h);
+
+        let activeData = miniData;
+
+        // Process Heikin Ashi specifically
+        if (type === 'heikin') {
+          const ha = [];
+          let prevOpen = null;
+          let prevClose = null;
+          miniData.forEach(bar => {
+            const haClose = (bar.open + bar.high + bar.low + bar.close) / 4;
+            const haOpen = prevOpen === null ? (bar.open + bar.close) / 2 : (prevOpen + prevClose) / 2;
+            const haHigh = Math.max(bar.high, haOpen, haClose);
+            const haLow = Math.min(bar.low, haOpen, haClose);
+            ha.push({ open: haOpen, high: haHigh, low: haLow, close: haClose });
+            prevOpen = haOpen;
+            prevClose = haClose;
+          });
+          activeData = ha;
+        }
+
+        // Process Renko specifically
+        let renkoBricks = [];
+        if (type === 'renko') {
+          let prevPrice = 10;
+          const boxSize = 1;
+          miniData.forEach(bar => {
+            const diff = bar.close - prevPrice;
+            const numBricks = Math.floor(Math.abs(diff) / boxSize);
+            if (numBricks > 0) {
+              const dir = diff > 0 ? 'UP' : 'DOWN';
+              for (let b = 0; b < numBricks; b++) {
+                const open = prevPrice;
+                const close = prevPrice + (dir === 'UP' ? boxSize : -boxSize);
+                renkoBricks.push({ type: dir, open, close, high: Math.max(open, close), low: Math.min(open, close) });
+                prevPrice = close;
+              }
+            }
+          });
+          activeData = renkoBricks;
+        }
+
+        // Process P&F columns specifically
+        let pfCols = [];
+        if (type === 'pf') {
+          pfCols = [
+            { type: 'X', boxes: [9, 10, 11, 12, 13] },
+            { type: 'O', boxes: [12, 11, 10] },
+            { type: 'X', boxes: [11, 12, 13, 14, 15] },
+            { type: 'O', boxes: [14, 13, 12] }
+          ];
+          activeData = pfCols;
+        }
+
+        // calculate bounds
+        let max = -Infinity;
+        let min = Infinity;
+        if (type === 'pf') {
+          pfCols.forEach(col => {
+            col.boxes.forEach(val => {
+              if (val > max) max = val;
+              if (val < min) min = val;
+            });
+          });
+        } else {
+          activeData.forEach(bar => {
+            if (bar.high > max) max = bar.high;
+            if (bar.low < min) min = bar.low;
+          });
+        }
+        
+        max += 0.5;
+        min -= 0.5;
+
+        function getMiniY(price) {
+          return h - 10 - ((price - min) / (max - min)) * (h - 20);
+        }
+
+        const count = activeData.length;
+        const step = (w - 20) / count;
+        const barW = Math.max(2, Math.floor((w - 20) / count) - 2);
+
+        // draw
+        if (type === 'line') {
+          ctx.strokeStyle = lineStroke;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          activeData.forEach((bar, idx) => {
+            const x = 10 + idx * step + barW / 2;
+            const y = getMiniY(bar.close);
+            if (idx === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          });
+          ctx.stroke();
+          
+          // fill shadow
+          ctx.lineTo(10 + (count - 1) * step + barW / 2, h);
+          ctx.lineTo(10 + barW / 2, h);
+          ctx.fillStyle = lineFill;
+          ctx.closePath();
+          ctx.fill();
+        } else if (type === 'bar') {
+          ctx.lineWidth = 2;
+          activeData.forEach((bar, idx) => {
+            const x = 10 + idx * step;
+            const yOpen = getMiniY(bar.open);
+            const yHigh = getMiniY(bar.high);
+            const yLow = getMiniY(bar.low);
+            const yClose = getMiniY(bar.close);
+            const isBull = bar.close >= bar.open;
+
+            ctx.strokeStyle = isBull ? '#10b981' : '#ef4444';
+            ctx.beginPath();
+            ctx.moveTo(x + barW / 2, yHigh);
+            ctx.lineTo(x + barW / 2, yLow);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(x, yOpen);
+            ctx.lineTo(x + barW / 2, yOpen);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(x + barW / 2, yClose);
+            ctx.lineTo(x + barW, yClose);
+            ctx.stroke();
+          });
+        } else if (type === 'candle' || type === 'heikin') {
+          ctx.lineWidth = 1.5;
+          activeData.forEach((bar, idx) => {
+            const x = 10 + idx * step;
+            const yOpen = getMiniY(bar.open);
+            const yHigh = getMiniY(bar.high);
+            const yLow = getMiniY(bar.low);
+            const yClose = getMiniY(bar.close);
+            const isBull = bar.close >= bar.open;
+
+            ctx.strokeStyle = isBull ? '#10b981' : '#ef4444';
+            ctx.fillStyle = isBull ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)';
+
+            ctx.beginPath();
+            ctx.moveTo(x + barW / 2, yHigh);
+            ctx.lineTo(x + barW / 2, yLow);
+            ctx.stroke();
+
+            const bodyY = Math.min(yOpen, yClose);
+            const bodyH = Math.max(2, Math.abs(yOpen - yClose));
+            ctx.fillRect(x, bodyY, barW, bodyH);
+            ctx.strokeRect(x, bodyY, barW, bodyH);
+          });
+        } else if (type === 'renko') {
+          ctx.lineWidth = 1;
+          activeData.forEach((brick, idx) => {
+            const x = 10 + idx * step;
+            const yOpen = getMiniY(brick.open);
+            const yClose = getMiniY(brick.close);
+            
+            ctx.strokeStyle = brick.type === 'UP' ? '#10b981' : '#ef4444';
+            ctx.fillStyle = brick.type === 'UP' ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)';
+
+            const boxY = Math.min(yOpen, yClose);
+            const boxH = Math.max(1, Math.abs(yOpen - yClose));
+            ctx.fillRect(x, boxY, barW, boxH);
+            ctx.strokeRect(x, boxY, barW, boxH);
+          });
+        } else if (type === 'pf') {
+          activeData.forEach((col, idx) => {
+            const x = 10 + idx * step + step / 2;
+            ctx.textAlign = 'center';
+            ctx.font = '8px Space Grotesk';
+            ctx.fillStyle = col.type === 'X' ? '#10b981' : '#ef4444';
+
+            col.boxes.forEach(val => {
+              const y = getMiniY(val);
+              ctx.fillText(col.type, x, y + 3);
+            });
+          });
+        }
+      });
+    }
+
+    // Theme Selector Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.documentElement.classList.toggle('light');
+      localStorage.setItem('preferredTheme', isLight ? 'light' : 'dark');
+      
+      const iconSun = document.getElementById('theme-icon-sun');
+      const iconMoon = document.getElementById('theme-icon-moon');
+      
+      if (isLight) {
+        iconSun.style.display = 'block';
+        iconMoon.style.display = 'none';
+      } else {
+        iconSun.style.display = 'none';
+        iconMoon.style.display = 'block';
+      }
+      
+      // Re-trigger icon updates
+      lucide.createIcons();
+      // Redraw canvas if active
+      if (appState.currentTab === 'tab-module4') drawChart();
+      if (appState.currentTab === 'tab-module2') initMiniCharts();
+    });
+
+    // Handle initial Theme icons properly on startup
+    window.addEventListener('DOMContentLoaded', () => {
+      // Bind sidebar click events to tab switching
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+          switchTab(item.getAttribute('data-tab'));
+          // Close sidebar on mobile if open
+          const sidebar = document.getElementById('sidebar');
+          if (sidebar && sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+          }
+        });
+      });
+
+      const theme = localStorage.getItem('preferredTheme') || 'dark';
+      const iconSun = document.getElementById('theme-icon-sun');
+      const iconMoon = document.getElementById('theme-icon-moon');
+      if (theme === 'light') {
+        iconSun.style.display = 'block';
+        iconMoon.style.display = 'none';
+      } else {
+        iconSun.style.display = 'none';
+        iconMoon.style.display = 'block';
+      }
+      loadSavedState();
+    });
+
+    // Mobile Sidebar toggle
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebar = document.getElementById('sidebar');
+    sidebarToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
+
+    // Confirm Read checkbox listeners
+    function toggleReadCheck(moduleId) {
+      const checkbox = document.getElementById('read-' + moduleId);
+      appState.progressCheckpoints['read_' + moduleId] = checkbox.checked;
+      
+      // Mark dashboard status completed
+      const statusLabel = document.getElementById('status-' + moduleId);
+      if (statusLabel) {
+        if (checkbox.checked) {
+          statusLabel.innerHTML = '<i data-lucide="check-circle" class="completed"></i> Completado';
+          statusLabel.classList.add('completed');
+        } else {
+          statusLabel.innerHTML = '<i data-lucide="circle"></i> Pendiente';
+          statusLabel.classList.remove('completed');
+        }
+        lucide.createIcons();
+      }
+
+      saveState();
+      updateProgressUI();
+    }
+
+    // Checking Quiz Solutions
+    function checkAnswer(btn, isCorrect, qid) {
+      const parent = btn.parentElement;
+      const options = parent.querySelectorAll('.q-option');
+      
+      // Clear previous classes
+      options.forEach(opt => opt.classList.remove('correct', 'incorrect'));
+      
+      if (isCorrect) {
+        btn.classList.add('correct');
+      } else {
+        btn.classList.add('incorrect');
+        // highlight correct answer in parallel
+        const optionsList = Array.from(options);
+        // Find correct button based on click handlers
+        const correctBtn = optionsList.find(opt => opt.getAttribute('onclick').includes('true'));
+        if (correctBtn) correctBtn.classList.add('correct');
+      }
+
+      // Check if all questions in this quiz are answered correctly
+      const quizPanel = parent.closest('.quiz-panel');
+      const allQuestions = quizPanel.querySelectorAll('.quiz-question');
+      let allPassed = true;
+      
+      allQuestions.forEach(q => {
+        const hasCorrectSelected = q.querySelector('.q-option.correct');
+        if (!hasCorrectSelected) allPassed = false;
+      });
+
+      if (allPassed) {
+        const quizId = quizPanel.id.replace('quiz-', '');
+        appState.progressCheckpoints['quiz_' + quizId] = true;
+        
+        const successMsg = quizPanel.querySelector('.quiz-success-msg');
+        if (successMsg) successMsg.style.display = 'block';
+        
+        saveState();
+        updateProgressUI();
+      }
+    }
+
+    // Progress calculations
+    function updateProgressUI() {
+      const checkpoints = Object.values(appState.progressCheckpoints);
+      const completedCount = checkpoints.filter(c => c === true).length;
+      const totalCount = checkpoints.length;
+      const progressPercent = Math.round((completedCount / totalCount) * 100);
+
+      // Circle parameters (r=45, C=283)
+      const circle = document.getElementById('course-progress-circle');
+      if (circle) {
+        const offset = 283 - (progressPercent / 100) * 283;
+        circle.style.strokeDashoffset = offset;
+      }
+      
+      const pctLabel = document.getElementById('course-progress-pct');
+      if (pctLabel) pctLabel.innerText = progressPercent + '%';
+
+      const detailsLabel = document.getElementById('course-progress-details');
+      if (detailsLabel) detailsLabel.innerText = `${completedCount} de ${totalCount} completados`;
+
+      // Check for certificate unlock
+      const certBox = document.getElementById('certificate-box');
+      if (certBox) {
+        if (progressPercent === 100) {
+          certBox.classList.add('unlocked');
+        } else {
+          certBox.classList.remove('unlocked');
+        }
+      }
+    }
+
+    // SIMULATOR REAL-TIME PRICING ENGINE
+    // Generate initial price history of 60 periods to draw the chart immediately
+    function initPriceHistory() {
+      let prevPrice = 100.00;
+      for (let i = 0; i < 60; i++) {
+        const change = (Math.random() - 0.495) * 0.8; // small positive drift
+        const open = prevPrice;
+        const close = prevPrice + change;
+        const high = Math.max(open, close) + Math.random() * 0.4;
+        const low = Math.min(open, close) - Math.random() * 0.4;
+        appState.priceHistory.push({ open, high, low, close });
+        prevPrice = close;
+      }
+      appState.currentPrice = prevPrice;
+    }
+    initPriceHistory();
+
+    // Simulated tick updater interval
+    setInterval(() => {
+      const drift = (appState.currentPrice < 90) ? 0.05 : (appState.currentPrice > 110) ? -0.05 : 0;
+      const tickChange = (Math.random() - 0.49 + drift) * 0.3; // standard stock oscillation
+      const lastPrice = appState.currentPrice;
+      appState.currentPrice = Math.max(5.00, parseFloat((lastPrice + tickChange).toFixed(2)));
+
+      // Live header pricing elements
+      const priceLabel = document.getElementById('sim-live-price');
+      const pctChangeLabel = document.getElementById('sim-price-change');
+      if (priceLabel) priceLabel.innerText = `$${appState.currentPrice.toFixed(2)}`;
+      
+      const startPrice = 100.00;
+      const pctDiff = ((appState.currentPrice - startPrice) / startPrice) * 100;
+      if (pctChangeLabel) {
+        pctChangeLabel.innerText = `${pctDiff >= 0 ? '+' : ''}${pctDiff.toFixed(2)}%`;
+        pctChangeLabel.style.color = pctDiff >= 0 ? 'var(--accent-green-neon)' : 'var(--accent-red-neon)';
+      }
+
+      // Update current active candle in the priceHistory array
+      const currentCandle = appState.priceHistory[appState.priceHistory.length - 1];
+      currentCandle.close = appState.currentPrice;
+      if (appState.currentPrice > currentCandle.high) currentCandle.high = appState.currentPrice;
+      if (appState.currentPrice < currentCandle.low) currentCandle.low = appState.currentPrice;
+
+      // Tick limit orders & open positions live calculations
+      processLimitOrders();
+      updateOpenPositions();
+
+      // Redraw Canvas Chart
+      if (appState.currentTab === 'tab-module4') {
+        drawChart();
+      }
+    }, 1000);
+
+    // Period bar closure interval (every 10 ticks/seconds, close current candle and open a new one)
+    setInterval(() => {
+      const lastClose = appState.currentPrice;
+      appState.priceHistory.push({
+        open: lastClose,
+        high: lastClose,
+        low: lastClose,
+        close: lastClose
+      });
+      // limit array size to avoid overflow
+      if (appState.priceHistory.length > 150) {
+        appState.priceHistory.shift();
+      }
+    }, 10000);
+
+    // CANVAS DRAWING LOGIC
+    let mainCanvas = null;
+    let mainCtx = null;
+
+    function initSimulatorCanvas() {
+      const container = document.getElementById('chart-canvas-container');
+      mainCanvas = document.getElementById('main-chart');
+      mainCtx = mainCanvas.getContext('2d');
+      
+      // Match canvas coordinate system resolution to display size
+      mainCanvas.width = container.clientWidth;
+      mainCanvas.height = container.clientHeight;
+
+      // Mousemove tooltip events
+      mainCanvas.addEventListener('mousemove', showCanvasTooltip);
+      mainCanvas.addEventListener('mouseout', hideCanvasTooltip);
+
+      drawChart();
+    }
+
+    // Chart style state
+    function setChartStyle(style) {
+      appState.chartStyle = style;
+      document.querySelectorAll('.chart-controls-row button[data-style]').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-style') === style) btn.classList.add('active');
+      });
+      drawChart();
+    }
+
+    // Technical indicator overlays
+    function toggleIndicator(indicator) {
+      appState.indicators[indicator] = !appState.indicators[indicator];
+      const btn = document.getElementById('btn-toggle-' + indicator);
+      if (btn) {
+        btn.classList.toggle('active', appState.indicators[indicator]);
+      }
+      drawChart();
+    }
+
+    // Helper functions for math calculations
+    function calculateSMA(data, period) {
+      const sma = [];
+      for (let i = 0; i < data.length; i++) {
+        if (i < period - 1) {
+          sma.push(null);
+        } else {
+          let sum = 0;
+          for (let j = 0; j < period; j++) {
+            sum += data[i - j].close;
+          }
+          sma.push(sum / period);
+        }
+      }
+      return sma;
+    }
+
+    function calculateEMA(data, period) {
+      const ema = [];
+      const k = 2 / (period + 1);
+      let prevEma = null;
+      for (let i = 0; i < data.length; i++) {
+        if (i < period - 1) {
+          ema.push(null);
+        } else if (i === period - 1) {
+          // simple start average
+          let sum = 0;
+          for (let j = 0; j < period; j++) {
+            sum += data[i - j].close;
+          }
+          prevEma = sum / period;
+          ema.push(prevEma);
+        } else {
+          const curEma = data[i].close * k + prevEma * (1 - k);
+          ema.push(curEma);
+          prevEma = curEma;
+        }
+      }
+      return ema;
+    }
+
+    function calculateRSI(data, period = 14) {
+      const rsi = [];
+      let gains = [];
+      let losses = [];
+      
+      // Calculate changes
+      for (let i = 1; i < data.length; i++) {
+        const diff = data[i].close - data[i - 1].close;
+        gains.push(diff > 0 ? diff : 0);
+        losses.push(diff < 0 ? -diff : 0);
+      }
+
+      // Initial averages
+      let avgGain = 0;
+      let avgLoss = 0;
+      for (let i = 0; i < period; i++) {
+        avgGain += gains[i] || 0;
+        avgLoss += losses[i] || 0;
+      }
+      avgGain /= period;
+      avgLoss /= period;
+
+      for (let i = 0; i < data.length; i++) {
+        if (i < period) {
+          rsi.push(null);
+        } else {
+          const idx = i - 1;
+          const currentGain = gains[idx] || 0;
+          const currentLoss = losses[idx] || 0;
+          
+          avgGain = (avgGain * (period - 1) + currentGain) / period;
+          avgLoss = (avgLoss * (period - 1) + currentLoss) / period;
+
+          if (avgLoss === 0) {
+            rsi.push(100);
+          } else {
+            const rs = avgGain / avgLoss;
+            rsi.push(100 - 100 / (1 + rs));
+          }
+        }
+      }
+      return rsi;
+    }
+
+    // DRAW CHART ENGINE
+    function drawChart() {
+      if (!mainCanvas || !mainCtx) return;
+
+      const width = mainCanvas.width;
+      const height = mainCanvas.height;
+      
+      // Clear background
+      const styleTheme = window.getComputedStyle(document.documentElement);
+      const canvasBg = styleTheme.getPropertyValue('--bg-darker').trim() || '#06090f';
+      const isLightMode = document.documentElement.classList.contains('light');
+
+      mainCtx.fillStyle = canvasBg;
+      mainCtx.fillRect(0, 0, width, height);
+
+      // Establish drawing panels. If RSI is enabled, split chart 80% main, 20% RSI oscillator
+      const rsiEnabled = appState.indicators.rsi;
+      const splitHeight = rsiEnabled ? height * 0.75 : height - 25;
+      const rsiHeight = height - splitHeight - 25;
+
+      // Select data history based on style
+      let data = appState.priceHistory;
+      if (appState.chartStyle === 'heikin') {
+        // Compute Heikin Ashi values
+        const ha = [];
+        let prevOpen = null;
+        let prevClose = null;
+        
+        data.forEach((bar) => {
+          const haClose = (bar.open + bar.high + bar.low + bar.close) / 4;
+          const haOpen = prevOpen === null ? (bar.open + bar.close) / 2 : (prevOpen + prevClose) / 2;
+          const haHigh = Math.max(bar.high, haOpen, haClose);
+          const haLow = Math.min(bar.low, haOpen, haClose);
+          
+          ha.push({ open: haOpen, high: haHigh, low: haLow, close: haClose });
+          prevOpen = haOpen;
+          prevClose = haClose;
+        });
+        data = ha;
+      }
+
+      // 1. Calculations: find Min/Max price for scaling
+      let maxVal = -Infinity;
+      let minVal = Infinity;
+      
+      if (appState.chartStyle === 'renko') {
+        // Build Renko bricks
+        const bricks = [];
+        const boxSize = 1.00;
+        let prevBoxPrice = 100.00;
+        
+        appState.priceHistory.forEach((bar) => {
+          const diff = bar.close - prevBoxPrice;
+          const numBricks = Math.floor(Math.abs(diff) / boxSize);
+          if (numBricks > 0) {
+            const dir = diff > 0 ? 'UP' : 'DOWN';
+            for (let b = 0; b < numBricks; b++) {
+              const open = prevBoxPrice;
+              const close = prevBoxPrice + (dir === 'UP' ? boxSize : -boxSize);
+              bricks.push({ type: dir, open, close, high: Math.max(open, close), low: Math.min(open, close) });
+              prevBoxPrice = close;
+            }
+          }
+        });
+        
+        data = bricks.slice(-50); // limit to fit screen
+        data.forEach(b => {
+          if (b.high > maxVal) maxVal = b.high;
+          if (b.low < minVal) minVal = b.low;
+        });
+      } else if (appState.chartStyle === 'pf') {
+        // Point and Figure simple columns engine
+        const boxSize = 1.00;
+        const reversal = 3.00; // 3 box reversal
+        const columns = []; // { type: 'X'|'O', boxes: [prices] }
+        let currentType = null;
+        let columnPrices = [];
+        let prevPrice = 100.00;
+
+        appState.priceHistory.forEach((bar) => {
+          const price = bar.close;
+          const diff = price - prevPrice;
+
+          if (currentType === null) {
+            currentType = diff >= 0 ? 'X' : 'O';
+            columnPrices.push(prevPrice);
+          }
+
+          if (currentType === 'X') {
+            if (price >= prevPrice + boxSize) {
+              const boxes = Math.floor((price - prevPrice) / boxSize);
+              for (let k = 1; k <= boxes; k++) {
+                columnPrices.push(prevPrice + k * boxSize);
+              }
+              prevPrice = prevPrice + boxes * boxSize;
+            } else if (price <= prevPrice - reversal) {
+              // reversal
+              columns.push({ type: 'X', boxes: [...columnPrices] });
+              currentType = 'O';
+              columnPrices = [];
+              const boxes = Math.floor((prevPrice - price) / boxSize);
+              for (let k = 1; k <= boxes; k++) {
+                columnPrices.push(prevPrice - k * boxSize);
+              }
+              prevPrice = prevPrice - boxes * boxSize;
+            }
+          } else { // Current O
+            if (price <= prevPrice - boxSize) {
+              const boxes = Math.floor((prevPrice - price) / boxSize);
+              for (let k = 1; k <= boxes; k++) {
+                columnPrices.push(prevPrice - k * boxSize);
+              }
+              prevPrice = prevPrice - boxes * boxSize;
+            } else if (price >= prevPrice + reversal) {
+              // reversal
+              columns.push({ type: 'O', boxes: [...columnPrices] });
+              currentType = 'X';
+              columnPrices = [];
+              const boxes = Math.floor((price - prevPrice) / boxSize);
+              for (let k = 1; k <= boxes; k++) {
+                columnPrices.push(prevPrice + k * boxSize);
+              }
+              prevPrice = prevPrice + boxes * boxSize;
+            }
+          }
+        });
+        
+        if (columnPrices.length > 0) {
+          columns.push({ type: currentType, boxes: columnPrices });
+        }
+
+        const visibleCols = columns.slice(-40);
+        data = visibleCols;
+        
+        visibleCols.forEach(col => {
+          col.boxes.forEach(val => {
+            if (val > maxVal) maxVal = val;
+            if (val < minVal) minVal = val;
+          });
+        });
+      } else {
+        // Standard time series
+        data.forEach(bar => {
+          if (bar.high > maxVal) maxVal = bar.high;
+          if (bar.low < minVal) minVal = bar.low;
+        });
+      }
+
+      // Prevent division by zero
+      if (maxVal === minVal) {
+        maxVal += 1.0;
+        minVal -= 1.0;
+      }
+      
+      // Add padding to margins
+      const pad = (maxVal - minVal) * 0.08;
+      maxVal += pad;
+      minVal -= pad;
+
+      // Coordinate converter helper
+      function getY(price) {
+        return splitHeight - 20 - ((price - minVal) / (maxVal - minVal)) * (splitHeight - 40);
+      }
+
+      // Draw Grid Lines (Y-Axis grid)
+      mainCtx.strokeStyle = styleTheme.getPropertyValue('--border').trim() || '#1e293b';
+      mainCtx.lineWidth = 1;
+      mainCtx.fillStyle = styleTheme.getPropertyValue('--text-muted').trim() || '#6b7280';
+      mainCtx.font = '10px Fira Code';
+      mainCtx.textAlign = 'right';
+
+      const numTicks = 6;
+      for (let i = 0; i < numTicks; i++) {
+        const val = minVal + (i * (maxVal - minVal)) / (numTicks - 1);
+        const y = getY(val);
+        mainCtx.beginPath();
+        mainCtx.moveTo(40, y);
+        mainCtx.lineTo(width - 50, y);
+        mainCtx.stroke();
+        
+        // Label Y axis
+        mainCtx.fillText(val.toFixed(2), width - 8, y + 4);
+      }
+
+      // 2. Plotting Candles/Bars/Lines
+      const count = data.length;
+      const chartWidth = width - 90;
+      const barWidth = Math.max(2, Math.floor(chartWidth / count) - 2);
+      const step = chartWidth / count;
+
+      // Plot data loop
+      if (appState.chartStyle === 'pf') {
+        // Render Columns of X and O
+        data.forEach((col, colIdx) => {
+          const x = 50 + colIdx * step + step / 2;
+          mainCtx.textAlign = 'center';
+          mainCtx.font = '12px Space Grotesk';
+          
+          if (col.type === 'X') {
+            mainCtx.fillStyle = '#10b981'; // Green
+          } else {
+            mainCtx.fillStyle = '#ef4444'; // Red
+          }
+
+          col.boxes.forEach(val => {
+            const y = getY(val);
+            mainCtx.fillText(col.type, x, y + 4);
+          });
+        });
+      } else if (appState.chartStyle === 'renko') {
+        // Draw Renko boxes
+        data.forEach((brick, idx) => {
+          const x = 50 + idx * step;
+          const yOpen = getY(brick.open);
+          const yClose = getY(brick.close);
+          
+          mainCtx.fillStyle = brick.type === 'UP' ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)';
+          mainCtx.strokeStyle = brick.type === 'UP' ? '#10b981' : '#ef4444';
+          mainCtx.lineWidth = 1.5;
+
+          const boxY = Math.min(yOpen, yClose);
+          const boxH = Math.max(1.5, Math.abs(yOpen - yClose));
+          
+          mainCtx.fillRect(x, boxY, barWidth, boxH);
+          mainCtx.strokeRect(x, boxY, barWidth, boxH);
+        });
+      } else {
+        // Standard time series graphics
+        data.forEach((bar, idx) => {
+          const x = 50 + idx * step;
+          const yOpen = getY(bar.open);
+          const yHigh = getY(bar.high);
+          const yLow = getY(bar.low);
+          const yClose = getY(bar.close);
+          
+          const isBull = bar.close >= bar.open;
+          
+          if (appState.chartStyle === 'line') {
+            // Drawn collectively outside loop below
+          } else if (appState.chartStyle === 'bar') {
+            // Draw OHLC Bar
+            mainCtx.strokeStyle = isBull ? '#10b981' : '#ef4444';
+            mainCtx.lineWidth = 2;
+            
+            mainCtx.beginPath();
+            mainCtx.moveTo(x + barWidth / 2, yHigh);
+            mainCtx.lineTo(x + barWidth / 2, yLow);
+            mainCtx.stroke();
+            
+            // Open ticket
+            mainCtx.beginPath();
+            mainCtx.moveTo(x, yOpen);
+            mainCtx.lineTo(x + barWidth / 2, yOpen);
+            mainCtx.stroke();
+
+            // Close ticket
+            mainCtx.beginPath();
+            mainCtx.moveTo(x + barWidth / 2, yClose);
+            mainCtx.lineTo(x + barWidth, yClose);
+            mainCtx.stroke();
+          } else {
+            // Japanese / Heikin Ashi Candlestick
+            mainCtx.strokeStyle = isBull ? '#10b981' : '#ef4444';
+            mainCtx.fillStyle = isBull ? 'rgba(16, 185, 129, 0.45)' : 'rgba(239, 68, 68, 0.45)';
+            mainCtx.lineWidth = 1.5;
+
+            // Wick
+            mainCtx.beginPath();
+            mainCtx.moveTo(x + barWidth / 2, yHigh);
+            mainCtx.lineTo(x + barWidth / 2, yLow);
+            mainCtx.stroke();
+
+            // Body
+            const bodyY = Math.min(yOpen, yClose);
+            const bodyH = Math.max(2, Math.abs(yOpen - yClose));
+            mainCtx.fillRect(x, bodyY, barWidth, bodyH);
+            mainCtx.strokeRect(x, bodyY, barWidth, bodyH);
+          }
+        });
+
+        // Collectively draw Line Chart
+        if (appState.chartStyle === 'line') {
+          mainCtx.strokeStyle = '#00f0ff'; // Cyan
+          mainCtx.lineWidth = 2.5;
+          mainCtx.beginPath();
+          data.forEach((bar, idx) => {
+            const x = 50 + idx * step + barWidth / 2;
+            const y = getY(bar.close);
+            if (idx === 0) {
+              mainCtx.moveTo(x, y);
+            } else {
+              mainCtx.lineTo(x, y);
+            }
+          });
+          mainCtx.stroke();
+          
+          // Shadow Area below line
+          mainCtx.lineTo(50 + (count - 1) * step + barWidth / 2, splitHeight - 20);
+          mainCtx.lineTo(50 + barWidth / 2, splitHeight - 20);
+          mainCtx.fillStyle = 'rgba(0, 240, 255, 0.06)';
+          mainCtx.closePath();
+          mainCtx.fill();
+        }
+      }
+
+      // 3. Technical Indicator Overlays
+      if (appState.indicators.sma && appState.chartStyle !== 'renko' && appState.chartStyle !== 'pf') {
+        const smaValues = calculateSMA(data, 20);
+        mainCtx.strokeStyle = '#f59e0b'; // Amber yellow
+        mainCtx.lineWidth = 1.5;
+        mainCtx.beginPath();
+        smaValues.forEach((val, idx) => {
+          if (val !== null) {
+            const x = 50 + idx * step + barWidth / 2;
+            const y = getY(val);
+            if (smaValues[idx - 1] === null) {
+              mainCtx.moveTo(x, y);
+            } else {
+              mainCtx.lineTo(x, y);
+            }
+          }
+        });
+        mainCtx.stroke();
+      }
+
+      if (appState.indicators.ema && appState.chartStyle !== 'renko' && appState.chartStyle !== 'pf') {
+        const emaValues = calculateEMA(data, 9);
+        mainCtx.strokeStyle = '#8b5cf6'; // Purple
+        mainCtx.lineWidth = 1.5;
+        mainCtx.beginPath();
+        emaValues.forEach((val, idx) => {
+          if (val !== null) {
+            const x = 50 + idx * step + barWidth / 2;
+            const y = getY(val);
+            if (emaValues[idx - 1] === null) {
+              mainCtx.moveTo(x, y);
+            } else {
+              mainCtx.lineTo(x, y);
+            }
+          }
+        });
+        mainCtx.stroke();
+      }
+
+      // 4. Draw Limit / Position / SL / TP Dotted Lines
+      appState.openPositions.forEach(pos => {
+        const yPos = getY(pos.entryPrice);
+        
+        mainCtx.setLineDash([5, 5]);
+        mainCtx.strokeStyle = pos.type === 'BUY' ? 'rgba(57, 255, 20, 0.6)' : 'rgba(255, 51, 102, 0.6)';
+        mainCtx.lineWidth = 1;
+        mainCtx.beginPath();
+        mainCtx.moveTo(50, yPos);
+        mainCtx.lineTo(width - 50, yPos);
+        mainCtx.stroke();
+        mainCtx.setLineDash([]); // reset
+
+        // Label entry price
+        mainCtx.fillStyle = pos.type === 'BUY' ? '#10b981' : '#ef4444';
+        mainCtx.font = '8px Fira Code';
+        mainCtx.fillText(`${pos.type} #${pos.id} @${pos.entryPrice.toFixed(2)}`, width - 55, yPos - 3);
+      });
+
+      // 5. RSI Oscillator Canvas Panel Rendering
+      if (rsiEnabled && appState.chartStyle !== 'renko' && appState.chartStyle !== 'pf') {
+        const rsiValues = calculateRSI(data, 14);
+        const rsiStartY = splitHeight + 15;
+        
+        // Draw RSI frame bg
+        mainCtx.fillStyle = '#020509';
+        mainCtx.fillRect(40, rsiStartY, width - 90, rsiHeight);
+        mainCtx.strokeStyle = styleTheme.getPropertyValue('--border').trim() || '#1e293b';
+        mainCtx.strokeRect(40, rsiStartY, width - 90, rsiHeight);
+
+        // Helper to convert RSI values to Y coordinates
+        function getRsiY(val) {
+          return rsiStartY + rsiHeight - ((val / 100) * rsiHeight);
+        }
+
+        // Draw 30 / 70 Overbought/Oversold lines
+        mainCtx.strokeStyle = 'rgba(239, 68, 68, 0.35)'; // Red limit lines
+        mainCtx.setLineDash([4, 4]);
+        mainCtx.beginPath();
+        mainCtx.moveTo(40, getRsiY(70));
+        mainCtx.lineTo(width - 50, getRsiY(70));
+        mainCtx.moveTo(40, getRsiY(30));
+        mainCtx.lineTo(width - 50, getRsiY(30));
+        mainCtx.stroke();
+        mainCtx.setLineDash([]); // reset
+
+        // Labels
+        mainCtx.fillStyle = '#ef4444';
+        mainCtx.font = '8px Fira Code';
+        mainCtx.fillText("70 OB", width - 8, getRsiY(70) + 3);
+        mainCtx.fillText("30 OS", width - 8, getRsiY(30) + 3);
+
+        // Plot RSI line
+        mainCtx.strokeStyle = '#00f0ff'; // Cyan
+        mainCtx.lineWidth = 1.5;
+        mainCtx.beginPath();
+        rsiValues.forEach((val, idx) => {
+          if (val !== null) {
+            const x = 50 + idx * step + barWidth / 2;
+            const y = getRsiY(val);
+            if (rsiValues[idx - 1] === null) {
+              mainCtx.moveTo(x, y);
+            } else {
+              mainCtx.lineTo(x, y);
+            }
+          }
+        });
+        mainCtx.stroke();
+        
+        // Frame Label
+        mainCtx.fillStyle = styleTheme.getPropertyValue('--text-muted').trim() || '#6b7280';
+        mainCtx.fillText("RSI (14)", width - 8, rsiStartY + 12);
+      }
+    }
+
+    // Canvas tooltip values matching
+    function showCanvasTooltip(e) {
+      if (appState.chartStyle === 'renko' || appState.chartStyle === 'pf') return; // disabled for bricks
+      
+      const rect = mainCanvas.getBoundingClientRect();
+      const xMouse = e.clientX - rect.left;
+      const tooltip = document.getElementById('chart-tooltip');
+
+      const width = mainCanvas.width;
+      const count = appState.priceHistory.length;
+      const chartWidth = width - 90;
+      const step = chartWidth / count;
+
+      // Find nearest index
+      const dataIdx = Math.floor((xMouse - 50) / step);
+      if (dataIdx >= 0 && dataIdx < count) {
+        const bar = appState.priceHistory[dataIdx];
+        tooltip.style.display = 'block';
+        tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+        tooltip.style.top = (e.clientY - rect.top + 15) + 'px';
+        tooltip.innerHTML = `
+          O: $${bar.open.toFixed(2)}<br>
+          H: $${bar.high.toFixed(2)}<br>
+          L: $${bar.low.toFixed(2)}<br>
+          C: $${bar.close.toFixed(2)}
+        `;
+      } else {
+        tooltip.style.display = 'none';
+      }
+    }
+
+    function hideCanvasTooltip() {
+      document.getElementById('chart-tooltip').style.display = 'none';
+    }
+
+
+    // SIMULATOR TRADING LOGIC
+    function setOrderSide(side) {
+      appState.orderSide = side;
+      document.getElementById('order-side-buy').classList.toggle('active', side === 'BUY');
+      document.getElementById('order-side-sell').classList.toggle('active', side === 'SELL');
+    }
+
+    function setOrderType(type) {
+      appState.orderType = type;
+      document.getElementById('order-type-mkt').classList.toggle('active', type === 'MKT');
+      document.getElementById('order-type-lim').classList.toggle('active', type === 'LIMIT');
+      
+      const priceGroup = document.getElementById('limit-price-group');
+      if (priceGroup) priceGroup.style.display = type === 'LIMIT' ? 'block' : 'none';
+    }
+
+    // Submit Simulated Orders
+    function executeOrder() {
+      const sizeInput = document.getElementById('order-size');
+      const size = parseInt(sizeInput.value);
+      if (isNaN(size) || size <= 0) {
+        alert("Introduce una cantidad válida");
+        return;
+      }
+
+      let entryPrice = appState.currentPrice;
+      const type = appState.orderType;
+      
+      // Limit order price
+      if (type === 'LIMIT') {
+        const limitPriceInput = document.getElementById('order-limit-price');
+        entryPrice = parseFloat(limitPriceInput.value);
+        if (isNaN(entryPrice) || entryPrice <= 0) {
+          alert("Introduce un precio límite válido");
+          return;
+        }
+      }
+
+      const slPrice = parseFloat(document.getElementById('order-sl').value);
+      const tpPrice = parseFloat(document.getElementById('order-tp').value);
+
+      // Verify margin capital requirements
+      const requiredMargin = entryPrice * size * 0.1; // 10% Margin required (1:10 Leverage)
+      const freeMargin = appState.portfolio.balance - appState.portfolio.margin;
+
+      if (requiredMargin > freeMargin) {
+        alert("¡Margen insuficiente! Reduce el tamaño del contrato u opera con menos volumen.");
+        return;
+      }
+
+      appState.tradeCounter++;
+
+      const newOrder = {
+        id: appState.tradeCounter,
+        type: appState.orderSide,
+        status: type === 'LIMIT' ? 'LIMIT_PENDING' : 'OPEN',
+        size: size,
+        entryPrice: entryPrice,
+        sl: isNaN(slPrice) ? null : slPrice,
+        tp: isNaN(tpPrice) ? null : tpPrice,
+        pnl: 0.00,
+        margin: requiredMargin
+      };
+
+      if (type === 'LIMIT') {
+        // Place in pendings list
+        appState.openPositions.push(newOrder);
+        alert(`Orden pendiente colocada: LÍMITE ${appState.orderSide} de ${size} u a $${entryPrice.toFixed(2)}`);
+      } else {
+        // Executed instantly at market
+        appState.openPositions.push(newOrder);
+        appState.portfolio.margin += requiredMargin;
+        
+        // Trigger completion checkpoint
+        appState.progressCheckpoints.sim_trade = true;
+        saveState();
+        updateProgressUI();
+      }
+
+      updatePositionsUI();
+      drawChart();
+    }
+
+    // Scan for limit fills
+    function processLimitOrders() {
+      appState.openPositions.forEach(pos => {
+        if (pos.status === 'LIMIT_PENDING') {
+          let trigger = false;
+          if (pos.type === 'BUY' && appState.currentPrice <= pos.entryPrice) {
+            trigger = true;
+          } else if (pos.type === 'SELL' && appState.currentPrice >= pos.entryPrice) {
+            trigger = true;
+          }
+
+          if (trigger) {
+            pos.status = 'OPEN';
+            pos.entryPrice = appState.currentPrice; // fill at current
+            appState.portfolio.margin += pos.margin;
+            
+            // Mark checklist
+            appState.progressCheckpoints.sim_trade = true;
+            saveState();
+            updateProgressUI();
+          }
+        }
+      });
+    }
+
+    // Refresh metrics on ticks
+    function updateOpenPositions() {
+      let totalOpenPnL = 0;
+      const positionsToClose = [];
+      
+      appState.openPositions.forEach(pos => {
+        if (pos.status === 'OPEN') {
+          // Calculate Live PnL
+          if (pos.type === 'BUY') {
+            pos.pnl = (appState.currentPrice - pos.entryPrice) * pos.size;
+          } else {
+            pos.pnl = (pos.entryPrice - appState.currentPrice) * pos.size;
+          }
+          totalOpenPnL += pos.pnl;
+
+          // Check SL / TP levels
+          let exitTrade = false;
+          let exitPrice = 0;
+          
+          if (pos.sl !== null) {
+            if (pos.type === 'BUY' && appState.currentPrice <= pos.sl) {
+              exitTrade = true;
+              exitPrice = pos.sl;
+            } else if (pos.type === 'SELL' && appState.currentPrice >= pos.sl) {
+              exitTrade = true;
+              exitPrice = pos.sl;
+            }
+          }
+
+          if (pos.tp !== null && !exitTrade) {
+            if (pos.type === 'BUY' && appState.currentPrice >= pos.tp) {
+              exitTrade = true;
+              exitPrice = pos.tp;
+            } else if (pos.type === 'SELL' && appState.currentPrice <= pos.tp) {
+              exitTrade = true;
+              exitPrice = pos.tp;
+            }
+          }
+
+          if (exitTrade) {
+            positionsToClose.push({ id: pos.id, price: exitPrice });
+          }
+        }
+      });
+
+      // Close trades safely outside iteration
+      positionsToClose.forEach(item => {
+        closePosition(item.id, item.price);
+      });
+
+      appState.portfolio.pnl = totalOpenPnL;
+      appState.portfolio.equity = appState.portfolio.balance + totalOpenPnL;
+
+      // Check for margin call / account blowup
+      if (appState.portfolio.equity <= 0) {
+        // Force liquidate all
+        alert("¡Margin Call! Su cuenta de margen ha sido liquidada.");
+        forceLiquidateAll();
+      }
+
+      updateMetricsUI();
+      updatePositionsUI();
+    }
+
+    // Force liquidate account
+    function forceLiquidateAll() {
+      appState.openPositions = [];
+      appState.portfolio.margin = 0;
+      appState.portfolio.balance = 100.00; // emergency reset seed
+      appState.portfolio.equity = 100.00;
+      appState.portfolio.pnl = 0.00;
+      saveState();
+      updateMetricsUI();
+      updatePositionsUI();
+    }
+
+    function closePosition(id, exitPrice) {
+      const idx = appState.openPositions.findIndex(pos => pos.id === id);
+      if (idx !== -1) {
+        const pos = appState.openPositions[idx];
+        const finalExit = exitPrice || appState.currentPrice;
+        
+        let finalPnL = 0;
+        if (pos.status === 'OPEN') {
+          if (pos.type === 'BUY') {
+            finalPnL = (finalExit - pos.entryPrice) * pos.size;
+          } else {
+            finalPnL = (pos.entryPrice - finalExit) * pos.size;
+          }
+          
+          // Clear active margin requirements
+          appState.portfolio.margin = Math.max(0, appState.portfolio.margin - pos.margin);
+          appState.portfolio.balance += finalPnL;
+        }
+
+        // Add history log
+        appState.closedTrades.push({
+          id: pos.id,
+          type: pos.type,
+          size: pos.size,
+          entryPrice: pos.entryPrice,
+          exitPrice: finalExit,
+          pnl: finalPnL,
+          time: new Date().toLocaleTimeString()
+        });
+
+        // Remove from active list
+        appState.openPositions.splice(idx, 1);
+
+        saveState();
+        updatePositionsUI();
+        updateHistoryTable();
+        updateMetricsUI();
+        drawChart();
+      }
+    }
+
+    // Refresh User Interfaces
+    function updateMetricsUI() {
+      const balanceEl = document.getElementById('port-balance');
+      const equityEl = document.getElementById('port-equity');
+      const pnlEl = document.getElementById('port-pnl');
+
+      if (balanceEl) balanceEl.innerText = `$${appState.portfolio.balance.toFixed(2)}`;
+      if (equityEl) equityEl.innerText = `$${appState.portfolio.equity.toFixed(2)}`;
+      
+      if (pnlEl) {
+        pnlEl.innerText = `${appState.portfolio.pnl >= 0 ? '+' : ''}$${appState.portfolio.pnl.toFixed(2)}`;
+        pnlEl.className = `sim-metric-val ${appState.portfolio.pnl >= 0 ? 'profit' : 'loss'}`;
+      }
+    }
+
+    function updatePositionsUI() {
+      const openList = document.getElementById('open-positions-list');
+      const countBadge = document.getElementById('open-positions-count');
+      const noPositionsMsg = document.getElementById('no-positions-msg');
+      
+      if (!openList) return;
+
+      openList.innerHTML = '';
+      const activePositions = appState.openPositions;
+      
+      countBadge.innerText = `${activePositions.length} posiciones`;
+      noPositionsMsg.style.display = activePositions.length === 0 ? 'block' : 'none';
+
+      activePositions.forEach(pos => {
+        const tr = document.createElement('tr');
+        const isPending = pos.status === 'LIMIT_PENDING';
+        
+        tr.innerHTML = `
+          <td>#${pos.id}</td>
+          <td class="${pos.type === 'BUY' ? 'text-buy' : 'text-sell'}">${pos.type} ${isPending ? '(Límit)' : ''}</td>
+          <td>${pos.size} u</td>
+          <td>$${pos.entryPrice.toFixed(2)}</td>
+          <td>${isPending ? '-' : '$' + appState.currentPrice.toFixed(2)}</td>
+          <td>${pos.sl ? '$' + pos.sl.toFixed(2) : '-'}</td>
+          <td>${pos.tp ? '$' + pos.tp.toFixed(2) : '-'}</td>
+          <td class="${pos.pnl >= 0 ? 'text-buy' : 'text-sell'}">${isPending ? '-' : '$' + pos.pnl.toFixed(2)}</td>
+          <td>
+            <button class="close-trade-btn" onclick="closePosition(${pos.id})">Cerrar</button>
+          </td>
+        `;
+        openList.appendChild(tr);
+      });
+    }
+
+    function updateHistoryTable() {
+      const historyList = document.getElementById('closed-trades-list');
+      const countBadge = document.getElementById('closed-trades-count');
+      const noHistoryMsg = document.getElementById('no-history-msg');
+
+      if (!historyList) return;
+
+      historyList.innerHTML = '';
+      countBadge.innerText = `${appState.closedTrades.length} cerradas`;
+      noHistoryMsg.style.display = appState.closedTrades.length === 0 ? 'block' : 'none';
+
+      appState.closedTrades.slice().reverse().forEach(trade => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>#${trade.id}</td>
+          <td class="${trade.type === 'BUY' ? 'text-buy' : 'text-sell'}">${trade.type}</td>
+          <td>${trade.size} u</td>
+          <td>$${trade.entryPrice.toFixed(2)}</td>
+          <td>$${trade.exitPrice.toFixed(2)}</td>
+          <td class="${trade.pnl >= 0 ? 'text-buy' : 'text-sell'}">${trade.pnl >= 0 ? '+' : ''}$${trade.pnl.toFixed(2)}</td>
+          <td>${trade.time}</td>
+        `;
+        historyList.appendChild(tr);
+      });
+    }
+
+  </script>
+</body>
+</html>
