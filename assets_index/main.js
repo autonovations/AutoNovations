@@ -260,13 +260,17 @@ const translations = {
         tech_subtitle: "Core Architecture",
         tech_title: "Technological Arsenal",
         tech_card1_title: "AI Systems",
-        tech_card1_desc: "Advanced neural networks built for edge intelligence. Deep learning logic, predictive analytics, and autonomous decision making.",
+        tech_card1_desc: "Advanced neural networks built for edge intelligence, predictive analytics, and autonomous decision making.",
+        tech_card1_detail: "Advanced neural networks built for edge intelligence. Deep learning logic, predictive analytics, and autonomous decision making. We develop and optimize neural networks for deployment on resource-constrained devices, allowing real-time processing and decision-making directly at the edge.",
         tech_card2_title: "Autonomous Drones",
-        tech_card2_desc: "Intelligent UAVs with swarm capabilities. Real-time scanning, collision avoidance, and precision navigation.",
+        tech_card2_desc: "Intelligent UAVs with swarm capabilities, real-time mapping, and precision collision avoidance.",
+        tech_card2_detail: "Intelligent UAVs with swarm capabilities. Real-time scanning, collision avoidance, and precision navigation. Our drone fleets operate autonomously using decentralized coordination algorithms, making them ideal for mapping, industrial inspections, search and rescue, and complex surveillance missions.",
         tech_card3_title: "Robotics Integration",
-        tech_card3_desc: "Mechanical systems fused with cognitive intelligence. Interactive robots (Labubu style integration) and dynamic systems.",
+        tech_card3_desc: "Mechanical systems fused with cognitive intelligence, interactive robotics, and dynamic systems.",
+        tech_card3_detail: "Mechanical systems fused with cognitive intelligence. Interactive robots (Labubu style integration) and dynamic systems. We bridge the gap between AI and physical actuation, building robotic platforms that understand and interact with their surroundings using computer vision, force sensing, and adaptive control systems.",
         tech_card4_title: "Real-time Data Systems",
-        tech_card4_desc: "High-performance streams connecting global IoT sensors. Processing massive telemetry with zero-downtime scalability.",
+        tech_card4_desc: "High-performance streams connecting global IoT sensors and processing telemetry with massive scalability.",
+        tech_card4_detail: "High-performance streams connecting global IoT sensors. Processing massive telemetry with zero-downtime scalability. Our architectures handle millions of events per second with ultra-low latency, ensuring seamless synchronization, data integrity, and real-time visualization for large-scale industrial deployments.",
         projects_subtitle: "Vision & Escalability",
         projects_title: "Innovation Projects",
         project_railytics_tag1: "Railway Intelligence",
@@ -318,7 +322,45 @@ const translations = {
         course4_desc: "Learn trading from scratch to an intermediate-advanced level. Master chart types, indicators, chart patterns, and build your execution discipline.",
         course5_title: "Machine Learning from Scratch",
         course5_desc: "Learn machine learning basics interactively. Master linear and logistic regression, decision trees, perceptrons, and clustering algorithms with hands-on visual tools.",
-        course_view_syllabus: "View Syllabus"
+        course_view_syllabus: "View Syllabus",
+        telemetry_mesh: "MESH ONLINE",
+        course6_title: "Industrial IoT & Edge AI",
+        course6_desc: "Learn to connect physical sensors in real-time and run lightweight machine learning models directly on edge devices (Edge Computing).",
+        course7_title: "ROS2 Robotics Fundamentals",
+        course7_desc: "Master the industry standard software framework for autonomous robots. Learn topics, nodes, simulation, and path planning fundamentals.",
+        cat_all_filter: "All Projects",
+        cat_ai_filter: "AI Systems",
+        cat_robotics_filter: "Robotics",
+        cat_data_filter: "Data & Simulators",
+        course_level_all: "All Levels",
+        course_level_beginner_filter: "Beginner",
+        course_level_advanced_filter: "Advanced",
+        course_level_master_filter: "Master",
+        project1_btn: "Launch Cognitive Demo",
+        terminal_command_not_found: "Command not found. Type 'help' for options.",
+        terminal_help_desc: "Available commands:<br>- help: list commands<br>- about: info about us<br>- projects: list innovations<br>- courses: list academy courses<br>- status: diagnostic report<br>- clear: clear screen<br>- secret: operator level authentication",
+        terminal_about_desc: "AutoNovations: Deep-tech engineering lab. Physical-digital systems. AI, Robotics, and IIoT convergence.",
+        terminal_projects_desc: "Current Projects:<br>- Railytics (Railway intelligence)<br>- Cognitive Companions (Mechatronics)<br>- AI Trading Core (Machine learning yield)<br>- AeroExplorer (Drone simulator)",
+        terminal_courses_desc: "Academy Courses:<br>1. Basic Trading<br>2. Algorithmic Trading<br>3. Basic Electronics<br>4. UAV Electronic Engineering<br>5. Machine Learning<br>6. Industrial IoT & Edge AI<br>7. ROS2 Robotics",
+        terminal_status_desc: "SYSTEM STATUS: ACTIVE<br>IoT Mesh: Connected (1,420,892 nodes)<br>Swarm Coordination: Online<br>Telemetry Flow: Stable (24.8 GB/s)<br>AI Engine Temp: 42°C | Load: 14.5%",
+        terminal_secret_desc: "DEEP MINDS CREATE THE FUTURE. Welcome to the core, operator.",
+        contact_title_1: "Join AutoNovations",
+        contact_step_1_text: "Select your primary interest:",
+        contact_interest_academy: "Academy (Learn)",
+        contact_interest_collab: "Collaboration (Build)",
+        contact_interest_team: "Join the Core Team",
+        contact_step_2_text: "Enter your name and email:",
+        contact_placeholder_name: "Name",
+        contact_placeholder_email: "Email",
+        contact_invalid_email: "Please enter a valid email address.",
+        contact_invalid_name: "Name must be at least 2 characters.",
+        contact_simulating: "Encrypting payload...",
+        contact_connecting: "Connecting to Core Nodes...",
+        contact_success_title: "Connection Established",
+        contact_success_text: "Your request has been registered in our neural core. We will contact you soon.",
+        contact_btn_next: "Next",
+        contact_btn_cancel: "Cancel",
+        contact_btn_submit: "Connect"
     },
     es: {
         nav_about: "Nosotros",
@@ -340,13 +382,17 @@ const translations = {
         tech_subtitle: "Arquitectura Core",
         tech_title: "Arsenal Tecnológico",
         tech_card1_title: "Sistemas de IA",
-        tech_card1_desc: "Redes neuronales avanzadas creadas para inteligencia de borde. Lógica de aprendizaje profundo, analítica predictiva y toma de decisiones autónoma.",
+        tech_card1_desc: "Redes neuronales avanzadas creadas para inteligencia de borde, analítica predictiva y toma de decisiones autónoma.",
+        tech_card1_detail: "Redes neuronales avanzadas creadas para inteligencia de borde. Lógica de aprendizaje profundo, analítica predictiva y toma de decisiones autónoma. Desarrollamos y optimizamos redes neuronales para su despliegue en dispositivos con recursos limitados, permitiendo procesamiento y toma de decisiones en tiempo real directamente en el borde.",
         tech_card2_title: "Drones Autónomos",
-        tech_card2_desc: "UAVs inteligentes con capacidades de enjambre. Escaneo en tiempo real, evitación de colisiones y navegación de precisión.",
+        tech_card2_desc: "UAVs inteligentes con capacidades de enjambre, mapeo en tiempo real y evitación de colisiones.",
+        tech_card2_detail: "UAVs inteligentes con capacidades de enjambre. Escaneo en tiempo real, evitación de colisiones y navegación de precisión. Nuestras flotas de drones operan de forma autónoma utilizando algoritmos de coordinación descentralizada, ideales para cartografía, inspecciones industriales, búsqueda y rescate, y misiones de vigilancia complejas.",
         tech_card3_title: "Integración Robótica",
-        tech_card3_desc: "Sistemas mecánicos fusionados con inteligencia cognitiva. Robots interactivos y sistemas dinámicos.",
+        tech_card3_desc: "Sistemas mecánicos fusionados con inteligencia cognitiva, robótica interactiva y sistemas dinámicos.",
+        tech_card3_detail: "Sistemas mecánicos fusionados con inteligencia cognitiva. Robots interactivos y sistemas dinámicos. Cerramos la brecha entre la IA y la actuación física, construyendo plataformas robóticas que comprenden e interactúan con su entorno mediante visión computacional, sensores de fuerza y sistemas de control adaptativo.",
         tech_card4_title: "Sistemas de Datos en Tiempo Real",
-        tech_card4_desc: "Flujos de alto rendimiento que conectan sensores IoT globales. Procesamiento de telemetría masiva con escalabilidad sin tiempo de inactividad.",
+        tech_card4_desc: "Flujos de alto rendimiento que conectan sensores IoT globales y procesan telemetría con escalabilidad masiva.",
+        tech_card4_detail: "Flujos de alto rendimiento que conectan sensores IoT globales. Procesamiento de telemetría masiva con escalabilidad sin tiempo de inactividad. Nuestras arquitecturas manejan millones de eventos por segundo con latencia ultra baja, asegurando una sincronización perfecta, integridad de datos y visualización en tiempo real para despliegues industriales a gran escala.",
         projects_subtitle: "Visión y Escalabilidad",
         projects_title: "Proyectos de Innovación",
         project_railytics_tag1: "Inteligencia Ferroviaria",
@@ -398,7 +444,45 @@ const translations = {
         course4_desc: "Aprende trading desde cero hasta un nivel medio-avanzado. Domina los tipos de gráficos, indicadores, patrones técnicos y construye tu disciplina operativa.",
         course5_title: "Machine Learning desde Cero",
         course5_desc: "Aprende los fundamentos de aprendizaje automático de forma interactiva. Domina regresión lineal/logística, árboles de decisión, perceptrones y clustering con simuladores visuales en tiempo real.",
-        course_view_syllabus: "Ver Plan de Estudios"
+        course_view_syllabus: "Ver Plan de Estudios",
+        telemetry_mesh: "RED ONLINE",
+        course6_title: "Industrial IoT y Edge AI",
+        course6_desc: "Aprende a conectar sensores físicos en tiempo real y a ejecutar modelos ligeros de aprendizaje automático directamente en dispositivos de borde (Edge Computing).",
+        course7_title: "Fundamentos de Robótica ROS2",
+        course7_desc: "Domina el marco de trabajo de software estándar de la industria para robots autónomos. Aprende sobre nodos, tópicos, simulación y planificación de rutas.",
+        cat_all_filter: "Todos los Proyectos",
+        cat_ai_filter: "Sistemas de IA",
+        cat_robotics_filter: "Robótica",
+        cat_data_filter: "Datos y Simuladores",
+        course_level_all: "Todos los Niveles",
+        course_level_beginner_filter: "Principiante",
+        course_level_advanced_filter: "Avanzado",
+        course_level_master_filter: "Master",
+        project1_btn: "Iniciar Demo Cognitiva",
+        terminal_command_not_found: "Comando no encontrado. Escribe 'help' para ver opciones.",
+        terminal_help_desc: "Comandos disponibles:<br>- help: lista comandos<br>- about: información sobre nosotros<br>- projects: lista innovaciones<br>- courses: lista cursos de academia<br>- status: reporte de diagnóstico<br>- clear: limpiar pantalla<br>- secret: autenticación de operador",
+        terminal_about_desc: "AutoNovations: Laboratorio de ingeniería deep-tech. Sistemas físico-digitales. Convergencia de IA, Robótica e IIoT.",
+        terminal_projects_desc: "Proyectos Actuales:<br>- Railytics (Inteligencia ferroviaria)<br>- Compañeros Cognitivos (Mecatrónica)<br>- Núcleo de Trading IA (Rendimiento ML)<br>- AeroExplorer (Simulador de Dron)",
+        terminal_courses_desc: "Cursos de la Academia:<br>1. Trading Básico<br>2. Trading Algorítmico<br>3. Electrónica Básica<br>4. Ingeniería Electrónica de UAV<br>5. Machine Learning<br>6. IoT Industrial y Edge AI<br>7. Robótica ROS2",
+        terminal_status_desc: "ESTADO DEL SISTEMA: ACTIVO<br>Malla IoT: Conectada (1,420,892 nodos)<br>Coordinación de Enjambre: Online<br>Flujo de Telemetría: Estable (24.8 GB/s)<br>Temp de IA: 42°C | Carga: 14.5%",
+        terminal_secret_desc: "LAS MENTES PROFUNDAS CREAN EL FUTURO. Bienvenido al núcleo, operador.",
+        contact_title_1: "Únete a AutoNovations",
+        contact_step_1_text: "Selecciona tu interés principal:",
+        contact_interest_academy: "Academia (Aprender)",
+        contact_interest_collab: "Colaboración (Construir)",
+        contact_interest_team: "Unirse al Equipo Core",
+        contact_step_2_text: "Ingresa tu nombre y correo:",
+        contact_placeholder_name: "Nombre",
+        contact_placeholder_email: "Correo",
+        contact_invalid_email: "Por favor, ingresa un correo electrónico válido.",
+        contact_invalid_name: "El nombre debe tener al menos 2 caracteres.",
+        contact_simulating: "Cifrando payload...",
+        contact_connecting: "Conectando con Nodos Core...",
+        contact_success_title: "Conexión Establecida",
+        contact_success_text: "Tu solicitud ha sido registrada en nuestro núcleo neuronal. Nos contactaremos pronto.",
+        contact_btn_next: "Siguiente",
+        contact_btn_cancel: "Cancelar",
+        contact_btn_submit: "Conectar"
     }
 };
 
@@ -486,6 +570,7 @@ let commandIndex = 0;
 
 function typeTerminal() {
     if (commandIndex >= commands.length) {
+        appendTerminalInput();
         return;
     }
 
@@ -542,6 +627,55 @@ function toggleTheme() {
     setTheme(isLight ? 'dark' : 'light');
 }
 
+// Tech Cards Interactivity with SweetAlert2
+function initTechCards() {
+    const techCards = document.querySelectorAll('.tech-card');
+    techCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const titleEl = card.querySelector('h4');
+            const descEl = card.querySelector('p');
+            const iconEl = card.querySelector('[data-lucide]');
+            
+            if (!titleEl || !descEl || !iconEl) return;
+            
+            const title = titleEl.innerText;
+            const techId = card.getAttribute('data-tech-id');
+            const currentLang = localStorage.getItem('preferredLang') || 'en';
+            const detailKey = `tech_card${techId}_detail`;
+            const desc = (translations[currentLang] && translations[currentLang][detailKey]) ? translations[currentLang][detailKey] : descEl.innerText;
+            const iconName = iconEl.getAttribute('data-lucide');
+            const closeText = currentLang === 'es' ? 'Cerrar' : 'Close';
+            
+            Swal.fire({
+                background: 'var(--color-panel)',
+                color: 'var(--text-color)',
+                showConfirmButton: true,
+                confirmButtonText: closeText,
+                buttonsStyling: false,
+                customClass: {
+                    popup: 'autonovations-swal-popup p-6 md:p-8 text-center max-w-lg',
+                    confirmButton: 'px-8 py-3 bg-neon text-dark font-bold font-tech rounded-full transition-all duration-300 hover:scale-105 glow-button cursor-pointer mt-4',
+                },
+                html: `
+                    <div class="flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-xl bg-neon/10 flex items-center justify-center mb-6 text-neon border border-neon/20 shadow-[0_0_15px_rgba(0,217,255,0.2)]">
+                            <i data-lucide="${iconName}" class="w-9 h-9"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold font-tech text-white mb-4 tracking-wider">${title}</h3>
+                        <p class="text-gray-400 text-sm md:text-base leading-relaxed max-w-md">${desc}</p>
+                    </div>
+                `,
+                didOpen: () => {
+                    // Initialize Lucide icons inside the modal
+                    if (window.lucide) {
+                        window.lucide.createIcons();
+                    }
+                }
+            });
+        });
+    });
+}
+
 window.addEventListener('DOMContentLoaded', () => {
     const savedLang = localStorage.getItem('preferredLang') || 'en';
     setLanguage(savedLang);
@@ -559,4 +693,323 @@ window.addEventListener('DOMContentLoaded', () => {
     if (mobileToggle) {
         mobileToggle.addEventListener('click', toggleTheme);
     }
+
+    // Initialize interactive tech cards
+    initTechCards();
+
+    // Start Live Telemetry Update
+    initLiveTelemetry();
+
+    // Setup interactive filters
+    initFilters();
+
+    // Setup SweetAlert2 Contact Form
+    initContactForm();
 });
+
+// Live Telemetry Simulation
+function initLiveTelemetry() {
+    const telemetryNodes = document.getElementById('telemetryNodes');
+    const telemetryUav = document.getElementById('telemetryUav');
+    const telemetryCpu = document.getElementById('telemetryCpu');
+    if (!telemetryNodes || !telemetryUav || !telemetryCpu) return;
+
+    let baseNodes = 1420892;
+    let baseCpu = 32;
+    const uavStatuses = ['IDLE', 'FLIGHT', 'MAPPING', 'CHARGING', 'SEARCHING'];
+
+    setInterval(() => {
+        // Dynamic node count
+        baseNodes += Math.floor(Math.random() * 15) - 7;
+        telemetryNodes.innerText = `NODES: ${baseNodes.toLocaleString()}`;
+
+        // Dynamic CPU temperature
+        baseCpu = (30 + Math.random() * 8).toFixed(1);
+        telemetryCpu.innerText = `CPU: ${baseCpu}°C`;
+
+        // Dynamic UAV status
+        const status = uavStatuses[Math.floor(Math.random() * uavStatuses.length)];
+        const currentLang = localStorage.getItem('preferredLang') || 'en';
+        let statusText = status;
+        if (currentLang === 'es') {
+            if (status === 'IDLE') statusText = 'INACTIVO';
+            else if (status === 'FLIGHT') statusText = 'EN VUELO';
+            else if (status === 'MAPPING') statusText = 'MAPEANDO';
+            else if (status === 'CHARGING') statusText = 'CARGANDO';
+            else if (status === 'SEARCHING') statusText = 'BUSCANDO';
+        }
+        telemetryUav.innerText = `UAV-01: ${statusText}`;
+    }, 3000);
+}
+
+// Interactive Filters Logic
+function initFilters() {
+    // Project Filters
+    const projectFilterBtns = document.querySelectorAll('#projectFilters .filter-btn');
+    const projectCards = document.querySelectorAll('.project-card');
+
+    projectFilterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            projectFilterBtns.forEach(b => b.classList.remove('active', 'border-neon', 'text-neon', 'bg-neon/10'));
+            projectFilterBtns.forEach(b => b.classList.add('border-white/10', 'text-gray-400'));
+            
+            btn.classList.add('active');
+            btn.classList.remove('border-white/10', 'text-gray-400');
+
+            const filterValue = btn.getAttribute('data-filter');
+
+            projectCards.forEach(card => {
+                const categories = card.getAttribute('data-category').split(' ');
+                if (filterValue === 'all' || categories.includes(filterValue)) {
+                    card.classList.remove('card-hidden');
+                } else {
+                    card.classList.add('card-hidden');
+                }
+            });
+        });
+    });
+
+    // Course Filters
+    const courseFilterBtns = document.querySelectorAll('#courseFilters .course-filter-btn');
+    const courseCards = document.querySelectorAll('.course-card');
+
+    courseFilterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            courseFilterBtns.forEach(b => b.classList.remove('active', 'border-neon', 'text-neon', 'bg-neon/10'));
+            courseFilterBtns.forEach(b => b.classList.add('border-white/10', 'text-gray-400'));
+            
+            btn.classList.add('active');
+            btn.classList.remove('border-white/10', 'text-gray-400');
+
+            const filterValue = btn.getAttribute('data-filter');
+
+            courseCards.forEach(card => {
+                const categories = card.getAttribute('data-category').split(' ');
+                if (filterValue === 'all' || categories.includes(filterValue)) {
+                    card.classList.remove('card-hidden');
+                } else {
+                    card.classList.add('card-hidden');
+                }
+            });
+        });
+    });
+}
+
+// SweetAlert2 Interactive Contact Form
+function initContactForm() {
+    const contactButtons = [
+        document.getElementById('navJoinBtn'),
+        document.getElementById('mobileNavJoinBtn'),
+        document.getElementById('ctaJoinBtn'),
+        document.getElementById('heroBuildBtn')
+    ];
+
+    contactButtons.forEach(btn => {
+        if (!btn) return;
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openInteractiveContactModal();
+        });
+    });
+}
+
+function openInteractiveContactModal() {
+    const lang = localStorage.getItem('preferredLang') || 'en';
+    const t = translations[lang];
+
+    // Step 1: Select Interest
+    Swal.fire({
+        title: t.contact_title_1,
+        background: 'var(--color-panel)',
+        color: 'var(--text-color)',
+        showConfirmButton: false,
+        showCancelButton: true,
+        cancelButtonText: t.contact_btn_cancel,
+        buttonsStyling: false,
+        customClass: {
+            popup: 'autonovations-swal-popup p-6 md:p-8',
+            cancelButton: 'px-6 py-2.5 border border-white/20 text-gray-400 font-tech rounded-full hover:bg-white/5 transition-all text-sm cursor-pointer mt-4'
+        },
+        html: `
+            <div class="flex flex-col items-center">
+                <p class="text-gray-400 text-sm mb-6">${t.contact_step_1_text}</p>
+                <div class="flex flex-col gap-3 w-full max-w-xs">
+                    <button class="interest-btn px-4 py-3 bg-white/5 border border-white/10 hover:border-neon hover:text-neon rounded-xl text-sm font-tech text-white transition-all duration-300" data-val="academy">${t.contact_interest_academy}</button>
+                    <button class="interest-btn px-4 py-3 bg-white/5 border border-white/10 hover:border-neon hover:text-neon rounded-xl text-sm font-tech text-white transition-all duration-300" data-val="collaboration">${t.contact_interest_collab}</button>
+                    <button class="interest-btn px-4 py-3 bg-white/5 border border-white/10 hover:border-neon hover:text-neon rounded-xl text-sm font-tech text-white transition-all duration-300" data-val="career">${t.contact_interest_team}</button>
+                </div>
+            </div>
+        `,
+        didOpen: () => {
+            const btns = Swal.getPopup().querySelectorAll('.interest-btn');
+            btns.forEach(b => {
+                b.addEventListener('click', () => {
+                    const selectedInterest = b.getAttribute('data-val');
+                    openContactDataModal(selectedInterest);
+                });
+            });
+        }
+    });
+}
+
+function openContactDataModal(interest) {
+    const lang = localStorage.getItem('preferredLang') || 'en';
+    const t = translations[lang];
+
+    Swal.fire({
+        title: t.contact_title_1,
+        background: 'var(--color-panel)',
+        color: 'var(--text-color)',
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: t.contact_btn_submit,
+        cancelButtonText: t.contact_btn_cancel,
+        buttonsStyling: false,
+        customClass: {
+            popup: 'autonovations-swal-popup p-6 md:p-8',
+            confirmButton: 'px-8 py-3 bg-neon text-dark font-bold font-tech rounded-full transition-all duration-300 hover:scale-105 glow-button cursor-pointer mr-3',
+            cancelButton: 'px-6 py-3 border border-white/20 text-gray-400 font-tech rounded-full hover:bg-white/5 transition-all cursor-pointer'
+        },
+        html: `
+            <div class="flex flex-col items-center">
+                <p class="text-gray-400 text-sm mb-6">${t.contact_step_2_text}</p>
+                <div class="flex flex-col gap-4 w-full max-w-sm">
+                    <input type="text" id="swalName" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-neon/50 transition-all" placeholder="${t.contact_placeholder_name}" autocomplete="off" />
+                    <input type="email" id="swalEmail" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-neon/50 transition-all" placeholder="${t.contact_placeholder_email}" autocomplete="off" />
+                </div>
+            </div>
+        `,
+        preConfirm: () => {
+            const name = document.getElementById('swalName').value.trim();
+            const email = document.getElementById('swalEmail').value.trim();
+            
+            if (name.length < 2) {
+                Swal.showValidationMessage(t.contact_invalid_name);
+                return false;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                Swal.showValidationMessage(t.contact_invalid_email);
+                return false;
+            }
+
+            return { name, email, interest };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            simulateConnectionPayload(result.value);
+        }
+    });
+}
+
+function simulateConnectionPayload(data) {
+    const lang = localStorage.getItem('preferredLang') || 'en';
+    const t = translations[lang];
+
+    Swal.fire({
+        title: t.contact_simulating,
+        background: 'var(--color-panel)',
+        color: 'var(--text-color)',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+            setTimeout(() => {
+                Swal.update({
+                    title: t.contact_connecting
+                });
+                setTimeout(() => {
+                    Swal.fire({
+                        title: t.contact_success_title,
+                        text: t.contact_success_text,
+                        icon: 'success',
+                        background: 'var(--color-panel)',
+                        color: 'var(--text-color)',
+                        confirmButtonText: 'OK',
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: 'autonovations-swal-popup p-6 md:p-8 text-center',
+                            confirmButton: 'px-8 py-3 bg-neon text-dark font-bold font-tech rounded-full transition-all duration-300 hover:scale-105 glow-button cursor-pointer'
+                        }
+                    });
+                }, 1500);
+            }, 1200);
+        }
+    });
+}
+
+// Modify typeTerminal() to append input logic at the end
+// Let's rewrite the terminal commands processing and input append
+function appendTerminalInput() {
+    if (document.getElementById('terminalInput')) return;
+
+    const line = document.createElement('div');
+    line.className = 'terminal-line flex items-center';
+    line.innerHTML = `<span class="terminal-prompt text-neon mr-2">></span><input type="text" id="terminalInput" class="bg-transparent border-none outline-none text-white font-mono text-sm w-full" autofocus autocomplete="off" />`;
+    terminalContent.appendChild(line);
+    terminalContent.scrollTop = terminalContent.scrollHeight;
+
+    const input = document.getElementById('terminalInput');
+    input.focus();
+
+    // Re-focus on click anywhere inside terminal content
+    terminalContent.addEventListener('click', () => {
+        input.focus();
+    });
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const val = input.value.trim().toLowerCase();
+            processTerminalCommand(val);
+        }
+    });
+}
+
+function processTerminalCommand(cmd) {
+    const inputLine = document.getElementById('terminalInput').parentElement;
+    if (inputLine) inputLine.remove();
+
+    // Append executed command line to log
+    const cmdLine = document.createElement('div');
+    cmdLine.className = 'terminal-line text-white';
+    cmdLine.innerHTML = `<span class="terminal-prompt text-neon mr-2">></span>${cmd}`;
+    terminalContent.appendChild(cmdLine);
+
+    const lang = localStorage.getItem('preferredLang') || 'en';
+    const t = translations[lang];
+
+    let outputHtml = '';
+
+    if (cmd === '') {
+        // Empty command does nothing
+    } else if (cmd === 'help') {
+        outputHtml = t.terminal_help_desc;
+    } else if (cmd === 'about') {
+        outputHtml = t.terminal_about_desc;
+    } else if (cmd === 'projects') {
+        outputHtml = t.terminal_projects_desc;
+    } else if (cmd === 'courses') {
+        outputHtml = t.terminal_courses_desc;
+    } else if (cmd === 'status') {
+        outputHtml = t.terminal_status_desc;
+    } else if (cmd === 'secret') {
+        outputHtml = `<span class="text-neon font-bold">${t.terminal_secret_desc}</span>`;
+    } else if (cmd === 'clear') {
+        terminalContent.innerHTML = '';
+    } else {
+        outputHtml = `<span class="text-red-500">${t.terminal_command_not_found}</span>`;
+    }
+
+    if (outputHtml && cmd !== 'clear') {
+        const outLine = document.createElement('div');
+        outLine.className = 'terminal-line text-gray-400 mt-1 leading-relaxed';
+        outLine.innerHTML = outputHtml;
+        terminalContent.appendChild(outLine);
+    }
+
+    terminalContent.scrollTop = terminalContent.scrollHeight;
+
+    // Append new input line
+    setTimeout(appendTerminalInput, 100);
+}

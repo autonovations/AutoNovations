@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoNovations Academy - Industrial IoT & Edge AI</title>
+  <script>
+    (function() {
+        const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+        if (savedTheme === 'light') {
+            document.documentElement.classList.add('light');
+        } else {
+            document.documentElement.classList.remove('light');
+        }
+    })();
+  </script>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Aprende IoT Industrial y Edge AI de forma interactiva. Conecta sensores en tiempo real y ejecuta redes neuronales en microcontroladores ESP32.">
+  <meta name="keywords" content="Industrial IoT, Edge AI, ESP32, MQTT, TensorFlow Lite Micro, TinyML, Sensores, Edge Computing">
+  <meta name="author" content="AutoNovations Academy">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      /* HSL tailored color palette - Cyber Edge AI Theme */
+      --bg-darker: #04080e;
+      --bg-dark: #0a101d;
+      --bg-card: #111b2e;
+      --bg-card-hover: #192742;
+      --border: #1d2e4c;
+      --border-focus: #00D9FF;
+      
+      --accent-cyan: #00D9FF;
+      --accent-cyan-dim: rgba(0, 217, 255, 0.15);
+      --accent-green: #39ff14;
+      --accent-green-dim: rgba(57, 255, 20, 0.15);
+      --accent-amber: #ff9d00;
+      --accent-amber-dim: rgba(255, 157, 0, 0.15);
+      --accent-red: #ff3366;
+      --accent-red-dim: rgba(255, 51, 102, 0.15);
+
+      --text-primary: #f0f4f8;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      
+      --font-sans: 'Inter', sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html.light {
+      --bg-darker: #f8fafc;
+      --bg-dark: #ffffff;
+      --bg-card: #f1f5f9;
+      --bg-card-hover: #e2e8f0;
+      --border: #cbd5e1;
+      --border-focus: #0088CC;
+
+      --accent-cyan: #0088CC;
+      --accent-cyan-dim: rgba(0, 136, 204, 0.1);
+      --accent-green: #10b981;
+      --accent-green-dim: rgba(16, 185, 129, 0.1);
+      --accent-amber: #d97706;
+      --accent-amber-dim: rgba(217, 119, 6, 0.1);
+      --accent-red: #dc2626;
+      --accent-red-dim: rgba(220, 38, 38, 0.1);
+
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg-darker);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-darker);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: var(--radius-sm);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-cyan);
+    }
+
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background-color: var(--bg-dark);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      padding: 1.5rem;
+      transition: transform 0.3s ease;
+    }
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      letter-spacing: 0.05em;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+    }
+    .sidebar-brand i {
+      animation: pulse-glow 3s infinite ease-in-out;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { filter: drop-shadow(0 0 2px var(--accent-cyan)); }
+      50% { filter: drop-shadow(0 0 10px var(--accent-cyan)); }
+    }
+
+    .nav-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      background: rgba(148, 163, 184, 0.05);
+      color: var(--text-primary);
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .theme-toggle-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: rgba(148, 163, 184, 0.05);
+      color: var(--text-primary);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .theme-toggle-btn i {
+      transition: transform 0.5s ease, opacity 0.3s ease;
+    }
+    html:not(.light) .theme-toggle-btn .sun-icon { opacity: 1; transform: scale(1); }
+    html:not(.light) .theme-toggle-btn .moon-icon { opacity: 0; transform: scale(0); position: absolute; }
+    html.light .theme-toggle-btn .sun-icon { opacity: 0; transform: scale(0); position: absolute; }
+    html.light .theme-toggle-btn .moon-icon { opacity: 1; transform: scale(1); }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+    .nav-item button {
+      width: 100%;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-align: left;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: var(--transition);
+    }
+    .nav-item button:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-primary);
+    }
+    .nav-item.active button {
+      background-color: var(--accent-cyan-dim);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 217, 255, 0.25);
+    }
+
+    .progress-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+    .progress-box-title {
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .progress-circle-wrapper {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 10px auto;
+    }
+    .progress-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .progress-bg-circle { fill: none; stroke: var(--border); stroke-width: 8; }
+    .progress-bar-circle {
+      fill: none;
+      stroke: var(--accent-cyan);
+      stroke-width: 8;
+      stroke-dasharray: 283;
+      stroke-dashoffset: 283;
+      transition: stroke-dashoffset 0.8s ease;
+      stroke-linecap: round;
+    }
+    .progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 280px;
+      flex-grow: 1;
+      padding: 2.5rem;
+      max-width: calc(100% - 280px);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .content-header h1 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .content-header p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-family: var(--font-display);
+      font-weight: 600;
+      transition: var(--transition);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 9999px;
+    }
+    .back-btn:hover {
+      color: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+      background: var(--accent-cyan-dim);
+    }
+
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    .tab-pane.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Dashboard grids */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background-color: var(--border);
+      transition: var(--transition);
+    }
+    .card:hover {
+      background-color: var(--bg-card-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    .card:hover::before {
+      background-color: var(--accent-cyan);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-badge {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-adv {
+      background-color: var(--accent-cyan-dim);
+      color: var(--accent-cyan);
+    }
+    .card-desc {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+    .card-status {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .card-btn {
+      background-color: transparent;
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      padding: 6px 14px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .card-btn:hover {
+      background-color: var(--accent-cyan);
+      color: var(--bg-darker);
+    }
+
+    /* Course Modules Content */
+    .learning-section {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .learning-section h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--accent-cyan);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .learning-section h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      margin: 1.5rem 0 0.5rem 0;
+      color: var(--text-primary);
+    }
+    .learning-section p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      line-height: 1.7;
+    }
+    .learning-section ul {
+      margin-left: 1.5rem;
+      margin-bottom: 1.25rem;
+      color: var(--text-secondary);
+    }
+    .learning-section li { margin-bottom: 4px; font-size: 0.95rem; }
+    
+    .code-block {
+      background-color: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #38bdf8;
+      overflow-x: auto;
+      margin: 1.25rem 0;
+    }
+
+    /* Interactive Simulator */
+    .simulator-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .simulator-container { grid-template-columns: 1fr; }
+    }
+    .control-panel, .telemetry-panel {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+    }
+    .control-group { margin-bottom: 1.5rem; }
+    .control-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .control-label span.val {
+      font-family: var(--font-mono);
+      color: var(--accent-cyan);
+    }
+    .slider-input {
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: var(--radius-sm);
+      outline: none;
+      -webkit-appearance: none;
+      accent-color: var(--accent-cyan);
+    }
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .classification-box {
+      border: 1px solid var(--border);
+      background: var(--bg-darker);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .status-normal { background: var(--accent-green-dim); color: var(--accent-green); border: 1px solid rgba(57,255,20,0.3); }
+    .status-warning { background: var(--accent-amber-dim); color: var(--accent-amber); border: 1px solid rgba(255,157,0,0.3); }
+    .status-critical { background: var(--accent-red-dim); color: var(--accent-red); border: 1px solid rgba(255,51,102,0.3); }
+
+    .mqtt-console {
+      background: #020408;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #38bdf8;
+      height: 220px;
+      overflow-y: auto;
+    }
+
+    /* Quiz Widget */
+    .quiz-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .quiz-question {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .quiz-option {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+    .quiz-option:hover {
+      background-color: var(--bg-card-hover);
+      border-color: var(--accent-cyan);
+    }
+    .quiz-option.selected {
+      border-color: var(--accent-cyan);
+      background-color: var(--accent-cyan-dim);
+    }
+
+    /* Certificate view */
+    .certificate-card {
+      background: linear-gradient(135deg, rgba(17, 27, 46, 0.95), rgba(10, 16, 29, 0.98)), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54 48c-2 0-3 1.7-3 3.5s1 3.5 3 3.5 3-1.7 3-3.5-1-3.5-3-3.5zm-48 0c-2 0-3 1.7-3 3.5s1 3.5 3 3.5 3-1.7 3-3.5-1-3.5-3-3.5zM30 20c-8.8 0-16 7.2-16 16s7.2 16 16 16 16-7.2 16-16-7.2-16-16-16zm0 2c7.7 0 14 6.3 14 14s-6.3 14-14 14-14-6.3-14-14 6.3-14 14-14z' fill='%231d2e4c' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+      border: 4px double var(--accent-cyan);
+      border-radius: var(--radius-lg);
+      padding: 3rem;
+      text-align: center;
+      max-width: 700px;
+      margin: 2rem auto;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      display: none;
+    }
+    .certificate-card.unlocked { display: block; }
+    .cert-icon { color: var(--accent-amber); font-size: 3.5rem; margin-bottom: 1.5rem; }
+    .cert-title { font-family: var(--font-display); font-size: 2rem; margin-bottom: 1rem; color: var(--accent-cyan); }
+    .cert-text { color: var(--text-secondary); margin-bottom: 2rem; font-size: 1rem; }
+    .cert-input-wrapper { display: flex; justify-content: center; gap: 10px; max-width: 400px; margin: 0 auto 2rem auto; }
+    .cert-input {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      outline: none;
+      width: 100%;
+    }
+    .cert-print-btn {
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+      border: none;
+      color: var(--bg-darker);
+      padding: 10px 24px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 15px var(--accent-cyan-dim);
+      transition: var(--transition);
+    }
+    .cert-print-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 217, 255, 0.4); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left: 0; max-width: 100%; padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <i data-lucide="cpu" class="w-6 h-6"></i>
+        <span>AN Academy</span>
+      </div>
+
+      <div class="nav-controls">
+        <!-- Language selector placeholder -->
+        <button class="lang-btn" onclick="toggleLanguage()">
+          <span id="currentLangLabel">ES</span>
+          <i data-lucide="chevron-down" class="w-4 h-4"></i>
+        </button>
+        <button class="theme-toggle-btn" onclick="toggleTheme()">
+          <i data-lucide="sun" class="w-4 h-4 sun-icon"></i>
+          <i data-lucide="moon" class="w-4 h-4 moon-icon"></i>
+        </button>
+      </div>
+
+      <ul class="nav-list">
+        <li class="nav-item active" id="tab-btn-dashboard">
+          <button onclick="switchTab('dashboard')">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+            <span data-i18n="nav_dashboard">Dashboard</span>
+          </button>
+        </li>
+        <li class="nav-item" id="tab-btn-modules">
+          <button onclick="switchTab('modules')">
+            <i data-lucide="book-open" class="w-4 h-4"></i>
+            <span data-i18n="nav_modules">Módulos</span>
+          </button>
+        </li>
+        <li class="nav-item" id="tab-btn-simulator">
+          <button onclick="switchTab('simulator')">
+            <i data-lucide="activity" class="w-4 h-4"></i>
+            <span data-i18n="nav_simulator">Simulador IIoT</span>
+          </button>
+        </li>
+        <li class="nav-item" id="tab-btn-quiz">
+          <button onclick="switchTab('quiz')">
+            <i data-lucide="help-circle" class="w-4 h-4"></i>
+            <span data-i18n="nav_quiz">Evaluación</span>
+          </button>
+        </li>
+        <li class="nav-item" id="tab-btn-certificate">
+          <button onclick="switchTab('certificate')">
+            <i data-lucide="award" class="w-4 h-4"></i>
+            <span data-i18n="nav_cert">Certificado</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="progress-box">
+        <div class="progress-box-title" data-i18n="course_progress">Progreso del Curso</div>
+        <div class="progress-circle-wrapper">
+          <svg class="progress-svg">
+            <circle class="progress-bg-circle" cx="50" cy="50" r="45"></circle>
+            <circle class="progress-bar-circle" id="progressBar" cx="50" cy="50" r="45"></circle>
+          </svg>
+          <div class="progress-text" id="progressText">0%</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Content Header -->
+      <header class="content-header">
+        <div>
+          <h1 id="headerTitle" data-i18n="course_title">Industrial IoT & Edge AI</h1>
+          <p id="headerSubtitle" data-i18n="course_subtitle">Conectando hardware industrial con inteligencia neuronal artificial.</p>
+        </div>
+        <a href="../index.html" class="back-btn">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span data-i18n="btn_back">Volver</span>
+        </a>
+      </header>
+
+      <!-- TAB 1: Dashboard -->
+      <section class="tab-pane active" id="tab-dashboard">
+        <div class="learning-section">
+          <h2 data-i18n="welcome_title">Bienvenido a la Malla de IoT & Edge AI</h2>
+          <p data-i18n="welcome_desc">Este portal te guiará a través de la integración de dispositivos electrónicos industriales con modelos de TinyML. Aprenderás a estructurar flujos de datos en tiempo real mediante protocolos como MQTT y a compilar redes neuronales en microcontroladores de bajos recursos como el ESP32.</p>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-badge badge-adv" data-i18n="module_1">Módulo 1</span>
+              <i data-lucide="network" class="text-neon w-5 h-5"></i>
+            </div>
+            <h3 class="card-title" data-i18n="m1_title">Redes de Sensores e IIoT</h3>
+            <p class="card-desc" data-i18n="m1_desc">Aprende sobre topologías de red, comunicación por microcontroladores, MQTT y adquisición de datos en tiempo real.</p>
+            <div class="card-footer">
+              <span class="card-status" data-i18n="m1_status">Completado [ ]</span>
+              <button class="card-btn" onclick="switchTab('modules'); showModuleSection(1);" data-i18n="btn_start">Iniciar</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-badge badge-adv" data-i18n="module_2">Módulo 2</span>
+              <i data-lucide="brain" class="text-neon w-5 h-5"></i>
+            </div>
+            <h3 class="card-title" data-i18n="m2_title">Edge AI & TinyML</h3>
+            <p class="card-desc" data-i18n="m2_desc">Compilación de redes neuronales, cuantización de modelos y despliegue local mediante TensorFlow Lite Micro.</p>
+            <div class="card-footer">
+              <span class="card-status" data-i18n="m2_status">Completado [ ]</span>
+              <button class="card-btn" onclick="switchTab('modules'); showModuleSection(2);" data-i18n="btn_start">Iniciar</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: Modules Content -->
+      <section class="tab-pane" id="tab-modules">
+        <div class="learning-section" id="module-sec-1">
+          <h2 data-i18n="m1_full_title">Módulo 1: Adquisición de Datos y Redes IIoT</h2>
+          <p data-i18n="m1_p1">El Internet de las Cosas Industrial (IIoT) requiere de protocolos de mensajería altamente optimizados. A diferencia de las redes tradicionales, los nodos de borde operan con restricciones energéticas y de ancho de banda.</p>
+          
+          <h3>El Protocolo MQTT (Message Queuing Telemetry Transport)</h3>
+          <p data-i18n="m1_p2">MQTT es el protocolo estándar para la transmisión de datos debido a su modelo de Publicación/Suscripción con sobrecarga mínima. Los nodos publican su telemetría en un 'Topic' a un Servidor Broker que distribuye los paquetes instantáneamente.</p>
+
+          <div class="code-block">
+// Ejemplo básico de payload JSON publicado por un nodo sensor
+{
+  "node_id": "esp32-vibe-sensor-01",
+  "temperature": 74.8, // Celsius
+  "frequency_hz": 125.0, // Frecuencia de vibración
+  "voltage": 3.3
+}
+          </div>
+          <button class="card-btn" onclick="markModuleComplete(1)" data-i18n="btn_complete_m1">Marcar Módulo como Completado</button>
+        </div>
+
+        <div class="learning-section" id="module-sec-2">
+          <h2 data-i18n="m2_full_title">Módulo 2: TinyML y Despliegue de Modelos de Borde</h2>
+          <p data-i18n="m2_p1">El procesamiento en el Edge elimina la dependencia del servidor en la nube, disminuyendo la latencia de respuesta y garantizando la seguridad de datos críticos industriales.</p>
+
+          <h3>TensorFlow Lite Micro</h3>
+          <p data-i18n="m2_p2">Para ejecutar redes neuronales artificiales en hardware como el ESP32, es necesario un proceso de cuantización. Consiste en mapear los pesos del modelo de floats de 32 bits a enteros de 8 bits (INT8). Esto reduce el peso del archivo del modelo en un 75% sin sacrificar precisión significativa.</p>
+
+          <div class="code-block">
+// Inicialización básica de TFLite Micro en C++
+#include "tensorflow/lite/micro/micro_interpreter.h"
+#include "tensorflow/lite/micro/all_ops_resolver.h"
+
+tflite::AllOpsResolver resolver;
+tflite::MicroInterpreter interpreter(model, tensor_arena, arena_size, &resolver);
+interpreter.AllocateTensors();
+          </div>
+          <button class="card-btn" onclick="markModuleComplete(2)" data-i18n="btn_complete_m2">Marcar Módulo como Completado</button>
+        </div>
+      </section>
+
+      <!-- TAB 3: Simulator -->
+      <section class="tab-pane" id="tab-simulator">
+        <div class="learning-section">
+          <h2 data-i18n="sim_title">Simulador de Telemetría Edge AI</h2>
+          <p data-i18n="sim_desc">Ajusta los sliders de temperatura y vibración. El modelo de inteligencia artificial de borde (simulado localmente en JS) clasificará de forma instantánea el estado operativo del motor industrial.</p>
+        </div>
+
+        <div class="simulator-container">
+          <div class="control-panel">
+            <h3 data-i18n="sim_controls">Controles de Sensores</h3>
+            
+            <div class="control-group">
+              <div class="control-label">
+                <span data-i18n="sim_temp">Temperatura del Sensor</span>
+                <span class="val" id="tempVal">25°C</span>
+              </div>
+              <input type="range" class="slider-input" id="tempSlider" min="10" max="120" value="25" oninput="updateSimulator()" />
+            </div>
+
+            <div class="control-group">
+              <div class="control-label">
+                <span data-i18n="sim_vib">Frecuencia de Vibración</span>
+                <span class="val" id="vibVal">40 Hz</span>
+              </div>
+              <input type="range" class="slider-input" id="vibSlider" min="0" max="200" value="40" oninput="updateSimulator()" />
+            </div>
+
+            <div class="classification-box">
+              <h4 class="control-label" style="justify-content: center; margin-bottom: 12px;" data-i18n="sim_ai_output">Clasificación TinyML (Edge)</h4>
+              <span class="status-badge status-normal" id="statusBadge">Normal</span>
+            </div>
+          </div>
+
+          <div class="telemetry-panel">
+            <h3 data-i18n="sim_payload">Payload MQTT Broker</h3>
+            <div class="mqtt-console" id="mqttConsole">
+              // Esperando conexión de telemetría...
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: Quiz -->
+      <section class="tab-pane" id="tab-quiz">
+        <div class="learning-section">
+          <h2 data-i18n="quiz_title_sec">Evaluación de Certificación</h2>
+          <p data-i18n="quiz_desc_sec">Completa las siguientes preguntas técnicas para desbloquear el certificado de acreditación académica en IoT Industrial y Edge AI.</p>
+        </div>
+
+        <div class="quiz-box">
+          <div class="quiz-question" data-i18n="q1">1. ¿Qué protocolo es ideal para conectar sensores de baja potencia debido a su bajísima sobrecarga de cabecera?</div>
+          <div class="quiz-options">
+            <div class="quiz-option" onclick="selectQuizOption(1, 0)">
+              <span class="dot-black probe-dot"></span>
+              <span>HTTP/2 Web Server</span>
+            </div>
+            <div class="quiz-option" onclick="selectQuizOption(1, 1)">
+              <span class="dot-black probe-dot"></span>
+              <span>MQTT (Publish/Subscribe)</span>
+            </div>
+            <div class="quiz-option" onclick="selectQuizOption(1, 2)">
+              <span class="dot-black probe-dot"></span>
+              <span>SMTP Protocol</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quiz-box">
+          <div class="quiz-question" data-i18n="q2">2. ¿En qué consiste la cuantización de un modelo de red neuronal en TinyML?</div>
+          <div class="quiz-options">
+            <div class="quiz-option" onclick="selectQuizOption(2, 0)">
+              <span class="dot-black probe-dot"></span>
+              <span data-i18n="q2_o1">Reducir el número de capas de la red neuronal.</span>
+            </div>
+            <div class="quiz-option" onclick="selectQuizOption(2, 1)">
+              <span class="dot-black probe-dot"></span>
+              <span data-i18n="q2_o2">Convertir pesos y sesgos de flotantes de 32 bits a enteros de 8 bits.</span>
+            </div>
+            <div class="quiz-option" onclick="selectQuizOption(2, 2)">
+              <span class="dot-black probe-dot"></span>
+              <span data-i18n="q2_o3">Aumentar la velocidad de transferencia en la nube.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quiz-box">
+          <div class="quiz-question" data-i18n="q3">3. ¿Qué chip electrónico integra microprocesador, Wi-Fi y Bluetooth y es el estándar preferido para proyectos TinyML?</div>
+          <div class="quiz-options">
+            <div class="quiz-option" onclick="selectQuizOption(3, 0)">
+              <span class="dot-black probe-dot"></span>
+              <span>ESP32 SoC</span>
+            </div>
+            <div class="quiz-option" onclick="selectQuizOption(3, 1)">
+              <span class="dot-black probe-dot"></span>
+              <span>NE555 Timer</span>
+            </div>
+            <div class="quiz-option" onclick="selectQuizOption(3, 2)">
+              <span class="dot-black probe-dot"></span>
+              <span>Raspberry Pi 5 (Single Board Computer)</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="cert-print-btn" onclick="gradeQuiz()" data-i18n="btn_grade">Evaluar Respuestas</button>
+      </section>
+
+      <!-- TAB 5: Certificate -->
+      <section class="tab-pane" id="tab-certificate">
+        <div class="learning-section" id="cert-lock-message">
+          <h2 data-i18n="cert_locked">Certificado Bloqueado</h2>
+          <p data-i18n="cert_locked_desc">Completa todos los módulos y aprueba el cuestionario de evaluación con una puntuación perfecta para desbloquear tu certificado oficial.</p>
+        </div>
+
+        <div class="certificate-card" id="certificateCard">
+          <i data-lucide="award" class="cert-icon"></i>
+          <h2 class="cert-title" data-i18n="cert_congrats">Certificación de Logro</h2>
+          <p class="cert-text" data-i18n="cert_body">Por la presente se certifica que el titular ha completado y aprobado con éxito la capacitación técnica en <strong>Industrial IoT & Edge AI</strong>, demostrando conocimientos avanzados en TinyML, ESP32, protocolos MQTT y redes de borde industriales.</p>
+          <div class="cert-input-wrapper">
+            <input type="text" id="studentName" class="cert-input" placeholder="Tu Nombre Completo" />
+          </div>
+          <button class="cert-print-btn" onclick="window.print()" data-i18n="btn_print">Imprimir Certificado</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Tab switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      
+      const tabEl = document.getElementById('tab-' + tabId);
+      const btnEl = document.getElementById('tab-btn-' + tabId);
+      if (tabEl) tabEl.classList.add('active');
+      if (btnEl) btnEl.classList.add('active');
+    }
+
+    function showModuleSection(num) {
+      document.getElementById('module-sec-1').style.display = num === 1 ? 'block' : 'none';
+      document.getElementById('module-sec-2').style.display = num === 2 ? 'block' : 'none';
+    }
+
+    // Translations i18n
+    const translations = {
+      en: {
+        nav_dashboard: "Dashboard",
+        nav_modules: "Modules",
+        nav_simulator: "IIoT Simulator",
+        nav_quiz: "Evaluation",
+        nav_cert: "Certificate",
+        course_progress: "Course Progress",
+        course_title: "Industrial IoT & Edge AI",
+        course_subtitle: "Connecting industrial hardware with artificial neural intelligence.",
+        btn_back: "Back",
+        welcome_title: "Welcome to IoT & Edge AI Course",
+        welcome_desc: "This interactive portal will guide you through the integration of physical industrial sensors and TinyML models. Learn to build real-time data flows using protocols like MQTT and deploy deep learning models on resource-constrained devices like the ESP32.",
+        module_1: "Module 1",
+        module_2: "Module 2",
+        m1_title: "IIoT & Sensor Networks",
+        m1_desc: "Learn about network topologies, microcontroller communication, MQTT messaging, and real-time telemetry pipelines.",
+        m2_title: "Edge AI & TinyML",
+        m2_desc: "Learn about model quantization, ESP32 local deployment, and running neural networks on bare-metal systems.",
+        btn_start: "Start",
+        btn_complete_m1: "Mark Module 1 Completed",
+        btn_complete_m2: "Mark Module 2 Completed",
+        m1_full_title: "Module 1: Data Acquisition & IIoT Networks",
+        m1_p1: "Industrial Internet of Things (IIoT) requires highly optimized messaging protocols. Unlike standard IT environments, edge nodes operate under extreme resource constraints.",
+        m1_p2: "MQTT is the preferred protocol because of its Publish/Subscribe model. The broker handles routing seamlessly, reducing code size on the client.",
+        m2_full_title: "Module 2: TinyML Deployment on Edge",
+        m2_p1: "Processing on the Edge removes reliance on cloud servers, reducing latency and securing critical factory floor data.",
+        m2_p2: "Model quantization reduces memory footprint by up to 75% by converting 32-bit floats to 8-bit integers, allowing neural networks to run locally on ESP32 microcontrollers.",
+        sim_title: "Edge AI Simulated Telemetry Monitor",
+        sim_desc: "Adjust the sensor temperature and vibration sliders. The TinyML classification engine running in the background will classify system states.",
+        sim_controls: "Sensor Controls",
+        sim_temp: "Sensor Temperature",
+        sim_vib: "Vibration Frequency",
+        sim_ai_output: "TinyML Output (Edge Classification)",
+        sim_payload: "MQTT Published Payload",
+        quiz_title_sec: "Acreditation Evaluation",
+        quiz_desc_sec: "Answer the following technical questions to unlock your official academic certificate.",
+        q1: "1. Which protocol is ideal for connecting low-power sensors due to its extremely low overhead?",
+        q2: "2. What is quantization in the context of TinyML models?",
+        q2_o1: "Reducing the number of hidden layers.",
+        q2_o2: "Converting weights and biases from 32-bit floats to 8-bit integers.",
+        q2_o3: "Speeding up payload transfer in the cloud.",
+        q3: "3. Which microcontroller integrates Wi-Fi and Bluetooth and is highly popular for TinyML?",
+        btn_grade: "Grade Quiz",
+        cert_locked: "Certificate Locked",
+        cert_locked_desc: "Complete modules 1 and 2 and pass the quiz to unlock the certificate.",
+        cert_congrats: "Certificate of Achievement",
+        cert_body: "It is hereby certified that the holder has successfully completed the technical program in <strong>Industrial IoT & Edge AI</strong>, demonstrating mastery in ESP32 SoC architectures, TinyML quantization, and MQTT telemetry messaging.",
+        btn_print: "Print Certificate"
+      },
+      es: {
+        nav_dashboard: "Dashboard",
+        nav_modules: "Módulos",
+        nav_simulator: "Simulador IIoT",
+        nav_quiz: "Evaluación",
+        nav_cert: "Certificado",
+        course_progress: "Progreso del Curso",
+        course_title: "Industrial IoT & Edge AI",
+        course_subtitle: "Conectando hardware industrial con inteligencia neuronal artificial.",
+        btn_back: "Volver",
+        welcome_title: "Bienvenido a la Malla de IoT & Edge AI",
+        welcome_desc: "Este portal te guiará a través de la integración de dispositivos electrónicos industriales con modelos de TinyML. Aprenderás a estructurar flujos de datos en tiempo real mediante protocolos como MQTT y a compilar redes neuronales en microcontroladores de bajos recursos como el ESP32.",
+        module_1: "Módulo 1",
+        module_2: "Módulo 2",
+        m1_title: "Redes de Sensores e IIoT",
+        m1_desc: "Aprende sobre topologías de red, comunicación por microcontroladores, MQTT y adquisición de datos en tiempo real.",
+        m2_title: "Edge AI & TinyML",
+        m2_desc: "Compilación de redes neuronales, cuantización de modelos y despliegue local mediante TensorFlow Lite Micro.",
+        btn_start: "Iniciar",
+        btn_complete_m1: "Marcar Módulo 1 Completado",
+        btn_complete_m2: "Marcar Módulo 2 Completado",
+        m1_full_title: "Módulo 1: Adquisición de Datos y Redes IIoT",
+        m1_p1: "El Internet de las Cosas Industrial (IIoT) requiere de protocolos de mensajería altamente optimizados. A diferencia de las redes tradicionales, los nodos de borde operan con restricciones energéticas y de ancho de banda.",
+        m1_p2: "MQTT es el protocolo estándar para la transmisión de datos debido a su modelo de Publicación/Suscripción con sobrecarga mínima. Los nodos publican su telemetría en un 'Topic' a un Servidor Broker que distribuye los paquetes instantáneamente.",
+        m2_full_title: "Módulo 2: TinyML y Despliegue de Modelos de Borde",
+        m2_p1: "El procesamiento en el Edge elimina la dependencia del servidor en la nube, disminuyendo la latencia de respuesta y garantizando la seguridad de datos críticos industriales.",
+        m2_p2: "Para ejecutar redes neuronales artificiales en hardware como el ESP32, es necesario un proceso de cuantización. Consiste en mapear los pesos del modelo de floats de 32 bits a enteros de 8 bits (INT8). Esto reduce el peso del archivo del modelo en un 75% sin sacrificar precisión significativa.",
+        sim_title: "Simulador de Telemetría Edge AI",
+        sim_desc: "Ajusta los sliders de temperatura y vibración. El modelo de inteligencia artificial de borde (simulado localmente en JS) clasificará de forma instantánea el estado operativo del motor industrial.",
+        sim_controls: "Controles de Sensores",
+        sim_temp: "Temperatura del Sensor",
+        sim_vib: "Frecuencia de Vibración",
+        sim_ai_output: "Clasificación TinyML (Edge)",
+        sim_payload: "Payload MQTT Publicado",
+        quiz_title_sec: "Evaluación de Certificación",
+        quiz_desc_sec: "Completa las siguientes preguntas técnicas para desbloquear el certificado de acreditación académica en IoT Industrial y Edge AI.",
+        q1: "1. ¿Qué protocolo es ideal para conectar sensores de baja potencia debido a su bajísima sobrecarga de cabecera?",
+        q2: "2. ¿En qué consiste la cuantización de un modelo de red neuronal en TinyML?",
+        q2_o1: "Reducir el número de capas de la red neuronal.",
+        q2_o2: "Convertir pesos y sesgos de flotantes de 32 bits a enteros de 8 bits.",
+        q2_o3: "Aumentar la velocidad de transferencia en la nube.",
+        q3: "3. ¿Qué chip electrónico integra microprocesador, Wi-Fi y Bluetooth y es el estándar preferido para proyectos TinyML?",
+        btn_grade: "Evaluar Respuestas",
+        cert_locked: "Certificado Bloqueado",
+        cert_locked_desc: "Completa todos los módulos y aprueba el cuestionario de evaluación con una puntuación perfecta para desbloquear tu certificado oficial.",
+        cert_congrats: "Certificación de Logro",
+        cert_body: "Por la presente se certifica que el titular ha completado y aprobado con éxito la capacitación técnica en <strong>Industrial IoT & Edge AI</strong>, demostrando conocimientos avanzados en TinyML, ESP32, protocolos MQTT y redes de borde industriales.",
+        btn_print: "Imprimir Certificado"
+      }
+    };
+
+    let currentLanguage = 'es';
+    function toggleLanguage() {
+      currentLanguage = currentLanguage === 'es' ? 'en' : 'es';
+      document.getElementById('currentLangLabel').innerText = currentLanguage.toUpperCase();
+      
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[currentLanguage][key]) {
+          el.innerHTML = translations[currentLanguage][key];
+        }
+      });
+      
+      updateSimulator();
+    }
+
+    function toggleTheme() {
+      const isLight = document.documentElement.classList.contains('light');
+      if (isLight) {
+        document.documentElement.classList.remove('light');
+        localStorage.setItem('preferredTheme', 'dark');
+      } else {
+        document.documentElement.classList.add('light');
+        localStorage.setItem('preferredTheme', 'light');
+      }
+    }
+
+    // Tracking progress state
+    let progressState = {
+      m1: false,
+      m2: false,
+      quizApproved: false
+    };
+
+    function markModuleComplete(num) {
+      if (num === 1) {
+        progressState.m1 = true;
+        document.querySelector('[data-i18n="m1_status"]').innerText = currentLanguage === 'es' ? "Completado [x]" : "Completed [x]";
+      } else if (num === 2) {
+        progressState.m2 = true;
+        document.querySelector('[data-i18n="m2_status"]').innerText = currentLanguage === 'es' ? "Completado [x]" : "Completed [x]";
+      }
+      updateProgressUI();
+    }
+
+    function updateProgressUI() {
+      let percent = 0;
+      if (progressState.m1) percent += 33;
+      if (progressState.m2) percent += 33;
+      if (progressState.quizApproved) percent += 34;
+
+      document.getElementById('progressText').innerText = percent + '%';
+      
+      const offset = 283 - (percent / 100) * 283;
+      document.getElementById('progressBar').style.strokeDashoffset = offset;
+
+      if (percent === 100) {
+        document.getElementById('cert-lock-message').style.display = 'none';
+        document.getElementById('certificateCard').classList.add('unlocked');
+      }
+    }
+
+    // Simulator logic
+    function updateSimulator() {
+      const temp = parseInt(document.getElementById('tempSlider').value);
+      const vib = parseInt(document.getElementById('vibSlider').value);
+
+      document.getElementById('tempVal').innerText = temp + '°C';
+      document.getElementById('vibVal').innerText = vib + ' Hz';
+
+      const statusBadge = document.getElementById('statusBadge');
+      let status = 'NORMAL';
+      statusBadge.className = 'status-badge';
+
+      if (temp > 80 || vib > 150) {
+        status = 'CRITICAL';
+        statusBadge.classList.add('status-critical');
+        statusBadge.innerText = currentLanguage === 'es' ? 'Crítico' : 'Critical';
+      } else if (temp > 60 || vib > 100) {
+        status = 'WARNING';
+        statusBadge.classList.add('status-warning');
+        statusBadge.innerText = currentLanguage === 'es' ? 'Advertencia' : 'Warning';
+      } else {
+        status = 'NORMAL';
+        statusBadge.classList.add('status-normal');
+        statusBadge.innerText = 'Normal';
+      }
+
+      // Generate simulated JSON payload
+      const payload = {
+        device_id: "AN-edge-node-01",
+        temperature: temp,
+        vibration_hz: vib,
+        classification: status,
+        timestamp: Date.now()
+      };
+
+      const consoleEl = document.getElementById('mqttConsole');
+      consoleEl.innerHTML = `<span style="color:#22c55e">[MQTT PUB] Topic: autonovations/edge/sensor_01</span>\n` + JSON.stringify(payload, null, 2);
+    }
+
+    // Quiz evaluation logic
+    let quizSelectedAnswers = [null, null, null];
+    function selectQuizOption(qNum, optIndex) {
+      const questionBoxes = document.querySelectorAll('.quiz-box');
+      const options = questionBoxes[qNum - 1].querySelectorAll('.quiz-option');
+      options.forEach(o => o.classList.remove('selected'));
+      options[optIndex].classList.add('selected');
+      
+      quizSelectedAnswers[qNum - 1] = optIndex;
+    }
+
+    function gradeQuiz() {
+      // Correct answers: Q1: 1 (MQTT), Q2: 1 (weights conversion), Q3: 0 (ESP32)
+      if (quizSelectedAnswers[0] === 1 && quizSelectedAnswers[1] === 1 && quizSelectedAnswers[2] === 0) {
+        alert(currentLanguage === 'es' ? "¡Evaluación Aprobada con 100%! Has desbloqueado el portal del certificado." : "Quiz passed with 100%! Certificate portal unlocked.");
+        progressState.quizApproved = true;
+        updateProgressUI();
+        switchTab('certificate');
+      } else {
+        alert(currentLanguage === 'es' ? "Algunas respuestas son incorrectas. Por favor, revisa el contenido de los módulos y reevalúa." : "Some answers are incorrect. Please review modules and try again.");
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      updateSimulator();
+      updateProgressUI();
+    });
+  </script>
+</body>
+</html>

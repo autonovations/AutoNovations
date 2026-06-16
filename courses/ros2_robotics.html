@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoNovations Academy - ROS2 Robotics Fundamentals</title>
+  <script>
+    (function() {
+        const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+        if (savedTheme === 'light') {
+            document.documentElement.classList.add('light');
+        } else {
+            document.documentElement.classList.remove('light');
+        }
+    })();
+  </script>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Aprende desarrollo de robots autónomos con ROS2. Domina nodos, tópicos y algoritmos de planificación de rutas autónomas en simuladores interactivos.">
+  <meta name="keywords" content="ROS2, Robot Operating System, Robótica, Navegación Autónoma, Nav2, LiDAR, Simulador de Robots">
+  <meta name="author" content="AutoNovations Academy">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      /* HSL tailored color palette - Cyber Purple/Cyan theme */
+      --bg-darker: #05050a;
+      --bg-dark: #0a0b14;
+      --bg-card: #121324;
+      --bg-card-hover: #1b1c36;
+      --border: #212342;
+      --border-focus: #00D9FF;
+      
+      --accent-cyan: #00D9FF;
+      --accent-cyan-dim: rgba(0, 217, 255, 0.15);
+      --accent-green: #39ff14;
+      --accent-green-dim: rgba(57, 255, 20, 0.15);
+      --accent-amber: #ff9d00;
+      --accent-amber-dim: rgba(255, 157, 0, 0.15);
+      --accent-red: #ff3366;
+      --accent-red-dim: rgba(255, 51, 102, 0.15);
+
+      --text-primary: #f1f1f7;
+      --text-secondary: #9aa0b9;
+      --text-muted: #65698a;
+      
+      --font-sans: 'Inter', sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html.light {
+      --bg-darker: #f8fafc;
+      --bg-dark: #ffffff;
+      --bg-card: #f1f5f9;
+      --bg-card-hover: #e2e8f0;
+      --border: #cbd5e1;
+      --border-focus: #0088CC;
+
+      --accent-cyan: #0088CC;
+      --accent-cyan-dim: rgba(0, 136, 204, 0.1);
+      --accent-green: #10b981;
+      --accent-green-dim: rgba(16, 185, 129, 0.1);
+      --accent-amber: #d97706;
+      --accent-amber-dim: rgba(217, 119, 6, 0.1);
+      --accent-red: #dc2626;
+      --accent-red-dim: rgba(220, 38, 38, 0.1);
+
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg-darker);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-darker);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: var(--radius-sm);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-cyan);
+    }
+
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background-color: var(--bg-dark);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      padding: 1.5rem;
+      transition: transform 0.3s ease;
+    }
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      letter-spacing: 0.05em;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+    }
+    .sidebar-brand i {
+      animation: pulse-glow 3s infinite ease-in-out;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { filter: drop-shadow(0 0 2px var(--accent-cyan)); }
+      50% { filter: drop-shadow(0 0 10px var(--accent-cyan)); }
+    }
+
+    .nav-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      background: rgba(148, 163, 184, 0.05);
+      color: var(--text-primary);
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .theme-toggle-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: rgba(148, 163, 184, 0.05);
+      color: var(--text-primary);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .theme-toggle-btn i {
+      transition: transform 0.5s ease, opacity 0.3s ease;
+    }
+    html:not(.light) .theme-toggle-btn .sun-icon { opacity: 1; transform: scale(1); }
+    html:not(.light) .theme-toggle-btn .moon-icon { opacity: 0; transform: scale(0); position: absolute; }
+    html.light .theme-toggle-btn .sun-icon { opacity: 0; transform: scale(0); position: absolute; }
+    html.light .theme-toggle-btn .moon-icon { opacity: 1; transform: scale(1); }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+    .nav-item button {
+      width: 100%;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-align: left;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: var(--transition);
+    }
+    .nav-item button:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-primary);
+    }
+    .nav-item.active button {
+      background-color: var(--accent-cyan-dim);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 217, 255, 0.25);
+    }
+
+    .progress-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+    .progress-box-title {
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .progress-circle-wrapper {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 10px auto;
+    }
+    .progress-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .progress-bg-circle { fill: none; stroke: var(--border); stroke-width: 8; }
+    .progress-bar-circle {
+      fill: none;
+      stroke: var(--accent-cyan);
+      stroke-width: 8;
+      stroke-dasharray: 283;
+      stroke-dashoffset: 283;
+      transition: stroke-dashoffset 0.8s ease;
+      stroke-linecap: round;
+    }
+    .progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 280px;
+      flex-grow: 1;
+      padding: 2.5rem;
+      max-width: calc(100% - 280px);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .content-header h1 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .content-header p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-family: var(--font-display);
+      font-weight: 600;
+      transition: var(--transition);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 9999px;
+    }
+    .back-btn:hover {
+      color: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+      background: var(--accent-cyan-dim);
+    }
+
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    .tab-pane.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Dashboard grids */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background-color: var(--border);
+      transition: var(--transition);
+    }
+    .card:hover {
+      background-color: var(--bg-card-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    .card:hover::before {
+      background-color: var(--accent-cyan);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-badge {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-master {
+      background-color: var(--accent-cyan-dim);
+      color: var(--accent-cyan);
+    }
+    .card-desc {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+    .card-status {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .card-btn {
+      background-color: transparent;
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      padding: 6px 14px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .card-btn:hover {
+      background-color: var(--accent-cyan);
+      color: var(--bg-darker);
+    }
+
+    /* Course Modules Content */
+    .learning-section {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .learning-section h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--accent-cyan);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .learning-section h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      margin: 1.5rem 0 0.5rem 0;
+      color: var(--text-primary);
+    }
+    .learning-section p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      line-height: 1.7;
+    }
+    .learning-section ul {
+      margin-left: 1.5rem;
+      margin-bottom: 1.25rem;
+      color: var(--text-secondary);
+    }
+    .learning-section li { margin-bottom: 4px; font-size: 0.95rem; }
+    
+    .code-block {
+      background-color: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #38bdf8;
+      overflow-x: auto;
+      margin: 1.25rem 0;
+    }
+
+    /* Path Simulator Widget */
+    .simulator-container {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .simulator-container { grid-template-columns: 1fr; }
+    }
+    .map-panel {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .log-panel {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Pathfinder Grid Map */
+    .grid-map {
+      display: grid;
+      grid-template-columns: repeat(10, 32px);
+      grid-template-rows: repeat(10, 32px);
+      gap: 3px;
+      background: var(--bg-darker);
+      padding: 8px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem;
+    }
+    .grid-cell {
+      width: 32px;
+      height: 32px;
+      background: rgba(148, 163, 184, 0.05);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .grid-cell.obstacle {
+      background: var(--accent-red-dim);
+      border-color: var(--accent-red);
+      box-shadow: inset 0 0 8px rgba(255, 51, 102, 0.4);
+    }
+    .grid-cell.start {
+      background: var(--accent-green-dim);
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+    .grid-cell.goal {
+      background: var(--accent-amber-dim);
+      border-color: var(--accent-amber);
+      color: var(--accent-amber);
+      animation: pulse-star 2s infinite alternate;
+    }
+    @keyframes pulse-star {
+      0% { filter: drop-shadow(0 0 2px var(--accent-amber)); }
+      100% { filter: drop-shadow(0 0 8px var(--accent-amber)); }
+    }
+    .grid-cell.path {
+      background: var(--accent-cyan-dim);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      box-shadow: inset 0 0 8px rgba(0, 217, 255, 0.3);
+    }
+
+    .ros-console {
+      background: #020408;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #38bdf8;
+      height: 250px;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    .map-controls {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* Quiz Widget */
+    .quiz-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .quiz-question {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .quiz-option {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+    .quiz-option:hover {
+      background-color: var(--bg-card-hover);
+      border-color: var(--accent-cyan);
+    }
+    .quiz-option.selected {
+      border-color: var(--accent-cyan);
+      background-color: var(--accent-cyan-dim);
+    }
+
+    /* Certificate view */
+    .certificate-card {
+      background: linear-gradient(135deg, rgba(20, 20, 36, 0.95), rgba(10, 11, 20, 0.98)), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54 48c-2 0-3 1.7-3 3.5s1 3.5 3 3.5 3-1.7 3-3.5-1-3.5-3-3.5zm-48 0c-2 0-3 1.7-3 3.5s1 3.5 3 3.5 3-1.7 3-3.5-1-3.5-3-3.5zM30 20c-8.8 0-16 7.2-16 16s7.2 16 16 16 16-7.2 16-16-7.2-16-16-16zm0 2c7.7 0 14 6.3 14 14s-6.3 14-14 14-14-6.3-14-14 6.3-14 14-14z' fill='%23212342' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+      border: 4px double var(--accent-cyan);
+      border-radius: var(--radius-lg);
+      padding: 3rem;
+      text-align: center;
+      max-width: 700px;
+      margin: 2rem auto;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      display: none;
+    }
+    .certificate-card.unlocked { display: block; }
+    .cert-icon { color: var(--accent-amber); font-size: 3.5rem; margin-bottom: 1.5rem; }
+    .cert-title { font-family: var(--font-display); font-size: 2rem; margin-bottom: 1rem; color: var(--accent-cyan); }
+    .cert-text { color: var(--text-secondary); margin-bottom: 2rem; font-size: 1rem; }
+    .cert-input-wrapper { display: flex; justify-content: center; gap: 10px; max-width: 400px; margin: 0 auto 2rem auto; }
+    .cert-input {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      outline: none;
+      width: 100%;
+    }
+    .cert-print-btn {
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+      border: none;
+      color: var(--bg-darker);
+      padding: 10px 24px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 15px var(--accent-cyan-dim);
+      transition: var(--transition);
+    }
+    .cert-print-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 217, 255, 0.4); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left: 0; max-width: 100%; padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <i data-lucide="bot" class="w-6 h-6"></i>
+        <span>AN Academy</span>
+      </div>
+
+      <div class="nav-controls">
+        <button class="lang-btn" onclick="toggleLanguage()">
+          <span id="currentLangLabel">ES</span>
+          <i data-lucide="chevron-down" class="w-4 h-4"></i>
+        </button>
+        <button class="theme-toggle-btn" onclick="toggleTheme()">
+          <i data-lucide="sun" class="w-4 h-4 sun-icon"></i>
+          <i data-lucide="moon" class="w-4 h-4 moon-icon"></i>
+        </button>
+      </div>
+
+      <ul class="nav-list">
+        <li class="nav-item active" id="tab-btn-dashboard">
+          <button onclick="switchTab('dashboard')">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+            <span data-i18n="nav_dashboard">Dashboard</span>
+          </button>
+        </li>
+        <li class="nav-item" id="tab-btn-modules">
+          <button onclick="switchTab('modules')">
+            <i data-lucide="book-open" class="w-4 h-4"></i>
+            <span data-i18n="nav_modules">Módulos</span>
+          </button>
+        </li>
+        <li class="nav-item" id="tab-btn-simulator">
+          <button onclick="switchTab('simulator')">
+            <i data-lucide="navigation" class="w-4 h-4"></i>
+            <span data-i18n="nav_simulator">Simulador Nav2</span>
+          </button>
+        </li>
+        <li class="nav-item" id="tab-btn-quiz">
+          <button onclick="switchTab('quiz')">
+            <i data-lucide="help-circle" class="w-4 h-4"></i>
+            <span data-i18n="nav_quiz">Evaluación</span>
+          </button>
+        </li>
+        <li class="nav-item" id="tab-btn-certificate">
+          <button onclick="switchTab('certificate')">
+            <i data-lucide="award" class="w-4 h-4"></i>
+            <span data-i18n="nav_cert">Certificado</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="progress-box">
+        <div class="progress-box-title" data-i18n="course_progress">Progreso del Curso</div>
+        <div class="progress-circle-wrapper">
+          <svg class="progress-svg">
+            <circle class="progress-bg-circle" cx="50" cy="50" r="45"></circle>
+            <circle class="progress-bar-circle" id="progressBar" cx="50" cy="50" r="45"></circle>
+          </svg>
+          <div class="progress-text" id="progressText">0%</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Content Header -->
+      <header class="content-header">
+        <div>
+          <h1 id="headerTitle" data-i18n="course_title">ROS2 Robotics Fundamentals</h1>
+          <p id="headerSubtitle" data-i18n="course_subtitle">Entendiendo nodos de comunicación y navegación autónoma industrial.</p>
+        </div>
+        <a href="../index.html" class="back-btn">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span data-i18n="btn_back">Volver</span>
+        </a>
+      </header>
+
+      <!-- TAB 1: Dashboard -->
+      <section class="tab-pane active" id="tab-dashboard">
+        <div class="learning-section">
+          <h2 data-i18n="welcome_title">Portal de Fundamentos de Robótica ROS2</h2>
+          <p data-i18n="welcome_desc">Bienvenido al curso interactivo de ROS2 (Robot Operating System). Este programa está diseñado para introducirte al ecosistema estándar de programación de robots. Aprenderás a orquestar arquitecturas de software robótico basadas en nodos de comunicación asíncrona y a implementar planificación de trayectorias complejas en entornos simulados.</p>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-badge badge-master" data-i18n="module_1">Módulo 1</span>
+              <i data-lucide="share-2" class="text-neon w-5 h-5"></i>
+            </div>
+            <h3 class="card-title" data-i18n="m1_title">ROS2 Core: Nodos y Tópicos</h3>
+            <p class="card-desc" data-i18n="m1_desc">Aprende la arquitectura computacional basada en grafos de ROS2. Implementa nodos publicadores y suscriptores.</p>
+            <div class="card-footer">
+              <span class="card-status" data-i18n="m1_status">Completado [ ]</span>
+              <button class="card-btn" onclick="switchTab('modules'); showModuleSection(1);" data-i18n="btn_start">Iniciar</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-badge badge-master" data-i18n="module_2">Módulo 2</span>
+              <i data-lucide="navigation-2" class="text-neon w-5 h-5"></i>
+            </div>
+            <h3 class="card-title" data-i18n="m2_title">Navegación Nav2 & Pathfinder</h3>
+            <p class="card-desc" data-i18n="m2_desc">Domina la planificación global de rutas, la evitación local de colisiones y la integración de sensores de profundidad como LiDAR.</p>
+            <div class="card-footer">
+              <span class="card-status" data-i18n="m2_status">Completado [ ]</span>
+              <button class="card-btn" onclick="switchTab('modules'); showModuleSection(2);" data-i18n="btn_start">Iniciar</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: Modules Content -->
+      <section class="tab-pane" id="tab-modules">
+        <div class="learning-section" id="module-sec-1">
+          <h2 data-i18n="m1_full_title">Módulo 1: Arquitectura Computacional ROS2</h2>
+          <p data-i18n="m1_p1">ROS2 no es un sistema operativo tradicional, sino un Middleware que facilita la comunicación entre procesos distribuidos independientes de su lenguaje (C++ o Python).</p>
+          
+          <h3>Grafo de Nodos y Tópicos</h3>
+          <p data-i18n="m1_p2">La lógica de control de un robot se descompone en pequeñas unidades autónomas llamadas <strong>Nodos</strong>. Los nodos intercambian información publicando y suscribiéndose a canales de datos nombrados llamados <strong>Tópicos</strong>.</p>
+
+          <div class="code-block">
+# Ejemplo básico de Nodo Publicador en Python (ROS2 rclpy)
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import Twist
+
+class TeleopNode(Node):
+    def __init__(self):
+        super().__init__('teleop_node')
+        self.publisher_ = self.create_publisher(Twist, '/cmd_vel', 10)
+        # Publica comandos de movimiento a motores...
+          </div>
+          <button class="card-btn" onclick="markModuleComplete(1)" data-i18n="btn_complete_m1">Marcar Módulo como Completado</button>
+        </div>
+
+        <div class="learning-section" id="module-sec-2">
+          <h2 data-i18n="m2_full_title">Módulo 2: Planificación de Trayectorias y Nav2</h2>
+          <p data-i18n="m2_p1">El stack de navegación Nav2 de ROS2 proporciona los algoritmos necesarios para permitir que un robot se traslade de forma autónoma entre dos puntos de interés evitando obstáculos estáticos y dinámicos.</p>
+
+          <h3>Planificadores Globales (Global Planners)</h3>
+          <p data-i18n="m2_p2">El planificador global calcula la ruta óptima libre de colisiones utilizando algoritmos como A* (A-Estrella) o Dijkstra sobre un mapa de coste (Costmap) estático generado por sensores LiDAR.</p>
+
+          <div class="code-block">
+// ROS2 C++ Plugin para planificadores Nav2
+#include "nav2_core/global_planner.hpp"
+
+namespace nav2_straightline_planner {
+  class StraightLine : public nav2_core::GlobalPlanner {
+    // Implementa la ruta libre de colisiones...
+  };
+}
+          </div>
+          <button class="card-btn" onclick="markModuleComplete(2)" data-i18n="btn_complete_m2">Marcar Módulo como Completado</button>
+        </div>
+      </section>
+
+      <!-- TAB 3: Simulator -->
+      <section class="tab-pane" id="tab-simulator">
+        <div class="learning-section">
+          <h2 data-i18n="sim_title">Simulador de Planificación de Rutas (Nav2)</h2>
+          <p data-i18n="sim_desc">Haz clic en cualquier celda de la cuadrícula para agregar/quitar obstáculos (bloques rojos). Luego presiona "Calcular Ruta". El planificador Nav2 (simulado mediante BFS) encontrará el camino óptimo (celdas celestes) desde el inicio (verde/robot) hasta la meta (oro/estrella).</p>
+        </div>
+
+        <div class="simulator-container">
+          <div class="map-panel">
+            <h3 data-i18n="sim_map" style="margin-bottom: 12px;">Mapa de Coste 2D (Costmap)</h3>
+            <div class="grid-map" id="gridMap">
+              <!-- Grid generated via JS (10x10) -->
+            </div>
+            <div class="map-controls">
+              <button class="cert-print-btn" onclick="calculatePath()" data-i18n="btn_calc">Calcular Ruta</button>
+              <button class="schematic-btn" style="border: 1px solid var(--border)" onclick="clearObstacles()" data-i18n="btn_clear_map">Limpiar Mapa</button>
+            </div>
+          </div>
+
+          <div class="log-panel">
+            <h3 data-i18n="sim_log" style="margin-bottom: 12px;">ROS2 Node Console Log</h3>
+            <div class="ros-console" id="rosConsole">
+              [INFO] [nav2_controller]: Node initialized successfully.<br>
+              [INFO] [nav2_controller]: Waiting for map and path request...
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: Quiz -->
+      <section class="tab-pane" id="tab-quiz">
+        <div class="learning-section">
+          <h2 data-i18n="quiz_title_sec">Evaluación de Acreditación</h2>
+          <p data-i18n="quiz_desc_sec">Comprueba tus conocimientos sobre ROS2 y desbloquea tu credencial académica.</p>
+        </div>
+
+        <div class="quiz-box">
+          <div class="quiz-question" data-i18n="q1">1. ¿Qué comando ROS2 se utiliza para monitorizar los datos publicados en tiempo real dentro de un canal/tópico?</div>
+          <div class="quiz-options">
+            <div class="quiz-option" onclick="selectQuizOption(1, 0)">
+              <span class="dot-black probe-dot"></span>
+              <span>ros2 node info</span>
+            </div>
+            <div class="quiz-option" onclick="selectQuizOption(1, 1)">
+              <span class="dot-black probe-dot"></span>
+              <span>ros2 topic echo [nombre_del_topico]</span>
+            </div>
+            <div class="quiz-option" onclick="selectQuizOption(1, 2)">
+              <span class="dot-black probe-dot"></span>
+              <span>ros2 service call</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quiz-box">
+          <div class="quiz-question" data-i18n="q2">2. ¿Cuál es el propósito del Costmap en el stack Nav2?</div>
+          <div class="quiz-options">
+            <div class="quiz-option" onclick="selectQuizOption(2, 0)">
+              <span class="dot-black probe-dot"></span>
+              <span data-i18n="q2_o1">Calcular el coste financiero de construir el robot físico.</span>
+            </div>
+            <div class="quiz-option" onclick="selectQuizOption(2, 1)">
+              <span class="dot-black probe-dot"></span>
+              <span data-i18n="q2_o2">Representar las celdas ocupadas por obstáculos y las zonas de seguridad alrededor de ellos.</span>
+            </div>
+            <div class="quiz-option" onclick="selectQuizOption(2, 2)">
+              <span class="dot-black probe-dot"></span>
+              <span data-i18n="q2_o3">Medir el consumo de corriente de los motores.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quiz-box">
+          <div class="quiz-question" data-i18n="q3">3. ¿Qué biblioteca cliente de ROS2 es la nativa para el desarrollo en C++?</div>
+          <div class="quiz-options">
+            <div class="quiz-option" onclick="selectQuizOption(3, 0)">
+              <span class="dot-black probe-dot"></span>
+              <span>rclpy</span>
+            </div>
+            <div class="quiz-option" onclick="selectQuizOption(3, 1)">
+              <span class="dot-black probe-dot"></span>
+              <span>rclcpp</span>
+            </div>
+            <div class="quiz-option" onclick="selectQuizOption(3, 2)">
+              <span class="dot-black probe-dot"></span>
+              <span>rospy</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="cert-print-btn" onclick="gradeQuiz()" data-i18n="btn_grade">Evaluar Respuestas</button>
+      </section>
+
+      <!-- TAB 5: Certificate -->
+      <section class="tab-pane" id="tab-certificate">
+        <div class="learning-section" id="cert-lock-message">
+          <h2 data-i18n="cert_locked">Certificado Bloqueado</h2>
+          <p data-i18n="cert_locked_desc">Completa todos los módulos y aprueba el cuestionario de evaluación con una puntuación perfecta para desbloquear tu certificado oficial.</p>
+        </div>
+
+        <div class="certificate-card" id="certificateCard">
+          <i data-lucide="award" class="cert-icon"></i>
+          <h2 class="cert-title" data-i18n="cert_congrats">Certificación de Logro</h2>
+          <p class="cert-text" data-i18n="cert_body">Por la presente se certifica que el titular ha completado y aprobado con éxito la capacitación técnica en <strong>ROS2 Robotics Fundamentals</strong>, demostrando conocimientos avanzados en arquitecturas de nodos middleware, simulación 3D en Costmap y planificación Nav2.</p>
+          <div class="cert-input-wrapper">
+            <input type="text" id="studentName" class="cert-input" placeholder="Tu Nombre Completo" />
+          </div>
+          <button class="cert-print-btn" onclick="window.print()" data-i18n="btn_print">Imprimir Certificado</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Tab switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      
+      const tabEl = document.getElementById('tab-' + tabId);
+      const btnEl = document.getElementById('tab-btn-' + tabId);
+      if (tabEl) tabEl.classList.add('active');
+      if (btnEl) btnEl.classList.add('active');
+    }
+
+    function showModuleSection(num) {
+      document.getElementById('module-sec-1').style.display = num === 1 ? 'block' : 'none';
+      document.getElementById('module-sec-2').style.display = num === 2 ? 'block' : 'none';
+    }
+
+    // Translations i18n
+    const translations = {
+      en: {
+        nav_dashboard: "Dashboard",
+        nav_modules: "Modules",
+        nav_simulator: "Nav2 Simulator",
+        nav_quiz: "Evaluation",
+        nav_cert: "Certificate",
+        course_progress: "Course Progress",
+        course_title: "ROS2 Robotics Fundamentals",
+        course_subtitle: "Understanding node communication and industrial autonomous navigation.",
+        btn_back: "Back",
+        welcome_title: "Welcome to ROS2 Robotics Fundamentals Portal",
+        welcome_desc: "Welcome to the ROS2 (Robot Operating System) interactive course. This program introduces you to the industry standard software framework for robots. Learn to coordinate asynchronous nodes and design paths in complex simulated environments.",
+        module_1: "Module 1",
+        module_2: "Module 2",
+        m1_title: "ROS2 Core: Nodes & Topics",
+        m1_desc: "Learn about computational graph layouts. Code publisher and subscriber nodes to move real robot actuators.",
+        m2_title: "Nav2 Stack & Pathfinders",
+        m2_desc: "Master global planning, collision avoidance, and sensor integration like LiDAR and Depth Cameras.",
+        btn_start: "Start",
+        btn_complete_m1: "Mark Module 1 Completed",
+        btn_complete_m2: "Mark Module 2 Completed",
+        m1_full_title: "Module 1: ROS2 Computational Graph Layouts",
+        m1_p1: "ROS2 is a flexible middleware designed to orchestrate communication between distributed hardware units regardless of their primary language (C++ or Python).",
+        m1_p2: "Robot logic is broken down into small modular processes called Nodes. Nodes communicate asynchronously by publishing and subscribing to messaging topics.",
+        m2_full_title: "Module 2: Route Planning and Nav2 stack",
+        m2_p1: "The Nav2 navigation stack provides local and global path planning, enabling robots to safely travel around static and dynamic obstacles.",
+        m2_p2: "Global path planning computes the shortest collision-free path to a destination using A* or Dijkstra algorithms on top of a 2D cost grid generated by LiDAR sensors.",
+        sim_title: "Nav2 Route Planner Simulation",
+        sim_desc: "Click any cell to toggle obstacles (red blocks). Then click 'Calculate Route'. The Nav2 planner (simulated BFS) will find the shortest path (cyan cells) from start (green robot) to goal (gold star).",
+        sim_map: "2D Costmap Grid",
+        sim_log: "ROS2 Node Console Log",
+        btn_calc: "Calculate Route",
+        btn_clear_map: "Clear Map",
+        quiz_title_sec: "Acreditation Evaluation",
+        quiz_desc_sec: "Answer the following technical questions to unlock your official academic certificate.",
+        q1: "1. Which command monitors published topic values in real time?",
+        q2: "2. What is the main purpose of the Costmap grid in Nav2?",
+        q2_o1: "To compute the raw price of the physical sensors.",
+        q2_o2: "To represent safety buffers and cells occupied by obstacles.",
+        q2_o3: "To measure motor current draw.",
+        q3: "3. Which client library is native for C++ node development in ROS2?",
+        btn_grade: "Grade Quiz",
+        cert_locked: "Certificate Locked",
+        cert_locked_desc: "Complete modules 1 and 2 and pass the quiz to unlock the certificate.",
+        cert_congrats: "Certificate of Achievement",
+        cert_body: "It is hereby certified that the holder has successfully completed the technical program in <strong>ROS2 Robotics Fundamentals</strong>, demonstrating mastery in middleware node structures, 2D Costmap sensors, and Nav2 global planning algorithms.",
+        btn_print: "Print Certificate"
+      },
+      es: {
+        nav_dashboard: "Dashboard",
+        nav_modules: "Módulos",
+        nav_simulator: "Simulador Nav2",
+        nav_quiz: "Evaluación",
+        nav_cert: "Certificado",
+        course_progress: "Progreso del Curso",
+        course_title: "ROS2 Robotics Fundamentals",
+        course_subtitle: "Entendiendo nodos de comunicación y navegación autónoma industrial.",
+        btn_back: "Volver",
+        welcome_title: "Portal de Fundamentos de Robótica ROS2",
+        welcome_desc: "Bienvenido al curso interactivo de ROS2 (Robot Operating System). Este programa está diseñado para introducirte al ecosistema estándar de programación de robots. Aprenderás a orquestar arquitecturas de software robótico basadas en nodos de comunicación asíncrona y a implementar planificación de trayectorias complejas en entornos simulados.",
+        module_1: "Módulo 1",
+        module_2: "Módulo 2",
+        m1_title: "ROS2 Core: Nodos y Tópicos",
+        m1_desc: "Aprende la arquitectura computacional basada en grafos de ROS2. Implementa nodos publicadores y suscriptores.",
+        m2_title: "Navegación Nav2 & Pathfinder",
+        m2_desc: "Domina la planificación global de rutas, la evitación local de colisiones y la integración de sensores de profundidad como LiDAR.",
+        btn_start: "Iniciar",
+        btn_complete_m1: "Marcar Módulo 1 Completado",
+        btn_complete_m2: "Marcar Módulo 2 Completado",
+        m1_full_title: "Módulo 1: Arquitectura Computacional ROS2",
+        m1_p1: "ROS2 no es un sistema operativo tradicional, sino un Middleware que facilita la comunicación entre procesos distribuidos independientes de su lenguaje (C++ o Python).",
+        m1_p2: "La lógica de control de un robot se descompone en pequeñas unidades autónomas llamadas Nodos. Nodos intercambian información publicando y suscribiéndose a canales de datos nombrados llamados Tópicos.",
+        m2_full_title: "Módulo 2: Planificación de Trayectorias y Nav2",
+        m2_p1: "El stack de navegación Nav2 de ROS2 proporciona los algoritmos necesarios para permitir que un robot se traslade de forma autónoma entre dos puntos de interés evitando obstáculos estáticos y dinámicos.",
+        m2_p2: "El planificador global calcula la ruta óptima libre de colisiones utilizando algoritmos como A* (A-Estrella) o Dijkstra sobre un mapa de coste (Costmap) estático generado por sensores LiDAR.",
+        sim_title: "Simulador de Planificación de Rutas (Nav2)",
+        sim_desc: "Haz clic en cualquier celda de la cuadrícula para agregar/quitar obstáculos (bloques rojos). Luego presiona 'Calcular Ruta'. El planificador Nav2 (simulado mediante BFS) encontrará el camino óptimo (celdas celestes) desde el inicio (verde/robot) hasta la meta (oro/estrella).",
+        sim_map: "Mapa de Coste 2D (Costmap)",
+        sim_log: "ROS2 Node Console Log",
+        btn_calc: "Calcular Ruta",
+        btn_clear_map: "Limpiar Mapa",
+        quiz_title_sec: "Evaluación de Acreditación",
+        quiz_desc_sec: "Comprueba tus conocimientos sobre ROS2 y desbloquea tu credencial académica.",
+        q1: "1. ¿Qué comando ROS2 se utiliza para monitorizar los datos publicados en tiempo real dentro de un canal/tópico?",
+        q2: "2. ¿Cuál es el propósito del Costmap en el stack Nav2?",
+        q2_o1: "Calcular el coste financiero de construir el robot físico.",
+        q2_o2: "Representar las celdas ocupadas por obstáculos y las zonas de seguridad alrededor de ellos.",
+        q2_o3: "Medir el consumo de corriente de los motores.",
+        q3: "3. ¿Qué biblioteca cliente de ROS2 es la nativa para el desarrollo en C++?",
+        btn_grade: "Evaluar Respuestas",
+        cert_locked: "Certificado Bloqueado",
+        cert_locked_desc: "Completa todos los módulos y aprueba el cuestionario de evaluación con una puntuación perfecta para desbloquear tu certificado oficial.",
+        cert_congrats: "Certificación de Logro",
+        cert_body: "Por la presente se certifica que el titular ha completado y aprobado con éxito la capacitación técnica en <strong>ROS2 Robotics Fundamentals</strong>, demostrando conocimientos avanzados en arquitecturas de nodos middleware, simulación 3D en Costmap y planificación Nav2.",
+        btn_print: "Imprimir Certificado"
+      }
+    };
+
+    let currentLanguage = 'es';
+    function toggleLanguage() {
+      currentLanguage = currentLanguage === 'es' ? 'en' : 'es';
+      document.getElementById('currentLangLabel').innerText = currentLanguage.toUpperCase();
+      
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[currentLanguage][key]) {
+          el.innerHTML = translations[currentLanguage][key];
+        }
+      });
+    }
+
+    function toggleTheme() {
+      const isLight = document.documentElement.classList.contains('light');
+      if (isLight) {
+        document.documentElement.classList.remove('light');
+        localStorage.setItem('preferredTheme', 'dark');
+      } else {
+        document.documentElement.classList.add('light');
+        localStorage.setItem('preferredTheme', 'light');
+      }
+    }
+
+    // Tracking progress state
+    let progressState = {
+      m1: false,
+      m2: false,
+      quizApproved: false
+    };
+
+    function markModuleComplete(num) {
+      if (num === 1) {
+        progressState.m1 = true;
+        document.querySelector('[data-i18n="m1_status"]').innerText = currentLanguage === 'es' ? "Completado [x]" : "Completed [x]";
+      } else if (num === 2) {
+        progressState.m2 = true;
+        document.querySelector('[data-i18n="m2_status"]').innerText = currentLanguage === 'es' ? "Completado [x]" : "Completed [x]";
+      }
+      updateProgressUI();
+    }
+
+    function updateProgressUI() {
+      let percent = 0;
+      if (progressState.m1) percent += 33;
+      if (progressState.m2) percent += 33;
+      if (progressState.quizApproved) percent += 34;
+
+      document.getElementById('progressText').innerText = percent + '%';
+      
+      const offset = 283 - (percent / 100) * 283;
+      document.getElementById('progressBar').style.strokeDashoffset = offset;
+
+      if (percent === 100) {
+        document.getElementById('cert-lock-message').style.display = 'none';
+        document.getElementById('certificateCard').classList.add('unlocked');
+      }
+    }
+
+    // Pathfinder Grid simulator
+    const gridCols = 10;
+    const gridRows = 10;
+    let gridMap = Array(gridRows).fill().map(() => Array(gridCols).fill(0));
+    
+    // Start (0,0) and Goal (9,9)
+    const startNode = [0, 0];
+    const goalNode = [9, 9];
+
+    function buildGridMap() {
+      const container = document.getElementById('gridMap');
+      container.innerHTML = '';
+
+      for (let r = 0; r < gridRows; r++) {
+        for (let c = 0; c < gridCols; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'grid-cell';
+          cell.setAttribute('data-row', r);
+          cell.setAttribute('data-col', c);
+
+          if (r === startNode[0] && c === startNode[1]) {
+            cell.classList.add('start');
+            cell.innerHTML = '<i data-lucide="bot" style="width:20px;height:20px;"></i>';
+          } else if (r === goalNode[0] && c === goalNode[1]) {
+            cell.classList.add('goal');
+            cell.innerHTML = '<i data-lucide="star" style="width:20px;height:20px;"></i>';
+          } else {
+            // Click to toggle obstacles
+            cell.addEventListener('click', () => {
+              if (cell.classList.contains('path')) return;
+              
+              const isObstacle = cell.classList.contains('obstacle');
+              if (isObstacle) {
+                cell.classList.remove('obstacle');
+                gridMap[r][c] = 0;
+                logConsole(`[INFO] [nav2_costmap]: Cleared obstacle at (${r},${c})`);
+              } else {
+                cell.classList.add('obstacle');
+                gridMap[r][c] = 1;
+                logConsole(`[INFO] [nav2_costmap]: Added static obstacle at (${r},${c})`);
+              }
+            });
+          }
+
+          container.appendChild(cell);
+        }
+      }
+      lucide.createIcons();
+    }
+
+    function logConsole(msg) {
+      const consoleEl = document.getElementById('rosConsole');
+      consoleEl.innerHTML += `<br>${msg}`;
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    function clearObstacles() {
+      gridMap = Array(gridRows).fill().map(() => Array(gridCols).fill(0));
+      buildGridMap();
+      logConsole(`[INFO] [nav2_costmap]: Map fully cleared.`);
+    }
+
+    // Path calculation using BFS pathfinder
+    function calculatePath() {
+      // Clear old path cells
+      document.querySelectorAll('.grid-cell').forEach(cell => {
+        cell.classList.remove('path');
+      });
+
+      logConsole(`[INFO] [nav2_planner]: Global planner triggered...`);
+      logConsole(`[INFO] [nav2_planner]: Planning route from (0,0) to (9,9)`);
+
+      const queue = [[startNode]];
+      const visited = new Set();
+      visited.add(`${startNode[0]},${startNode[1]}`);
+
+      let foundPath = null;
+
+      while (queue.length > 0) {
+        const path = queue.shift();
+        const current = path[path.length - 1];
+
+        if (current[0] === goalNode[0] && current[1] === goalNode[1]) {
+          foundPath = path;
+          break;
+        }
+
+        const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+        for (const dir of directions) {
+          const nextRow = current[0] + dir[0];
+          const nextCol = current[1] + dir[1];
+          const key = `${nextRow},${nextCol}`;
+
+          if (nextRow >= 0 && nextRow < gridRows && nextCol >= 0 && nextCol < gridCols) {
+            // Not obstacle and not visited
+            if (gridMap[nextRow][nextCol] === 0 && !visited.has(key)) {
+              visited.add(key);
+              queue.push([...path, [nextRow, nextCol]]);
+            }
+          }
+        }
+      }
+
+      if (foundPath) {
+        logConsole(`[INFO] [nav2_planner]: Route computed. Length: ${foundPath.length} steps.`);
+        logConsole(`[INFO] [nav2_controller]: Publishing motor commands on /cmd_vel`);
+
+        // Draw path sequentially with delay
+        let index = 1;
+        function drawNext() {
+          if (index < foundPath.length - 1) {
+            const node = foundPath[index];
+            const cell = document.querySelector(`.grid-cell[data-row="${node[0]}"][data-col="${node[1]}"]`);
+            if (cell) cell.classList.add('path');
+            index++;
+            setTimeout(drawNext, 100);
+          } else {
+            logConsole(`[INFO] [nav2_controller]: Robot arrived at Goal (9,9) successfully.`);
+          }
+        }
+        drawNext();
+      } else {
+        logConsole(`[WARN] [nav2_planner]: Failed to plan path. Target is unreachable!`);
+      }
+    }
+
+    // Quiz logic
+    let quizSelectedAnswers = [null, null, null];
+    function selectQuizOption(qNum, optIndex) {
+      const questionBoxes = document.querySelectorAll('.quiz-box');
+      const options = questionBoxes[qNum - 1].querySelectorAll('.quiz-option');
+      options.forEach(o => o.classList.remove('selected'));
+      options[optIndex].classList.add('selected');
+      
+      quizSelectedAnswers[qNum - 1] = optIndex;
+    }
+
+    function gradeQuiz() {
+      // Correct answers: Q1: 1 (topic echo), Q2: 1 (obstacles grid), Q3: 1 (rclcpp)
+      if (quizSelectedAnswers[0] === 1 && quizSelectedAnswers[1] === 1 && quizSelectedAnswers[2] === 1) {
+        alert(currentLanguage === 'es' ? "¡Evaluación Aprobada con 100%! Has desbloqueado el portal del certificado." : "Quiz passed with 100%! Certificate portal unlocked.");
+        progressState.quizApproved = true;
+        updateProgressUI();
+        switchTab('certificate');
+      } else {
+        alert(currentLanguage === 'es' ? "Algunas respuestas son incorrectas. Por favor, revisa el contenido de los módulos y reevalúa." : "Some answers are incorrect. Please review modules and try again.");
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      buildGridMap();
+      updateProgressUI();
+    });
+  </script>
+</body>
+</html>
