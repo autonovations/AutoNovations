@@ -1,0 +1,3124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoNovations Academy - Curso de Machine Learning desde Cero</title>
+  <script>
+    (function() {
+        const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+        if (savedTheme === 'light') {
+            document.documentElement.classList.add('light');
+        } else {
+            document.documentElement.classList.remove('light');
+        }
+    })();
+  </script>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Aprende Machine Learning desde cero de forma 100% interactiva. Regresión lineal y logística, árboles de decisión, perceptrones y clustering con simuladores visuales.">
+  <meta name="keywords" content="Machine Learning desde cero, Aprendizaje Automático, Regresión Lineal, Regresión Logística, Árbol de Decisión, Perceptrón, K-Means Clustering">
+  <meta name="author" content="AutoNovations Academy">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      /* Palette: Cyber-Purple ML Aesthetics Dark Mode */
+      --bg-darker: #05060b;
+      --bg-dark: #0a0c16;
+      --bg-card: #111326;
+      --bg-card-hover: #191c36;
+      --border: #1e2240;
+      --border-focus: #a855f7;
+      
+      --accent-cyan: #00f0ff;
+      --accent-cyan-dim: rgba(0, 240, 255, 0.1);
+      --accent-purple: #a855f7;
+      --accent-purple-dim: rgba(168, 85, 247, 0.15);
+      --accent-pink: #ec4899;
+      --accent-pink-dim: rgba(236, 72, 153, 0.15);
+      --accent-green: #10b981;
+      --accent-green-neon: #39ff14;
+      --accent-green-dim: rgba(16, 185, 129, 0.15);
+      --accent-red: #ef4444;
+      --accent-red-neon: #ff3366;
+      --accent-red-dim: rgba(239, 68, 68, 0.15);
+      --accent-amber: #f59e0b;
+      --accent-amber-neon: #ff9d00;
+      --accent-amber-dim: rgba(245, 158, 11, 0.15);
+
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      
+      --bg-canvas: #020307;
+      --canvas-grid: #141728;
+      --bg-control: rgba(21, 28, 45, 0.4);
+      
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Light Mode Variables Override */
+    html.light {
+      --bg-darker: #f8fafc;
+      --bg-dark: #ffffff;
+      --bg-card: #f1f5f9;
+      --bg-card-hover: #e2e8f0;
+      --border: #cbd5e1;
+      --border-focus: #7c3aed;
+
+      --accent-cyan: #0284c7;
+      --accent-cyan-dim: rgba(2, 132, 199, 0.1);
+      --accent-purple: #7c3aed;
+      --accent-purple-dim: rgba(124, 58, 237, 0.1);
+      --accent-pink: #db2777;
+      --accent-pink-dim: rgba(219, 39, 119, 0.1);
+      --accent-green: #059669;
+      --accent-green-neon: #10b981;
+      --accent-green-dim: rgba(5, 150, 105, 0.1);
+      --accent-red: #dc2626;
+      --accent-red-neon: #ef4444;
+      --accent-red-dim: rgba(220, 38, 38, 0.1);
+      --accent-amber: #d97706;
+      --accent-amber-neon: #f59e0b;
+      --accent-amber-dim: rgba(217, 119, 6, 0.1);
+
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+
+      --bg-canvas: #f8fafc;
+      --canvas-grid: #cbd5e1;
+      --bg-control: rgba(148, 163, 184, 0.15);
+    }
+
+    /* Base Reset & Scrollbars */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg-darker);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-darker);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: var(--radius-sm);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-purple);
+    }
+
+    /* Layout */
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 280px;
+      background-color: var(--bg-dark);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      padding: 1.5rem;
+      transition: width 0.3s, transform 0.3s;
+    }
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent-purple);
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+    .sidebar-brand i {
+      animation: pulse-purple 3s infinite ease-in-out;
+    }
+
+    /* Language & Theme control in sidebar */
+    .nav-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .lang-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      background: var(--bg-control);
+      color: var(--text-primary);
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .lang-btn:hover {
+      border-color: var(--accent-purple);
+      background: var(--bg-card-hover);
+    }
+    .lang-options {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: var(--transition);
+      z-index: 1000;
+      min-width: 150px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+    .lang-dropdown:hover .lang-options {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .lang-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      width: 100%;
+      background: none;
+      border: none;
+      outline: none;
+      text-align: left;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .lang-option:hover {
+      background: var(--accent-purple-dim);
+      color: var(--accent-purple);
+    }
+    .lang-option.active {
+      color: var(--accent-purple);
+      background: rgba(168, 85, 247, 0.05);
+    }
+    .flag-icon {
+      width: 18px;
+      height: 12px;
+      object-fit: cover;
+      border-radius: 1px;
+    }
+    .theme-toggle-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--bg-control);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .theme-toggle-btn:hover {
+      border-color: var(--accent-purple);
+      transform: scale(1.05);
+    }
+    .theme-toggle-btn i {
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    }
+    html:not(.light) .theme-toggle-btn .sun-icon {
+      opacity: 1;
+      transform: rotate(0) scale(1);
+    }
+    html:not(.light) .theme-toggle-btn .moon-icon {
+      opacity: 0;
+      transform: rotate(90deg) scale(0);
+      position: absolute;
+    }
+    html.light .theme-toggle-btn .sun-icon {
+      opacity: 0;
+      transform: rotate(-90deg) scale(0);
+      position: absolute;
+    }
+    html.light .theme-toggle-btn .moon-icon {
+      opacity: 1;
+      transform: rotate(0) scale(1);
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+    .nav-item button {
+      width: 100%;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      font-weight: 500;
+      text-align: left;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: var(--transition);
+      border: 1px solid transparent;
+    }
+    .nav-item button:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-primary);
+    }
+    .nav-item.active button {
+      background-color: var(--accent-purple-dim);
+      color: var(--accent-purple);
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.03);
+    }
+
+    /* Circular Progress Box */
+    .progress-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+    .progress-box-title {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .progress-circle-wrapper {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 10px auto;
+    }
+    .progress-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .progress-bg-circle {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 8;
+    }
+    .progress-bar-circle {
+      fill: none;
+      stroke: var(--accent-purple);
+      stroke-width: 8;
+      stroke-dasharray: 283;
+      stroke-dashoffset: 283;
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      stroke-linecap: round;
+    }
+    .progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent-purple);
+    }
+    .progress-details {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 280px;
+      flex-grow: 1;
+      padding: 2.5rem;
+      max-width: calc(100% - 280px);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: margin-left 0.3s, max-width 0.3s;
+    }
+
+    /* Header */
+    .content-header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .content-header h1 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .content-header p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    /* Tabs */
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Dashboard Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background-color: var(--border);
+      transition: var(--transition);
+    }
+    .card:hover {
+      background-color: var(--bg-card-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    }
+    .card:hover::before {
+      background-color: var(--accent-purple);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-badge {
+      font-size: 0.7rem;
+      padding: 3px 6px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-beg { background-color: var(--accent-green-dim); color: var(--accent-green); }
+    .badge-int { background-color: var(--accent-amber-dim); color: var(--accent-amber); }
+    .badge-adv { background-color: var(--accent-pink-dim); color: var(--accent-pink); }
+
+    .card-desc {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+      margin-top: auto;
+    }
+    .card-status {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .card-btn {
+      background-color: transparent;
+      border: 1px solid var(--accent-purple);
+      color: var(--accent-purple);
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .card-btn:hover {
+      background-color: var(--accent-purple);
+      color: #05060b;
+    }
+
+    /* Certificate Box */
+    .certificate-card {
+      background: linear-gradient(135deg, rgba(17, 19, 38, 0.95), rgba(10, 12, 22, 0.98)), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54 48c-2 0-3 1.7-3 3.5s1 3.5 3 3.5 3-1.7 3-3.5-1-3.5-3-3.5zm-48 0c-2 0-3 1.7-3 3.5s1 3.5 3 3.5 3-1.7 3-3.5-1-3.5-3-3.5zM30 20c-8.8 0-16 7.2-16 16s7.2 16 16 16 16-7.2 16-16-7.2-16-16-16zm0 2c7.7 0 14 6.3 14 14s-6.3 14-14 14-14-6.3-14-14 6.3-14 14-14z' fill='%231e2240' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      margin-top: 2rem;
+      text-align: center;
+      position: relative;
+      display: none;
+      animation: pulse-border 4s infinite alternate;
+    }
+    .certificate-card.unlocked {
+      display: block;
+    }
+    .cert-icon {
+      color: var(--accent-amber);
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: rotate-gold 6s infinite linear;
+    }
+    .cert-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+    .cert-text {
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 1.5rem auto;
+      font-size: 0.95rem;
+    }
+    .cert-input-wrapper {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cert-print-btn {
+      background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+      border: none;
+      color: #05060b;
+      padding: 10px 24px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+      transition: var(--transition);
+    }
+    .cert-print-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+    }
+
+    /* Modules Grid & Layout */
+    .module-content-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 2rem;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main-content {
+        margin-left: 0;
+        max-width: 100%;
+      }
+      .module-content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Learning Section Styling */
+    .learning-section {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .learning-section h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      margin-bottom: 1.25rem;
+      color: var(--accent-purple);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .learning-section h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      margin: 1.75rem 0 0.75rem 0;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .learning-section p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 1.25rem;
+      line-height: 1.7;
+    }
+    .learning-section ul {
+      margin-left: 1.5rem;
+      margin-bottom: 1.25rem;
+      color: var(--text-secondary);
+    }
+    .learning-section li {
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    /* Alert and Definition boxes */
+    .alert-box {
+      padding: 1.25rem;
+      border-radius: var(--radius-lg);
+      margin: 1.5rem 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      border: 1px solid transparent;
+    }
+    .alert-box.info {
+      background-color: var(--accent-purple-dim);
+      border-color: rgba(168, 85, 247, 0.2);
+      color: var(--text-primary);
+    }
+    .alert-box.info i { color: var(--accent-purple); }
+    .alert-box.warn {
+      background-color: var(--accent-amber-dim);
+      border-color: rgba(255, 157, 0, 0.2);
+      color: var(--text-primary);
+    }
+    .alert-box.warn i { color: var(--accent-amber); }
+    .alert-box-text {
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+    .definition-box {
+      background-color: var(--bg-darker);
+      border-left: 3px solid var(--accent-purple);
+      padding: 1rem;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      margin: 1.25rem 0;
+    }
+    .definition-term {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--accent-purple);
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .definition-desc {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Interactive Widgets Base */
+    .interactive-widget {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .widget-title {
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .control-group {
+      margin-bottom: 1rem;
+    }
+    .control-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .control-label span.val {
+      color: var(--accent-purple);
+      font-family: var(--font-mono);
+    }
+    .slider-input {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border);
+      outline: none;
+      accent-color: var(--accent-purple);
+      cursor: pointer;
+    }
+    .input-field {
+      width: 100%;
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      outline: none;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      transition: var(--transition);
+    }
+    .input-field:focus {
+      border-color: var(--accent-purple);
+    }
+
+    /* Quiz Panel */
+    .quiz-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .quiz-question {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 1.25rem;
+    }
+    .quiz-option {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+    }
+    .quiz-option:hover {
+      border-color: var(--accent-purple);
+      background-color: var(--bg-card-hover);
+    }
+    .quiz-option.selected {
+      border-color: var(--accent-purple);
+      background-color: var(--accent-purple-dim);
+    }
+    .quiz-option.correct {
+      border-color: var(--accent-green);
+      background-color: var(--accent-green-dim);
+      color: var(--accent-green-neon);
+    }
+    .quiz-option.incorrect {
+      border-color: var(--accent-red);
+      background-color: var(--accent-red-dim);
+      color: var(--accent-red-neon);
+    }
+    .quiz-feedback {
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      display: none;
+      line-height: 1.5;
+    }
+    .quiz-feedback.show {
+      display: block;
+    }
+    .quiz-submit-btn {
+      width: 100%;
+      background: var(--accent-purple);
+      color: #05060b;
+      border: none;
+      padding: 10px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.9rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: var(--transition);
+    }
+    .quiz-submit-btn:hover {
+      box-shadow: 0 0 15px var(--accent-purple);
+      transform: translateY(-1px);
+    }
+    .quiz-submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Roadmap List */
+    .roadmap-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .roadmap-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      transition: var(--transition);
+    }
+    .roadmap-item:hover {
+      border-color: var(--border-focus);
+    }
+    .roadmap-checkbox-wrapper {
+      padding-top: 4px;
+    }
+    .roadmap-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      color: var(--bg-darker);
+    }
+    .roadmap-item.checked .roadmap-checkbox {
+      background-color: var(--accent-purple);
+      border-color: var(--accent-purple);
+      color: #05060b;
+      box-shadow: 0 0 8px var(--accent-purple);
+    }
+    .roadmap-checkbox i {
+      font-size: 14px;
+      stroke-width: 3px;
+      display: none;
+    }
+    .roadmap-item.checked .roadmap-checkbox i {
+      display: block;
+    }
+    .roadmap-body {
+      flex-grow: 1;
+    }
+    .roadmap-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+      transition: var(--transition);
+    }
+    .roadmap-item.checked .roadmap-title {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+    .roadmap-meta {
+      font-size: 0.75rem;
+      color: var(--accent-purple);
+      margin-bottom: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .roadmap-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .roadmap-item.checked .roadmap-desc {
+      color: var(--text-muted);
+    }
+
+    /* Mobile responsive toggle */
+    .menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 101;
+      transition: var(--transition);
+    }
+    @media (max-width: 900px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main-content {
+        margin-left: 0;
+        padding: 1.5rem;
+        padding-top: 5rem;
+      }
+      .menu-toggle {
+        display: flex;
+      }
+    }
+
+    /* SPECIFIC WIDGETS */
+    /* Concept Classifier */
+    .classifier-widget {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .scenario-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: 500;
+      font-size: 0.95rem;
+      border-left: 4px solid var(--accent-purple);
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    }
+    .classifier-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .class-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 10px 6px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: var(--transition);
+      text-align: center;
+    }
+    .class-btn:hover {
+      border-color: var(--accent-purple);
+      color: var(--text-primary);
+    }
+    .class-btn.correct {
+      background-color: var(--accent-green-dim);
+      border-color: var(--accent-green);
+      color: var(--accent-green-neon);
+    }
+    .class-btn.incorrect {
+      background-color: var(--accent-red-dim);
+      border-color: var(--accent-red);
+      color: var(--accent-red-neon);
+    }
+    .classifier-feedback {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      display: none;
+      line-height: 1.5;
+    }
+
+    /* Canvas Simulators */
+    .canvas-container {
+      position: relative;
+      background: var(--bg-canvas);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      width: 100%;
+      height: 320px;
+      cursor: crosshair;
+    }
+    .sim-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .canvas-instructions {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(10, 12, 22, 0.85);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: var(--radius-md);
+      font-size: 0.75rem;
+      pointer-events: none;
+      color: var(--text-secondary);
+      z-index: 5;
+    }
+    .canvas-stats-overlay {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(10, 12, 22, 0.85);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      pointer-events: none;
+      z-index: 5;
+      text-align: right;
+    }
+    .widget-actions-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .widget-btn {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+    }
+    .widget-btn:hover {
+      border-color: var(--accent-purple);
+      color: var(--text-primary);
+    }
+    .widget-btn.primary {
+      background: var(--accent-purple-dim);
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
+    }
+    .widget-btn.primary:hover {
+      background: var(--accent-purple);
+      color: #05060b;
+    }
+
+    /* Mathematical formulas styling */
+    .formula-box {
+      background-color: var(--bg-darker);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 12px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      text-align: center;
+      margin: 1rem 0;
+      transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+    }
+
+    /* Decision Tree splits */
+    .tree-viz-container {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .split-nodes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .split-node {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      text-align: center;
+    }
+    .split-node-title {
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .points-bubble-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 6px;
+      min-height: 24px;
+    }
+    .pt-bubble {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .pt-bubble.pass { background: var(--accent-cyan); box-shadow: 0 0 4px var(--accent-cyan); }
+    .pt-bubble.fail { background: var(--accent-pink); box-shadow: 0 0 4px var(--accent-pink); }
+    
+    .gini-calc-box {
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      margin-top: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      text-align: left;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* Perceptron logic visualizer */
+    .perceptron-container {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 15px;
+    }
+    @media (max-width: 600px) {
+      .perceptron-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    .gate-selector-row {
+      grid-column: span 2;
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      margin-bottom: 4px;
+    }
+    @media (max-width: 600px) {
+      .gate-selector-row {
+        grid-column: span 1;
+      }
+    }
+    .perceptron-diagram {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+    .perc-gate-table {
+      font-size: 0.75rem;
+    }
+    .perc-gate-table table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+    }
+    .perc-gate-table th {
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 4px;
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      font-size: 0.65rem;
+    }
+    .perc-gate-table td {
+      padding: 5px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .perc-gate-table tr.success {
+      background: rgba(16, 185, 129, 0.05);
+      color: var(--accent-green-neon);
+    }
+    .perc-gate-table tr.fail {
+      background: rgba(239, 68, 68, 0.05);
+      color: var(--accent-red-neon);
+    }
+
+    /* Print styling for certificate */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #certificate-box, #certificate-box * {
+        visibility: visible;
+      }
+      #certificate-box {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        border: 4px double #7c3aed;
+        background: #fff !important;
+        color: #000 !important;
+        padding: 4rem;
+        box-shadow: none;
+        display: block !important;
+      }
+      .cert-text, .cert-title {
+        color: #000 !important;
+      }
+      .cert-print-btn, .cert-input-wrapper {
+        display: none !important;
+      }
+    }
+
+    @keyframes pulse-purple {
+      0%, 100% { filter: drop-shadow(0 0 2px var(--accent-purple)); }
+      50% { filter: drop-shadow(0 0 8px var(--accent-purple)); }
+    }
+    @keyframes pulse-border {
+      0% { border-color: var(--border); }
+      100% { border-color: var(--accent-purple); }
+    }
+    @keyframes rotate-gold {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(12deg); }
+      100% { transform: rotate(0deg); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mobile Menu Toggle Button -->
+  <button id="menuToggle" class="menu-toggle" aria-label="Abrir Menú">
+    <i data-lucide="menu"></i>
+  </button>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <i data-lucide="brain-circuit"></i>
+        <span>RoboLearn Lab</span>
+      </div>
+
+      <!-- Navigation Controls -->
+      <div class="nav-controls">
+        <!-- Language Dropdown -->
+        <div class="lang-dropdown">
+          <button class="lang-btn" id="currentLangBtn">
+            <img src="https://flagcdn.com/w40/co.png" alt="Español" class="flag-icon" id="currentFlag">
+            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+          </button>
+          <div class="lang-options">
+            <button class="lang-option" onclick="setLanguage('en')">
+              <img src="https://flagcdn.com/w40/us.png" alt="English" class="flag-icon">
+              <span data-i18n="lang_en">English</span>
+            </button>
+            <button class="lang-option active" onclick="setLanguage('es')">
+              <img src="https://flagcdn.com/w40/co.png" alt="Español" class="flag-icon">
+              <span data-i18n="lang_es">Spanish</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Theme Toggle Button -->
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle Theme">
+          <i data-lucide="sun" class="w-5 h-5 sun-icon"></i>
+          <i data-lucide="moon" class="w-5 h-5 moon-icon"></i>
+        </button>
+      </div>
+      
+      <ul class="nav-list">
+        <li class="nav-item active" data-tab="dashboard">
+          <button><i data-lucide="layout-dashboard"></i><span data-i18n="nav_dashboard">Dashboard</span></button>
+        </li>
+        <li class="nav-item" data-tab="conceptos">
+          <button><i data-lucide="help-circle"></i><span data-i18n="nav_conceptos">Conceptos Básicos</span></button>
+        </li>
+        <li class="nav-item" data-tab="lineal">
+          <button><i data-lucide="trending-up"></i><span data-i18n="nav_lineal">Regresión Lineal</span></button>
+        </li>
+        <li class="nav-item" data-tab="logistica">
+          <button><i data-lucide="percent"></i><span data-i18n="nav_logistica">Regresión Logística</span></button>
+        </li>
+        <li class="nav-item" data-tab="arboles">
+          <button><i data-lucide="git-branch"></i><span data-i18n="nav_arboles">Árboles de Decisión</span></button>
+        </li>
+        <li class="nav-item" data-tab="redes">
+          <button><i data-lucide="network"></i><span data-i18n="nav_redes">Redes Neuronales</span></button>
+        </li>
+        <li class="nav-item" data-tab="kmeans">
+          <button><i data-lucide="projector"></i><span data-i18n="nav_kmeans">K-Means Clustering</span></button>
+        </li>
+        <li class="nav-item" data-tab="ruta">
+          <button><i data-lucide="map"></i><span data-i18n="nav_ruta">Mi Ruta de Estudio</span></button>
+        </li>
+      </ul>
+      
+      <!-- User study progress dashboard widget -->
+      <div class="progress-box">
+        <div class="progress-box-title" data-i18n="course_progress">Progreso del Curso</div>
+        <div class="progress-circle-wrapper">
+          <svg class="progress-svg">
+            <circle class="progress-bg-circle" cx="50" cy="50" r="45"></circle>
+            <circle id="globalProgressBar" class="progress-bar-circle" cx="50" cy="50" r="45"></circle>
+          </svg>
+          <div id="globalProgressText" class="progress-text">0%</div>
+        </div>
+        <div id="globalProgressDetails" class="progress-details">0 / 0 completados</div>
+      </div>
+    </nav>
+    
+    <!-- Main Content Panel -->
+    <main class="main-content" id="mainContent">
+
+      <!-- ==================== DASHBOARD PANEL ==================== -->
+      <div id="tab-dashboard" class="tab-pane active">
+        <div class="content-header">
+          <h1><i data-lucide="layout-dashboard" class="accent-purple"></i><span data-i18n="dash_title">Academia de Inteligencia Artificial</span></h1>
+          <p data-i18n="dash_subtitle">Aprende Machine Learning desde cero mediante simulaciones interactivas y visuales.</p>
+        </div>
+        
+        <div class="alert-box info">
+          <i data-lucide="info" class="accent-purple"></i>
+          <div class="alert-box-text" data-i18n="welcome_text">
+            <strong>¡Bienvenido al Laboratorio de Machine Learning!</strong> En esta plataforma interactiva estudiarás de forma práctica cómo los algoritmos analizan y aprenden de los datos. Podrás interactuar directamente con modelos matemáticos y de clustering mediante lienzos de dibujo dinámicos. Utiliza la sección <strong>"Mi Ruta de Estudio"</strong> para medir tu progreso.
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i data-lucide="help-circle" class="accent-purple"></i><span data-i18n="card_concepts_title">Conceptos Básicos</span></div>
+              <span class="card-badge badge-beg" data-i18n="badge_beg">Principiante</span>
+            </div>
+            <p class="card-desc" data-i18n="card_concepts_desc">Entiende qué es el aprendizaje automático y clasifica casos reales entre aprendizaje supervisado, no supervisado y por refuerzo.</p>
+            <div class="card-footer">
+              <div class="card-status"><i data-lucide="clock"></i> <span>2 horas aprox.</span></div>
+              <button class="card-btn" onclick="switchTab('conceptos')" data-i18n="btn_study">Estudiar</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i data-lucide="trending-up" class="accent-purple"></i><span data-i18n="card_linear_title">Regresión Lineal</span></div>
+              <span class="card-badge badge-beg" data-i18n="badge_beg">Principiante</span>
+            </div>
+            <p class="card-desc" data-i18n="card_linear_desc">Dibuja puntos sobre un plano 2D interactivo y observa cómo se calcula y dibuja la recta de regresión por mínimos cuadrados.</p>
+            <div class="card-footer">
+              <div class="card-status"><i data-lucide="clock"></i> <span>4 horas aprox.</span></div>
+              <button class="card-btn" onclick="switchTab('lineal')" data-i18n="btn_study">Estudiar</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i data-lucide="percent" class="accent-purple"></i><span data-i18n="card_logistic_title">Regresión Logística</span></div>
+              <span class="card-badge badge-int" data-i18n="badge_int">Intermedio</span>
+            </div>
+            <p class="card-desc" data-i18n="card_logistic_desc">Ajusta pesos y sesgo con deslizadores para clasificar puntos de dos colores y observa la frontera sigmoidea.</p>
+            <div class="card-footer">
+              <div class="card-status"><i data-lucide="clock"></i> <span>5 horas aprox.</span></div>
+              <button class="card-btn" onclick="switchTab('logistica')" data-i18n="btn_study">Estudiar</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i data-lucide="git-branch" class="accent-purple"></i><span data-i18n="card_trees_title">Árboles de Decisión</span></div>
+              <span class="card-badge badge-int" data-i18n="badge_int">Intermedio</span>
+            </div>
+            <p class="card-desc" data-i18n="card_trees_desc">Mueve el umbral de decisión sobre un conjunto de datos lineal y aprende a medir la ganancia de información con Gini.</p>
+            <div class="card-footer">
+              <div class="card-status"><i data-lucide="clock"></i> <span>6 horas aprox.</span></div>
+              <button class="card-btn" onclick="switchTab('arboles')" data-i18n="btn_study">Estudiar</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i data-lucide="network" class="accent-purple"></i><span data-i18n="card_nn_title">Redes Neuronales</span></div>
+              <span class="card-badge badge-adv" data-i18n="badge_adv">Avanzado</span>
+            </div>
+            <p class="card-desc" data-i18n="card_nn_desc">Entrena un perceptrón básico e intenta resolver compuertas lógicas lineales (AND/OR) y no lineales (XOR).</p>
+            <div class="card-footer">
+              <div class="card-status"><i data-lucide="clock"></i> <span>10 horas aprox.</span></div>
+              <button class="card-btn" onclick="switchTab('redes')" data-i18n="btn_study">Estudiar</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i data-lucide="projector" class="accent-purple"></i><span data-i18n="card_kmeans_title">K-Means Clustering</span></div>
+              <span class="card-badge badge-adv" data-i18n="badge_adv">Avanzado</span>
+            </div>
+            <p class="card-desc" data-i18n="card_kmeans_desc">Visualiza el aprendizaje no supervisado. Ubica centroides y observa paso a paso cómo se agrupan los puntos de datos.</p>
+            <div class="card-footer">
+              <div class="card-status"><i data-lucide="clock"></i> <span>6 horas aprox.</span></div>
+              <button class="card-btn" onclick="switchTab('kmeans')" data-i18n="btn_study">Estudiar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Completion Certificate Box -->
+        <div id="certificate-box" class="certificate-card">
+          <i data-lucide="award" class="cert-icon"></i>
+          <h2 class="cert-title" data-i18n="cert_unlocked_title">¡Certificado de Machine Learning Completado!</h2>
+          <p class="cert-text" data-i18n="cert_unlocked_desc">Has superado satisfactoriamente todos los módulos de entrenamiento técnico interactivo en aprendizaje automático.</p>
+          
+          <div class="cert-input-wrapper">
+            <input type="text" id="certUserName" class="input-field" placeholder="Ingresa tu nombre completo" value="Estudiante de AutoNovations">
+          </div>
+          
+          <button class="cert-print-btn" onclick="window.print()">
+            <i data-lucide="printer"></i> <span data-i18n="btn_print_cert">Imprimir Certificado</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ==================== CONCEPTOS BASICOS PANEL ==================== -->
+      <div id="tab-conceptos" class="tab-pane">
+        <div class="content-header">
+          <h1><i data-lucide="help-circle" class="accent-purple"></i>Conceptos Básicos de ML</h1>
+          <p>¿Qué es Machine Learning y qué tipos de algoritmos existen en la industria?</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div>
+            <section class="learning-section">
+              <h2>¿Qué es el Aprendizaje Automático?</h2>
+              <p>El Machine Learning (ML) es un subcampo de la Inteligencia Artificial que otorga a las computadoras la capacidad de aprender patrones a partir de datos históricos sin ser programadas explícitamente.</p>
+              
+              <div class="definition-box">
+                <div class="definition-term">Dato (Feature)</div>
+                <div class="definition-desc">Es una variable de entrada independiente que describe una característica (ej. el tamaño de una casa, la edad del paciente).</div>
+              </div>
+              <div class="definition-box">
+                <div class="definition-term">Etiqueta (Label / Target)</div>
+                <div class="definition-desc">Es el valor objetivo o de salida que queremos predecir (ej. el precio de venta final de la casa, si el tumor es benigno o maligno).</div>
+              </div>
+
+              <h3>Los Tres Grandes Paradigmas</h3>
+              <ul>
+                <li><strong>Aprendizaje Supervisado:</strong> Entrenamos al modelo con datos etiquetados (pares entrada-salida correctos). El objetivo es aprender una función de mapeo (ej. predecir precios de inmuebles).</li>
+                <li><strong>Aprendizaje No Supervisado:</strong> Los datos de entrada no tienen etiquetas. El algoritmo busca estructuras ocultas por similitud o comportamiento (ej. agrupar clientes en un clúster de mercadeo).</li>
+                <li><strong>Aprendizaje por Refuerzo:</strong> El modelo (llamado agente) aprende a tomar decisiones mediante interacción con un entorno dinámico, recibiendo castigos (penalizaciones) o premios (recompensas) (ej. un dron aprendiendo a volar estable).</li>
+              </ul>
+            </section>
+          </div>
+
+          <div class="sidebar-widgets">
+            <div class="interactive-widget">
+              <div class="widget-title"><i data-lucide="shuffle" class="accent-purple"></i>Clasificador de Casos</div>
+              <div class="classifier-widget">
+                <div id="scenarioText" class="scenario-card">Prediciendo el precio de venta de una casa basándose en sus metros cuadrados y habitaciones.</div>
+                <div class="classifier-buttons">
+                  <button class="class-btn" onclick="checkClassification(0)">Supervisado</button>
+                  <button class="class-btn" onclick="checkClassification(1)">No Superv.</button>
+                  <button class="class-btn" onclick="checkClassification(2)">Refuerzo</button>
+                </div>
+                <div id="classifierFeedback" class="classifier-feedback"></div>
+                <button class="widget-btn primary" id="btnNextScenario" onclick="nextScenario()" style="display:none;">Siguiente Caso</button>
+              </div>
+            </div>
+            
+            <!-- Quiz -->
+            <div class="quiz-box" id="quiz-conceptos">
+              <div class="quiz-question">Si queremos entrenar una IA para agrupar canciones en una plataforma según similitudes de frecuencia acústica sin que sepamos de antemano el género musical, ¿qué paradigma se usa?</div>
+              <div class="quiz-options">
+                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. Aprendizaje Supervisado</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. Aprendizaje No Supervisado</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. Aprendizaje por Refuerzo</div>
+              </div>
+              <div class="quiz-feedback" id="quiz-feedback-conceptos"></div>
+              <button class="quiz-submit-btn" onclick="submitQuiz('conceptos')" disabled>Enviar Respuesta</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== REGRESION LINEAL PANEL ==================== -->
+      <div id="tab-lineal" class="tab-pane">
+        <div class="content-header">
+          <h1><i data-lucide="trending-up" class="accent-purple"></i>Regresión Lineal</h1>
+          <p>Encuentra la tendencia y haz predicciones continuas sobre variables numéricas.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div>
+            <section class="learning-section">
+              <h2>Ajustando una Recta a los Datos</h2>
+              <p>La regresión lineal modela la relación entre una variable dependiente continua ($y$) y una variable independiente ($x$) mediante una línea recta:</p>
+              <div class="formula-box" style="font-size:1.1rem;">
+                y = w * x + b
+              </div>
+              <p>Donde <strong>w</strong> es el peso (pendiente de la recta) y <strong>b</strong> es el sesgo (intersección con el eje Y). En machine learning, medimos qué tan buena es la aproximación usando la función de pérdida del <strong>Error Cuadrático Medio (MSE)</strong>:</p>
+              <div class="formula-box" style="font-size:0.9rem;">
+                MSE = (1 / N) * Σ (y_real - y_predico)²
+              </div>
+              <p>El algoritmo de entrenamiento utiliza **Descenso de Gradiente** para ajustar iterativamente $w$ y $b$ con el fin de minimizar el MSE.</p>
+            </section>
+            
+            <section class="learning-section">
+              <h2>Prueba el Simulador</h2>
+              <p>Agrega puntos en el lienzo de la derecha haciendo clic. La recta se ajustará inmediatamente mediante el método de Mínimos Cuadrados.</p>
+              <div class="alert-box warn">
+                <i data-lucide="alert-triangle" class="accent-amber"></i>
+                <div class="alert-box-text">
+                  Si agregas puntos muy dispersos, el MSE subirá debido a que una sola línea recta no puede cruzar todos los puntos perfectamente (bajo ajuste o underfitting).
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="sidebar-widgets">
+            <div class="interactive-widget">
+              <div class="widget-title"><i data-lucide="sliders" class="accent-purple"></i>Lienzo de Regresión</div>
+              <div class="canvas-container" id="linearCanvasContainer">
+                <div class="canvas-instructions" data-i18n="click_canvas_add">Haz clic para agregar puntos</div>
+                <canvas id="linearCanvas" class="sim-canvas"></canvas>
+                <div id="linearStats" class="canvas-stats-overlay">
+                  N: 0<br>
+                  y = 0.00x + 0.00<br>
+                  MSE: 0.00
+                </div>
+              </div>
+              <div class="widget-actions-row">
+                <button class="widget-btn" onclick="clearLinearPoints()">Limpiar Lienzo</button>
+              </div>
+              
+              <!-- Predictor box -->
+              <div style="margin-top: 15px; border-top: 1px solid var(--border); padding-top: 12px;">
+                <div class="control-label">Probar predicción para X <span id="linearXValText" class="val">50.0</span></div>
+                <input type="range" id="linearPredictSlider" class="slider-input" min="0" max="100" value="50" oninput="predictLinear()">
+                <div style="font-family:var(--font-mono); font-size:0.8rem; margin-top:8px; text-align:right;">
+                  Y predicho: <span id="linearYPredText" style="color:var(--accent-purple); font-weight:700;">-</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quiz -->
+            <div class="quiz-box" id="quiz-lineal">
+              <div class="quiz-question">¿Qué efecto produce la presencia de puntos atípicos (outliers) extremos alejados de la tendencia en un modelo entrenado con Error Cuadrático Medio (MSE)?</div>
+              <div class="quiz-options">
+                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. La recta ignora los outliers debido al factor del promedio.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. La recta se desvía drásticamente hacia los outliers porque el error se eleva al cuadrado.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. El peso del modelo (w) cae automáticamente a cero para protegerse.</div>
+              </div>
+              <div class="quiz-feedback" id="quiz-feedback-lineal"></div>
+              <button class="quiz-submit-btn" onclick="submitQuiz('lineal')" disabled>Enviar Respuesta</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== REGRESION LOGISTICA PANEL ==================== -->
+      <div id="tab-logistica" class="tab-pane">
+        <div class="content-header">
+          <h1><i data-lucide="percent" class="accent-purple"></i>Regresión Logística</h1>
+          <p>Clasificación binaria mediante límites de probabilidad sigmoideos.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div>
+            <section class="learning-section">
+              <h2>Del Infinito a la Probabilidad</h2>
+              <p>A diferencia de la regresión lineal, la regresión logística predice una probabilidad de clase entre 0 y 1. Para ello, toma la salida continua de una ecuación lineal y la pasa por la **Función Sigmoide**:</p>
+              <div class="formula-box" style="font-size:1.1rem;">
+                σ(z) = 1 / (1 + e^-z)
+              </div>
+              <p>Donde $z = w_1 x_1 + w_2 x_2 + b$. Si la probabilidad $\sigma(z) \ge 0.5$, clasificamos el punto como clase 1 (azul), de lo contrario, como clase 0 (rojo). La frontera de decisión es la línea donde $\sigma(z) = 0.5$, es decir, donde $w_1 x_1 + w_2 x_2 + b = 0$.</p>
+            </section>
+
+            <section class="learning-section">
+              <h2>Ajusta el Separador Lineal</h2>
+              <p>Agrega puntos en el plano. Puedes presionar el botón de tipo de punto para cambiar de clase (rojo vs azul). Mueve los pesos y sesgo manualmente, o presiona <strong>"Auto-Entrenar"</strong> para que el algoritmo busque el ajuste óptimo mediante gradiente descendiente.</p>
+            </section>
+          </div>
+
+          <div class="sidebar-widgets">
+            <div class="interactive-widget">
+              <div class="widget-title"><i data-lucide="sliders" class="accent-purple"></i>Límite Logístico</div>
+              <div class="canvas-container" id="logisticCanvasContainer" style="height: 280px;">
+                <div class="canvas-instructions">Haz clic para agregar puntos</div>
+                <canvas id="logisticCanvas" class="sim-canvas"></canvas>
+                <div id="logisticStats" class="canvas-stats-overlay">
+                  Rojos: 0 | Azules: 0<br>
+                  Precisión: 0%
+                </div>
+              </div>
+              
+              <!-- Draw side selector -->
+              <div class="widget-actions-row">
+                <button class="widget-btn primary" id="btnLogisticColor" onclick="toggleLogisticColor()" style="border-color:var(--accent-red); color:var(--accent-red);">Clase Activa: Roja (0)</button>
+                <button class="widget-btn" onclick="clearLogisticPoints()">Limpiar</button>
+              </div>
+
+              <!-- Sliders -->
+              <div style="margin-top:10px;">
+                <div class="control-label">Peso X1 (w1) <span id="val-w1" class="val">0.0</span></div>
+                <input type="range" id="slider-w1" class="slider-input" min="-10" max="10" step="0.5" value="1" oninput="updateLogisticModel()">
+              </div>
+              <div style="margin-top:10px;">
+                <div class="control-label">Peso X2 (w2) <span id="val-w2" class="val">0.0</span></div>
+                <input type="range" id="slider-w2" class="slider-input" min="-10" max="10" step="0.5" value="1" oninput="updateLogisticModel()">
+              </div>
+              <div style="margin-top:10px;">
+                <div class="control-label">Sesgo (b) <span id="val-b" class="val">0.0</span></div>
+                <input type="range" id="slider-b" class="slider-input" min="-500" max="500" step="10" value="-50" oninput="updateLogisticModel()">
+              </div>
+
+              <div class="widget-actions-row" style="margin-top: 12px;">
+                <button class="widget-btn primary" onclick="autoTrainLogistic()"><i data-lucide="play" style="display:inline; width:12px; height:12px; margin-right:4px;"></i> Auto-Entrenar</button>
+              </div>
+            </div>
+            
+            <!-- Quiz -->
+            <div class="quiz-box" id="quiz-logistica">
+              <div class="quiz-question">Si el valor neto de la combinación lineal (z = w1*x1 + w2*x2 + b) es exactamente cero, ¿cuál es la probabilidad calculada por la función sigmoide?</div>
+              <div class="quiz-options">
+                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. 0.0 (Seguridad total de clase 0)</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. 0.5 (Frontera de decisión de máxima duda)</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. 1.0 (Seguridad total de clase 1)</div>
+              </div>
+              <div class="quiz-feedback" id="quiz-feedback-logistica"></div>
+              <button class="quiz-submit-btn" onclick="submitQuiz('logistica')" disabled>Enviar Respuesta</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== ARBOLES DE DECISION PANEL ==================== -->
+      <div id="tab-arboles" class="tab-pane">
+        <div class="content-header">
+          <h1><i data-lucide="git-branch" class="accent-purple"></i>Árboles de Decisión</h1>
+          <p>Divide y vencerás: separando datos mediante árboles jerárquicos basados en impureza.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div>
+            <section class="learning-section">
+              <h2>¿Cómo decide un Árbol?</h2>
+              <p>Un árbol de decisión busca realizar preguntas sucesivas sobre las variables de entrada de modo que divida el conjunto de datos en subgrupos cada vez más homogéneos ("puros").</p>
+              
+              <h3>Impureza de Gini</h3>
+              <p>Mide la probabilidad de clasificar incorrectamente un elemento seleccionado al azar en un nodo. Para clasificación binaria, se calcula como:</p>
+              <div class="formula-box" style="font-size:1rem;">
+                Gini = 1 - p₀² - p₁²
+              </div>
+              <p>Donde $p_0$ y $p_1$ son las proporciones de las clases 0 y 1 en el nodo. Un Gini de 0 significa pureza perfecta (todos pertenecen a una clase); un Gini de 0.5 representa mezcla máxima.</p>
+              
+              <div class="alert-box info">
+                <i data-lucide="git-merge" class="accent-purple"></i>
+                <div class="alert-box-text">
+                  El algoritmo busca el umbral que maximice la **Ganancia de Información**, la cual se calcula restando el Gini ponderado de los nodos hijos al Gini inicial del nodo padre.
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="sidebar-widgets">
+            <div class="interactive-widget">
+              <div class="widget-title"><i data-lucide="git-commit" class="accent-purple"></i>Simulador de Corte Gini</div>
+              <div class="tree-viz-container">
+                <!-- Points before split -->
+                <div style="text-align:center; margin-bottom:8px;">
+                  <span style="font-size:0.75rem; color:var(--text-muted);">Padre (5 Rojas, 5 Azules): Gini = 0.50</span>
+                  <div class="points-bubble-row">
+                    <span class="pt-bubble fail"></span>
+                    <span class="pt-bubble fail"></span>
+                    <span class="pt-bubble fail"></span>
+                    <span class="pt-bubble fail"></span>
+                    <span class="pt-bubble fail"></span>
+                    <span class="pt-bubble pass"></span>
+                    <span class="pt-bubble pass"></span>
+                    <span class="pt-bubble pass"></span>
+                    <span class="pt-bubble pass"></span>
+                    <span class="pt-bubble pass"></span>
+                  </div>
+                </div>
+
+                <div class="control-group">
+                  <div class="control-label">Umbral de Corte <span id="val-tree-threshold" class="val">4.5</span></div>
+                  <input type="range" id="slider-tree-threshold" class="slider-input" min="0.5" max="9.5" step="1" value="4.5" oninput="updateTreeSplit()">
+                </div>
+
+                <div class="split-nodes">
+                  <div class="split-node">
+                    <div class="split-node-title">Hijo Izquierdo (x &le; t)</div>
+                    <div class="points-bubble-row" id="leftNodeBubbles"></div>
+                    <div class="gini-calc-box" id="leftGiniText">Gini = 0.00</div>
+                  </div>
+                  <div class="split-node">
+                    <div class="split-node-title">Hijo Derecho (x &gt; t)</div>
+                    <div class="points-bubble-row" id="rightNodeBubbles"></div>
+                    <div class="gini-calc-box" id="rightGiniText">Gini = 0.00</div>
+                  </div>
+                </div>
+
+                <div style="border-top:1px solid var(--border); padding-top:10px; text-align:center; font-weight:700; font-size:0.8rem; color:var(--accent-purple);">
+                  Gini Ponderado Hijos: <span id="weightedGiniText">0.00</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quiz -->
+            <div class="quiz-box" id="quiz-arboles">
+              <div class="quiz-question">Si al realizar un corte en un árbol de decisión, el nodo hijo izquierdo contiene únicamente 4 elementos de clase azul (Paz) y ningún elemento rojo, ¿cuál es la impureza de Gini de este nodo?</div>
+              <div class="quiz-options">
+                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. 0.0 (Pureza absoluta)</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. 0.5 (Duda máxima)</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. 1.0 (Mezcla teórica imposible)</div>
+              </div>
+              <div class="quiz-feedback" id="quiz-feedback-arboles"></div>
+              <button class="quiz-submit-btn" onclick="submitQuiz('arboles')" disabled>Enviar Respuesta</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== REDES NEURONALES PANEL ==================== -->
+      <div id="tab-redes" class="tab-pane">
+        <div class="content-header">
+          <h1><i data-lucide="network" class="accent-purple"></i>Redes Neuronales y Perceptrón</h1>
+          <p>Conectando nodos lógicos para resolver problemas lineales y no lineales.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div>
+            <section class="learning-section">
+              <h2>El Perceptrón</h2>
+              <p>El perceptrón es la unidad fundamental de las redes neuronales artificiales. Recibe múltiples entradas ($x_1, x_2$), las multiplica por pesos asignados ($w_1, w_2$), añade un sesgo ($b$) y pasa el resultado por una función de activación (ej. escalón o sigmoide).</p>
+              
+              <h3>El Problema de la Separabilidad Lineal</h3>
+              <p>Un solo perceptrón actúa como clasificador lineal. Puede modelar compuertas lógicas como **AND** u **OR** porque sus salidas pueden dividirse con una sola línea recta.</p>
+              <p>Sin embargo, un perceptrón no puede resolver la función lógica **XOR** (OR exclusivo) debido a que no es linealmente separable. Para resolver XOR se requiere al menos una capa intermedia (oculta) de neuronas (Multi-layer Perceptron).</p>
+            </section>
+          </div>
+
+          <div class="sidebar-widgets">
+            <div class="interactive-widget">
+              <div class="widget-title"><i data-lucide="cpu" class="accent-purple"></i>Simulador de Perceptrón</div>
+              <div class="perceptron-container">
+                <div class="gate-selector-row">
+                  <button class="widget-btn active" id="btnGateAND" onclick="selectGate('AND')">AND</button>
+                  <button class="widget-btn" id="btnGateOR" onclick="selectGate('OR')">OR</button>
+                  <button class="widget-btn" id="btnGateXOR" onclick="selectGate('XOR')">XOR</button>
+                </div>
+
+                <div class="perc-sliders" style="display:flex; flex-direction:column; gap:8px;">
+                  <div>
+                    <div class="control-label">Peso W1 <span id="val-w1-perc" class="val">1.0</span></div>
+                    <input type="range" id="slider-w1-perc" class="slider-input" min="-2" max="2" step="0.2" value="1.0" oninput="updatePerceptron()">
+                  </div>
+                  <div>
+                    <div class="control-label">Peso W2 <span id="val-w2-perc" class="val">1.0</span></div>
+                    <input type="range" id="slider-w2-perc" class="slider-input" min="-2" max="2" step="0.2" value="1.0" oninput="updatePerceptron()">
+                  </div>
+                  <div>
+                    <div class="control-label">Sesgo (b) <span id="val-b-perc" class="val">-1.5</span></div>
+                    <input type="range" id="slider-b-perc" class="slider-input" min="-2" max="2" step="0.1" value="-1.5" oninput="updatePerceptron()">
+                  </div>
+                </div>
+
+                <div class="perc-gate-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>X1</th>
+                        <th>X2</th>
+                        <th>Target</th>
+                        <th>Pred</th>
+                      </tr>
+                    </thead>
+                    <tbody id="percTableBody">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quiz -->
+            <div class="quiz-box" id="quiz-redes">
+              <div class="quiz-question">¿Cuál es la razón técnica matemática por la cual un solo perceptrón simple es incapaz de resolver el problema lógico XOR?</div>
+              <div class="quiz-options">
+                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. El perceptrón solo opera con números racionales.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. Los puntos de salida de XOR no se pueden separar mediante una sola frontera de decisión lineal.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. Se requiere obligatoriamente la función de activación ReLU.</div>
+              </div>
+              <div class="quiz-feedback" id="quiz-feedback-redes"></div>
+              <button class="quiz-submit-btn" onclick="submitQuiz('redes')" disabled>Enviar Respuesta</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== K-MEANS CLUSTERING PANEL ==================== -->
+      <div id="tab-kmeans" class="tab-pane">
+        <div class="content-header">
+          <h1><i data-lucide="projector" class="accent-purple"></i>K-Means Clustering</h1>
+          <p>Agrupación de datos no etiquetados por similitud y centroides.</p>
+        </div>
+
+        <div class="module-content-grid">
+          <div>
+            <section class="learning-section">
+              <h2>Agrupamiento Inteligente (Clustering)</h2>
+              <p>El algoritmo K-Means clasifica un conjunto de datos en $K$ grupos distintos basándose en la distancia de los puntos a unos puntos de referencia llamados **centroides**.</p>
+              
+              <h3>El algoritmo iterativo</h3>
+              <ul>
+                <li><strong>1. Inicialización:</strong> Elegimos $K$ centroides en posiciones aleatorias del plano.</li>
+                <li><strong>2. Asignación:</strong> Cada punto de datos se asigna al centroide más cercano (usando la distancia euclidiana).</li>
+                <li><strong>3. Actualización:</strong> Se recalculan las coordenadas de cada centroide moviéndolo al promedio o "centro de gravedad" de los puntos asignados a él.</li>
+                <li><strong>4. Convergencia:</strong> Se repiten los pasos de asignación y actualización hasta que los centroides dejen de moverse.</li>
+              </ul>
+            </section>
+          </div>
+
+          <div class="sidebar-widgets">
+            <div class="interactive-widget">
+              <div class="widget-title"><i data-lucide="pie-chart" class="accent-purple"></i>Lienzo K-Means</div>
+              <div class="canvas-container" id="kmeansCanvasContainer" style="height: 250px;">
+                <div class="canvas-instructions">Puntos inicializados aleatoriamente</div>
+                <canvas id="kmeansCanvas" class="sim-canvas"></canvas>
+              </div>
+              <div id="kmeansPhaseText" style="font-size:0.75rem; text-align:center; font-weight:bold; margin-top:8px; color:var(--accent-purple);">Paso 1: Coloca centroides o presiona Asignar</div>
+              <div class="widget-actions-row">
+                <button class="widget-btn primary" id="btnKmeansStep" onclick="runKmeansStep()">Asignar Puntos</button>
+                <button class="widget-btn" onclick="resetKmeans()">Reiniciar</button>
+              </div>
+            </div>
+            
+            <!-- Quiz -->
+            <div class="quiz-box" id="quiz-kmeans">
+              <div class="quiz-question">¿Qué criterio matemático marca la finalización y convergencia definitiva de las iteraciones del algoritmo K-Means?</div>
+              <div class="quiz-options">
+                <div class="quiz-option" onclick="selectQuizOption(this, 0)">A. Cuando el número de iteraciones llega exactamente a 1000.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 1)">B. Cuando las asignaciones de los puntos ya no cambian y los centroides permanecen en la misma posición.</div>
+                <div class="quiz-option" onclick="selectQuizOption(this, 2)">C. Cuando la distancia promedio entre centroides cae a cero.</div>
+              </div>
+              <div class="quiz-feedback" id="quiz-feedback-kmeans"></div>
+              <button class="quiz-submit-btn" onclick="submitQuiz('kmeans')" disabled>Enviar Respuesta</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== MI RUTA DE ESTUDIO PANEL ==================== -->
+      <div id="tab-ruta" class="tab-pane">
+        <div class="content-header">
+          <h1><i data-lucide="map" class="accent-purple"></i>Mi Ruta de Estudio</h1>
+          <p>Revisa tu avance y desbloquea tu certificado técnico.</p>
+        </div>
+
+        <div class="module-content-grid" style="grid-template-columns: 1fr;">
+          <section class="learning-section">
+            <h2>Hitos de Aprendizaje</h2>
+            <p>Completa cada hito interactuando con los simuladores y respondiendo correctamente las evaluaciones. Cuando alcances el 100% de la ruta, tu certificado de finalización se desbloqueará en el Dashboard principal.</p>
+            
+            <div class="roadmap-list" id="roadmapListContainer">
+              <!-- Checkboxes rendered dynamically in JS -->
+            </div>
+          </section>
+        </div>
+      </div>
+
+    </main>
+    
+  </div>
+
+  <script>
+    // Helper to dynamically get CSS Variables for Canvas rendering
+    function getCSSVar(name) {
+      let cleanName = name.trim();
+      if (cleanName.startsWith('var(') && cleanName.endsWith(')')) {
+        cleanName = cleanName.slice(4, -1).trim();
+      }
+      return getComputedStyle(document.documentElement).getPropertyValue(cleanName).trim();
+    }
+
+    // =========================================================================
+    // NAVIGATION & SPA TABS
+    // =========================================================================
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      
+      const targetPane = document.getElementById(`tab-${tabId}`);
+      if (targetPane) targetPane.classList.add('active');
+      
+      const targetNavItem = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
+      if (targetNavItem) targetNavItem.classList.add('active');
+
+      // Close mobile sidebar
+      document.getElementById('sidebar').classList.remove('open');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Trigger redraws if opening canvas tabs
+      if (tabId === 'lineal') initLinearCanvas();
+      if (tabId === 'logistica') initLogisticCanvas();
+      if (tabId === 'kmeans') initKmeansCanvas();
+    }
+
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        switchTab(item.getAttribute('data-tab'));
+      });
+    });
+
+    document.getElementById('menuToggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+
+    // =========================================================================
+    // PROGRESS TRACKING & LOCALSTORAGE
+    // =========================================================================
+    const roadmapTasks = [
+      { id: "task1", phase: "Fase 1", title: "Conceptos Fundamentales", desc: "Clasificar casos reales y entender los paradigmas del aprendizaje automático." },
+      { id: "task2", phase: "Fase 1", title: "Fórmulas de Regresión", desc: "Comprender la función del peso (w), sesgo (b) y Error Cuadrático Medio." },
+      { id: "task3", phase: "Fase 1", title: "Lienzo de Regresión Lineal", desc: "Interactuar con el plano agregando puntos y analizando el ajuste dinámico." },
+      { id: "task4", phase: "Fase 2", title: "Sigmoide y Probabilidad", desc: "Estudiar la función de probabilidad y cómo proyecta valores al rango (0, 1)." },
+      { id: "task5", phase: "Fase 2", title: "Frontera de Clasificación", desc: "Ajustar una recta logística y comprobar el acierto en dos clases de puntos." },
+      { id: "task6", phase: "Fase 2", title: "Gini y División de Árboles", desc: "Experimentar con cortes de datos y calcular la reducción de la impureza." },
+      { id: "task7", phase: "Fase 3", title: "Entrenamiento del Perceptrón", desc: "Encontrar la combinación que simule las compuertas AND u OR básicas." },
+      { id: "task8", phase: "Fase 3", title: "Separabilidad de XOR", desc: "Comprender por qué una sola línea no separa XOR y la utilidad de las capas ocultas." },
+      { id: "task9", phase: "Fase 3", title: "Centroides y Clustering", desc: "Inicializar centroides y observar la distribución del agrupamiento K-Means." },
+      { id: "task10", phase: "Fase 3", title: "Algoritmo de Convergencia", desc: "Correr paso a paso el cálculo de medias y completar todas las evaluaciones." }
+    ];
+
+    let userProgress = {};
+
+    function initProgressTracker() {
+      const saved = localStorage.getItem('ml_progress');
+      if (saved) {
+        try {
+          userProgress = JSON.parse(saved);
+        } catch(e) {
+          userProgress = {};
+        }
+      }
+
+      const container = document.getElementById('roadmapListContainer');
+      if (container) {
+        container.innerHTML = '';
+        roadmapTasks.forEach(task => {
+          const isChecked = userProgress[task.id] === true;
+          const itemHtml = `
+            <div class="roadmap-item ${isChecked ? 'checked' : ''}" id="item-${task.id}">
+              <div class="roadmap-checkbox-wrapper">
+                <div class="roadmap-checkbox" onclick="toggleTask('${task.id}')">
+                  <i data-lucide="check"></i>
+                </div>
+              </div>
+              <div class="roadmap-body">
+                <span class="roadmap-meta">${task.phase}</span>
+                <h3 class="roadmap-title">${task.title}</h3>
+                <p class="roadmap-desc">${task.desc}</p>
+              </div>
+            </div>
+          `;
+          container.insertAdjacentHTML('beforeend', itemHtml);
+        });
+      }
+      
+      if (window.lucide) window.lucide.createIcons();
+      updateGlobalProgressUI();
+    }
+
+    function toggleTask(taskId) {
+      userProgress[taskId] = !userProgress[taskId];
+      localStorage.setItem('ml_progress', JSON.stringify(userProgress));
+      
+      const element = document.getElementById(`item-${taskId}`);
+      if (element) {
+        if (userProgress[taskId]) {
+          element.classList.add('checked');
+        } else {
+          element.classList.remove('checked');
+        }
+      }
+      
+      updateGlobalProgressUI();
+    }
+
+    function markModuleAsPassed(moduleId) {
+      let taskIds = [];
+      if (moduleId === 'conceptos') taskIds = ['task1'];
+      if (moduleId === 'lineal') taskIds = ['task2', 'task3'];
+      if (moduleId === 'logistica') taskIds = ['task4', 'task5'];
+      if (moduleId === 'arboles') taskIds = ['task6'];
+      if (moduleId === 'redes') taskIds = ['task7', 'task8'];
+      if (moduleId === 'kmeans') taskIds = ['task9', 'task10'];
+      
+      taskIds.forEach(id => {
+        userProgress[id] = true;
+        const element = document.getElementById(`item-${id}`);
+        if (element) element.classList.add('checked');
+      });
+      
+      localStorage.setItem('ml_progress', JSON.stringify(userProgress));
+      updateGlobalProgressUI();
+    }
+
+    function updateGlobalProgressUI() {
+      const total = roadmapTasks.length;
+      let completed = 0;
+      
+      roadmapTasks.forEach(task => {
+        if (userProgress[task.id] === true) completed++;
+      });
+      
+      const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+      
+      const circle = document.getElementById('globalProgressBar');
+      if (circle) {
+        const offset = 283 - (pct / 100) * 283;
+        circle.style.strokeDashoffset = offset;
+      }
+      
+      const pText = document.getElementById('globalProgressText');
+      if (pText) pText.innerText = `${pct}%`;
+      
+      const pDetails = document.getElementById('globalProgressDetails');
+      if (pDetails) {
+        const currentLang = localStorage.getItem('preferredLang') || 'es';
+        if (currentLang === 'es') {
+          pDetails.innerText = `${completed} / ${total} hitos completados`;
+        } else {
+          pDetails.innerText = `${completed} / ${total} milestones completed`;
+        }
+      }
+
+      // Check certificate unlock
+      const certBox = document.getElementById('certificate-box');
+      if (certBox) {
+        if (completed === total) {
+          certBox.classList.add('unlocked');
+        } else {
+          certBox.classList.remove('unlocked');
+        }
+      }
+    }
+
+    // =========================================================================
+    // QUIZZES ENGINE
+    // =========================================================================
+    const selectedOptions = {
+      conceptos: null,
+      lineal: null,
+      logistica: null,
+      arboles: null,
+      redes: null,
+      kmeans: null
+    };
+
+    const quizAnswers = {
+      conceptos: 1, // B
+      lineal: 1, // B
+      logistica: 1, // B
+      arboles: 0, // A
+      redes: 1, // B
+      kmeans: 1 // B
+    };
+
+    const quizFeedbacks = {
+      conceptos: {
+        correct: "¡Excelente! Al no tener etiquetas preestablecidas, el modelo buscará agrupar las señales acústicas con características similares en clústeres comunes. Esto es aprendizaje no supervisado puro.",
+        incorrect: "Incorrecto. Recuerda que no conocemos los géneros musicales correctos (las etiquetas) de antemano. El modelo trabaja de forma autónoma basándose solo en similitudes estructurales."
+      },
+      lineal: {
+        correct: "¡Exacto! El MSE eleva los errores al cuadrado, lo que penaliza mucho más los desvíos grandes. La recta se desvía en gran medida intentando acercarse al outlier para no disparar el error.",
+        incorrect: "Incorrecto. El error cuadrático penaliza con fuerza los valores lejanos ya que la distancia se eleva al cuadrado, afectando severamente el cálculo global."
+      },
+      logistica: {
+        correct: "¡Correcto! Si z = 0, la sigmoide calcula 1 / (1 + e^0) = 1 / 2 = 0.5. Indica el límite exacto donde el clasificador duda por igual entre ambas clases.",
+        incorrect: "Incorrecto. Evalúa la ecuación e^0 = 1. Calcula la sigmoide bajo este valor para encontrar la frontera neutral."
+      },
+      arboles: {
+        correct: "¡Perfecto! Al tener únicamente elementos de la clase azul, la proporción p1 = 1 y p0 = 0. Gini = 1 - 0^2 - 1^2 = 0. Indica que el nodo es perfectamente puro.",
+        incorrect: "Incorrecto. Si no hay mezcla y todos los elementos pertenecen a la misma clase, el nodo es 100% puro. Calcula Gini con p = 1."
+      },
+      redes: {
+        correct: "¡Correcto! XOR requiere delimitar dos zonas no contiguas. Ninguna sola recta puede trazar esta división lineal. Se necesita una capa oculta para doblar el espacio de entrada.",
+        incorrect: "Incorrecto. Se debe a un límite geométrico básico: no puedes separar las coordenadas lógicas de XOR usando una única recta recta."
+      },
+      kmeans: {
+        correct: "¡Magnífico! El algoritmo K-Means finaliza de forma natural cuando las agrupaciones y las coordenadas medias de los centroides no se mueven entre dos pasos sucesivos.",
+        incorrect: "Incorrecto. El algoritmo no se detiene bajo un límite fijo de iteraciones arbitrario si no ha estabilizado las agrupaciones promedio de los centroides."
+      }
+    };
+
+    window.selectQuizOption = function(optionElement, index) {
+      const parent = optionElement.parentElement;
+      const quizBox = parent.parentElement;
+      if (quizBox.classList.contains('solved')) return;
+      
+      parent.querySelectorAll('.quiz-option').forEach(el => {
+        el.classList.remove('selected', 'correct', 'incorrect');
+      });
+      
+      optionElement.classList.add('selected');
+      const quizId = quizBox.id.replace('quiz-', '');
+      selectedOptions[quizId] = index;
+      
+      const feedback = document.getElementById(`quiz-feedback-${quizId}`);
+      if (feedback) {
+        feedback.classList.remove('show');
+        feedback.innerHTML = '';
+      }
+      
+      quizBox.querySelector('.quiz-submit-btn').disabled = false;
+    };
+
+    window.submitQuiz = function(quizId) {
+      const selectedIdx = selectedOptions[quizId];
+      const correctIdx = quizAnswers[quizId];
+      
+      const quizContainer = document.getElementById(`quiz-${quizId}`);
+      const options = quizContainer.querySelectorAll('.quiz-option');
+      const feedback = document.getElementById(`quiz-feedback-${quizId}`);
+      const submitBtn = quizContainer.querySelector('.quiz-submit-btn');
+
+      options.forEach(el => el.classList.remove('selected'));
+
+      if (selectedIdx === correctIdx) {
+        options[selectedIdx].classList.add('correct');
+        feedback.innerHTML = `<span style="color: var(--accent-green-neon); font-weight:bold;">¡CORRECTO!</span><br>${quizFeedbacks[quizId].correct}`;
+        quizContainer.classList.add('solved');
+        markModuleAsPassed(quizId);
+      } else {
+        options[selectedIdx].classList.add('incorrect');
+        options[correctIdx].classList.add('correct');
+        feedback.innerHTML = `<span style="color: var(--accent-red-neon); font-weight:bold;">INCORRECTO</span><br>${quizFeedbacks[quizId].incorrect}`;
+      }
+
+      feedback.classList.add('show');
+      submitBtn.disabled = true;
+    };
+
+    // =========================================================================
+    // MODULE 1: CONCEPT CLASSIFIER WIDGET
+    // =========================================================================
+    const scenarios = [
+      { text: "Estimar el precio de venta de una vivienda a partir del área y el código postal.", type: 0, desc: "Supervisado (Regresión): Tenemos la etiqueta numérica continua de salida (precio)." },
+      { text: "Agrupar usuarios de Netflix en 5 grupos de interés basados en similitud de películas vistas.", type: 1, desc: "No Supervisado (Clustering): Buscamos agrupaciones similares sin géneros ni etiquetas prefijadas." },
+      { text: "Entrenar un coche a control remoto para que no colisione dándole una señal positiva cada segundo que avanza sin chocar.", type: 2, desc: "Refuerzo: El coche (agente) interactúa y aprende bajo señales de recompensa." },
+      { text: "Clasificar correos entrantes entre SPAM y CORREO SEGURO a partir de palabras sospechosas.", type: 0, desc: "Supervisado (Clasificación): Modelo entrenado con etiquetas previas (Spam / Seguro)." },
+      { text: "Reducir la cantidad de variables de un dataset de sensores de 100 columnas a 5 columnas clave.", type: 1, desc: "No Supervisado (Reducción de dimensionalidad): Analizamos correlación de datos sin etiquetas." }
+    ];
+    let currentScenarioIdx = 0;
+
+    function checkClassification(chosenType) {
+      const scenario = scenarios[currentScenarioIdx];
+      const feedback = document.getElementById('classifierFeedback');
+      const buttons = document.querySelectorAll('.class-btn');
+      
+      buttons.forEach((btn, idx) => {
+        btn.classList.remove('correct', 'incorrect');
+        if (idx === scenario.type) btn.classList.add('correct');
+        else if (idx === chosenType) btn.classList.add('incorrect');
+      });
+
+      feedback.innerHTML = chosenType === scenario.type ? 
+        `<span style="color:var(--accent-green-neon);font-weight:bold;">¡Correcto!</span> ${scenario.desc}` : 
+        `<span style="color:var(--accent-red-neon);font-weight:bold;">Incorrecto.</span> ${scenario.desc}`;
+      
+      feedback.style.display = 'block';
+      document.getElementById('btnNextScenario').style.display = 'block';
+    }
+
+    function nextScenario() {
+      currentScenarioIdx = (currentScenarioIdx + 1) % scenarios.length;
+      document.getElementById('scenarioText').innerText = scenarios[currentScenarioIdx].text;
+      document.getElementById('classifierFeedback').style.display = 'none';
+      document.getElementById('btnNextScenario').style.display = 'none';
+      document.querySelectorAll('.class-btn').forEach(btn => btn.classList.remove('correct', 'incorrect'));
+    }
+
+    // =========================================================================
+    // MODULE 2: LINEAR REGRESSION CANVAS WIDGET
+    // =========================================================================
+    let linearPoints = [];
+    let linearCanvas, linearCtx;
+
+    function initLinearCanvas() {
+      linearCanvas = document.getElementById('linearCanvas');
+      if (!linearCanvas) return;
+      linearCtx = linearCanvas.getContext('2d');
+      
+      // Handle resizing
+      const rect = linearCanvas.parentElement.getBoundingClientRect();
+      linearCanvas.width = rect.width;
+      linearCanvas.height = 320;
+      
+      linearCanvas.removeEventListener('mousedown', handleLinearCanvasClick);
+      linearCanvas.addEventListener('mousedown', handleLinearCanvasClick);
+      drawLinearRegression();
+    }
+
+    function handleLinearCanvasClick(e) {
+      const rect = linearCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      linearPoints.push({ x, y });
+      drawLinearRegression();
+      predictLinear();
+    }
+
+    function clearLinearPoints() {
+      linearPoints = [];
+      drawLinearRegression();
+      predictLinear();
+    }
+
+    function drawLinearRegression() {
+      if (!linearCtx) return;
+      
+      // Clear
+      linearCtx.fillStyle = getCSSVar('--bg-canvas');
+      linearCtx.fillRect(0, 0, linearCanvas.width, linearCanvas.height);
+      
+      // Grid lines
+      linearCtx.strokeStyle = getCSSVar('--canvas-grid');
+      linearCtx.lineWidth = 1;
+      for (let i = 40; i < linearCanvas.width; i += 40) {
+        linearCtx.beginPath();
+        linearCtx.moveTo(i, 0);
+        linearCtx.lineTo(i, linearCanvas.height);
+        linearCtx.stroke();
+      }
+      for (let j = 40; j < linearCanvas.height; j += 40) {
+        linearCtx.beginPath();
+        linearCtx.moveTo(0, j);
+        linearCtx.lineTo(linearCanvas.width, j);
+        linearCtx.stroke();
+      }
+
+      // Draw points
+      linearPoints.forEach(pt => {
+        linearCtx.fillStyle = getCSSVar('--accent-cyan');
+        linearCtx.shadowColor = getCSSVar('--accent-cyan');
+        linearCtx.shadowBlur = 8;
+        linearCtx.beginPath();
+        linearCtx.arc(pt.x, pt.y, 6, 0, Math.PI * 2);
+        linearCtx.fill();
+        linearCtx.shadowBlur = 0; // reset
+      });
+
+      // Calculate regression
+      let w = 0, b = 0, mse = 0;
+      const N = linearPoints.length;
+
+      if (N >= 2) {
+        let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+        linearPoints.forEach(pt => {
+          sumX += pt.x;
+          sumY += pt.y;
+          sumXY += pt.x * pt.y;
+          sumXX += pt.x * pt.x;
+        });
+
+        const meanX = sumX / N;
+        const meanY = sumY / N;
+
+        let numerator = 0;
+        let denominator = 0;
+        linearPoints.forEach(pt => {
+          numerator += (pt.x - meanX) * (pt.y - meanY);
+          denominator += (pt.x - meanX) * (pt.x - meanX);
+        });
+
+        if (denominator !== 0) {
+          w = numerator / denominator;
+          b = meanY - w * meanX;
+        } else {
+          w = 0;
+          b = meanY;
+        }
+
+        // Draw line
+        linearCtx.strokeStyle = getCSSVar('--accent-purple');
+        linearCtx.lineWidth = 3;
+        linearCtx.shadowColor = getCSSVar('--accent-purple');
+        linearCtx.shadowBlur = 10;
+        linearCtx.beginPath();
+        linearCtx.moveTo(0, b);
+        linearCtx.lineTo(linearCanvas.width, w * linearCanvas.width + b);
+        linearCtx.stroke();
+        linearCtx.shadowBlur = 0; // reset
+
+        // Calculate MSE
+        let sqErrorSum = 0;
+        linearPoints.forEach(pt => {
+          const predY = w * pt.x + b;
+          sqErrorSum += Math.pow(pt.y - predY, 2);
+        });
+        mse = sqErrorSum / N;
+
+        document.getElementById('linearStats').innerHTML = `
+          N: ${N}<br>
+          y = ${w.toFixed(2)}x + ${b.toFixed(0)}<br>
+          MSE: ${mse.toFixed(1)}
+        `;
+      } else {
+        document.getElementById('linearStats').innerHTML = `
+          N: ${N}<br>
+          y = 0.00x + 0.00<br>
+          MSE: 0.00
+        `;
+      }
+
+      // Save to global variables for prediction
+      linearCanvas.wValue = w;
+      linearCanvas.bValue = b;
+    }
+
+    function predictLinear() {
+      const val = parseFloat(document.getElementById('linearPredictSlider').value);
+      document.getElementById('linearXValText').innerText = val.toFixed(1);
+      
+      const w = linearCanvas.wValue || 0;
+      const b = linearCanvas.bValue || 0;
+      const pointsCount = linearPoints.length;
+
+      const yPredText = document.getElementById('linearYPredText');
+      if (pointsCount < 2) {
+        yPredText.innerText = "Añade más puntos";
+        return;
+      }
+
+      // Normalize canvas width into percentage
+      const normalizedX = (val / 100) * linearCanvas.width;
+      const predY = w * normalizedX + b;
+      
+      // Inverse scaling coordinate for standard visual printout
+      const normalizedYVal = (linearCanvas.height - predY).toFixed(1);
+      yPredText.innerText = normalizedYVal;
+
+      // Draw prediction indicator point
+      drawLinearRegression();
+      linearCtx.fillStyle = getCSSVar('--accent-pink');
+      linearCtx.strokeStyle = '#ffffff';
+      linearCtx.lineWidth = 1.5;
+      linearCtx.shadowColor = getCSSVar('--accent-pink');
+      linearCtx.shadowBlur = 12;
+      linearCtx.beginPath();
+      linearCtx.arc(normalizedX, predY, 8, 0, Math.PI * 2);
+      linearCtx.fill();
+      linearCtx.stroke();
+      linearCtx.shadowBlur = 0;
+    }
+
+    // =========================================================================
+    // MODULE 3: LOGISTIC REGRESSION CANVAS WIDGET
+    // =========================================================================
+    let logisticPoints = [];
+    let logisticCanvas, logisticCtx;
+    let activeLogisticClass = 0; // 0: Red, 1: Blue
+
+    function initLogisticCanvas() {
+      logisticCanvas = document.getElementById('logisticCanvas');
+      if (!logisticCanvas) return;
+      logisticCtx = logisticCanvas.getContext('2d');
+      
+      const rect = logisticCanvas.parentElement.getBoundingClientRect();
+      logisticCanvas.width = rect.width;
+      logisticCanvas.height = 280;
+      
+      logisticCanvas.removeEventListener('mousedown', handleLogisticCanvasClick);
+      logisticCanvas.addEventListener('mousedown', handleLogisticCanvasClick);
+      
+      updateLogisticModel();
+    }
+
+    function toggleLogisticColor() {
+      activeLogisticClass = activeLogisticClass === 0 ? 1 : 0;
+      const btn = document.getElementById('btnLogisticColor');
+      if (activeLogisticClass === 0) {
+        btn.innerText = "Clase Activa: Roja (0)";
+        btn.style.borderColor = 'var(--accent-red)';
+        btn.style.color = 'var(--accent-red)';
+      } else {
+        btn.innerText = "Clase Activa: Azul (1)";
+        btn.style.borderColor = 'var(--accent-cyan)';
+        btn.style.color = 'var(--accent-cyan)';
+      }
+    }
+
+    function handleLogisticCanvasClick(e) {
+      const rect = logisticCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      logisticPoints.push({ x, y, c: activeLogisticClass });
+      updateLogisticModel();
+    }
+
+    function clearLogisticPoints() {
+      logisticPoints = [];
+      updateLogisticModel();
+    }
+
+    function updateLogisticModel() {
+      if (!logisticCtx) return;
+
+      const w1 = parseFloat(document.getElementById('slider-w1').value);
+      const w2 = parseFloat(document.getElementById('slider-w2').value);
+      const b = parseFloat(document.getElementById('slider-b').value);
+
+      document.getElementById('val-w1').innerText = w1.toFixed(1);
+      document.getElementById('val-w2').innerText = w2.toFixed(1);
+      document.getElementById('val-b').innerText = b.toFixed(0);
+
+      // Clear background first to prevent opacity accumulation
+      logisticCtx.fillStyle = getCSSVar('--bg-canvas');
+      logisticCtx.fillRect(0, 0, logisticCanvas.width, logisticCanvas.height);
+
+      // Render Sigmoid probability grid in background (20x20 blocks)
+      const blockSize = 14;
+      for (let x = 0; x < logisticCanvas.width; x += blockSize) {
+        for (let y = 0; y < logisticCanvas.height; y += blockSize) {
+          const z = w1 * x + w2 * y + b;
+          const p = 1 / (1 + Math.exp(-z));
+          
+          // Interpolate color between Red (0) and Blue (1)
+          logisticCtx.fillStyle = `rgba(${Math.round((1 - p) * 200)}, 20, ${Math.round(p * 200)}, 0.08)`;
+          logisticCtx.fillRect(x, y, blockSize, blockSize);
+        }
+      }
+
+      // Draw decision boundary line where w1*x + w2*y + b = 0  => y = (-w1*x - b) / w2
+      logisticCtx.strokeStyle = getCSSVar('--accent-purple');
+      logisticCtx.lineWidth = 3;
+      logisticCtx.beginPath();
+      
+      if (w2 !== 0) {
+        const y0 = (-b) / w2;
+        const yW = (-w1 * logisticCanvas.width - b) / w2;
+        logisticCtx.moveTo(0, y0);
+        logisticCtx.lineTo(logisticCanvas.width, yW);
+      } else {
+        // Vertical boundary if w2 is zero: x = -b / w1
+        const xVal = -b / w1;
+        logisticCtx.moveTo(xVal, 0);
+        logisticCtx.lineTo(xVal, logisticCanvas.height);
+      }
+      logisticCtx.stroke();
+
+      // Count classes
+      let redCount = 0;
+      let blueCount = 0;
+      let correctCount = 0;
+
+      logisticPoints.forEach(pt => {
+        // Draw point
+        logisticCtx.fillStyle = pt.c === 0 ? getCSSVar('--accent-red') : getCSSVar('--accent-cyan');
+        logisticCtx.strokeStyle = '#ffffff';
+        logisticCtx.lineWidth = 1;
+        logisticCtx.shadowColor = pt.c === 0 ? getCSSVar('--accent-red') : getCSSVar('--accent-cyan');
+        logisticCtx.shadowBlur = 6;
+        
+        logisticCtx.beginPath();
+        logisticCtx.arc(pt.x, pt.y, 7, 0, Math.PI * 2);
+        logisticCtx.fill();
+        logisticCtx.stroke();
+        logisticCtx.shadowBlur = 0;
+
+        if (pt.c === 0) redCount++;
+        else blueCount++;
+
+        // Calculate predict correctness
+        const z = w1 * pt.x + w2 * pt.y + b;
+        const p = 1 / (1 + Math.exp(-z));
+        const pred = p >= 0.5 ? 1 : 0;
+        if (pred === pt.c) correctCount++;
+      });
+
+      const accuracy = logisticPoints.length > 0 ? Math.round((correctCount / logisticPoints.length) * 100) : 100;
+      
+      document.getElementById('logisticStats').innerHTML = `
+        Rojos: ${redCount} | Azules: ${blueCount}<br>
+        Precisión: ${accuracy}%
+      `;
+    }
+
+    // Gradient Descent auto training
+    function autoTrainLogistic() {
+      if (logisticPoints.length === 0) {
+        alert("Agrega algunos puntos de ambos colores para entrenar el modelo.");
+        return;
+      }
+
+      let w1 = parseFloat(document.getElementById('slider-w1').value);
+      let w2 = parseFloat(document.getElementById('slider-w2').value);
+      let b = parseFloat(document.getElementById('slider-b').value);
+
+      const lr = 0.005; // learning rate
+      const epochs = 400;
+
+      for (let epoch = 0; epoch < epochs; epoch++) {
+        let gradW1 = 0;
+        let gradW2 = 0;
+        let gradB = 0;
+
+        logisticPoints.forEach(pt => {
+          const z = w1 * pt.x + w2 * pt.y + b;
+          const p = 1 / (1 + Math.exp(-z));
+          const err = p - pt.c;
+
+          gradW1 += err * pt.x;
+          gradW2 += err * pt.y;
+          gradB += err;
+        });
+
+        // Average gradient
+        const n = logisticPoints.length;
+        w1 -= (gradW1 / n) * lr * 10; 
+        w2 -= (gradW2 / n) * lr * 10;
+        b -= (gradB / n) * lr * 200; // bias requires larger scale updates
+      }
+
+      // Constrain inside slider limits
+      w1 = Math.max(-10, Math.min(10, w1));
+      w2 = Math.max(-10, Math.min(10, w2));
+      b = Math.max(-500, Math.min(500, b));
+
+      document.getElementById('slider-w1').value = w1.toFixed(1);
+      document.getElementById('slider-w2').value = w2.toFixed(1);
+      document.getElementById('slider-b').value = b.toFixed(0);
+
+      updateLogisticModel();
+    }
+
+    // =========================================================================
+    // MODULE 4: DECISION TREE split WIDGET
+    // =========================================================================
+    // 1D points on X-axis: coordinate values from 1 to 10
+    const treeData = [
+      { val: 1, label: 0 }, // Fail
+      { val: 2, label: 0 }, // Fail
+      { val: 3, label: 0 }, // Fail
+      { val: 4, label: 1 }, // Pass
+      { val: 5, label: 0 }, // Fail (noise)
+      { val: 6, label: 1 }, // Pass
+      { val: 7, label: 1 }, // Pass
+      { val: 8, label: 1 }, // Pass
+      { val: 9, label: 1 }, // Pass
+      { val: 10, label: 1 } // Pass
+    ];
+
+    function updateTreeSplit() {
+      const threshold = parseFloat(document.getElementById('slider-tree-threshold').value);
+      document.getElementById('val-tree-threshold').innerText = threshold.toFixed(1);
+
+      const leftNode = [];
+      const rightNode = [];
+
+      treeData.forEach(pt => {
+        if (pt.val <= threshold) leftNode.push(pt);
+        else rightNode.push(pt);
+      });
+
+      // Render bubbles
+      const renderBubbles = (node, containerId) => {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        node.forEach(pt => {
+          const bubble = document.createElement('span');
+          bubble.className = `pt-bubble ${pt.label === 1 ? 'pass' : 'fail'}`;
+          bubble.title = `x=${pt.val}`;
+          container.appendChild(bubble);
+        });
+      };
+
+      renderBubbles(leftNode, 'leftNodeBubbles');
+      renderBubbles(rightNode, 'rightNodeBubbles');
+
+      // Gini functions
+      const calcGini = (node) => {
+        const N = node.length;
+        if (N === 0) return 0;
+        let pass = 0;
+        node.forEach(pt => { if (pt.label === 1) pass++; });
+        
+        const p1 = pass / N;
+        const p0 = 1 - p1;
+        return 1 - Math.pow(p0, 2) - Math.pow(p1, 2);
+      };
+
+      const giniL = calcGini(leftNode);
+      const giniR = calcGini(rightNode);
+      
+      const nL = leftNode.length;
+      const nR = rightNode.length;
+      const nTotal = treeData.length;
+      const weightedGini = (nL / nTotal) * giniL + (nR / nTotal) * giniR;
+
+      document.getElementById('leftGiniText').innerHTML = `
+        N: ${nL}<br>
+        Gini: ${giniL.toFixed(3)}
+      `;
+      document.getElementById('rightGiniText').innerHTML = `
+        N: ${nR}<br>
+        Gini: ${giniR.toFixed(3)}
+      `;
+      document.getElementById('weightedGiniText').innerText = weightedGini.toFixed(3);
+    }
+
+    // =========================================================================
+    // MODULE 5: NEURAL NET PERCEPTRON WIDGET
+    // =========================================================================
+    let activeGate = 'AND';
+
+    const gateData = {
+      AND: [
+        { x1: 0, x2: 0, target: 0 },
+        { x1: 0, x2: 1, target: 0 },
+        { x1: 1, x2: 0, target: 0 },
+        { x1: 1, x2: 1, target: 1 }
+      ],
+      OR: [
+        { x1: 0, x2: 0, target: 0 },
+        { x1: 0, x2: 1, target: 1 },
+        { x1: 1, x2: 0, target: 1 },
+        { x1: 1, x2: 1, target: 1 }
+      ],
+      XOR: [
+        { x1: 0, x2: 0, target: 0 },
+        { x1: 0, x2: 1, target: 1 },
+        { x1: 1, x2: 0, target: 1 },
+        { x1: 1, x2: 1, target: 0 }
+      ]
+    };
+
+    function selectGate(gateName) {
+      activeGate = gateName;
+      document.querySelectorAll('.gate-selector-row button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.getElementById(`btnGate${gateName}`).classList.add('active');
+
+      // Adjust default sliders based on standard logic weights for easier starting point
+      if (gateName === 'AND') {
+        document.getElementById('slider-w1-perc').value = '1.0';
+        document.getElementById('slider-w2-perc').value = '1.0';
+        document.getElementById('slider-b-perc').value = '-1.5';
+      } else if (gateName === 'OR') {
+        document.getElementById('slider-w1-perc').value = '1.0';
+        document.getElementById('slider-w2-perc').value = '1.0';
+        document.getElementById('slider-b-perc').value = '-0.5';
+      }
+
+      updatePerceptron();
+    }
+
+    function updatePerceptron() {
+      const w1 = parseFloat(document.getElementById('slider-w1-perc').value);
+      const w2 = parseFloat(document.getElementById('slider-w2-perc').value);
+      const b = parseFloat(document.getElementById('slider-b-perc').value);
+
+      document.getElementById('val-w1-perc').innerText = w1.toFixed(1);
+      document.getElementById('val-w2-perc').innerText = w2.toFixed(1);
+      document.getElementById('val-b-perc').innerText = b.toFixed(1);
+
+      const tableBody = document.getElementById('percTableBody');
+      tableBody.innerHTML = '';
+
+      const testData = gateData[activeGate];
+      testData.forEach(row => {
+        const netInput = w1 * row.x1 + w2 * row.x2 + b;
+        const pred = netInput >= 0 ? 1 : 0; // step activation
+        const isCorrect = pred === row.target;
+
+        const tr = document.createElement('tr');
+        tr.className = isCorrect ? 'success' : 'fail';
+        tr.innerHTML = `
+          <td>${row.x1}</td>
+          <td>${row.x2}</td>
+          <td><strong>${row.target}</strong></td>
+          <td><strong>${pred}</strong></td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    // =========================================================================
+    // MODULE 6: K-MEANS CLUSTERING CANVAS WIDGET
+    // =========================================================================
+    let kmeansPoints = [];
+    let centroids = [
+      { x: 80, y: 80, color: 'var(--accent-red)', id: 0 },
+      { x: 200, y: 180, color: 'var(--accent-cyan)', id: 1 }
+    ];
+    let kmeansCanvas, kmeansCtx;
+    let kmeansPhase = 0; // 0: Assign step next, 1: Update centroids step next
+
+    function initKmeansCanvas() {
+      kmeansCanvas = document.getElementById('kmeansCanvas');
+      if (!kmeansCanvas) return;
+      kmeansCtx = kmeansCanvas.getContext('2d');
+      
+      const rect = kmeansCanvas.parentElement.getBoundingClientRect();
+      kmeansCanvas.width = rect.width;
+      kmeansCanvas.height = 250;
+      
+      // Generate random points (grouped in two areas for visualization)
+      if (kmeansPoints.length === 0) {
+        generateKmeansPoints();
+      }
+
+      kmeansCanvas.removeEventListener('mousedown', handleKmeansCanvasClick);
+      kmeansCanvas.addEventListener('mousedown', handleKmeansCanvasClick);
+      drawKmeans();
+    }
+
+    function generateKmeansPoints() {
+      kmeansPoints = [];
+      const N = 40;
+      
+      // Cluster 1
+      for (let i = 0; i < N / 2; i++) {
+        const x = 70 + Math.random() * 80;
+        const y = 50 + Math.random() * 80;
+        kmeansPoints.push({ x, y, cluster: -1 });
+      }
+
+      // Cluster 2
+      for (let i = 0; i < N / 2; i++) {
+        const x = 200 + Math.random() * 100;
+        const y = 100 + Math.random() * 100;
+        kmeansPoints.push({ x, y, cluster: -1 });
+      }
+    }
+
+    function handleKmeansCanvasClick(e) {
+      const rect = kmeansCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      // Reposition closest centroid
+      const d0 = Math.hypot(x - centroids[0].x, y - centroids[0].y);
+      const d1 = Math.hypot(x - centroids[1].x, y - centroids[1].y);
+      
+      if (d0 < d1) {
+        centroids[0].x = x;
+        centroids[0].y = y;
+      } else {
+        centroids[1].x = x;
+        centroids[1].y = y;
+      }
+      
+      kmeansPhase = 0;
+      document.getElementById('btnKmeansStep').innerText = "Asignar Puntos";
+      document.getElementById('kmeansPhaseText').innerText = "Fase: Asigna puntos a centroides más cercanos.";
+      
+      drawKmeans();
+    }
+
+    function resetKmeans() {
+      generateKmeansPoints();
+      centroids[0] = { x: 80, y: 80, color: 'var(--accent-red)', id: 0 };
+      centroids[1] = { x: 200, y: 180, color: 'var(--accent-cyan)', id: 1 };
+      kmeansPhase = 0;
+      document.getElementById('btnKmeansStep').innerText = "Asignar Puntos";
+      document.getElementById('kmeansPhaseText').innerText = "Fase: Asigna puntos a centroides más cercanos.";
+      drawKmeans();
+    }
+
+    function runKmeansStep() {
+      const btn = document.getElementById('btnKmeansStep');
+      const phaseText = document.getElementById('kmeansPhaseText');
+
+      if (kmeansPhase === 0) {
+        // STEP 1: Assign points to closest centroids
+        kmeansPoints.forEach(pt => {
+          const d0 = Math.hypot(pt.x - centroids[0].x, pt.y - centroids[0].y);
+          const d1 = Math.hypot(pt.x - centroids[1].x, pt.y - centroids[1].y);
+          pt.cluster = d0 < d1 ? 0 : 1;
+        });
+
+        kmeansPhase = 1;
+        btn.innerText = "Recalcular Medias";
+        phaseText.innerText = "Fase: Recalcula centroides moviéndolos al promedio de su grupo.";
+      } else {
+        // STEP 2: Update centroid coordinate averages
+        let sums = [{ x: 0, y: 0, count: 0 }, { x: 0, y: 0, count: 0 }];
+
+        kmeansPoints.forEach(pt => {
+          if (pt.cluster !== -1) {
+            sums[pt.cluster].x += pt.x;
+            sums[pt.cluster].y += pt.y;
+            sums[pt.cluster].count++;
+          }
+        });
+
+        centroids.forEach((c, idx) => {
+          if (sums[idx].count > 0) {
+            c.x = sums[idx].x / sums[idx].count;
+            c.y = sums[idx].y / sums[idx].count;
+          }
+        });
+
+        kmeansPhase = 0;
+        btn.innerText = "Asignar Puntos";
+        phaseText.innerText = "Fase: Asigna puntos a centroides más cercanos.";
+      }
+
+      drawKmeans();
+    }
+
+    function drawKmeans() {
+      if (!kmeansCtx) return;
+      
+      // Clear
+      kmeansCtx.fillStyle = getCSSVar('--bg-canvas');
+      kmeansCtx.fillRect(0, 0, kmeansCanvas.width, kmeansCanvas.height);
+
+      // Grid
+      kmeansCtx.strokeStyle = getCSSVar('--canvas-grid');
+      kmeansCtx.lineWidth = 1;
+      for (let i = 40; i < kmeansCanvas.width; i += 40) {
+        kmeansCtx.beginPath();
+        kmeansCtx.moveTo(i, 0);
+        kmeansCtx.lineTo(i, kmeansCanvas.height);
+        kmeansCtx.stroke();
+      }
+
+      // Draw datapoints
+      kmeansPoints.forEach(pt => {
+        let color = '#7f8c8d'; // unassigned gray
+        let glow = '#7f8c8d';
+        if (pt.cluster === 0) {
+          color = getCSSVar('--accent-red');
+          glow = getCSSVar('--accent-red');
+        } else if (pt.cluster === 1) {
+          color = getCSSVar('--accent-cyan');
+          glow = getCSSVar('--accent-cyan');
+        }
+        
+        kmeansCtx.fillStyle = color;
+        kmeansCtx.shadowColor = glow;
+        kmeansCtx.shadowBlur = 6;
+        
+        kmeansCtx.beginPath();
+        kmeansCtx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+        kmeansCtx.fill();
+        kmeansCtx.shadowBlur = 0;
+      });
+
+      // Draw Centroids as larger stars or target points
+      centroids.forEach(c => {
+        kmeansCtx.fillStyle = getCSSVar(c.color);
+        kmeansCtx.strokeStyle = '#ffffff';
+        kmeansCtx.lineWidth = 2;
+        kmeansCtx.shadowColor = getCSSVar(c.color);
+        kmeansCtx.shadowBlur = 15;
+        
+        // Draw crosshair or larger circle
+        kmeansCtx.beginPath();
+        kmeansCtx.arc(c.x, c.y, 10, 0, Math.PI * 2);
+        kmeansCtx.fill();
+        kmeansCtx.stroke();
+        
+        kmeansCtx.fillStyle = '#ffffff';
+        kmeansCtx.beginPath();
+        kmeansCtx.arc(c.x, c.y, 3, 0, Math.PI * 2);
+        kmeansCtx.fill();
+        
+        kmeansCtx.shadowBlur = 0;
+      });
+    }
+
+    // =========================================================================
+    // THEME & LANGUAGE TRANSLATION LOGIC
+    // =========================================================================
+    const translations = {
+      en: {
+        lang_en: "English",
+        lang_es: "Spanish",
+        nav_dashboard: "Dashboard",
+        nav_conceptos: "Basic Concepts",
+        nav_lineal: "Linear Regression",
+        nav_logistica: "Logistic Regression",
+        nav_arboles: "Decision Trees",
+        nav_redes: "Neural Networks",
+        nav_kmeans: "K-Means Clustering",
+        nav_ruta: "My Study Roadmap",
+        course_progress: "Course Progress",
+        
+        dash_title: "AI Academy",
+        dash_subtitle: "Learn Machine Learning from scratch through interactive, visual simulations.",
+        welcome_text: "<strong>Welcome to the Machine Learning Lab!</strong> In this interactive platform, you will study how algorithms analyze and learn from data. You can interact directly with mathematical models and clustering through dynamic drawing canvases. Use the 'My Study Roadmap' section to track your progress.",
+        
+        card_concepts_title: "Basic Concepts",
+        card_concepts_desc: "Understand what machine learning is and classify real cases into supervised, unsupervised, and reinforcement learning.",
+        btn_study: "Study",
+        
+        card_linear_title: "Linear Regression",
+        card_linear_desc: "Plot points on an interactive 2D canvas and see how the least-squares regression line is calculated and drawn.",
+        
+        card_logistic_title: "Logistic Regression",
+        card_logistic_desc: "Adjust weights and bias with sliders to classify colored points and see the sigmoid boundary.",
+        
+        card_trees_title: "Decision Trees",
+        card_trees_desc: "Set decision thresholds on a 1D dataset and learn to measure Information Gain using Gini Impurity.",
+        
+        card_nn_title: "Neural Networks",
+        card_nn_desc: "Train a basic perceptron and try to solve linear logic gates (AND/OR) and non-linear gates (XOR).",
+        
+        card_kmeans_title: "K-Means Clustering",
+        card_kmeans_desc: "Visualize unsupervised learning. Position centroids and watch step-by-step how data points group.",
+        
+        cert_unlocked_title: "Machine Learning Certificate Unlocked!",
+        cert_unlocked_desc: "You have successfully completed all technical training modules in machine learning.",
+        btn_print_cert: "Print Certificate",
+        click_canvas_add: "Click to add points",
+        
+        badge_beg: "Beginner",
+        badge_int: "Intermediate",
+        badge_adv: "Advanced"
+      },
+      es: {
+        lang_en: "Inglés",
+        lang_es: "Español",
+        nav_dashboard: "Dashboard",
+        nav_conceptos: "Conceptos Básicos",
+        nav_lineal: "Regresión Lineal",
+        nav_logistica: "Regresión Logística",
+        nav_arboles: "Árboles de Decisión",
+        nav_redes: "Redes Neuronales",
+        nav_kmeans: "K-Means Clustering",
+        nav_ruta: "Mi Ruta de Estudio",
+        course_progress: "Progreso del Curso",
+        
+        dash_title: "Academia de Inteligencia Artificial",
+        dash_subtitle: "Aprende Machine Learning desde cero mediante simulaciones interactivas y visuales.",
+        welcome_text: "<strong>¡Bienvenido al Laboratorio de Machine Learning!</strong> En esta plataforma interactiva estudiarás de forma práctica cómo los algoritmos analizan y aprenden de los datos. Podrás interactuar directamente con modelos matemáticos y de clustering mediante lienzos de dibujo dinámicos. Utiliza la sección <strong>\"Mi Ruta de Estudio\"</strong> para medir tu progreso.",
+        
+        card_concepts_title: "Conceptos Básicos",
+        card_concepts_desc: "Entiende qué es el aprendizaje automático y clasifica casos reales entre aprendizaje supervisado, no supervisado y por refuerzo.",
+        btn_study: "Estudiar",
+        
+        card_linear_title: "Regresión Lineal",
+        card_linear_desc: "Dibuja puntos sobre un plano 2D interactivo y observa cómo se calcula y dibuja la recta de regresión por mínimos cuadrados.",
+        
+        card_logistic_title: "Regresión Logística",
+        card_logistic_desc: "Ajusta pesos y sesgo con deslizadores para clasificar puntos de dos colores y observa la frontera sigmoidea.",
+        
+        card_trees_title: "Árboles de Decisión",
+        card_trees_desc: "Mueve el umbral de decisión sobre un conjunto de datos lineal y aprende a medir la ganancia de información con Gini.",
+        
+        card_nn_title: "Redes Neuronales",
+        card_nn_desc: "Entrena un perceptrón básico e intenta resolver compuertas lógicas lineales (AND/OR) y no lineales (XOR).",
+        
+        card_kmeans_title: "K-Means Clustering",
+        card_kmeans_desc: "Visualiza el aprendizaje no supervisado. Ubica centroides y observa paso a paso cómo se agrupan los puntos de datos.",
+        
+        cert_unlocked_title: "¡Certificado de Machine Learning Completado!",
+        cert_unlocked_desc: "Has superado satisfactoriamente todos los módulos de entrenamiento técnico interactivo en aprendizaje automático.",
+        btn_print_cert: "Imprimir Certificado",
+        click_canvas_add: "Haz clic para agregar puntos",
+        
+        badge_beg: "Principiante",
+        badge_int: "Intermedio",
+        badge_adv: "Avanzado"
+      }
+    };
+
+    function setTheme(theme) {
+      if (theme === 'light') {
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.remove('light');
+      }
+      localStorage.setItem('preferredTheme', theme);
+      if (window.lucide) window.lucide.createIcons();
+
+      // Redraw active canvases to apply theme-appropriate colors
+      if (typeof drawLinearRegression === 'function' && typeof linearCtx !== 'undefined' && linearCtx) {
+        drawLinearRegression();
+      }
+      if (typeof updateLogisticModel === 'function' && typeof logisticCtx !== 'undefined' && logisticCtx) {
+        updateLogisticModel();
+      }
+      if (typeof drawKmeans === 'function' && typeof kmeansCtx !== 'undefined' && kmeansCtx) {
+        drawKmeans();
+      }
+    }
+
+    function toggleTheme() {
+      const isLight = document.documentElement.classList.contains('light');
+      setTheme(isLight ? 'dark' : 'light');
+    }
+
+    function setLanguage(lang) {
+      const flagUrl = lang === 'es' ? 'https://flagcdn.com/w40/co.png' : 'https://flagcdn.com/w40/us.png';
+      const currentFlag = document.getElementById('currentFlag');
+      if (currentFlag) currentFlag.src = flagUrl;
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+          el.innerHTML = translations[lang][key];
+        }
+      });
+
+      document.querySelectorAll('.lang-option').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(`'${lang}'`)) {
+          btn.classList.add('active');
+        }
+      });
+
+      localStorage.setItem('preferredLang', lang);
+      updateGlobalProgressUI();
+    }
+
+    window.setLanguage = setLanguage;
+    window.toggleTheme = toggleTheme;
+
+    // =========================================================================
+    // APPLICATION INITIALIZATION
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      initProgressTracker();
+      updateTreeSplit();
+      selectGate('AND');
+
+      const savedLang = localStorage.getItem('preferredLang') || 'es';
+      setLanguage(savedLang);
+      const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+      setTheme(savedTheme);
+
+      const desktopToggle = document.getElementById('themeToggleBtn');
+      if (desktopToggle) {
+        desktopToggle.addEventListener('click', toggleTheme);
+      }
+    });
+
+  </script>
+  <script src="../assets_index/cursor.js" defer></script>
+</body>
+</html>

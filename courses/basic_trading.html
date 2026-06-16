@@ -1155,6 +1155,378 @@
         display: none !important;
       }
     }
+
+    /* Estilos Adicionales para los Nuevos Widgets Interactivos */
+    .order-book-widget {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 768px) {
+      .order-book-widget {
+        grid-template-columns: 1fr;
+      }
+    }
+    .ob-table {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+    .ob-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 4px 8px;
+      margin: 2px 0;
+      border-radius: var(--radius-sm);
+      transition: background 0.15s;
+    }
+    .ob-row.ask { color: var(--accent-red-neon); background: rgba(239, 68, 68, 0.05); }
+    .ob-row.bid { color: var(--accent-green-neon); background: rgba(16, 185, 129, 0.05); }
+    .ob-row.active-hit { background: rgba(0, 240, 255, 0.2) !important; }
+    .ob-header {
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+      margin-bottom: 6px;
+    }
+    .ob-spread {
+      text-align: center;
+      padding: 6px;
+      margin: 6px 0;
+      background: var(--accent-cyan-dim);
+      border: 1px dashed rgba(0, 240, 255, 0.3);
+      color: var(--accent-cyan);
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+    }
+    .ob-actions {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 12px;
+    }
+    .ob-btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .ob-log {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.75rem;
+      height: 140px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+    }
+
+    .leverage-widget {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .slider-header span.val {
+      color: var(--accent-cyan);
+      font-family: var(--font-mono);
+    }
+    .widget-slider {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border);
+      outline: none;
+      accent-color: var(--accent-cyan);
+      cursor: pointer;
+    }
+    .calc-results {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .calc-card {
+      text-align: center;
+    }
+    .calc-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .calc-val {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-top: 2px;
+      color: var(--text-primary);
+    }
+    .liq-warning {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--accent-red);
+      color: var(--accent-red-neon);
+      border-radius: var(--radius-md);
+      padding: 0.75rem;
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 700;
+      animation: pulse-red-bg 1.5s infinite alternate;
+      display: none;
+    }
+    @keyframes pulse-red-bg {
+      0% { box-shadow: 0 0 5px rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.15); }
+      100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.3); }
+    }
+
+    /* Candlestick Studio */
+    .candle-studio-widget {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 1.5rem;
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+    }
+    @media (max-width: 768px) {
+      .candle-studio-widget {
+        grid-template-columns: 1fr;
+      }
+    }
+    .candle-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .candle-canvas-container {
+      background: #020509;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 250px;
+      height: 100%;
+      position: relative;
+    }
+    .candle-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .candle-explanation-card {
+      grid-column: span 2;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      .candle-explanation-card {
+        grid-column: span 1;
+      }
+    }
+
+    /* Support and Resistance Game */
+    .sr-game-widget {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .sr-canvas-container {
+      background: #020509;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      height: 280px;
+      position: relative;
+      cursor: crosshair;
+      overflow: hidden;
+    }
+    .sr-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .sr-instructions {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(10, 14, 23, 0.9);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      font-size: 0.78rem;
+      pointer-events: none;
+      color: var(--text-primary);
+      z-index: 5;
+    }
+    .sr-feedback {
+      background: var(--accent-cyan-dim);
+      border: 1px solid var(--accent-cyan);
+      color: var(--text-primary);
+      border-radius: var(--radius-md);
+      padding: 0.75rem;
+      font-size: 0.85rem;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .sr-feedback.success {
+      background: var(--accent-green-dim);
+      border-color: var(--accent-green);
+      color: var(--accent-green-neon);
+    }
+    .sr-feedback.error-click {
+      background: var(--accent-red-dim);
+      border-color: var(--accent-red);
+      color: var(--accent-red-neon);
+    }
+
+    /* Psychology Dilemmas */
+    .psy-dilemma-card {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      animation: fadeIn 0.3s ease;
+    }
+    .psy-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 1rem;
+    }
+    .psy-option-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      cursor: pointer;
+      text-align: left;
+      transition: var(--transition);
+      font-family: var(--font-sans);
+    }
+    .psy-option-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--text-primary);
+      background: var(--bg-card-hover);
+    }
+    .psy-option-btn.selected-success {
+      background: var(--accent-green-dim);
+      border-color: var(--accent-green);
+      color: var(--accent-green-neon);
+    }
+    .psy-option-btn.selected-fail {
+      background: var(--accent-red-dim);
+      border-color: var(--accent-red);
+      color: var(--accent-red-neon);
+    }
+    .psy-explanation {
+      margin-top: 1rem;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      display: none;
+      line-height: 1.5;
+    }
+    .psy-explanation.success {
+      background: var(--accent-green-dim);
+      border: 1px solid var(--accent-green);
+      color: var(--accent-green-neon);
+    }
+    .psy-explanation.danger {
+      background: var(--accent-red-dim);
+      border: 1px solid var(--accent-red);
+      color: var(--accent-red-neon);
+    }
+
+    /* Guided tour styling overlays */
+    .tour-highlight {
+      position: relative;
+      z-index: 1000 !important;
+      box-shadow: 0 0 20px var(--accent-cyan) !important;
+      border-color: var(--accent-cyan) !important;
+    }
+    .tour-tooltip {
+      position: absolute;
+      background: rgba(10, 14, 23, 0.98);
+      border: 2px solid var(--accent-cyan);
+      color: var(--text-primary);
+      padding: 1rem;
+      border-radius: var(--radius-lg);
+      width: 280px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+      z-index: 10001;
+      font-size: 0.85rem;
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+    .tour-tooltip-arrow {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-style: solid;
+    }
+    .tour-tooltip-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .tour-btn {
+      background: var(--accent-cyan-dim);
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      font-size: 0.72rem;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .tour-btn:hover {
+      background: var(--accent-cyan);
+      color: #000;
+    }
+    .tour-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 999;
+      pointer-events: auto;
+      display: none;
+    }
+    }
   </style>
 </head>
 <body>
@@ -1182,7 +1554,10 @@
           <button><i data-lucide="line-chart"></i> Mod 3: Análisis Técnico</button>
         </li>
         <li class="nav-item" data-tab="tab-module4">
-          <button><i data-lucide="play-circle"></i> Mod 4: Arena Simulador</button>
+          <button><i data-lucide="shield-alert"></i> Mod 4: Riesgo y Mente</button>
+        </li>
+        <li class="nav-item" data-tab="tab-module5">
+          <button><i data-lucide="play-circle"></i> Mod 5: Arena Simulador</button>
         </li>
       </nav>
 
@@ -1196,7 +1571,7 @@
           </svg>
           <div class="progress-text" id="course-progress-pct">0%</div>
         </div>
-        <div class="progress-details" id="course-progress-details">0 de 8 completados</div>
+        <div class="progress-details" id="course-progress-details">0 de 11 completados</div>
       </div>
     </aside>
 
@@ -1217,7 +1592,7 @@
           </button>
         </div>
       </header>
-
+ 
       <!-- TAB 0: DASHBOARD / OVERVIEW -->
       <div class="tab-pane active" id="tab-dashboard">
         
@@ -1228,7 +1603,7 @@
             Esta plataforma interactiva está diseñada para llevarte de la mano desde los conceptos fundamentales del mercado hasta la correcta interpretación visual del precio y la ejecución disciplinada de órdenes simuladas.
           </p>
           <p style="font-weight: 600; color: var(--accent-cyan);">
-            Estudia la teoría en cada módulo, aprueba los 4 cuestionarios correspondientes y opera activamente en la Arena de Simulación para desbloquear tu Certificado de Competencia en Trading de AutoNovations.
+            Estudia la teoría en cada módulo, realiza las actividades interactivas, aprueba las evaluaciones y opera activamente en la Arena de Simulación para desbloquear tu Certificado de Competencia en Trading de AutoNovations.
           </p>
         </div>
 
@@ -1245,7 +1620,7 @@
                 <i data-lucide="book-open" style="color: var(--accent-green-neon);"></i>
               </div>
               <div class="card-title">1. Fundamentos de Mercado</div>
-              <p class="card-desc">Qué es el trading, quiénes participan en los mercados, qué activos existen y qué significan términos como Bid, Ask, Spread y Apalancamiento.</p>
+              <p class="card-desc">Conceptos de Bid, Ask, Spread y participantes. Incluye el Libro de Órdenes interactivo y Calculadora de Apalancamiento.</p>
             </div>
             <div class="card-footer">
               <div class="card-status" id="status-mod1"><i data-lucide="circle"></i> Pendiente</div>
@@ -1261,7 +1636,7 @@
                 <i data-lucide="bar-chart-2" style="color: var(--accent-cyan);"></i>
               </div>
               <div class="card-title">2. Tipos de Gráficos</div>
-              <p class="card-desc">Descubre todos los métodos de visualización del precio: Líneas, Barras (OHLC), Velas Japonesas, Heikin Ashi, Renko y Puntos & Figuras.</p>
+              <p class="card-desc">Visualizaciones del precio: Líneas, Velas, Barras, Renko. Incluye el Candlestick Studio en vivo.</p>
             </div>
             <div class="card-footer">
               <div class="card-status" id="status-mod2"><i data-lucide="circle"></i> Pendiente</div>
@@ -1277,7 +1652,7 @@
                 <i data-lucide="line-chart" style="color: var(--accent-amber-neon);"></i>
               </div>
               <div class="card-title">3. Análisis Técnico</div>
-              <p class="card-desc">Aprende a trazar Soportes, Resistencias, Canales y a identificar patrones visuales clave de reversión y continuidad.</p>
+              <p class="card-desc">Trazado de Soportes y Resistencias, tendencias y patrones geométricos. Incluye el Minijuego de trazado.</p>
             </div>
             <div class="card-footer">
               <div class="card-status" id="status-mod3"><i data-lucide="circle"></i> Pendiente</div>
@@ -1289,15 +1664,31 @@
           <div class="card">
             <div>
               <div class="card-header">
-                <span class="card-badge badge-adv">Avanzado</span>
-                <i data-lucide="play-circle" style="color: var(--accent-purple);"></i>
+                <span class="card-badge badge-int">Intermedio</span>
+                <i data-lucide="shield-alert" style="color: var(--accent-amber);"></i>
               </div>
-              <div class="card-title">4. Arena Simulador</div>
-              <p class="card-desc">Pon en práctica tus conocimientos en un simulador gráfico en vivo. Configura indicadores, ejecuta órdenes de compra/venta y gestiona tu riesgo.</p>
+              <div class="card-title">4. Riesgo y Mente</div>
+              <p class="card-desc">Gestión del riesgo, relación Riesgo-Beneficio y Psicología del Trading. Incluye simulador de Dilemas de control mental.</p>
             </div>
             <div class="card-footer">
               <div class="card-status" id="status-mod4"><i data-lucide="circle"></i> Pendiente</div>
               <button class="card-btn" onclick="switchTab('tab-module4')">Comenzar</button>
+            </div>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="card">
+            <div>
+              <div class="card-header">
+                <span class="card-badge badge-adv">Avanzado</span>
+                <i data-lucide="play-circle" style="color: var(--accent-purple);"></i>
+              </div>
+              <div class="card-title">5. Arena Simulador</div>
+              <p class="card-desc">Pon en práctica tus conocimientos en un simulador en tiempo real con dinero virtual. Incluye un Tutorial Guiado.</p>
+            </div>
+            <div class="card-footer">
+              <div class="card-status" id="status-mod5"><i data-lucide="circle"></i> Pendiente</div>
+              <button class="card-btn" onclick="switchTab('tab-module5')">Comenzar</button>
             </div>
           </div>
 
@@ -1348,6 +1739,44 @@
                 <div class="definition-desc">La diferencia matemática entre el Bid y el Ask (Spread = Ask - Bid). Es el costo inmediato por entrar al mercado y representa la liquidez del activo: a menor spread, mayor liquidez.</div>
               </div>
 
+              <!-- Libro de Órdenes Interactivo -->
+              <div class="interactive-widget">
+                <div class="widget-title"><i data-lucide="book-open"></i> Libro de Órdenes Interactivo</div>
+                <p style="font-size:0.88rem; margin-bottom:1rem; color:var(--text-secondary);">
+                  Mira cómo interactúan las órdenes de compra y venta. Haz clic en los botones para enviar órdenes a mercado y observa cómo se "consumen" los precios más cercanos del libro, modificando el precio y el spread en tiempo real.
+                </p>
+                <div class="order-book-widget">
+                  <!-- Book Visualization -->
+                  <div class="ob-table">
+                    <div class="ob-row ob-header">
+                      <span>Precio Ask (Venta)</span>
+                      <span style="text-align:right;">Cantidad (Lotes)</span>
+                    </div>
+                    <div id="ob-asks-list">
+                      <!-- Filled by JS -->
+                    </div>
+                    <div class="ob-spread" id="ob-spread-val">SPREAD: $0.10</div>
+                    <div class="ob-row ob-header">
+                      <span>Precio Bid (Compra)</span>
+                      <span style="text-align:right;">Cantidad (Lotes)</span>
+                    </div>
+                    <div id="ob-bids-list">
+                      <!-- Filled by JS -->
+                    </div>
+                  </div>
+                  <!-- Book Actions -->
+                  <div class="ob-actions">
+                    <div class="ob-btn-row">
+                      <button class="action-btn primary" style="justify-content:center; width:100%;" onclick="submitObTrade('BUY')"><i data-lucide="trending-up"></i> COMPRA MKT</button>
+                      <button class="action-btn" style="border-color:var(--accent-red); color:var(--accent-red-neon); justify-content:center; width:100%;" onclick="submitObTrade('SELL')"><i data-lucide="trending-down"></i> VENTA MKT</button>
+                    </div>
+                    <div class="ob-log" id="ob-log-console">
+                      <div>[Terminal] Esperando órdenes...</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <h3>Participantes del Mercado</h3>
               <p>
                 Los mercados están constituidos por tres tipos principales de participantes cuyas interacciones definen el precio:
@@ -1377,6 +1806,60 @@
                 <i data-lucide="alert-triangle"></i>
                 <div class="alert-box-text">
                   <strong>¡Peligro!</strong> El apalancamiento aumenta exponencialmente tanto el potencial de ganancias como el de pérdidas. Una pequeña variación en contra del precio puede liquidar el <strong>Margen</strong> (capital de garantía necesario) y provocar un cierre forzoso de tu posición.
+                </div>
+              </div>
+
+              <!-- Simulador de Apalancamiento -->
+              <div class="interactive-widget">
+                <div class="widget-title"><i data-lucide="zap"></i> Simulador de Apalancamiento y Margen</div>
+                <p style="font-size:0.88rem; margin-bottom:1rem; color:var(--text-secondary);">
+                  Ajusta los deslizadores para ver cómo el apalancamiento aumenta el tamaño de tu posición operativa con el mismo capital, y cómo un pequeño movimiento del precio en tu contra puede liquidar tu cuenta de forma instantánea.
+                </p>
+                <div class="leverage-widget">
+                  <div class="slider-row">
+                    <div class="slider-header">
+                      <span>Tu Capital Inicial</span>
+                      <span class="val" id="lev-capital-txt">$1,000</span>
+                    </div>
+                    <input type="range" class="widget-slider" id="lev-capital" min="100" max="5000" step="100" value="1000" oninput="updateLeverageCalc()">
+                  </div>
+                  <div class="slider-row">
+                    <div class="slider-header">
+                      <span>Apalancamiento Operativo</span>
+                      <span class="val" id="lev-multiplier-txt">1:10 (10x)</span>
+                    </div>
+                    <input type="range" class="widget-slider" id="lev-multiplier" min="1" max="100" step="1" value="10" oninput="updateLeverageCalc()">
+                  </div>
+                  <div class="slider-row">
+                    <div class="slider-header">
+                      <span>Movimiento del Precio En Contra</span>
+                      <span class="val" id="lev-price-pct-txt">2.0%</span>
+                    </div>
+                    <input type="range" class="widget-slider" id="lev-price-pct" min="0" max="15" step="0.1" value="2" oninput="updateLeverageCalc()">
+                  </div>
+
+                  <div class="calc-results">
+                    <div class="calc-card">
+                      <div class="calc-label">Tamaño de la Posición</div>
+                      <div class="calc-val" id="lev-pos-size">$10,000</div>
+                    </div>
+                    <div class="calc-card">
+                      <div class="calc-label">Garantía Requerida (Margen)</div>
+                      <div class="calc-val" id="lev-margin-req">$1,000</div>
+                    </div>
+                    <div class="calc-card">
+                      <div class="calc-label">Pérdida Flotante</div>
+                      <div class="calc-val" id="lev-loss-val" style="color:var(--accent-red-neon);">-$200</div>
+                    </div>
+                    <div class="calc-card">
+                      <div class="calc-label">Capital Restante</div>
+                      <div class="calc-val" id="lev-remaining-bal">$800</div>
+                    </div>
+                  </div>
+
+                  <div class="liq-warning" id="lev-liq-warning">
+                    🚨 ¡MARGIN CALL & LIQUIDACIÓN INMINENTE! Tu pérdida ha igualado o superado tu capital depositado. Tu broker cerraría tu posición inmediatamente con una pérdida del 100%.
+                  </div>
                 </div>
               </div>
 
@@ -1500,7 +1983,66 @@
               <p>
                 Para dominar la acción del precio debemos comprender qué nos transmite cada vela. La mecha superior representa el rechazo de los compradores: el precio subió pero los vendedores empujaron hacia abajo. La mecha inferior representa el rechazo de los vendedores. Un cuerpo pequeño con mechas muy largas en ambos extremos indica indecisión total (Vela Doji).
               </p>
-              
+
+              <!-- Candlestick Studio Widget -->
+              <div class="interactive-widget">
+                <div class="widget-title"><i data-lucide="sliders"></i> Candlestick Studio - Diseña tu Vela</div>
+                <p style="font-size:0.88rem; margin-bottom:1.25rem; color:var(--text-secondary);">
+                  Ajusta los deslizadores de Apertura, Cierre, Máximo y Mínimo para ver cómo se forma una vela japonesa. O selecciona un patrón predefinido para entender su psicología de mercado.
+                </p>
+                <div class="candle-studio-widget">
+                  <div class="candle-controls">
+                    <div>
+                      <label class="control-label" for="preset-selector">Patrón Preestablecido</label>
+                      <select id="preset-selector" class="input-field" style="background:var(--bg-card); cursor:pointer;" onchange="applyCandlePreset()">
+                        <option value="none">-- Personalizado --</option>
+                        <option value="doji">Doji (Indecisión)</option>
+                        <option value="hammer">Martillo / Hammer (Reversión Alcista)</option>
+                        <option value="shooting">Estrella Fugaz (Reversión Bajista)</option>
+                        <option value="marubozu_bull">Marubozu Alcista (Fuerza Total)</option>
+                        <option value="marubozu_bear">Marubozu Bajista (Debilidad Total)</option>
+                      </select>
+                    </div>
+                    <div class="slider-row">
+                      <div class="slider-header">
+                        <span>Apertura (Open)</span>
+                        <span class="val" id="val-open">40.0</span>
+                      </div>
+                      <input type="range" class="widget-slider" id="sld-open" min="10" max="90" value="40" oninput="drawStudioCandle()">
+                    </div>
+                    <div class="slider-row">
+                      <div class="slider-header">
+                        <span>Cierre (Close)</span>
+                        <span class="val" id="val-close">65.0</span>
+                      </div>
+                      <input type="range" class="widget-slider" id="sld-close" min="10" max="90" value="65" oninput="drawStudioCandle()">
+                    </div>
+                    <div class="slider-row">
+                      <div class="slider-header">
+                        <span>Máximo (High)</span>
+                        <span class="val" id="val-high">80.0</span>
+                      </div>
+                      <input type="range" class="widget-slider" id="sld-high" min="10" max="95" value="80" oninput="drawStudioCandle()">
+                    </div>
+                    <div class="slider-row">
+                      <div class="slider-header">
+                        <span>Mínimo (Low)</span>
+                        <span class="val" id="val-low">25.0</span>
+                      </div>
+                      <input type="range" class="widget-slider" id="sld-low" min="5" max="90" value="25" oninput="drawStudioCandle()">
+                    </div>
+                  </div>
+
+                  <div class="candle-canvas-container">
+                    <canvas id="studio-candle-canvas" class="candle-canvas"></canvas>
+                  </div>
+
+                  <div class="candle-explanation-card" id="candle-explanation">
+                    Mueve los deslizadores para ver cómo el Máximo (High) y Mínimo (Low) dibujan las sombras/mechas del precio, mientras que la Apertura y el Cierre definen el cuerpo real de la sesión.
+                  </div>
+                </div>
+              </div>
+
               <div class="alert-box info">
                 <i data-lucide="info"></i>
                 <div class="alert-box-text">
@@ -1611,6 +2153,24 @@
                 <li><strong>Triángulos Simétricos:</strong> Mínimos crecientes y máximos decrecientes convergen en una punta. Reflejan compresión del precio y acumulación antes de estallar hacia el lado dominante.</li>
               </ul>
 
+              <!-- Minijuego de Trazado de Soporte y Resistencia -->
+              <div class="interactive-widget">
+                <div class="widget-title"><i data-lucide="crosshair"></i> Minijuego: Traza tu Soporte y Resistencia</div>
+                <p style="font-size:0.88rem; margin-bottom:1rem; color:var(--text-secondary);">
+                  Pon a prueba tu ojo clínico. Haz clic sobre el lienzo para trazar la zona de **Soporte (Piso)** y la de **Resistencia (Techo)** basándote en los picos y valles del gráfico. ¡Debes acertar ambas para ganar!
+                </p>
+                <div class="sr-game-widget">
+                  <div class="sr-canvas-container" id="sr-canvas-box">
+                    <div class="sr-instructions" id="sr-game-instruction">FASE 1: Haz clic para trazar el SOPORTE (Piso del precio)</div>
+                    <canvas id="sr-game-canvas" class="sr-canvas"></canvas>
+                  </div>
+                  <div class="ob-btn-row">
+                    <button class="action-btn" style="justify-content:center;" onclick="resetSrGame()"><i data-lucide="refresh-cw"></i> Reiniciar Juego</button>
+                  </div>
+                  <div class="sr-feedback" id="sr-game-feedback"></div>
+                </div>
+              </div>
+
               <div class="read-confirmation">
                 <input type="checkbox" id="read-mod3" class="read-checkbox" onchange="toggleReadCheck('mod3')">
                 <label for="read-mod3" class="read-label">He comprendido los conceptos de soporte, resistencia y patrones técnicos</label>
@@ -1666,10 +2226,113 @@
         </div>
       </div>
 
-      <!-- TAB 4: MODULE 4 (THE SIMULATOR) -->
+      <!-- TAB 4: MODULE 4 (RISK & PSYCHOLOGY) -->
       <div class="tab-pane" id="tab-module4">
+        <div class="module-grid">
+          
+          <div class="module-left">
+            <div class="learning-section">
+              <h2><i data-lucide="shield-alert"></i> Módulo 4: Gestión de Riesgo y Psicología del Trading</h2>
+              <p>
+                La **Gestión del Riesgo** es el único factor común entre todos los traders rentables a largo plazo. Nadie puede predecir el futuro con 100% de exactitud; por lo tanto, el trading es un juego de probabilidades y estadística, no de adivinación.
+              </p>
+              
+              <h3>Conceptos de Supervivencia Financiera</h3>
+              <div class="definition-box">
+                <div class="definition-term">Stop Loss (Freno de Pérdidas)</div>
+                <div class="definition-desc">La orden de salida incondicional colocada para cerrar la posición en una pequeña pérdida predeterminada si el mercado se mueve en contra. Define el "Riesgo de la Posición".</div>
+              </div>
+
+              <div class="definition-box">
+                <div class="definition-term">Take Profit (Toma de Ganancias)</div>
+                <div class="definition-desc">La orden que cierra la posición automáticamente al alcanzar un objetivo de ganancias establecido previamente.</div>
+              </div>
+
+              <div class="definition-box">
+                <div class="definition-term">Relación Riesgo-Beneficio (Risk-to-Reward Ratio)</div>
+                <div class="definition-desc">La proporción entre la pérdida potencial y el beneficio potencial (ej. 1:2 o 1:3). Si arriesgas $10 para ganar $30, tienes un ratio 1:3. Con esta relación, solo necesitas ganar el 34% de tus operaciones para ser rentable en el tiempo.</div>
+              </div>
+
+              <h3>Psicología del Trading y Sesgos Cognitivos</h3>
+              <p>
+                El peor enemigo de un trader no es el mercado, sino sus propias emociones. Al arriesgar dinero real, se activan dos impulsos primitivos:
+              </p>
+              <ul>
+                <li><strong>Miedo (Aversión a la Pérdida):</strong> Miedo a perder dinero que hace que los traders cierren rápido las operaciones ganadoras (para asegurar poco) y mantengan abiertas las perdedoras esperando un milagro (haciéndolas más grandes).</li>
+                <li><strong>Codicia & FOMO (Fear of Missing Out):</strong> Miedo a quedarse fuera de un gran movimiento, lo que impulsa a comprar tarde en el pico más alto de un gráfico o a arriesgar demasiado capital por operación.</li>
+                <li><strong>Venganza de Mercado:</strong> Intentar recuperar dinero perdido inmediatamente abriendo nuevas operaciones con mayor volumen sin un plan claro.</li>
+              </ul>
+
+              <!-- Psicología Dilemas Widget -->
+              <div class="interactive-widget">
+                <div class="widget-title"><i data-lucide="brain"></i> Simulador de Dilemas de Psicología</div>
+                <p style="font-size:0.88rem; margin-bottom:1rem; color:var(--text-secondary);">
+                  Enfréntate a situaciones reales en el mercado y descubre si actúas bajo la influencia de sesgos emocionales o con disciplina y profesionalismo.
+                </p>
+                <div id="psy-dilemma-container">
+                  <!-- JS will inject dynamic dilemma cards here -->
+                </div>
+              </div>
+
+              <div class="read-confirmation">
+                <input type="checkbox" id="read-mod4" class="read-checkbox" onchange="toggleReadCheck('mod4')">
+                <label for="read-mod4" class="read-label">He leído y comprendido la gestión de riesgo y psicología</label>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Quiz Column -->
+          <div class="module-right">
+            <div class="quiz-panel" id="quiz-mod4">
+              <div class="quiz-title">
+                <i data-lucide="check-square"></i> Evaluación Módulo 4
+              </div>
+              
+              <div class="quiz-question" data-qid="q4_1">
+                <div class="q-text">1. Si abro un trade arriesgando $100 con un objetivo de ganar $300, ¿cuál es mi relación Riesgo-Beneficio?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_1')">A) Relación 1:1.</button>
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q4_1')">B) Relación 1:3.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_1')">C) Relación 3:1.</button>
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="q4_2">
+                <div class="q-text">2. ¿Cuál es el principal propósito de colocar una orden Stop Loss?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_2')">A) Bloquear el sistema para evitar que el broker gane dinero.</button>
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q4_2')">B) Limitar la pérdida máxima en caso de que el mercado se mueva en nuestra contra.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_2')">C) Garantizar que cobremos una ganancia fija al final del día.</button>
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="q4_3">
+                <div class="q-text">3. Si tu cuenta de trading sufre un "margin call", ¿qué significa?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q4_3')">A) Que tu margen libre ha caído por debajo del límite mínimo y el broker cerrará tus posiciones abiertas.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_3')">B) Que has duplicado tu capital y has calificado para un bono.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_3')">C) Que el broker te ofrece un crédito sin intereses para seguir operando.</button>
+                </div>
+              </div>
+
+              <div class="quiz-success-msg" id="msg-quiz-mod4">
+                ¡Brillante! Has culminado de forma satisfactoria todos los cuestionarios teóricos de la academia.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-actions">
+          <button class="action-btn" onclick="switchTab('tab-module3')"><i data-lucide="arrow-left"></i> Mod 3</button>
+          <button class="action-btn primary" onclick="switchTab('tab-module5')">Siguiente Módulo (Arena) <i data-lucide="arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- TAB 5: MODULE 5 (THE SIMULATOR) -->
+      <div class="tab-pane" id="tab-module5">
         
-        <div class="learning-section" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+        <div class="learning-section" style="padding: 1.25rem; margin-bottom: 1.5rem;" id="sim-onboarding-card">
           <h2><i data-lucide="play-circle"></i> Arena de Práctica y Gestión Monetaria</h2>
           <p>
             Bienvenido a la Arena de Práctica de AutoNovations. Aquí pondrás a prueba la teoría operando en tiempo real. 
@@ -1679,7 +2342,7 @@
 
         <div class="sim-layout">
           <!-- Live Chart Pane -->
-          <div class="sim-chart-pane">
+          <div class="sim-chart-pane" id="sim-chart-section">
             
             <div class="sim-chart-header">
               <div class="sim-chart-title">
@@ -1715,14 +2378,14 @@
           </div>
 
           <!-- Order Execution Panel -->
-          <div class="sim-order-pane">
+          <div class="sim-order-pane" id="sim-order-section">
             <div class="widget-title" style="margin-bottom:0.5rem; border:none; padding:0;">
               <i data-lucide="sliders"></i> Gestión de Órdenes
             </div>
 
             <!-- Portfolio Metrics -->
             <div class="sim-metric-row">
-              <div class="sim-metric-card">
+              <div class="sim-metric-card" id="tour-metric-balance">
                 <div class="sim-metric-label">Balance</div>
                 <div class="sim-metric-val" id="port-balance">$10,000.00</div>
               </div>
@@ -1737,7 +2400,7 @@
             </div>
 
             <!-- Trade form -->
-            <div>
+            <div id="tour-order-side">
               <label class="control-label">Dirección</label>
               <div class="btn-group-row">
                 <button class="toggle-btn active buy" id="order-side-buy" onclick="setOrderSide('BUY')">COMPRAR</button>
@@ -1768,7 +2431,7 @@
             </div>
 
             <!-- Risk Management Toggles -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;" id="tour-order-risk">
               <div>
                 <label class="control-label" for="order-sl">Stop Loss (SL) ($)</label>
                 <input type="number" id="order-sl" class="input-field" value="95.00" step="0.1">
@@ -1779,7 +2442,7 @@
               </div>
             </div>
 
-            <button class="execute-order-btn" onclick="executeOrder()">
+            <button class="execute-order-btn" id="tour-execute-btn" onclick="executeOrder()">
               <i data-lucide="zap"></i> Enviar Orden
             </button>
 
@@ -1787,7 +2450,7 @@
         </div>
 
         <!-- Open Positions Section -->
-        <div class="positions-pane">
+        <div class="positions-pane" id="sim-positions-section">
           <div class="pane-header">
             <div class="pane-title"><i data-lucide="folder-open"></i> Posiciones Abiertas</div>
             <div class="pane-badge" id="open-positions-count">0 posiciones</div>
@@ -1842,84 +2505,17 @@
           </div>
         </div>
 
-        <!-- Reading & Quiz Panel Grid -->
-        <div class="module-grid" style="margin-top:2rem;">
-          <div class="module-left">
-            <div class="learning-section">
-              <h2><i data-lucide="award"></i> Módulo 4: Gestión de Riesgo y Operaciones</h2>
-              <p>
-                La **Gestión del Riesgo** es el único factor común entre todos los traders rentables en el largo plazo. Nadie puede predecir el futuro con 100% de exactitud; por lo tanto, el trading es un juego de probabilidades estadísticas.
-              </p>
-              
-              <h3>Conceptos de Supervivencia Financiera</h3>
-              <p>
-                Antes de arriesgar dinero real, debes memorizar estas leyes:
-              </p>
-              
-              <div class="definition-box">
-                <div class="definition-term">Stop Loss (Freno de Pérdidas)</div>
-                <div class="definition-desc">La orden de salida incondicional colocada para cerrar la posición en una pequeña pérdida si el mercado se mueve en contra. Define el "Riesgo de la Posición".</div>
-              </div>
-
-              <div class="definition-box">
-                <div class="definition-term">Take Profit (Toma de Ganancias)</div>
-                <div class="definition-desc">La orden que cierra la posición automáticamente al alcanzar un objetivo de ganancias establecido previamente.</div>
-              </div>
-
-              <div class="definition-box">
-                <div class="definition-term">Relación Riesgo-Beneficio (Risk-to-Reward Ratio)</div>
-                <div class="definition-desc">La proporción entre la pérdida potencial y el beneficio potencial (ej. 1:2 o 1:3). Si arriesgas $10 para ganar $30, tienes un ratio 1:3. Con este ratio, solo necesitas ganar el 30% de tus operaciones para ser rentable globalmente.</div>
-              </div>
-
-              <div class="read-confirmation">
-                <input type="checkbox" id="read-mod4" class="read-checkbox" onchange="toggleReadCheck('mod4')">
-                <label for="read-mod4" class="read-label">He operado en el simulador y comprendido el control de riesgo</label>
-              </div>
-            </div>
-          </div>
-
-          <div class="module-right">
-            <div class="quiz-panel" id="quiz-mod4">
-              <div class="quiz-title">
-                <i data-lucide="check-square"></i> Evaluación Módulo 4
-              </div>
-              
-              <div class="quiz-question" data-qid="q4_1">
-                <div class="q-text">1. Si abro un trade arriesgando $100 con un objetivo de ganar $300, ¿cuál es mi relación Riesgo-Beneficio?</div>
-                <div class="q-options">
-                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_1')">A) Relación 1:1.</button>
-                  <button class="q-option" onclick="checkAnswer(this, true, 'q4_1')">B) Relación 1:3.</button>
-                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_1')">C) Relación 3:1.</button>
-                </div>
-              </div>
-
-              <div class="quiz-question" data-qid="q4_2">
-                <div class="q-text">2. ¿Cuál es el principal propósito de colocar una orden Stop Loss?</div>
-                <div class="q-options">
-                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_2')">A) Bloquear el sistema para evitar que el broker gane dinero.</button>
-                  <button class="q-option" onclick="checkAnswer(this, true, 'q4_2')">B) Limitar la pérdida máxima en caso de que el mercado se mueva en nuestra contra.</button>
-                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_2')">C) Garantizar que cobremos una ganancia fija al final del día.</button>
-                </div>
-              </div>
-
-              <div class="quiz-question" data-qid="q4_3">
-                <div class="q-text">3. Si tu cuenta de trading sufre un "margin call", ¿qué significa?</div>
-                <div class="q-options">
-                  <button class="q-option" onclick="checkAnswer(this, true, 'q4_3')">A) Que tu margen libre ha caído por debajo del límite mínimo y el broker cerrará tus posiciones abiertas.</button>
-                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_3')">B) Que has duplicado tu capital y has calificado para un bono.</button>
-                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_3')">C) Que el broker te ofrece un crédito sin intereses para seguir operando.</button>
-                </div>
-              </div>
-
-              <div class="quiz-success-msg" id="msg-quiz-mod4">
-                ¡Brillante! Has culminado de forma satisfactoria todos los cuestionarios teóricos de la academia.
-              </div>
-            </div>
+        <!-- Confirm checklist for Module 5 -->
+        <div class="learning-section" style="margin-top: 1.5rem;">
+          <div class="read-confirmation">
+            <input type="checkbox" id="read-mod5" class="read-checkbox" onchange="toggleReadCheck('mod5')">
+            <label for="read-mod5" class="read-label">He operado en el simulador y completado la práctica guiada</label>
           </div>
         </div>
 
         <div class="module-actions">
-          <button class="action-btn" onclick="switchTab('tab-module3')"><i data-lucide="arrow-left"></i> Mod 3</button>
+          <button class="action-btn" onclick="switchTab('tab-module4')"><i data-lucide="arrow-left"></i> Mod 4</button>
+          <button class="action-btn" id="tour-start-btn" style="border-color:var(--accent-cyan); color:var(--accent-cyan);" onclick="startGuidedTour()"><i data-lucide="help-circle"></i> Iniciar Tour Guiado</button>
           <button class="action-btn primary" onclick="switchTab('tab-dashboard')">Finalizar Curso <i data-lucide="check-circle"></i></button>
         </div>
       </div>
@@ -1936,6 +2532,7 @@
         read_mod2: false,
         read_mod3: false,
         read_mod4: false,
+        read_mod5: false,
         quiz_mod1: false,
         quiz_mod2: false,
         quiz_mod3: false,
@@ -1985,6 +2582,33 @@
         }
       }
       
+      // Update dashboard status labels on load
+      for (let i = 1; i <= 5; i++) {
+        const moduleId = 'mod' + i;
+        const statusLabel = document.getElementById('status-' + moduleId);
+        if (statusLabel) {
+          const isCompleted = appState.progressCheckpoints['read_' + moduleId];
+          if (isCompleted) {
+            statusLabel.innerHTML = '<i data-lucide="check-circle" class="completed"></i> Completado';
+            statusLabel.classList.add('completed');
+          } else {
+            statusLabel.innerHTML = '<i data-lucide="circle"></i> Pendiente';
+            statusLabel.classList.remove('completed');
+          }
+        }
+      }
+
+      // Show quiz success messages on load
+      for (let i = 1; i <= 4; i++) {
+        const quizId = 'mod' + i;
+        const isPassed = appState.progressCheckpoints['quiz_' + quizId];
+        if (isPassed) {
+          const successMsg = document.getElementById('msg-quiz-mod' + i);
+          if (successMsg) successMsg.style.display = 'block';
+        }
+      }
+      lucide.createIcons();
+      
       // Load simulator history if saved
       const savedBalance = localStorage.getItem('bt_sim_balance');
       if (savedBalance) appState.portfolio.balance = parseFloat(savedBalance);
@@ -2020,14 +2644,35 @@
       appState.currentTab = tabId;
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
-      // Resize simulator canvas if switching to module 4
-      if (tabId === 'tab-module4') {
-        setTimeout(initSimulatorCanvas, 100);
+      // Init widgets based on tab
+      if (tabId === 'tab-module1') {
+        setTimeout(() => {
+          initOrderBook();
+          updateLeverageCalc();
+        }, 100);
       }
 
-      // Render mini visual charts if switching to module 2
+      // Render mini visual charts and init studio candle if switching to module 2
       if (tabId === 'tab-module2') {
-        setTimeout(initMiniCharts, 100);
+        setTimeout(() => {
+          initMiniCharts();
+          initCandleStudio();
+        }, 100);
+      }
+
+      // Init S/R drawing game if switching to module 3
+      if (tabId === 'tab-module3') {
+        setTimeout(initSrGame, 100);
+      }
+
+      // Init dilemmas if switching to module 4
+      if (tabId === 'tab-module4') {
+        setTimeout(initPsyDilemmas, 100);
+      }
+
+      // Resize simulator canvas if switching to module 5
+      if (tabId === 'tab-module5') {
+        setTimeout(initSimulatorCanvas, 100);
       }
     }
 
@@ -2274,9 +2919,776 @@
       // Re-trigger icon updates
       lucide.createIcons();
       // Redraw canvas if active
-      if (appState.currentTab === 'tab-module4') drawChart();
+      if (appState.currentTab === 'tab-module5') drawChart();
       if (appState.currentTab === 'tab-module2') initMiniCharts();
     });
+
+    // ==========================================
+    // WIDGET 1: LIBRO DE ÓRDENES INTERACTIVO
+    // ==========================================
+    let obState = {
+      asks: [
+        { price: 100.50, size: 45 },
+        { price: 100.40, size: 30 },
+        { price: 100.30, size: 25 },
+        { price: 100.20, size: 15 },
+        { price: 100.10, size: 10 }
+      ],
+      bids: [
+        { price: 99.90, size: 12 },
+        { price: 99.80, size: 18 },
+        { price: 99.70, size: 22 },
+        { price: 99.60, size: 35 },
+        { price: 99.50, size: 50 }
+      ],
+      spread: 0.20,
+      midPrice: 100.00
+    };
+
+    function initOrderBook() {
+      renderOrderBook();
+    }
+
+    function renderOrderBook() {
+      const asksContainer = document.getElementById('ob-asks-list');
+      const bidsContainer = document.getElementById('ob-bids-list');
+      const spreadEl = document.getElementById('ob-spread-val');
+      if (!asksContainer || !bidsContainer) return;
+
+      asksContainer.innerHTML = '';
+      // Render asks in reverse (high asks on top, lowest ask near the spread)
+      obState.asks.slice().reverse().forEach(ask => {
+        const row = document.createElement('div');
+        row.className = 'ob-row ask';
+        row.id = `ob-ask-${ask.price.toFixed(2).replace('.', '')}`;
+        row.innerHTML = `<span>$${ask.price.toFixed(2)}</span><span style="text-align:right;">${ask.size} u</span>`;
+        asksContainer.appendChild(row);
+      });
+
+      // Spread
+      obState.spread = parseFloat((obState.asks[obState.asks.length - 1].price - obState.bids[0].price).toFixed(2));
+      obState.midPrice = parseFloat(((obState.asks[obState.asks.length - 1].price + obState.bids[0].price) / 2).toFixed(2));
+      spreadEl.innerHTML = `SPREAD: $${obState.spread.toFixed(2)} | PRECIO MEDIO: $${obState.midPrice.toFixed(2)}`;
+
+      bidsContainer.innerHTML = '';
+      obState.bids.forEach(bid => {
+        const row = document.createElement('div');
+        row.className = 'ob-row bid';
+        row.id = `ob-bid-${bid.price.toFixed(2).replace('.', '')}`;
+        row.innerHTML = `<span>$${bid.price.toFixed(2)}</span><span style="text-align:right;">${bid.size} u</span>`;
+        bidsContainer.appendChild(row);
+      });
+    }
+
+    function submitObTrade(side) {
+      const consoleLog = document.getElementById('ob-log-console');
+      if (!consoleLog) return;
+
+      if (side === 'BUY') {
+        // Buy eats lowest ask (last item in obState.asks array)
+        let activeAsk = obState.asks[obState.asks.length - 1];
+        const tradePrice = activeAsk.price;
+        const tradeSize = Math.floor(Math.random() * 5) + 3; // 3 to 7 lots
+        
+        // Highlight row
+        const rowId = `ob-ask-${tradePrice.toFixed(2).replace('.', '')}`;
+        const rowEl = document.getElementById(rowId);
+        if (rowEl) {
+          rowEl.classList.add('active-hit');
+          setTimeout(() => rowEl.classList.remove('active-hit'), 300);
+        }
+
+        activeAsk.size -= tradeSize;
+        
+        let logDiv = document.createElement('div');
+        logDiv.style.color = 'var(--accent-green-neon)';
+        logDiv.innerHTML = `&gt; COMPRA MKT ejecutada: ${tradeSize} lotes a $${tradePrice.toFixed(2)}`;
+        consoleLog.insertBefore(logDiv, consoleLog.firstChild);
+
+        if (activeAsk.size <= 0) {
+          // Level consumed! Move book up
+          obState.asks.pop();
+          const nextPrice = parseFloat((obState.asks[0].price + 0.10).toFixed(2));
+          obState.asks.unshift({ price: nextPrice, size: Math.floor(Math.random() * 30) + 20 });
+          
+          let alertDiv = document.createElement('div');
+          alertDiv.style.color = 'var(--accent-cyan)';
+          alertDiv.innerHTML = `&gt;&gt; ¡NIVEL CONSUMIDO! El precio de venta sube a $${obState.asks[obState.asks.length - 1].price.toFixed(2)}`;
+          consoleLog.insertBefore(alertDiv, consoleLog.firstChild);
+        }
+      } else {
+        // Sell eats highest bid (first item in obState.bids array)
+        let activeBid = obState.bids[0];
+        const tradePrice = activeBid.price;
+        const tradeSize = Math.floor(Math.random() * 5) + 3;
+        
+        const rowId = `ob-bid-${tradePrice.toFixed(2).replace('.', '')}`;
+        const rowEl = document.getElementById(rowId);
+        if (rowEl) {
+          rowEl.classList.add('active-hit');
+          setTimeout(() => rowEl.classList.remove('active-hit'), 300);
+        }
+
+        activeBid.size -= tradeSize;
+
+        let logDiv = document.createElement('div');
+        logDiv.style.color = 'var(--accent-red-neon)';
+        logDiv.innerHTML = `&gt; VENTA MKT ejecutada: ${tradeSize} lotes a $${tradePrice.toFixed(2)}`;
+        consoleLog.insertBefore(logDiv, consoleLog.firstChild);
+
+        if (activeBid.size <= 0) {
+          // Level consumed! Move book down
+          obState.bids.shift();
+          const nextPrice = parseFloat((obState.bids[obState.bids.length - 1].price - 0.10).toFixed(2));
+          obState.bids.push({ price: nextPrice, size: Math.floor(Math.random() * 30) + 20 });
+
+          let alertDiv = document.createElement('div');
+          alertDiv.style.color = 'var(--accent-cyan)';
+          alertDiv.innerHTML = `&gt;&gt; ¡NIVEL CONSUMIDO! El precio de compra baja a $${obState.bids[0].price.toFixed(2)}`;
+          consoleLog.insertBefore(alertDiv, consoleLog.firstChild);
+        }
+      }
+
+      renderOrderBook();
+      lucide.createIcons();
+    }
+
+    // ==========================================
+    // WIDGET 2: SIMULADOR DE APALANCAMIENTO
+    // ==========================================
+    function updateLeverageCalc() {
+      const capital = parseFloat(document.getElementById('lev-capital').value);
+      const mult = parseInt(document.getElementById('lev-multiplier').value);
+      const pricePct = parseFloat(document.getElementById('lev-price-pct').value);
+
+      document.getElementById('lev-capital-txt').innerText = `$${capital.toLocaleString()}`;
+      document.getElementById('lev-multiplier-txt').innerText = `1:${mult} (${mult}x)`;
+      document.getElementById('lev-price-pct-txt').innerText = `${pricePct.toFixed(1)}%`;
+
+      const posSize = capital * mult;
+      const marginReq = capital;
+      const loss = posSize * (pricePct / 100);
+      const remaining = Math.max(0, capital - loss);
+
+      document.getElementById('lev-pos-size').innerText = `$${posSize.toLocaleString()}`;
+      document.getElementById('lev-margin-req').innerText = `$${marginReq.toLocaleString()}`;
+      document.getElementById('lev-loss-val').innerText = `-$${loss.toLocaleString()}`;
+      
+      const remainingEl = document.getElementById('lev-remaining-bal');
+      remainingEl.innerText = `$${remaining.toLocaleString()}`;
+
+      const liqWarning = document.getElementById('lev-liq-warning');
+      if (remaining <= 0) {
+        liqWarning.style.display = 'block';
+        remainingEl.style.color = 'var(--accent-red-neon)';
+      } else {
+        liqWarning.style.display = 'none';
+        remainingEl.style.color = 'var(--accent-green-neon)';
+      }
+    }
+
+    // ==========================================
+    // WIDGET 3: CANDLESTICK STUDIO
+    // ==========================================
+    function initCandleStudio() {
+      drawStudioCandle();
+    }
+
+    function applyCandlePreset() {
+      const preset = document.getElementById('preset-selector').value;
+      const oSld = document.getElementById('sld-open');
+      const cSld = document.getElementById('sld-close');
+      const hSld = document.getElementById('sld-high');
+      const lSld = document.getElementById('sld-low');
+
+      if (preset === 'doji') {
+        oSld.value = 50; cSld.value = 50; hSld.value = 85; lSld.value = 15;
+      } else if (preset === 'hammer') {
+        oSld.value = 70; cSld.value = 80; hSld.value = 82; lSld.value = 20;
+      } else if (preset === 'shooting') {
+        oSld.value = 30; cSld.value = 20; hSld.value = 80; lSld.value = 18;
+      } else if (preset === 'marubozu_bull') {
+        oSld.value = 15; cSld.value = 85; hSld.value = 85; lSld.value = 15;
+      } else if (preset === 'marubozu_bear') {
+        oSld.value = 85; cSld.value = 15; hSld.value = 85; lSld.value = 15;
+      }
+
+      drawStudioCandle();
+    }
+
+    function drawStudioCandle() {
+      const oSld = document.getElementById('sld-open');
+      const cSld = document.getElementById('sld-close');
+      const hSld = document.getElementById('sld-high');
+      const lSld = document.getElementById('sld-low');
+
+      let open = parseFloat(oSld.value);
+      let close = parseFloat(cSld.value);
+      let high = parseFloat(hSld.value);
+      let low = parseFloat(lSld.value);
+
+      // Force logical correctness: High >= Max(Open,Close) and Low <= Min(Open,Close)
+      const maxOC = Math.max(open, close);
+      const minOC = Math.min(open, close);
+
+      if (high < maxOC) { high = maxOC; hSld.value = high; }
+      if (low > minOC) { low = minOC; lSld.value = low; }
+
+      // Update text values
+      document.getElementById('val-open').innerText = open.toFixed(1);
+      document.getElementById('val-close').innerText = close.toFixed(1);
+      document.getElementById('val-high').innerText = high.toFixed(1);
+      document.getElementById('val-low').innerText = low.toFixed(1);
+
+      // Draw to canvas
+      const canvas = document.getElementById('studio-candle-canvas');
+      if (!canvas) return;
+      
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+      
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      
+      ctx.clearRect(0, 0, w, h);
+
+      // Coordinate maps (invert Y so higher values draw on top)
+      function getStudioY(val) {
+        return h - 30 - ((val - 0) / 100) * (h - 60);
+      }
+
+      const x = w / 2;
+      const yOpen = getStudioY(open);
+      const yClose = getStudioY(close);
+      const yHigh = getStudioY(high);
+      const yLow = getStudioY(low);
+      const isBull = close > open;
+      const isDoji = close === open;
+
+      const bodyWidth = 45;
+
+      // Draw shadow lines (Wicks)
+      ctx.strokeStyle = isDoji ? '#9ca3af' : (isBull ? '#10b981' : '#ef4444');
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x, yHigh);
+      ctx.lineTo(x, yLow);
+      ctx.stroke();
+
+      // Draw body
+      ctx.fillStyle = isDoji ? '#4b5563' : (isBull ? 'rgba(16, 185, 129, 0.9)' : 'rgba(239, 68, 68, 0.9)');
+      ctx.strokeStyle = isDoji ? '#9ca3af' : (isBull ? '#10b981' : '#ef4444');
+      ctx.lineWidth = 2;
+
+      const bodyY = Math.min(yOpen, yClose);
+      const bodyH = Math.max(isDoji ? 4 : 2, Math.abs(yOpen - yClose));
+      
+      ctx.fillRect(x - bodyWidth/2, bodyY, bodyWidth, bodyH);
+      ctx.strokeRect(x - bodyWidth/2, bodyY, bodyWidth, bodyH);
+
+      // Write explanation
+      let expText = "";
+      const preset = document.getElementById('preset-selector').value;
+      
+      if (preset !== 'none') {
+        if (preset === 'doji') {
+          expText = "<strong>Patrón Doji:</strong> La apertura y el cierre coinciden exactamente. Significa equilibrio absoluto de fuerzas o indecisión total de los inversores. Suele anteceder a una reversión de tendencia si se presenta en zonas de soporte/resistencia.";
+        } else if (preset === 'hammer') {
+          expText = "<strong>Patrón Martillo:</strong> Cuerpo pequeño arriba y una mecha inferior extremadamente larga (al menos el doble del cuerpo). Indica que los vendedores empujaron el precio fuertemente abajo, pero los compradores reaccionaron con fiereza cerrando cerca de máximos. Señal de reversión alcista.";
+        } else if (preset === 'shooting') {
+          expText = "<strong>Estrella Fugaz (Shooting Star):</strong> Cuerpo pequeño abajo y una larga mecha superior. Los compradores atacaron al alza pero la presión vendedora masiva rechazó los precios. Señal bajista.";
+        } else if (preset === 'marubozu_bull') {
+          expText = "<strong>Marubozu Alcista:</strong> Vela con cuerpo completo y sin mechas. Los compradores dominaron la sesión desde el primer segundo hasta el cierre. Indica extrema fuerza alcista.";
+        } else if (preset === 'marubozu_bear') {
+          expText = "<strong>Marubozu Bajista:</strong> Sin mechas, cuerpo completo rojo. Los vendedores aplastaron a las compras sin dar tregua de rebotes. Fuerza bajista contundente.";
+        }
+      } else {
+        if (isBull) {
+          expText = `<strong>Vela Alcista:</strong> El precio subió de $${open.toFixed(1)} a $${close.toFixed(1)}. Los máximos llegaron a $${high.toFixed(1)} y mínimos a $${low.toFixed(1)}. Hay control comprador.`;
+        } else if (close < open) {
+          expText = `<strong>Vela Bajista:</strong> El precio cayó de $${open.toFixed(1)} a $${close.toFixed(1)}. Refleja un sentimiento bajista o de venta mayoritaria en la sesión.`;
+        } else {
+          expText = "<strong>Vela Neutra (Doji):</strong> Apertura y cierre en el mismo precio. Fuerza de oferta y demanda balanceada.";
+        }
+      }
+
+      document.getElementById('candle-explanation').innerHTML = expText;
+    }
+
+    // ==========================================
+    // WIDGET 4: MINIJUEGO SOPORTE Y RESISTENCIA
+    // ==========================================
+    let srGame = {
+      fase: 1, // 1: Support, 2: Resistance, 3: Completed
+      supportY: null,
+      resistanceY: null,
+      points: [
+        {x: 30, y: 150},
+        {x: 90, y: 70},   // peak 1
+        {x: 150, y: 210}, // trough 1
+        {x: 210, y: 75},   // peak 2
+        {x: 270, y: 205}, // trough 2
+        {x: 330, y: 65},   // peak 3
+        {x: 390, y: 200}, // trough 3
+        {x: 450, y: 130}
+      ]
+    };
+
+    function initSrGame() {
+      const canvas = document.getElementById('sr-game-canvas');
+      if (!canvas) return;
+
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+
+      canvas.addEventListener('click', handleSrCanvasClick);
+      drawSrGameCanvas();
+    }
+
+    function drawSrGameCanvas() {
+      const canvas = document.getElementById('sr-game-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Grid bg
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 0.5;
+      for (let i = 20; i < w; i += 30) {
+        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke();
+      }
+      for (let i = 20; i < h; i += 30) {
+        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke();
+      }
+
+      // Draw waves price line
+      ctx.strokeStyle = 'var(--text-secondary)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      
+      // Interpolate points to canvas coordinates
+      const scaleX = (w - 40) / 480;
+      const scaleY = (h - 60) / 200;
+
+      srGame.points.forEach((pt, idx) => {
+        const x = 20 + pt.x * scaleX;
+        const y = 30 + pt.y * scaleY;
+        if (idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Draw nodes
+      ctx.fillStyle = 'var(--accent-cyan)';
+      srGame.points.forEach((pt) => {
+        const x = 20 + pt.x * scaleX;
+        const y = 30 + pt.y * scaleY;
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, 2*Math.PI);
+        ctx.fill();
+      });
+
+      // Draw support line if placed
+      if (srGame.supportY !== null) {
+        ctx.strokeStyle = '#10b981'; // Green
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(0, srGame.supportY);
+        ctx.lineTo(w, srGame.supportY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        ctx.fillStyle = '#10b981';
+        ctx.font = '10px Space Grotesk';
+        ctx.fillText("SOPORTE RECONOCIDO (PISO)", 10, srGame.supportY - 6);
+      }
+
+      // Draw resistance line if placed
+      if (srGame.resistanceY !== null) {
+        ctx.strokeStyle = '#ef4444'; // Red
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(0, srGame.resistanceY);
+        ctx.lineTo(w, srGame.resistanceY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = '#ef4444';
+        ctx.font = '10px Space Grotesk';
+        ctx.fillText("RESISTENCIA RECONOCIDA (TECHO)", 10, srGame.resistanceY - 6);
+      }
+    }
+
+    function handleSrCanvasClick(e) {
+      if (srGame.fase === 3) return;
+
+      const canvas = document.getElementById('sr-game-canvas');
+      const rect = canvas.getBoundingClientRect();
+      const clickY = e.clientY - rect.top;
+      const scaleY = (canvas.height - 60) / 200;
+
+      const instr = document.getElementById('sr-game-instruction');
+      const feedback = document.getElementById('sr-game-feedback');
+
+      if (srGame.fase === 1) {
+        // Target troughs (valles) around Y value 205 (which translates via scaleY)
+        const targetY = 30 + 205 * scaleY;
+        const errorMargin = 25; // 25px tolerance
+
+        if (Math.abs(clickY - targetY) <= errorMargin) {
+          srGame.supportY = targetY;
+          srGame.fase = 2;
+          instr.innerText = "FASE 2: Haz clic para trazar la RESISTENCIA (Techo del precio)";
+          feedback.style.display = 'block';
+          feedback.className = 'sr-feedback success';
+          feedback.innerText = "¡Excelente! Has identificado el soporte (piso de rebote del precio). Ahora marca la resistencia superior.";
+        } else {
+          feedback.style.display = 'block';
+          feedback.className = 'sr-feedback error-click';
+          feedback.innerText = "Incorrecto. Recuerda que el soporte se traza conectando los valles más bajos del precio. Intenta de nuevo.";
+        }
+      } else if (srGame.fase === 2) {
+        // Target peaks (crestas) around Y value 70
+        const targetY = 30 + 70 * scaleY;
+        const errorMargin = 25;
+
+        if (Math.abs(clickY - targetY) <= errorMargin) {
+          srGame.resistanceY = targetY;
+          srGame.fase = 3;
+          instr.innerText = "¡ENHORABUENA! Módulo interactivo completado.";
+          feedback.style.display = 'block';
+          feedback.className = 'sr-feedback success';
+          feedback.innerText = "¡Magnífico! Has trazado correctamente el canal de Soporte y Resistencia. El precio oscila armónicamente en este rango.";
+        } else {
+          feedback.style.display = 'block';
+          feedback.className = 'sr-feedback error-click';
+          feedback.innerText = "Incorrecto. La resistencia se sitúa en los máximos o picos que el precio no puede superar al alza. Prueba de nuevo.";
+        }
+      }
+
+      drawSrGameCanvas();
+    }
+
+    function resetSrGame() {
+      srGame.fase = 1;
+      srGame.supportY = null;
+      srGame.resistanceY = null;
+      
+      const instr = document.getElementById('sr-game-instruction');
+      const feedback = document.getElementById('sr-game-feedback');
+      if (instr) instr.innerText = "FASE 1: Haz clic para trazar el SOPORTE (Piso del precio)";
+      if (feedback) feedback.style.display = 'none';
+      
+      drawSrGameCanvas();
+    }
+
+    // ==========================================
+    // WIDGET 5: DILEMAS DE PSICOLOGÍA DE TRADING
+    // ==========================================
+    const psyDilemmas = [
+      {
+        question: "1. Tu operación de compra va ganando +$150. Tu objetivo (Take Profit) está fijado en +$200. El precio empieza a retroceder ligeramente a +$130. ¿Qué haces?",
+        options: [
+          {
+            text: "A) Cierro la posición asustado para asegurar esos $130 de ganancia.",
+            isCorrect: false,
+            explanation: "🚨 <strong>Sesgo de Aversión:</strong> Cortar las ganancias por miedo a perder lo acumulado viola tu relación Riesgo-Beneficio planificada. A largo plazo esto te hará perder dinero."
+          },
+          {
+            text: "B) Duplico el tamaño de la posición esperando ganar más rápido al ver que baja un poco.",
+            isCorrect: false,
+            explanation: "🚨 <strong>Codicia y Venganza:</strong> Promediar a la baja o sobreapalancarse en un retroceso acelera la probabilidad de liquidar tu margen de garantía."
+          },
+          {
+            text: "C) Mantengo la posición fiel al plan original, dejando que toque el SL o el TP.",
+            isCorrect: true,
+            explanation: "✅ <strong>Disciplina Profesional:</strong> Respetar tus salidas automáticas programadas (SL y TP) mantiene tus estadísticas puras y elimina la emoción del trade."
+          }
+        ]
+      },
+      {
+        question: "2. Tu trade va perdiendo -$80. Tu Stop Loss configurado está en -$100. El precio cae a -$95, casi a punto de sacarte del mercado. ¿Qué haces?",
+        options: [
+          {
+            text: "A) Muevo mi Stop Loss más abajo (-$150) para darle 'aire' al precio y evitar asumir la pérdida.",
+            isCorrect: false,
+            explanation: "🚨 <strong>Miedo a la Pérdida:</strong> Mover el Stop Loss es el pecado capital del trading. Aumenta tu riesgo inicial y puede desencadenar pérdidas incontrolables."
+          },
+          {
+            text: "B) Acepto la pérdida estipulada como parte estadística de mi negocio y me retiro tranquilo.",
+            isCorrect: true,
+            explanation: "✅ <strong>Aceptación del Riesgo:</strong> Una pérdida controlada es un gasto operativo normal en trading. El Stop Loss te protegió de un desastre mayor."
+          },
+          {
+            text: "C) Abro una posición en la dirección contraria inmediatamente para recuperar el dinero.",
+            isCorrect: false,
+            explanation: "🚨 <strong>Revenge Trading (Venganza):</strong> Operar con enojo es la vía más rápida para destruir una cuenta al operar sin análisis técnico real."
+          }
+        ]
+      }
+    ];
+
+    let currentPsyStep = 0;
+
+    function initPsyDilemmas() {
+      currentPsyStep = 0;
+      renderPsyDilemma();
+    }
+
+    function renderPsyDilemma() {
+      const container = document.getElementById('psy-dilemma-container');
+      if (!container) return;
+
+      container.innerHTML = '';
+      const dilemma = psyDilemmas[currentPsyStep];
+
+      const card = document.createElement('div');
+      card.className = 'psy-dilemma-card';
+      
+      const qText = document.createElement('div');
+      qText.className = 'q-text';
+      qText.style.fontSize = '0.92rem';
+      qText.innerHTML = dilemma.question;
+      card.appendChild(qText);
+
+      const optionsDiv = document.createElement('div');
+      optionsDiv.className = 'psy-options';
+
+      dilemma.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'psy-option-btn';
+        btn.innerText = opt.text;
+        btn.onclick = () => selectPsyOption(idx, btn);
+        optionsDiv.appendChild(btn);
+      });
+      card.appendChild(optionsDiv);
+
+      const explanationDiv = document.createElement('div');
+      explanationDiv.className = 'psy-explanation';
+      explanationDiv.id = 'psy-explanation-alert';
+      card.appendChild(explanationDiv);
+
+      container.appendChild(card);
+    }
+
+    function selectPsyOption(idx, clickedBtn) {
+      const dilemma = psyDilemmas[currentPsyStep];
+      const opt = dilemma.options[idx];
+      const explanation = document.getElementById('psy-explanation-alert');
+      
+      // Disable other buttons and color them
+      const parent = clickedBtn.parentElement;
+      parent.querySelectorAll('.psy-option-btn').forEach((btn, buttonIdx) => {
+        btn.disabled = true;
+        const isOptCorrect = dilemma.options[buttonIdx].isCorrect;
+        if (isOptCorrect) {
+          btn.classList.add('selected-success');
+        } else if (buttonIdx === idx) {
+          btn.classList.add('selected-fail');
+        }
+      });
+
+      explanation.style.display = 'block';
+      explanation.innerHTML = opt.explanation;
+      if (opt.isCorrect) {
+        explanation.className = 'psy-explanation success';
+        
+        // Show next button after a brief delay if we have more steps
+        setTimeout(() => {
+          if (currentPsyStep < psyDilemmas.length - 1) {
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'action-btn primary';
+            nextBtn.style.marginTop = '1rem';
+            nextBtn.innerHTML = `Siguiente Dilema <i data-lucide="arrow-right"></i>`;
+            nextBtn.onclick = () => {
+              currentPsyStep++;
+              renderPsyDilemma();
+              lucide.createIcons();
+            };
+            explanation.appendChild(nextBtn);
+            lucide.createIcons();
+          } else {
+            // Completed! Mark quiz as passed
+            appState.progressCheckpoints.quiz_mod4 = true;
+            saveState();
+            updateProgressUI();
+            
+            const completionMsg = document.createElement('div');
+            completionMsg.style.marginTop = '1rem';
+            completionMsg.style.fontWeight = 'bold';
+            completionMsg.style.color = 'var(--accent-green-neon)';
+            completionMsg.innerText = "¡Excelente! Has superado con éxito el Simulador Psicológico. Tu disciplina mental es óptima.";
+            explanation.appendChild(completionMsg);
+          }
+        }, 800);
+      } else {
+        explanation.className = 'psy-explanation danger';
+        
+        // Add retry button
+        const retryBtn = document.createElement('button');
+        retryBtn.className = 'action-btn';
+        retryBtn.style.marginTop = '1rem';
+        retryBtn.innerHTML = `<i data-lucide="refresh-cw"></i> Volver a Intentar`;
+        retryBtn.onclick = () => {
+          renderPsyDilemma();
+          lucide.createIcons();
+        };
+        explanation.appendChild(retryBtn);
+        lucide.createIcons();
+      }
+    }
+
+    // ==========================================
+    // WIDGET 6: TUTORIAL GUIADO EN LA ARENA
+    // ==========================================
+    let tourStep = 0;
+    const tourData = [
+      {
+        elementId: 'sim-onboarding-card',
+        text: "¡Bienvenido al Simulador Financiero! Esta guía rápida te enseñará a colocar una orden controlando tu riesgo en menos de 1 minuto.",
+        placement: 'bottom'
+      },
+      {
+        elementId: 'sim-chart-section',
+        text: "Este es el gráfico de cotización en tiempo real. Aquí puedes ver la fluctuación del precio de AUTN y activar indicadores (como EMA o RSI) para ayudarte.",
+        placement: 'bottom'
+      },
+      {
+        elementId: 'tour-metric-balance',
+        text: "Comienzas con $10,000 en Balance Virtual. La variación de tus operaciones afectará el Equity en tiempo real.",
+        placement: 'left'
+      },
+      {
+        elementId: 'tour-order-side',
+        text: "Paso 1: Elige COMPRAR si piensas que el precio de AUTN subirá, o VENDER si crees que caerá.",
+        placement: 'left'
+      },
+      {
+        elementId: 'tour-order-risk',
+        text: "Paso 2: ¡Súper Importante! Establece tu Stop Loss para cortar pérdidas automáticamente si el precio va en tu contra, y tu Take Profit para cobrar ganancias.",
+        placement: 'left'
+      },
+      {
+        elementId: 'tour-execute-btn',
+        text: "Paso 3: Haz clic en ENVIAR ORDEN para ingresar tu operación al mercado inmediatamente.",
+        placement: 'left'
+      },
+      {
+        elementId: 'sim-positions-section',
+        text: "Una vez enviada, tu posición aparecerá activa aquí, mostrando su PnL flotante segundo a segundo. ¡Pruébalo ahora y completa tu primera orden!",
+        placement: 'top'
+      }
+    ];
+
+    function startGuidedTour() {
+      tourStep = 0;
+      showTourStep();
+    }
+
+    function showTourStep() {
+      // Clean previous highlights
+      document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+      
+      // Remove previous tooltips
+      const oldTooltip = document.getElementById('active-tour-tooltip');
+      if (oldTooltip) oldTooltip.remove();
+      
+      const oldOverlay = document.getElementById('active-tour-overlay');
+      if (oldOverlay) oldOverlay.remove();
+
+      if (tourStep >= tourData.length) {
+        // Tour finished
+        return;
+      }
+
+      const step = tourData[tourStep];
+      const targetEl = document.getElementById(step.elementId);
+      if (!targetEl) return;
+
+      // Highlight target element
+      targetEl.classList.add('tour-highlight');
+
+      // Create overlay
+      const overlay = document.createElement('div');
+      overlay.className = 'tour-overlay';
+      overlay.id = 'active-tour-overlay';
+      overlay.style.display = 'block';
+      document.body.appendChild(overlay);
+
+      // Create tooltip
+      const tooltip = document.createElement('div');
+      tooltip.className = 'tour-tooltip';
+      tooltip.id = 'active-tour-tooltip';
+      tooltip.style.display = 'block';
+
+      tooltip.innerHTML = `
+        <div style="font-weight:700; color:var(--accent-cyan); margin-bottom:0.5rem; font-family:var(--font-display);">Paso ${tourStep + 1} de ${tourData.length}</div>
+        <p style="margin-bottom:0.75rem; font-size:0.8rem; line-height:1.4;">${step.text}</p>
+        <div class="tour-tooltip-actions">
+          <button class="tour-btn" onclick="exitTour()" style="background:transparent; border-color:var(--border); color:var(--text-secondary);">Salir</button>
+          <button class="tour-btn" onclick="nextTourStep()">${tourStep === tourData.length - 1 ? '¡Entendido!' : 'Siguiente'}</button>
+        </div>
+      `;
+
+      document.body.appendChild(tooltip);
+
+      // Position tooltip near the target
+      const rect = targetEl.getBoundingClientRect();
+      const scrollY = window.scrollY;
+      const scrollX = window.scrollX;
+
+      let left = 0;
+      let top = 0;
+
+      if (step.placement === 'bottom') {
+        left = rect.left + scrollX + (rect.width / 2) - 140;
+        top = rect.bottom + scrollY + 12;
+      } else if (step.placement === 'top') {
+        left = rect.left + scrollX + (rect.width / 2) - 140;
+        top = rect.top + scrollY - 140; // Estimated height offset
+      } else if (step.placement === 'left') {
+        left = rect.left + scrollX - 295;
+        top = rect.top + scrollY + (rect.height / 2) - 60;
+      } else { // right
+        left = rect.right + scrollX + 12;
+        top = rect.top + scrollY + (rect.height / 2) - 60;
+      }
+
+      // Check bounds
+      if (left < 10) left = 10;
+      if (left + 280 > window.innerWidth) left = window.innerWidth - 290;
+      if (top < 10) top = 10;
+
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = top + 'px';
+
+      // Scroll smoothly to target element
+      targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function nextTourStep() {
+      tourStep++;
+      if (tourStep < tourData.length) {
+        showTourStep();
+      } else {
+        exitTour();
+      }
+    }
+
+    function exitTour() {
+      document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+      const oldTooltip = document.getElementById('active-tour-tooltip');
+      if (oldTooltip) oldTooltip.remove();
+      
+      const oldOverlay = document.getElementById('active-tour-overlay');
+      if (oldOverlay) oldOverlay.remove();
+    }
 
     // Handle initial Theme icons properly on startup
     window.addEventListener('DOMContentLoaded', () => {
@@ -2453,7 +3865,7 @@
       updateOpenPositions();
 
       // Redraw Canvas Chart
-      if (appState.currentTab === 'tab-module4') {
+      if (appState.currentTab === 'tab-module5') {
         drawChart();
       }
     }, 1000);
