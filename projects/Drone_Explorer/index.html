@@ -1,0 +1,1975 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AutoNovations AeroExplorer - Drone Mission Control</title>
+    <link rel="icon" href="../../assets_index/images/favicon.png" type="image/x-icon">
+    
+    <!-- Local Leaflet dependencies copied from lia-explorer -->
+    <link rel="stylesheet" href="leaflet.css" />
+    <script src="leaflet.js"></script>
+
+    <!-- Google Fonts for High-Tech Aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --neon-cyan: #00D9FF;
+            --neon-alert: #FF0055;
+            --neon-green: #39e5a7;
+            --bg-dark: #07080B;
+            --panel-bg: rgba(10, 12, 18, 0.82);
+            --panel-border: rgba(0, 217, 255, 0.2);
+            --glow-cyan: 0 0 15px rgba(0, 217, 255, 0.35);
+            --glow-green: 0 0 15px rgba(57, 229, 167, 0.35);
+            --glow-alert: 0 0 15px rgba(255, 0, 85, 0.5);
+            --font-main: 'Outfit', sans-serif;
+            --font-tech: 'Space Grotesk', sans-serif;
+            --font-data: 'Share Tech Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--bg-dark);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            color: #E2E8F0;
+        }
+
+        /* ===== FULLSCREEN MAP ===== */
+        #mapa {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        /* ===== TELEMETRY SCANLINE OVERLAY ===== */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.05) 2px,
+                    rgba(0, 0, 0, 0.05) 4px);
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.8;
+        }
+
+        /* ===== HUD HEADER BAR ===== */
+        .hud-header {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9000;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 50px;
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: var(--glow-cyan);
+            animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .hud-header .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hud-header img {
+            height: 32px;
+            width: auto;
+            filter: drop-shadow(0 0 5px var(--neon-cyan));
+            mix-blend-mode: screen;
+        }
+
+        .hud-header .brand-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hud-header .title {
+            font-family: var(--font-tech);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--neon-cyan);
+            white-space: nowrap;
+        }
+
+        .hud-header .subtitle {
+            font-family: var(--font-main);
+            font-size: 10px;
+            color: #718096;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .recenter-btn {
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            background: transparent;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 5px rgba(0, 217, 255, 0.1);
+        }
+
+        .recenter-btn:hover {
+            background: rgba(0, 217, 255, 0.15);
+            box-shadow: var(--glow-cyan);
+            transform: scale(1.05);
+        }
+
+        .recenter-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ===== GENERAL HUD PANELS (GLASSMORPHISM) ===== */
+        .hud-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 9000;
+            padding: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .hud-panel:hover {
+            border-color: rgba(0, 217, 255, 0.4);
+        }
+
+        .hud-panel-title {
+            font-family: var(--font-tech);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--neon-cyan);
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+        }
+
+        /* ===== TELEMETRY HUD ===== */
+        .telemetry-hud {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            width: 260px;
+            animation: slideRight 0.5s ease-out 0.1s both;
+        }
+
+        .telemetry-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .telemetry-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .telemetry-item .label {
+            font-size: 9px;
+            color: #718096;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .telemetry-item .value {
+            font-family: var(--font-data);
+            font-size: 15px;
+            color: #E2E8F0;
+        }
+
+        .telemetry-item .value.accent {
+            color: var(--neon-cyan);
+        }
+
+        .telemetry-item .value.green {
+            color: var(--neon-green);
+        }
+
+        .telemetry-item .value.warning {
+            color: var(--neon-alert);
+            animation: blink-text 1s infinite alternate;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        /* ===== CONTROLS DE AUDIO Y MAPA (TOP RIGHT) ===== */
+        .audio-map-controls {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 9000;
+            animation: slideLeft 0.5s ease-out 0.2s both;
+        }
+
+        .control-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            color: var(--neon-cyan);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .control-btn:hover {
+            border-color: var(--neon-cyan);
+            background: rgba(0, 217, 255, 0.1);
+            box-shadow: var(--glow-cyan);
+            transform: translateY(-2px);
+        }
+
+        .control-btn:active {
+            transform: translateY(0) scale(0.95);
+        }
+
+        .control-btn.active {
+            color: var(--neon-green);
+            border-color: var(--neon-green);
+            background: rgba(57, 229, 167, 0.1);
+            box-shadow: var(--glow-green);
+        }
+
+        .control-btn.warning {
+            color: var(--neon-alert);
+            border-color: var(--neon-alert);
+            background: rgba(255, 0, 85, 0.1);
+        }
+
+        /* ===== SPEED SLIDER PANEL ===== */
+        .speed-panel {
+            width: 172px;
+            padding: 12px;
+            animation: slideLeft 0.5s ease-out 0.3s both;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .cyber-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 217, 255, 0.15);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .cyber-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--neon-cyan);
+            box-shadow: var(--glow-cyan);
+            border: 2px solid var(--bg-dark);
+            transition: transform 0.1s ease;
+        }
+
+        .cyber-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .speed-readout {
+            font-family: var(--font-data);
+            font-size: 11px;
+            color: #718096;
+            text-align: right;
+        }
+
+        /* ===== POINTS OF INTEREST (SIDE PANEL - LEFT) ===== */
+        .poi-panel {
+            position: fixed;
+            top: 220px;
+            left: 24px;
+            width: 260px;
+            max-height: calc(100vh - 245px);
+            animation: slideRight 0.5s ease-out 0.2s both;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .poi-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+            max-height: calc(100vh - 330px);
+            padding-right: 4px;
+        }
+
+        .poi-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .poi-list::-webkit-scrollbar-thumb {
+            background: rgba(0, 217, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        .poi-item {
+            display: flex;
+            gap: 12px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .poi-item:hover {
+            background: rgba(0, 217, 255, 0.06);
+            border-color: rgba(0, 217, 255, 0.35);
+            box-shadow: var(--glow-cyan);
+            transform: translateX(6px);
+        }
+
+        .poi-item.active {
+            background: rgba(0, 217, 255, 0.1);
+            border-color: var(--neon-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .poi-icon {
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 217, 255, 0.1);
+            border-radius: 6px;
+            border: 1px solid rgba(0, 217, 255, 0.15);
+        }
+
+        .poi-item.active .poi-icon {
+            background: rgba(0, 217, 255, 0.2);
+            border-color: var(--neon-cyan);
+            color: #fff;
+        }
+
+        .poi-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .poi-name {
+            font-family: var(--font-tech);
+            font-size: 13px;
+            font-weight: 500;
+            color: #E2E8F0;
+        }
+
+        .poi-desc {
+            font-size: 10px;
+            color: #718096;
+            line-height: 1.3;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .poi-item:hover .poi-desc {
+            color: #A0AEC0;
+        }
+
+        .poi-item.active .poi-desc {
+            color: #CBD5E0;
+        }
+
+        .poi-item.active .poi-name {
+            color: var(--neon-cyan);
+        }
+
+        .nav-status {
+            font-family: var(--font-tech);
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--neon-green);
+            text-align: center;
+            letter-spacing: 1px;
+            margin-top: 6px;
+            height: 14px;
+            text-shadow: 0 0 5px rgba(57, 229, 167, 0.5);
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        .nav-status.alert {
+            color: var(--neon-alert);
+            text-shadow: 0 0 5px rgba(255, 0, 85, 0.5);
+        }
+
+        /* ===== JOYSTICK ZONE (BOTTOM RIGHT) ===== */
+        .joystick-zone {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            width: 120px;
+            height: 120px;
+            z-index: 9000;
+            touch-action: none;
+            animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.4s both;
+        }
+
+        .joystick-base {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--panel-bg);
+            border: 2px solid var(--panel-border);
+            position: relative;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: var(--glow-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.2s;
+        }
+
+        .joystick-base.active {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 25px rgba(0, 217, 255, 0.5);
+        }
+
+        .joystick-stick {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffffff 0%, var(--neon-cyan) 100%);
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.7);
+            position: absolute;
+            cursor: pointer;
+            transition: background 0.1s, box-shadow 0.1s;
+        }
+
+        .joystick-base.active .joystick-stick {
+            background: #ffffff;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.9);
+        }
+
+        /* ===== BACK PORTFOLIO LINK (BOTTOM CENTER) ===== */
+        .back-link {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9000;
+            text-decoration: none;
+            padding: 10px 24px;
+            border: 1px solid var(--panel-border);
+            border-radius: 50px;
+            background: var(--panel-bg);
+            color: var(--neon-cyan);
+            font-family: var(--font-tech);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: slideUp 0.5s ease-out 0.5s both;
+        }
+
+        .back-link:hover {
+            box-shadow: var(--glow-cyan);
+            border-color: var(--neon-cyan);
+            color: #fff;
+            transform: translateX(-50%) translateY(-2px);
+        }
+
+        .back-link:active {
+            transform: translateX(-50%) translateY(0) scale(0.95);
+        }
+
+        /* ===== FLIGHT OVERLAYS (RETICLES) ===== */
+        .camera-reticle {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140px;
+            height: 140px;
+            border: 1px solid rgba(0, 217, 255, 0.15);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .camera-reticle::before {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 1px;
+            background: rgba(0, 217, 255, 0.4);
+        }
+
+        .camera-reticle::after {
+            content: '';
+            position: absolute;
+            width: 1px;
+            height: 24px;
+            background: rgba(0, 217, 255, 0.4);
+        }
+
+        .reticle-corner {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(0, 217, 255, 0.1);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .top-left { top: 40px; left: 40px; border-right: none; border-bottom: none; }
+        .top-right { top: 40px; right: 40px; border-left: none; border-bottom: none; }
+        .bottom-left { bottom: 40px; left: 40px; border-right: none; border-top: none; }
+        .bottom-right { bottom: 40px; right: 40px; border-left: none; border-top: none; }
+
+        /* ===== CUSTOM POPUP & DRONE ICON ===== */
+        .drone-marker, .drone-marker *, .drone-marker:focus, .drone-marker:active,
+        .drone-avatar-wrapper, .drone-avatar-wrapper *, .drone-avatar-wrapper:focus, .drone-avatar-wrapper:active {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .drone-avatar-wrapper {
+            width: 180px;
+            height: 180px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border-radius: 50%;
+        }
+
+        .drone-avatar-wrapper:hover {
+            transform: scale(1.12);
+            filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.6));
+            cursor: pointer;
+        }
+
+        .drone-avatar-wrapper::before {
+            content: '';
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-cyan);
+            animation: dronePulse 2.5s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+            pointer-events: none;
+        }
+
+        .drone-avatar-wrapper img {
+            width: 130px;
+            height: 130px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.8));
+            transition: transform 0.15s ease-out, filter 0.2s ease;
+            transform-origin: center center;
+        }
+
+        .drone-avatar-wrapper.moving img {
+            animation: droneBob 0.3s ease-in-out infinite alternate;
+        }
+
+        .drone-avatar-wrapper.low-battery::before {
+            border-color: var(--neon-alert);
+            animation: radarPulse 1.2s linear infinite;
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
+        }
+
+        .drone-avatar-wrapper.low-battery img {
+            filter: drop-shadow(0 0 8px rgba(255, 0, 85, 0.8));
+        }
+
+        /* Leaflet Popups Override */
+        .leaflet-popup-content-wrapper {
+            background: var(--panel-bg) !important;
+            border: 1px solid var(--panel-border) !important;
+            border-radius: 10px !important;
+            box-shadow: var(--glow-cyan) !important;
+            color: #fff !important;
+            backdrop-filter: blur(12px);
+        }
+
+        .leaflet-popup-tip {
+            background: var(--panel-bg) !important;
+            border-left: 1px solid var(--panel-border) !important;
+            border-bottom: 1px solid var(--panel-border) !important;
+        }
+
+        .custom-popup-content {
+            padding: 8px;
+            text-align: center;
+        }
+
+        .custom-popup-content img {
+            width: 42px;
+            height: 42px;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 4px var(--neon-cyan));
+        }
+
+        .custom-popup-title {
+            font-family: var(--font-tech);
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--neon-cyan);
+            margin-bottom: 4px;
+        }
+
+        .custom-popup-desc {
+            font-size: 11px;
+            color: #A0AEC0;
+            line-height: 1.4;
+        }
+
+        .leaflet-control-zoom {
+            display: none !important; /* Hide defaults */
+        }
+
+        .leaflet-control-attribution {
+            background: var(--panel-bg) !important;
+            color: #4A5568 !important;
+            border: 1px solid rgba(0, 217, 255, 0.1) !important;
+            border-radius: 4px !important;
+            font-size: 9px !important;
+            font-family: var(--font-data) !important;
+        }
+
+        .leaflet-control-attribution a {
+            color: var(--neon-cyan) !important;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes dronePulse {
+            0%, 100% {
+                transform: scale(0.95);
+                opacity: 0.8;
+                box-shadow: 0 0 15px rgba(0, 217, 255, 0.6);
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.25;
+                box-shadow: 0 0 35px rgba(0, 217, 255, 0.8);
+            }
+        }
+
+        @keyframes droneBob {
+            0% {
+                transform: scale(1) translateY(0);
+            }
+            100% {
+                transform: scale(1.04) translateY(-2px);
+            }
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.4; }
+            to { opacity: 1; }
+        }
+
+        @keyframes blink-text {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { transform: translate(-50%, -30px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        @keyframes slideRight {
+            from { transform: translateX(-30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideLeft {
+            from { transform: translateX(30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translate(-50%, 30px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* ===== RESPONSIVE HUD ===== */
+        @media (max-width: 768px) {
+            .hud-header {
+                top: 12px;
+                padding: 6px 16px;
+                gap: 10px;
+                width: auto;
+                left: auto;
+                right: 12px;
+                transform: none;
+            }
+
+            .hud-header img {
+                height: 24px;
+            }
+
+            .hud-header .title {
+                font-size: 11px;
+                letter-spacing: 1.5px;
+            }
+
+            .hud-header .subtitle {
+                display: none;
+            }
+
+            .telemetry-hud {
+                top: 12px;
+                left: 12px;
+                width: 170px;
+                padding: 10px;
+            }
+
+            .telemetry-grid {
+                gap: 8px;
+            }
+
+            .telemetry-item .value {
+                font-size: 12px;
+            }
+
+            .telemetry-item .label {
+                font-size: 8px;
+            }
+
+            .audio-map-controls {
+                top: 75px;
+                right: 12px;
+                gap: 8px;
+            }
+
+            .control-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 15px;
+            }
+
+            .speed-panel {
+                width: 140px;
+                padding: 8px 10px;
+            }
+
+            .poi-panel {
+                top: auto;
+                bottom: 15px;
+                left: 12px;
+                width: calc(100% - 154px); /* Leave room for joystick */
+                max-height: 130px;
+                padding: 10px;
+                gap: 6px;
+            }
+
+            .poi-list {
+                max-height: 75px;
+            }
+
+            .poi-item {
+                padding: 6px 8px;
+                gap: 8px;
+            }
+
+            .poi-icon {
+                font-size: 15px;
+                width: 24px;
+                height: 24px;
+            }
+
+            .poi-name {
+                font-size: 11px;
+            }
+
+            .poi-desc {
+                display: none; /* Hide desc on mobile list for space */
+            }
+
+            .joystick-zone {
+                bottom: 15px;
+                right: 12px;
+                width: 90px;
+                height: 90px;
+            }
+
+            .joystick-stick {
+                width: 34px;
+                height: 34px;
+            }
+
+            .back-link {
+                display: none; /* Hide standard bottom back link on mobile to avoid layout overlay */
+            }
+
+            /* Small back button at top */
+            .mobile-back-btn {
+                display: flex !important;
+            }
+
+            .camera-reticle, .reticle-corner {
+                display: none; /* Hide camera overlays on mobile to avoid clutter */
+            }
+        }
+
+        .mobile-back-btn {
+            display: none;
+            position: fixed;
+            bottom: 155px;
+            left: 12px;
+            z-index: 9000;
+            width: 34px;
+            height: 34px;
+            border-radius: 6px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            color: var(--neon-cyan);
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 480px) {
+            .telemetry-hud {
+                width: 150px;
+            }
+            .telemetry-item .value {
+                font-size: 11px;
+            }
+            .poi-panel {
+                width: calc(100% - 124px);
+            }
+            .joystick-zone {
+                width: 80px;
+                height: 80px;
+            }
+            .joystick-stick {
+                width: 30px;
+                height: 30px;
+            }
+            .mobile-back-btn {
+                bottom: 155px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Leaflet Map Container -->
+    <div id="mapa"></div>
+
+    <!-- Scanline HUD Overlay -->
+    <div class="scanlines"></div>
+
+    <!-- HUD Telemetry Panel (Top Left) -->
+    <div class="hud-panel telemetry-hud">
+        <div class="hud-panel-title">📡 Telemetría Drone</div>
+        <div class="telemetry-grid">
+            <div class="telemetry-item">
+                <span class="label">Latitud</span>
+                <span class="value accent" id="latDisplay">0.00000</span>
+            </div>
+            <div class="telemetry-item">
+                <span class="label">Longitud</span>
+                <span class="value accent" id="lngDisplay">0.00000</span>
+            </div>
+            <div class="telemetry-item">
+                <span class="label">Altitud</span>
+                <span class="value" id="altDisplay">0m</span>
+            </div>
+            <div class="telemetry-item">
+                <span class="label">Batería</span>
+                <span class="value green" id="batteryDisplay">100%</span>
+            </div>
+            <div class="telemetry-item">
+                <span class="label">Viento</span>
+                <span class="value" id="windDisplay">12 km/h</span>
+            </div>
+            <div class="telemetry-item">
+                <span class="label">Conexión</span>
+                <span class="value green" id="signalDisplay">Excelente</span>
+            </div>
+            <div class="telemetry-item full-width">
+                <span class="label">Estado de Vuelo</span>
+                <span class="value" id="statusDisplay" style="font-family: var(--font-tech); font-weight: 500; font-size: 13px;">Landed</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- HUD Header Badge (Top Center) -->
+    <div class="hud-header">
+        <div class="logo-container">
+            <img src="../../assets_index/images/logo_an_monogram.png" alt="AutoNovations" onerror="this.src='https://placehold.co/100x100/00D9FF/FFFFFF?text=AN'">
+        </div>
+        <div class="brand-info">
+            <div class="title">AEROEXPLORER</div>
+            <div class="subtitle">Mission Control Center</div>
+        </div>
+    </div>
+
+    <!-- Audio & Navigation Controls (Top Right) -->
+    <div class="audio-map-controls">
+        <div class="control-row">
+            <!-- Recenter camera on drone -->
+            <button class="control-btn" id="btnCenter" title="Centrar cámara en el drone">🎯</button>
+            <!-- Trail path toggle -->
+            <button class="control-btn" id="trailBtn" title="Dibujar estela de vuelo">🛣️</button>
+            <!-- Engine sound toggle -->
+            <button class="control-btn" id="soundBtn" title="Activar sonido de motores">🔊</button>
+            <!-- Zoom controls -->
+            <button class="control-btn" id="zoomOut" title="Alejar">-</button>
+            <button class="control-btn" id="zoomIn" title="Acercar">+</button>
+        </div>
+
+        <!-- Move Speed Slider -->
+        <div class="hud-panel speed-panel">
+            <div class="hud-panel-title" style="margin-bottom: 8px; padding-bottom: 4px;">⚡ Motores</div>
+            <div class="slider-wrapper">
+                <input type="range" class="cyber-slider" id="speedSlider" min="0.0001" max="0.004" step="0.0001" value="0.0001">
+                <div class="speed-readout" id="speedDisplay">Eco (0.0001)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Points of Interest Sidebar (Middle Left) -->
+    <div class="hud-panel poi-panel" id="poiPanelContainer">
+        <div class="hud-panel-title">📍 Nodos de Telemetría</div>
+        <div class="poi-list" id="poiList"></div>
+        <div class="nav-status" id="navigatorStatus"></div>
+    </div>
+
+    <!-- Virtual Joystick (Bottom Right) -->
+    <div class="joystick-zone" id="joystickZone">
+        <div class="joystick-base" id="joystickBase">
+            <div class="joystick-stick" id="joystickStick"></div>
+        </div>
+    </div>
+
+    <!-- Back to Portfolio Link (Bottom Center) -->
+    <a href="../../index.html" class="back-link">
+        ⬅️ Volver a AutoNovations
+    </a>
+
+    <!-- Mobile back button (Bottom left above POI list on small screens) -->
+    <a href="../../index.html" class="mobile-back-btn" title="Volver a AutoNovations">
+        ⬅️
+    </a>
+
+    <!-- Camera Reticle and corners (HUD Visual Elements) -->
+    <div class="camera-reticle"></div>
+    <div class="reticle-corner top-left"></div>
+    <div class="reticle-corner top-right"></div>
+    <div class="reticle-corner bottom-left"></div>
+    <div class="reticle-corner bottom-right"></div>
+
+
+    <script>
+        // =============================================
+        // 1. MAP INITIALIZATION (Colombia Centered)
+        // =============================================
+        const INITIAL_LAT = 4.60971;
+        const INITIAL_LNG = -74.07185; // Bogotá HQ coordinates
+        
+        const mapa = L.map('mapa', {
+            zoomControl: false,
+            keyboard: false,
+            center: [6.25, -74.8], // Show Colombia
+            zoom: 6,
+            minZoom: 5,
+            maxZoom: 18
+        });
+
+        // Satellite imagery layer
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; Esri &mdash; Earthstar Geographics',
+            maxZoom: 18
+        }).addTo(mapa);
+
+        // Soft carto labels overlay for streets/locations
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+            attribution: '',
+            maxZoom: 18,
+            pane: 'overlayPane'
+        }).addTo(mapa);
+
+        // =============================================
+        // 2. STATE VARIABLES
+        // =============================================
+        let droneLat = INITIAL_LAT;
+        let droneLng = INITIAL_LNG;
+        let moveSpeed = 0.0001; // Mínima velocidad por defecto (Eco)
+        let isMoving = false;
+        let lastAngle = 0; // In degrees
+        
+        // Battery and Altitude Simulation
+        let battery = 100.0;
+        let altitude = 0; // starts at 0 (landed)
+        let flightState = "LANDED"; // LANDED, TAKEOFF, EN_ROUTE, APPROACH, LANDING, EMERGENCY_LANDING
+        let connectionSignal = "Excelente";
+        let windSpeed = 12; // in km/h
+
+        // Trail path variable
+        let trailEnabled = false;
+        let trailPoints = [];
+        let trailLine = null;
+
+        // Auto-pilot variables
+        let isAutoDriving = false;
+        let autoDriveFrameId = null;
+        let activeDestination = null;
+
+        // Keys pressed
+        const activeKeys = new Set();
+        let animFrameId = null;
+
+        // =============================================
+        // 3. SOUND SYNTHESIZER (Web Audio API)
+        // =============================================
+        let audioCtx = null;
+        let oscMain = null;
+        let oscSub = null;
+        let filterNode = null;
+        let gainNode = null;
+        let soundEnabled = false;
+
+        function initAudio() {
+            if (audioCtx) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Main engine pitch (80Hz oscillator)
+                oscMain = audioCtx.createOscillator();
+                oscMain.type = 'sawtooth';
+                oscMain.frequency.value = 75;
+
+                // Sub engine pitch (82Hz oscillator to create a beating effect of rotors)
+                oscSub = audioCtx.createOscillator();
+                oscSub.type = 'sawtooth';
+                oscSub.frequency.value = 77;
+
+                // Lowpass filter to make it a deep mechanical hum
+                filterNode = audioCtx.createBiquadFilter();
+                filterNode.type = 'lowpass';
+                filterNode.frequency.value = 160;
+
+                // Master gain for sound
+                gainNode = audioCtx.createGain();
+                gainNode.gain.value = 0.0; // Start silent
+
+                oscMain.connect(filterNode);
+                oscSub.connect(filterNode);
+                filterNode.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                oscMain.start();
+                oscSub.start();
+            } catch (err) {
+                console.error("Web Audio API not supported", err);
+            }
+        }
+
+        function updateAudioPitch(speedRatio, altRatio) {
+            if (!soundEnabled || !audioCtx) return;
+            
+            // Modulation based on movement speed and altitude (representing rotor workload)
+            let pitchBase = 70 + speedRatio * 35 + altRatio * 15;
+            let gainBase = 0.12 + speedRatio * 0.18 + altRatio * 0.05;
+
+            if (flightState === "LANDED" && altitude === 0) {
+                gainBase = 0.01; // minimal quiet vibration
+                pitchBase = 50;
+            } else if (flightState === "TAKEOFF" || flightState === "LANDING") {
+                gainBase = 0.25; // high rotor strain
+                pitchBase = 95;
+            } else if (flightState === "EMERGENCY_LANDING") {
+                gainBase = 0.3;
+                pitchBase = 45; // low pitch sputtering
+            }
+
+            oscMain.frequency.setTargetAtTime(pitchBase, audioCtx.currentTime, 0.15);
+            oscSub.frequency.setTargetAtTime(pitchBase * 1.03, audioCtx.currentTime, 0.15);
+            gainNode.gain.setTargetAtTime(gainBase, audioCtx.currentTime, 0.15);
+        }
+
+        function muteAudio() {
+            if (gainNode) {
+                gainNode.gain.setTargetAtTime(0.0, audioCtx.currentTime, 0.2);
+            }
+        }
+
+        // Speaker Button Listener
+        const soundBtn = document.getElementById('soundBtn');
+        soundBtn.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            soundBtn.classList.toggle('active', soundEnabled);
+            
+            if (soundEnabled) {
+                soundBtn.textContent = "🔊";
+                initAudio();
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                updateAudioPitch(isMoving ? 0.8 : 0.0, altitude / 150);
+            } else {
+                soundBtn.textContent = "🔇";
+                muteAudio();
+            }
+        });
+
+        // =============================================
+        // 4. CUSTOM DRONE CURSOR MARKER
+        // =============================================
+        const droneIcon = L.divIcon({
+            html: `
+                <div class="drone-avatar-wrapper" id="droneWrapper">
+                    <img src="../../assets_index/images/cursor-drone.png" alt="Drone" id="droneImg" />
+                </div>
+            `,
+            className: 'drone-marker',
+            iconSize: [180, 180],
+            iconAnchor: [90, 90]
+        });
+
+        const droneMarker = L.marker([droneLat, droneLng], {
+            icon: droneIcon,
+            zIndexOffset: 1000
+        }).addTo(mapa);
+
+        // Popup standard metadata
+        droneMarker.bindPopup(`
+            <div class="custom-popup-content">
+                <img src="../../assets_index/images/cursor-drone.png" alt="Drone" />
+                <div class="custom-popup-title">AN-QUADCOPTER v2.0</div>
+                <div class="custom-popup-desc">Dron de Exploración y Telemetría Industrial AutoNovations.</div>
+            </div>
+        `);
+
+        // Interactive drone marker click
+        droneMarker.on('click', (e) => {
+            // Play a synthetic computer chime sound
+            if (soundEnabled && audioCtx) {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.08); // A5
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.25);
+            }
+
+            // Trigger a simulated connection ping
+            const status = document.getElementById('navigatorStatus');
+            if (status) {
+                status.textContent = "🛰️ PING DE TELEMETRÍA: Conexión Activa";
+                status.className = "nav-status";
+                setTimeout(() => {
+                    if (status.textContent.includes("PING")) status.textContent = "";
+                }, 3000);
+            }
+        });
+
+        // =============================================
+        // 5. DATA RENDER AND TELEMETRY LOGIC
+        // =============================================
+        function updateTelemetryUI() {
+            document.getElementById('latDisplay').textContent = droneLat.toFixed(5);
+            document.getElementById('lngDisplay').textContent = droneLng.toFixed(5);
+            document.getElementById('altDisplay').textContent = `${Math.round(altitude)}m`;
+            
+            // Battery formatting
+            const batteryDisplay = document.getElementById('batteryDisplay');
+            batteryDisplay.textContent = `${Math.ceil(battery)}%`;
+            if (battery <= 20) {
+                batteryDisplay.className = "value warning";
+                document.getElementById('droneWrapper')?.classList.add('low-battery');
+            } else {
+                batteryDisplay.className = "value green";
+                document.getElementById('droneWrapper')?.classList.remove('low-battery');
+            }
+
+            // Connection strength based on signal simulation
+            const signalDisplay = document.getElementById('signalDisplay');
+            if (battery === 0) {
+                signalDisplay.textContent = "OFFLINE";
+                signalDisplay.className = "value warning";
+            } else {
+                signalDisplay.textContent = connectionSignal;
+                if (connectionSignal === "Excelente") signalDisplay.className = "value green";
+                else if (connectionSignal === "Débil") signalDisplay.className = "value warning";
+                else signalDisplay.className = "value";
+            }
+
+            // Wind Speed
+            document.getElementById('windDisplay').textContent = `${windSpeed} km/h`;
+
+            // State Display
+            const statusDisplay = document.getElementById('statusDisplay');
+            statusDisplay.textContent = flightState;
+            if (flightState === "EN RUTA" || flightState === "APROXIMACIÓN") {
+                statusDisplay.style.color = "var(--neon-cyan)";
+            } else if (flightState === "DESPEGANDO" || flightState === "ATERRIZANDO") {
+                statusDisplay.style.color = "orange";
+            } else if (flightState === "CARGANDO" || flightState === "CARGADO") {
+                statusDisplay.style.color = "var(--neon-green)";
+            } else if (flightState === "ATERRIZAJE EMERGENCIA") {
+                statusDisplay.style.color = "var(--neon-alert)";
+            } else {
+                statusDisplay.style.color = "#E2E8F0";
+            }
+        }
+
+        // =============================================
+        // 6. MOVEMENT AND FLIGHT MECHANICS
+        // =============================================
+        function renderDronePosition() {
+            droneMarker.setLatLng([droneLat, droneLng]);
+            
+            // Only auto-pan camera if camera center option isn't locked, or drone is flying
+            if (flightState !== "LANDED" || isAutoDriving) {
+                mapa.panTo([droneLat, droneLng], { animate: false });
+            }
+
+            // Estela (Trail)
+            if (trailEnabled) {
+                trailPoints.push([droneLat, droneLng]);
+                if (trailLine) {
+                    trailLine.setLatLngs(trailPoints);
+                } else {
+                    trailLine = L.polyline(trailPoints, {
+                        color: 'var(--neon-cyan)',
+                        weight: 4,
+                        opacity: 0.8,
+                        dashArray: '8, 8',
+                        lineCap: 'round'
+                    }).addTo(mapa);
+                }
+            }
+
+            // Update UI telemetry coordinates
+            updateTelemetryUI();
+        }
+
+        function startDroneMovement() {
+            if (!isMoving) {
+                isMoving = true;
+                document.getElementById('droneWrapper')?.classList.add('moving');
+            }
+        }
+
+        function stopDroneMovement() {
+            if (isMoving) {
+                isMoving = false;
+                document.getElementById('droneWrapper')?.classList.remove('moving');
+                if (soundEnabled) updateAudioPitch(0, altitude / 150);
+            }
+        }
+
+        function updateRotationAngle(dLat, dLng) {
+            if (Math.abs(dLat) > 1e-7 || Math.abs(dLng) > 1e-7) {
+                // Calculate rotation yaw: 0 is North, 90 is East, 180 is South, 270 is West
+                let angleDeg = 90 - (Math.atan2(dLat, dLng) * (180 / Math.PI));
+                lastAngle = angleDeg;
+                
+                const img = document.getElementById('droneImg');
+                if (img) {
+                    img.style.transform = `rotate(${angleDeg}deg)`;
+                }
+            }
+        }
+
+        // Main animation loop for keyboard/joystick inputs
+        function updatePosition() {
+            // Cancel autopilot if user starts manual controls
+            if ((activeKeys.size > 0 || joyActive) && isAutoDriving) {
+                cancelAutoDrive('Piloto manual activado - Autopiloto cancelado');
+            }
+
+            let dLat = 0;
+            let dLng = 0;
+            let moved = false;
+
+            // Battery check
+            if (battery <= 0) {
+                triggerEmergencyLanding();
+                return;
+            }
+
+            // Takeoff sequence automatically triggers if user moves while landed
+            if (flightState === "LANDED" && (activeKeys.size > 0 || joyActive)) {
+                takeoffSequence();
+                animFrameId = requestAnimationFrame(updatePosition);
+                return;
+            }
+
+            // Telemetry simulation during active movement
+            if (flightState === "EN RUTA" || flightState === "DESPEGANDO" || flightState === "ATERRIZANDO") {
+                // Drain battery
+                battery = Math.max(0, battery - 0.02);
+                
+                // Simulate wind turbulence
+                windSpeed = Math.round(10 + Math.sin(Date.now() / 2000) * 4);
+                if (Math.random() < 0.05) {
+                    connectionSignal = Math.random() > 0.85 ? "Débil" : (Math.random() > 0.4 ? "Buena" : "Excelente");
+                }
+            }
+
+            // Keyboard logic
+            if (activeKeys.has('up')) { dLat += moveSpeed; moved = true; }
+            if (activeKeys.has('down')) { dLat -= moveSpeed; moved = true; }
+            if (activeKeys.has('left')) { dLng -= moveSpeed; moved = true; }
+            if (activeKeys.has('right')) { dLng += moveSpeed; moved = true; }
+
+            // Joystick logic
+            if (joyActive) {
+                dLat += joyDeltaY * moveSpeed;
+                dLng += joyDeltaX * moveSpeed;
+                if (Math.abs(joyDeltaX) > 0.05 || Math.abs(joyDeltaY) > 0.05) {
+                    moved = true;
+                }
+            }
+
+            if (moved) {
+                startDroneMovement();
+                
+                // Limit boundaries around Colombia approximately
+                const newLat = Math.min(13.0, Math.max(-4.5, droneLat + dLat));
+                const newLng = Math.min(-66.0, Math.max(-82.0, droneLng + dLng));
+                
+                dLat = newLat - droneLat;
+                dLng = newLng - droneLng;
+                
+                droneLat = newLat;
+                droneLng = newLng;
+
+                updateRotationAngle(dLat, dLng);
+                renderDronePosition();
+
+                // Height telemetry fluctuation
+                if (flightState === "EN RUTA") {
+                    altitude = 120 + Math.sin(Date.now() / 400) * 2;
+                }
+
+                if (soundEnabled) {
+                    updateAudioPitch(0.85, altitude / 150);
+                }
+            } else {
+                stopDroneMovement();
+                if (flightState === "EN RUTA") {
+                    // Hover stability
+                    altitude = 120 + Math.sin(Date.now() / 600) * 1;
+                    updateTelemetryUI();
+                }
+            }
+
+            if ((activeKeys.size > 0 || joyActive) && flightState !== "LANDED") {
+                animFrameId = requestAnimationFrame(updatePosition);
+            } else {
+                animFrameId = null;
+            }
+        }
+
+        // =============================================
+        // 7. TAKEOFF AND LANDING SEQUENCE
+        // =============================================
+        function takeoffSequence(callback) {
+            if (flightState !== "LANDED" && flightState !== "CARGADO") return;
+            
+            flightState = "DESPEGANDO";
+            updateTelemetryUI();
+            startDroneMovement();
+
+            let targetAltitude = 120;
+            let currentAlt = 0;
+
+            function liftLoop() {
+                if (currentAlt < targetAltitude) {
+                    currentAlt += 3;
+                    altitude = currentAlt;
+                    updateTelemetryUI();
+                    
+                    if (soundEnabled) updateAudioPitch(0.4, altitude / 150);
+                    
+                    requestAnimationFrame(liftLoop);
+                } else {
+                    altitude = targetAltitude;
+                    flightState = "EN RUTA";
+                    updateTelemetryUI();
+                    stopDroneMovement();
+                    
+                    if (callback) callback();
+                }
+            }
+
+            liftLoop();
+        }
+
+        function landSequence(isAtStation, stationName) {
+            if (flightState === "LANDED") return;
+            
+            flightState = "ATERRIZANDO";
+            updateTelemetryUI();
+            startDroneMovement();
+
+            let currentAlt = altitude;
+
+            function descentLoop() {
+                if (currentAlt > 0) {
+                    currentAlt = Math.max(0, currentAlt - 4);
+                    altitude = currentAlt;
+                    updateTelemetryUI();
+                    
+                    if (soundEnabled) updateAudioPitch(0.2, altitude / 150);
+                    
+                    requestAnimationFrame(descentLoop);
+                } else {
+                    altitude = 0;
+                    flightState = isAtStation ? "CARGANDO" : "LANDED";
+                    updateTelemetryUI();
+                    stopDroneMovement();
+
+                    if (isAtStation) {
+                        document.getElementById('navigatorStatus').textContent = `Conectado a puerto de carga: ${stationName}`;
+                        document.getElementById('navigatorStatus').className = "nav-status";
+                        rechargeBattery();
+                    }
+                }
+            }
+
+            descentLoop();
+        }
+
+        function rechargeBattery() {
+            function chargeLoop() {
+                if (flightState === "CARGANDO" && battery < 100) {
+                    battery = Math.min(100, battery + 1.5);
+                    updateTelemetryUI();
+                    
+                    if (battery === 100) {
+                        flightState = "CARGADO";
+                        updateTelemetryUI();
+                        document.getElementById('navigatorStatus').textContent = "Batería al 100% - Sistemas Listos";
+                        setTimeout(() => {
+                            if (flightState === "CARGADO" || flightState === "LANDED") {
+                                document.getElementById('navigatorStatus').textContent = "";
+                            }
+                        }, 4000);
+                        return;
+                    }
+                    setTimeout(chargeLoop, 50);
+                }
+            }
+            chargeLoop();
+        }
+
+        function triggerEmergencyLanding() {
+            cancelAutoDrive();
+            flightState = "ATERRIZAJE EMERGENCIA";
+            document.getElementById('navigatorStatus').textContent = "¡CRÍTICO: Aterrizaje de emergencia por batería!";
+            document.getElementById('navigatorStatus').className = "nav-status alert";
+            updateTelemetryUI();
+            startDroneMovement();
+
+            let currentAlt = altitude;
+            function emergencyLoop() {
+                if (currentAlt > 0) {
+                    currentAlt = Math.max(0, currentAlt - 2.5);
+                    altitude = currentAlt;
+                    updateTelemetryUI();
+                    if (soundEnabled) updateAudioPitch(0.1, altitude / 150);
+                    requestAnimationFrame(emergencyLoop);
+                } else {
+                    altitude = 0;
+                    flightState = "LANDED";
+                    updateTelemetryUI();
+                    stopDroneMovement();
+                    document.getElementById('navigatorStatus').textContent = "Dron apagado en superficie. Recarga requerida.";
+                }
+            }
+            emergencyLoop();
+        }
+
+        // =============================================
+        // 8. AUTOPILOT LONG RANGE FLIGHT NAVIGATION
+        // =============================================
+        function autoMoveTo(targetLat, targetLng, name) {
+            cancelAutoDrive();
+            isAutoDriving = true;
+
+            const executeFlight = () => {
+                flightState = "EN RUTA";
+                document.getElementById('navigatorStatus').textContent = `Autopiloto en curso: ${name}...`;
+                document.getElementById('navigatorStatus').className = "nav-status";
+                startDroneMovement();
+
+                // Zoom out slightly during departure for a wide telemetry survey, unless already zoomed out
+                if (mapa.getZoom() > 8) {
+                    mapa.setZoom(8, { animate: true });
+                }
+
+                // Calculate flight step vector based on total distance
+                // Distance flight logic should take approx 3.5 seconds
+                const startLat = droneLat;
+                const startLng = droneLng;
+                const startTime = performance.now();
+                const duration = 3500; // 3.5 seconds flight
+
+                function driveLoop(now) {
+                    if (!isAutoDriving) return;
+
+                    const elapsed = now - startTime;
+                    const progress = Math.min(1.0, elapsed / duration);
+                    
+                    // Ease function (sine in-out) for smooth flight acceleration
+                    const easeProgress = 0.5 - Math.cos(progress * Math.PI) / 2;
+
+                    const prevLat = droneLat;
+                    const prevLng = droneLng;
+
+                    // Interpolate coordinates
+                    droneLat = startLat + (targetLat - startLat) * easeProgress;
+                    droneLng = startLng + (targetLng - startLng) * easeProgress;
+
+                    // Drain battery along the flight
+                    battery = Math.max(0, battery - 0.05);
+                    if (battery <= 0) {
+                        triggerEmergencyLanding();
+                        return;
+                    }
+
+                    // Altitude during autopilot
+                    altitude = 120 + Math.sin(now / 200) * 3;
+
+                    // Compute rotation angle
+                    updateRotationAngle(droneLat - prevLat, droneLng - prevLng);
+                    renderDronePosition();
+
+                    // Adjust zoom level dynamically as we approach the landing station
+                    if (progress > 0.8 && mapa.getZoom() < 14) {
+                        mapa.setZoom(14, { animate: true });
+                    }
+
+                    if (progress < 1.0) {
+                        autoDriveFrameId = requestAnimationFrame(driveLoop);
+                    } else {
+                        // Reached destination coordinates
+                        droneLat = targetLat;
+                        droneLng = targetLng;
+                        renderDronePosition();
+                        
+                        // Set map focus and zoom in close (high-detail satellite view)
+                        mapa.setView([droneLat, droneLng], 18, { animate: true });
+                        
+                        // Start descent landing sequence
+                        landSequence(true, name);
+                        isAutoDriving = false;
+                    }
+                }
+
+                autoDriveFrameId = requestAnimationFrame(driveLoop);
+            };
+
+            // If drone is currently landed, execute takeoff first, then fly
+            if (flightState === "LANDED" || flightState === "CARGADO" || flightState === "CARGANDO") {
+                takeoffSequence(executeFlight);
+            } else {
+                executeFlight();
+            }
+        }
+
+        function cancelAutoDrive(reason = '') {
+            isAutoDriving = false;
+            if (autoDriveFrameId) {
+                cancelAnimationFrame(autoDriveFrameId);
+                autoDriveFrameId = null;
+            }
+            const status = document.getElementById('navigatorStatus');
+            if (status) {
+                if (reason) {
+                    status.textContent = reason;
+                    status.className = "nav-status alert";
+                    setTimeout(() => { if (status.textContent === reason) status.textContent = ''; }, 4000);
+                } else {
+                    status.textContent = '';
+                }
+            }
+            stopDroneMovement();
+        }
+
+        // =============================================
+        // 9. INPUT CONTROLS: KEYBOARD
+        // =============================================
+        const keyMap = {
+            'ArrowUp': 'up', 'w': 'up', 'W': 'up',
+            'ArrowDown': 'down', 's': 'down', 'S': 'down',
+            'ArrowLeft': 'left', 'a': 'left', 'A': 'left',
+            'ArrowRight': 'right', 'd': 'right', 'D': 'right'
+        };
+
+        document.addEventListener('keydown', (e) => {
+            const dir = keyMap[e.key];
+            if (dir) {
+                e.preventDefault();
+                activeKeys.add(dir);
+                if (!animFrameId) {
+                    animFrameId = requestAnimationFrame(updatePosition);
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            const dir = keyMap[e.key];
+            if (dir) {
+                activeKeys.delete(dir);
+                if (activeKeys.size === 0 && animFrameId) {
+                    cancelAnimationFrame(animFrameId);
+                    animFrameId = null;
+                    stopDroneMovement();
+                }
+            }
+        });
+
+        // =============================================
+        // 10. INPUT CONTROLS: JOYSICK (TOUCH/MOUSE)
+        // =============================================
+        const stick = document.getElementById('joystickStick');
+        const base = document.getElementById('joystickBase');
+        
+        let joyActive = false;
+        let joyCenterX = 0;
+        let joyCenterY = 0;
+        let joyMaxRadius = 0;
+        let joyDeltaX = 0; 
+        let joyDeltaY = 0;
+
+        function initJoystick(e) {
+            joyActive = true;
+            base.classList.add('active');
+            
+            const rect = base.getBoundingClientRect();
+            joyCenterX = rect.left + rect.width / 2;
+            joyCenterY = rect.top + rect.height / 2;
+            joyMaxRadius = rect.width / 2 - stick.offsetWidth / 2;
+            
+            moveJoystick(e);
+            
+            if (!animFrameId) {
+                animFrameId = requestAnimationFrame(updatePosition);
+            }
+        }
+
+        function moveJoystick(e) {
+            if (!joyActive) return;
+            e.preventDefault();
+
+            let clientX, clientY;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+
+            let dx = clientX - joyCenterX;
+            let dy = clientY - joyCenterY;
+            let dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist > joyMaxRadius) {
+                dx = dx * joyMaxRadius / dist;
+                dy = dy * joyMaxRadius / dist;
+            }
+
+            stick.style.transform = `translate(${dx}px, ${dy}px)`;
+
+            joyDeltaX = dx / joyMaxRadius;
+            joyDeltaY = -dy / joyMaxRadius; // Invert Y for cartesian navigation
+        }
+
+        function endJoystick(e) {
+            if (!joyActive) return;
+            joyActive = false;
+            base.classList.remove('active');
+            stick.style.transform = `translate(0px, 0px)`;
+            joyDeltaX = 0;
+            joyDeltaY = 0;
+            
+            if (activeKeys.size === 0 && animFrameId) {
+                cancelAnimationFrame(animFrameId);
+                animFrameId = null;
+                stopDroneMovement();
+            }
+        }
+
+        base.addEventListener('mousedown', initJoystick);
+        document.addEventListener('mousemove', moveJoystick);
+        document.addEventListener('mouseup', endJoystick);
+
+        base.addEventListener('touchstart', initJoystick, {passive: false});
+        document.addEventListener('touchmove', moveJoystick, {passive: false});
+        document.addEventListener('touchend', endJoystick);
+        document.addEventListener('touchcancel', endJoystick);
+
+        // =============================================
+        // 11. MAP CONTROLS AND SPEED SLIDER
+        // =============================================
+        // Center button
+        document.getElementById('btnCenter').addEventListener('click', () => {
+            mapa.setView([droneLat, droneLng], 16, { animate: true });
+        });
+
+        // Zoom Controls
+        document.getElementById('zoomIn').addEventListener('click', () => mapa.zoomIn());
+        document.getElementById('zoomOut').addEventListener('click', () => mapa.zoomOut());
+
+        // Speed Slider
+        const speedSlider = document.getElementById('speedSlider');
+        const speedDisplay = document.getElementById('speedDisplay');
+        speedSlider.addEventListener('input', function() {
+            moveSpeed = parseFloat(this.value);
+            let speedLabel = "Normal";
+            if (moveSpeed < 0.0004) speedLabel = "Eco";
+            else if (moveSpeed > 0.002) speedLabel = "Turbo";
+            else if (moveSpeed > 0.0012) speedLabel = "Rápido";
+            
+            speedDisplay.textContent = `${speedLabel} (${moveSpeed.toFixed(4)})`;
+        });
+
+        // Trail Toggle
+        const trailBtn = document.getElementById('trailBtn');
+        trailBtn.addEventListener('click', () => {
+            trailEnabled = !trailEnabled;
+            trailBtn.classList.toggle('active', trailEnabled);
+
+            if (!trailEnabled && trailLine) {
+                mapa.removeLayer(trailLine);
+                trailLine = null;
+                trailPoints = [];
+            }
+        });
+
+        // =============================================
+        // 12. COLOMBIA POINTS OF INTEREST (IIOT DATA)
+        // =============================================
+        const landmarks = [
+            { 
+                lat: 4.60971, 
+                lng: -74.07185, 
+                name: 'AutoNovations HQ & Command Center', 
+                emoji: '🏢',
+                desc: 'Estación de control central y operaciones de drones. Supervisión y procesamiento en la nube.'
+            },
+            { 
+                lat: 6.26317, 
+                lng: -75.56708, 
+                name: 'Medellín AI Lab - Ruta N', 
+                emoji: '🚀',
+                desc: 'Centro de desarrollo de algoritmos de navegación autónoma y computación paralela en el borde.'
+            },
+            { 
+                lat: 3.49811, 
+                lng: -76.35338, 
+                name: 'Palmira Precision Agriculture Center', 
+                emoji: '🌾',
+                desc: 'Monitoreo de cultivos con sensores multiespectrales terrestres y aéreos. IA agro-analítica.'
+            },
+            { 
+                lat: 10.40798, 
+                lng: -75.52988, 
+                name: 'Cartagena Maritime Port Drone Station', 
+                emoji: '🚢',
+                desc: 'Inspección de infraestructuras críticas portuarias y logística automatizada de contenedores.'
+            },
+            { 
+                lat: 10.95252, 
+                lng: -74.74712, 
+                name: 'Barranquilla Pumarejo Bridge Node', 
+                emoji: '🌉',
+                desc: 'Inspección estructural en tiempo real de soldaduras y tensores mediante drones industriales.'
+            },
+            { 
+                lat: 7.13543, 
+                lng: -75.66872, 
+                name: 'Hidroituango Hydroelectric Analytics Node', 
+                emoji: '⚡',
+                desc: 'Escaneo topográfico 3D y análisis térmico preventivo de turbinas e infraestructura hidráulica.'
+            }
+        ];
+
+        const poiListContainer = document.getElementById('poiList');
+
+        landmarks.forEach(lm => {
+            // Leaflet Map Marker for Landmarks
+            const landmarkIcon = L.divIcon({
+                html: `<div style="
+                    font-size: 24px;
+                    text-shadow: 0 0 8px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.6);
+                    filter: drop-shadow(0 0 6px var(--neon-cyan));
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                ">${lm.emoji}</div>`,
+                className: '',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+
+            const marker = L.marker([lm.lat, lm.lng], { icon: landmarkIcon }).addTo(mapa);
+            
+            marker.bindPopup(`
+                <div style="text-align: center; padding: 4px;">
+                    <span style="font-size: 20px;">${lm.emoji}</span>
+                    <h4 style="font-family: var(--font-tech); color: var(--neon-cyan); margin: 6px 0; font-size: 13px;">${lm.name}</h4>
+                    <p style="font-size: 11px; color: #CBD5E0; line-height: 1.3;">${lm.desc}</p>
+                </div>
+            `);
+
+            // Sidebar list item creation
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'poi-item';
+            itemDiv.id = `poi-${lm.name.replace(/\s+/g, '')}`;
+
+            itemDiv.innerHTML = `
+                <div class="poi-icon">${lm.emoji}</div>
+                <div class="poi-info">
+                    <div class="poi-name">${lm.name}</div>
+                    <div class="poi-desc">${lm.desc}</div>
+                </div>
+            `;
+
+            // Sidebar item click action
+            itemDiv.addEventListener('click', () => {
+                // Remove active class from all items
+                document.querySelectorAll('.poi-item').forEach(el => el.classList.remove('active'));
+                itemDiv.classList.add('active');
+
+                // Trigger drone auto-pilot flight
+                autoMoveTo(lm.lat, lm.lng, lm.name);
+                
+                // Close currently open popups and open this landmark's popup
+                mapa.closePopup();
+                marker.openPopup();
+            });
+
+            poiListContainer.appendChild(itemDiv);
+        });
+
+        // =============================================
+        // 13. INITIAL STATE SETUP
+        // =============================================
+        // Position drone at start location (Bogota HQ)
+        droneLat = INITIAL_LAT;
+        droneLng = INITIAL_LNG;
+        renderDronePosition();
+        
+        // Let's set the view initially to Bogota HQ so the drone is centered on map load
+        mapa.setView([droneLat, droneLng], 15);
+        
+        // Trigger initial telemetry update
+        updateTelemetryUI();
+
+    </script>
+</body>
+
+</html>
