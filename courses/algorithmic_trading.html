@@ -1,0 +1,3223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuantStation - Curso Interactivo de Trading Algorítmico</title>
+  <script>
+    (function() {
+        const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+        if (savedTheme === 'light') {
+            document.documentElement.classList.add('light');
+        } else {
+            document.documentElement.classList.remove('light');
+        }
+    })();
+  </script>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Aprende trading algorítmico desde cero hasta avanzado. Simuladores interactivos de order book, indicadores, backtesting y gestión de riesgos.">
+  <meta name="keywords" content="Trading Algorítmico, Backtesting, Análisis Técnico, Order Book, Monte Carlo, Cuantitativo">
+  <meta name="author" content="AutoNovations Quant Team">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      /* Palette: Cyber-Finance Dark Mode */
+      --bg-darker: #06090f;
+      --bg-dark: #0a0e17;
+      --bg-card: #111827;
+      --bg-card-hover: #1b263b;
+      --border: #1e293b;
+      --border-focus: #00f0ff;
+      
+      --accent-cyan: #00f0ff;
+      --accent-cyan-dim: rgba(0, 240, 255, 0.12);
+      --accent-green: #10b981;
+      --accent-green-neon: #39ff14;
+      --accent-green-dim: rgba(16, 185, 129, 0.15);
+      --accent-red: #ef4444;
+      --accent-red-neon: #ff3366;
+      --accent-red-dim: rgba(239, 68, 68, 0.15);
+      --accent-amber: #f59e0b;
+      --accent-amber-neon: #ff9d00;
+      --accent-amber-dim: rgba(245, 158, 11, 0.15);
+      --accent-purple: #8b5cf6;
+      --accent-purple-dim: rgba(139, 92, 246, 0.12);
+
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Palette: Cyber-Finance Light Mode */
+    html.light {
+      --bg-darker: #f3f4f6;
+      --bg-dark: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f9fafb;
+      --border: #e5e7eb;
+      --border-focus: #3b82f6;
+
+      --accent-cyan: #2563eb;
+      --accent-cyan-dim: rgba(37, 99, 235, 0.1);
+      --accent-green: #059669;
+      --accent-green-neon: #10b981;
+      --accent-green-dim: rgba(5, 150, 105, 0.1);
+      --accent-red: #dc2626;
+      --accent-red-neon: #ef4444;
+      --accent-red-dim: rgba(220, 38, 38, 0.1);
+      --accent-amber: #d97706;
+      --accent-amber-neon: #f59e0b;
+      --accent-amber-dim: rgba(217, 119, 6, 0.1);
+      --accent-purple: #7c3aed;
+      --accent-purple-dim: rgba(124, 58, 237, 0.1);
+
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-muted: #9ca3af;
+    }
+
+    /* Base Reset & Scrollbars */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg-darker);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-darker);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: var(--radius-sm);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-cyan);
+    }
+
+    /* Layout */
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background-color: var(--bg-dark);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      padding: 1.5rem;
+      transition: width 0.3s, transform 0.3s;
+    }
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      letter-spacing: 0.05em;
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+    }
+    .sidebar-brand i {
+      animation: pulse-cyan 3s infinite ease-in-out;
+    }
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+    .nav-item button {
+      width: 100%;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      font-weight: 500;
+      text-align: left;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: var(--transition);
+      border: 1px solid transparent;
+    }
+    .nav-item button:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-primary);
+    }
+    .nav-item.active button {
+      background-color: var(--accent-cyan-dim);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.03);
+    }
+
+    /* Circular Progress Box */
+    .progress-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+    .progress-box-title {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .progress-circle-wrapper {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 10px auto;
+    }
+    .progress-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .progress-bg-circle {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 8;
+    }
+    .progress-bar-circle {
+      fill: none;
+      stroke: var(--accent-cyan);
+      stroke-width: 8;
+      stroke-dasharray: 283;
+      stroke-dashoffset: 283;
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      stroke-linecap: round;
+    }
+    .progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+    .progress-details {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 280px;
+      flex-grow: 1;
+      padding: 2.5rem;
+      max-width: calc(100% - 280px);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: margin-left 0.3s, max-width 0.3s;
+    }
+
+    /* Header */
+    .content-header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .content-header h1 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .content-header p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .theme-toggle-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    .theme-toggle-btn:hover {
+      border-color: var(--accent-cyan);
+      background: var(--bg-card-hover);
+    }
+
+    /* Tabs */
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Dashboard Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background-color: var(--border);
+      transition: var(--transition);
+    }
+    .card:hover {
+      background-color: var(--bg-card-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    }
+    .card:hover::before {
+      background-color: var(--accent-cyan);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-badge {
+      font-size: 0.7rem;
+      padding: 3px 6px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-beg { background-color: var(--accent-green-dim); color: var(--accent-green); }
+    .badge-int { background-color: var(--accent-amber-dim); color: var(--accent-amber); }
+    .badge-adv { background-color: var(--accent-purple-dim); color: var(--accent-purple); }
+
+    .card-desc {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+      margin-top: auto;
+    }
+    .card-status {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .card-status.completed {
+      color: var(--accent-green);
+    }
+    .card-btn {
+      background-color: transparent;
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .card-btn:hover {
+      background-color: var(--accent-cyan);
+      color: var(--bg-darker);
+    }
+
+    /* Certificate Box */
+    .certificate-card {
+      background: linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(10, 14, 23, 0.95)), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54 48c-2 0-3 1.7-3 3.5s1 3.5 3 3.5 3-1.7 3-3.5-1-3.5-3-3.5zm-48 0c-2 0-3 1.7-3 3.5s1 3.5 3 3.5 3-1.7 3-3.5-1-3.5-3-3.5zM30 20c-8.8 0-16 7.2-16 16s7.2 16 16 16 16-7.2 16-16-7.2-16-16-16zm0 2c7.7 0 14 6.3 14 14s-6.3 14-14 14-14-6.3-14-14 6.3-14 14-14z' fill='%231e293b' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      margin-top: 2rem;
+      text-align: center;
+      position: relative;
+      display: none;
+      animation: pulse-border 4s infinite alternate;
+    }
+    .certificate-card.unlocked {
+      display: block;
+    }
+    .cert-icon {
+      color: var(--accent-amber);
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: rotate-gold 6s infinite linear;
+    }
+    .cert-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+    .cert-text {
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 1.5rem auto;
+      font-size: 0.95rem;
+    }
+    .cert-print-btn {
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green-neon));
+      border: none;
+      color: #070b13;
+      padding: 10px 24px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3);
+      transition: var(--transition);
+    }
+    .cert-print-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 240, 255, 0.5);
+    }
+
+    /* Modules Grid & Layout */
+    .module-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 2rem;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .module-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Content & Learning Section */
+    .learning-section {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .learning-section h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      margin-bottom: 1.25rem;
+      color: var(--accent-cyan);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .learning-section h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      margin: 1.5rem 0 0.75rem 0;
+      color: var(--text-primary);
+    }
+    .learning-section p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      line-height: 1.7;
+    }
+    .learning-section ul {
+      margin-left: 1.5rem;
+      margin-bottom: 1.25rem;
+      color: var(--text-secondary);
+    }
+    .learning-section li {
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+    .code-snippet {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--accent-cyan);
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    /* Alert boxes */
+    .alert-box {
+      padding: 1.25rem;
+      border-radius: var(--radius-lg);
+      margin: 1.5rem 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      border: 1px solid transparent;
+    }
+    .alert-box.info {
+      background-color: var(--accent-cyan-dim);
+      border-color: rgba(0, 240, 255, 0.2);
+      color: var(--text-primary);
+    }
+    .alert-box.info i { color: var(--accent-cyan); }
+    .alert-box.warn {
+      background-color: var(--accent-amber-dim);
+      border-color: rgba(255, 157, 0, 0.2);
+      color: var(--text-primary);
+    }
+    .alert-box.warn i { color: var(--accent-amber); }
+    .alert-box.danger {
+      background-color: var(--accent-red-dim);
+      border-color: rgba(255, 51, 102, 0.2);
+      color: var(--text-primary);
+    }
+    .alert-box.danger i { color: var(--accent-red-neon); }
+    .alert-box-text {
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+    .alert-box-text strong {
+      color: var(--text-primary);
+    }
+
+    /* Interactive Widgets Base */
+    .interactive-widget {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .widget-title {
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    /* WIDGET 1: Order Book Simulator */
+    .ob-container {
+      display: grid;
+      grid-template-columns: 260px 1fr 240px;
+      gap: 1.25rem;
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+    }
+    @media (max-width: 900px) {
+      .ob-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    /* Controls Panel */
+    .ob-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .control-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+      display: block;
+    }
+    .input-field {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      outline: none;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      transition: var(--transition);
+    }
+    .input-field:focus {
+      border-color: var(--accent-cyan);
+    }
+    .btn-group-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .toggle-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 8px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: var(--transition);
+    }
+    .toggle-btn.active.buy {
+      background: var(--accent-green-dim);
+      color: var(--accent-green-neon);
+      border-color: var(--accent-green);
+    }
+    .toggle-btn.active.sell {
+      background: var(--accent-red-dim);
+      color: var(--accent-red-neon);
+      border-color: var(--accent-red);
+    }
+    .toggle-btn.active.type {
+      background: var(--accent-cyan-dim);
+      color: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+    }
+    .submit-order-btn {
+      width: 100%;
+      background: var(--accent-cyan);
+      color: #070b13;
+      border: none;
+      padding: 10px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 0.5rem;
+    }
+    .submit-order-btn:hover {
+      box-shadow: 0 0 12px var(--accent-cyan);
+      transform: translateY(-1px);
+    }
+
+    /* Order Book Ladder */
+    .ob-ladder {
+      display: flex;
+      flex-direction: column;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+    }
+    .ob-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.5fr;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      position: relative;
+      overflow: hidden;
+      align-items: center;
+    }
+    .ob-row.ask { color: var(--accent-red-neon); }
+    .ob-row.bid { color: var(--accent-green-neon); }
+    .ob-row-depth {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      z-index: 1;
+      opacity: 0.15;
+      transition: width 0.3s;
+    }
+    .ob-row-depth.ask { background-color: var(--accent-red); }
+    .ob-row-depth.bid { background-color: var(--accent-green); }
+    .ob-row-val {
+      position: relative;
+      z-index: 2;
+    }
+    .ob-row-val.text-right { text-align: right; }
+    .ob-spread-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 6px 8px;
+      margin: 4px 0;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .ob-header-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.5fr;
+      padding: 4px 8px;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 6px;
+    }
+
+    /* Execution Log */
+    .ob-trades-log {
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--border);
+      padding-left: 1rem;
+    }
+    @media (max-width: 900px) {
+      .ob-trades-log {
+        border-left: none;
+        padding-left: 0;
+        border-top: 1px solid var(--border);
+        padding-top: 1rem;
+      }
+    }
+    .trades-log-title {
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .trades-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      height: 220px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+    .trade-print {
+      display: flex;
+      justify-content: space-between;
+      padding: 2px 4px;
+      border-radius: var(--radius-sm);
+    }
+    .trade-print.buy { color: var(--accent-green-neon); }
+    .trade-print.sell { color: var(--accent-red-neon); }
+
+    /* WIDGET 2 & 3: Canvas Graph Container */
+    .canvas-container {
+      position: relative;
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      width: 100%;
+    }
+    .graph-canvas {
+      display: block;
+      width: 100%;
+      height: 320px;
+      cursor: crosshair;
+    }
+    .canvas-tooltip {
+      position: absolute;
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid var(--accent-cyan);
+      color: var(--text-primary);
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      pointer-events: none;
+      display: none;
+      z-index: 10;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    /* Slider / Parameter panel */
+    .param-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1rem;
+      background: var(--bg-darker);
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .slider-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .slider-val {
+      font-family: var(--font-mono);
+      color: var(--accent-cyan);
+    }
+    .slider-input {
+      width: 100%;
+      height: 5px;
+      background: var(--border);
+      border-radius: var(--radius-sm);
+      outline: none;
+      -webkit-appearance: none;
+      margin: 8px 0;
+    }
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 8px var(--accent-cyan);
+      transition: transform 0.1s;
+    }
+    .slider-input::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
+
+    /* WIDGET 3: Backtesting metrics grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .metric-card {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      text-align: center;
+    }
+    .metric-val {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin-top: 2px;
+    }
+    .metric-val.profit { color: var(--accent-green-neon); }
+    .metric-val.loss { color: var(--accent-red-neon); }
+    .metric-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* WIDGET 4: Monte Carlo Layout */
+    .mc-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 800px) {
+      .mc-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .ruin-gauge-box {
+      margin-top: 1rem;
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      text-align: center;
+    }
+    .ruin-text {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+    .ruin-text.safe { color: var(--accent-green-neon); }
+    .ruin-text.warning { color: var(--accent-amber-neon); }
+    .ruin-text.danger { color: var(--accent-red-neon); animation: flash-red 1.5s infinite; }
+
+    /* Quiz Panel */
+    .quiz-panel {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      position: sticky;
+      top: 20px;
+    }
+    .quiz-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--accent-cyan);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .quiz-question {
+      margin-bottom: 1.25rem;
+    }
+    .q-text {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .q-options {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .q-option {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-align: left;
+      transition: var(--transition);
+    }
+    .q-option:hover {
+      border-color: var(--accent-cyan);
+      color: var(--text-primary);
+    }
+    .q-option.correct {
+      background-color: var(--accent-green-dim);
+      border-color: var(--accent-green);
+      color: var(--accent-green-neon);
+    }
+    .q-option.incorrect {
+      background-color: var(--accent-red-dim);
+      border-color: var(--accent-red);
+      color: var(--accent-red-neon);
+    }
+    .quiz-success-msg {
+      background-color: var(--accent-green-dim);
+      border: 1px solid var(--accent-green);
+      color: var(--accent-green-neon);
+      padding: 10px;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      text-align: center;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    /* Actions row at the bottom of modules */
+    .module-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+    }
+    .action-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+    .action-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    .action-btn.primary {
+      background: var(--accent-cyan-dim);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    .action-btn.primary:hover {
+      background: var(--accent-cyan);
+      color: #070b13;
+    }
+
+    /* Progress Checkbox Container */
+    .read-confirmation {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+    }
+    .read-checkbox {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--accent-cyan);
+    }
+    .read-label {
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-cyan {
+      0%, 100% { filter: drop-shadow(0 0 2px var(--accent-cyan)); }
+      50% { filter: drop-shadow(0 0 8px var(--accent-cyan)); }
+    }
+    @keyframes pulse-border {
+      0% { border-color: var(--border); }
+      100% { border-color: var(--accent-cyan); }
+    }
+    @keyframes rotate-gold {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(15deg); }
+      100% { transform: rotate(0deg); }
+    }
+    @keyframes flash-red {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main-content {
+        margin-left: 0;
+        max-width: 100%;
+        padding: 1.5rem;
+      }
+      .mobile-nav-toggle {
+        display: flex !important;
+      }
+    }
+
+    .mobile-nav-toggle {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <i data-lucide="trending-up"></i>
+        <span>QuantStation</span>
+      </div>
+      
+      <nav class="nav-list">
+        <li class="nav-item active" data-tab="tab-dashboard">
+          <button><i data-lucide="layout-dashboard"></i> Resumen del Curso</button>
+        </li>
+        <li class="nav-item" data-tab="tab-module1">
+          <button><i data-lucide="book-open"></i> Mod 1: Fundamentos</button>
+        </li>
+        <li class="nav-item" data-tab="tab-module2">
+          <button><i data-lucide="bar-chart-2"></i> Mod 2: Indicadores</button>
+        </li>
+        <li class="nav-item" data-tab="tab-module3">
+          <button><i data-lucide="cpu"></i> Mod 3: Backtesting</button>
+        </li>
+        <li class="nav-item" data-tab="tab-module4">
+          <button><i data-lucide="shield-alert"></i> Mod 4: Gestión Monetaria</button>
+        </li>
+      </nav>
+
+      <!-- Circular progress circle -->
+      <div class="progress-box">
+        <div class="progress-box-title">Progreso Total</div>
+        <div class="progress-circle-wrapper">
+          <svg class="progress-svg">
+            <circle class="progress-bg-circle" cx="50" cy="50" r="45"></circle>
+            <circle class="progress-bar-circle" id="course-progress-circle" cx="50" cy="50" r="45"></circle>
+          </svg>
+          <div class="progress-text" id="course-progress-pct">0%</div>
+        </div>
+        <div class="progress-details" id="course-progress-details">0 de 8 tareas completadas</div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Header -->
+      <header class="content-header">
+        <div>
+          <h1 id="main-title"><i data-lucide="graduation-cap"></i> Portal de Trading Algorítmico</h1>
+          <p id="main-subtitle">Domina las finanzas cuantitativas con simuladores de alta fidelidad.</p>
+        </div>
+        <div class="header-actions">
+          <button class="mobile-nav-toggle" id="sidebar-toggle"><i data-lucide="menu"></i></button>
+          <button class="theme-toggle-btn" id="theme-toggle" title="Cambiar tema">
+            <i data-lucide="sun" id="theme-icon-sun" style="display:none;"></i>
+            <i data-lucide="moon" id="theme-icon-moon"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- TAB 0: DASHBOARD / OVERVIEW -->
+      <div class="tab-pane active" id="tab-dashboard">
+        
+        <!-- Welcome banner style card -->
+        <div class="learning-section" style="background: linear-gradient(135deg, var(--bg-card), var(--accent-cyan-dim)); border-color: rgba(0, 240, 255, 0.25);">
+          <h2>¡Bienvenido a la Estación Quant de AutoNovations!</h2>
+          <p>
+            Este portal interactivo está diseñado para llevarte desde los conceptos más básicos del trading financiero hasta el diseño, prueba y optimización de sistemas automatizados avanzados. Aprenderás no solo la teoría matemática, sino que operarás directamente con simuladores interactivos de cajas de liquidez, motores de backtesting de series temporales y visualizadores estadísticos de riesgo de ruina.
+          </p>
+          <p style="font-weight: 600; color: var(--accent-cyan);">
+            Completa la teoría, experimenta con los simuladores interactivos y aprueba los 4 cuestionarios para obtener tu Certificado en Finanzas Cuantitativas de AutoNovations.
+          </p>
+        </div>
+
+        <h2 style="font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 1rem;">Módulos del Curso</h2>
+
+        <!-- Module Cards Grid -->
+        <div class="dashboard-grid">
+          
+          <!-- Card 1 -->
+          <div class="card">
+            <div>
+              <div class="card-header">
+                <span class="card-badge badge-beg">Principiante</span>
+                <i data-lucide="book-open" style="color: var(--accent-green-neon);"></i>
+              </div>
+              <div class="card-title">1. Fundamentos de Mercado</div>
+              <p class="card-desc">Comprende la estructura del mercado electrónico, cómo funciona el libro de órdenes (Order Book) y cómo se emparejan las órdenes de compra y venta.</p>
+            </div>
+            <div class="card-footer">
+              <div class="card-status" id="status-mod1"><i data-lucide="circle"></i> Pendiente</div>
+              <button class="card-btn" onclick="switchTab('tab-module1')">Comenzar</button>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="card">
+            <div>
+              <div class="card-header">
+                <span class="card-badge badge-int">Intermedio</span>
+                <i data-lucide="bar-chart-2" style="color: var(--accent-amber-neon);"></i>
+              </div>
+              <div class="card-title">2. Análisis Técnico e Indicadores</div>
+              <p class="card-desc">Matemáticas detrás de los indicadores técnicos de tendencia e impulso. Aprende a calcular y programar SMAs y el oscilador RSI.</p>
+            </div>
+            <div class="card-footer">
+              <div class="card-status" id="status-mod2"><i data-lucide="circle"></i> Pendiente</div>
+              <button class="card-btn" onclick="switchTab('tab-module2')">Comenzar</button>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="card">
+            <div>
+              <div class="card-header">
+                <span class="card-badge badge-adv">Avanzado</span>
+                <i data-lucide="cpu" style="color: var(--accent-cyan);"></i>
+              </div>
+              <div class="card-title">3. Motor de Backtesting</div>
+              <p class="card-desc">Simula tus estrategias algorítmicas con datos del pasado. Evalúa métricas como el Sharpe Ratio, Max Drawdown y Win Rate de manera cuantitativa.</p>
+            </div>
+            <div class="card-footer">
+              <div class="card-status" id="status-mod3"><i data-lucide="circle"></i> Pendiente</div>
+              <button class="card-btn" onclick="switchTab('tab-module3')">Comenzar</button>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="card">
+            <div>
+              <div class="card-header">
+                <span class="card-badge badge-adv">Avanzado</span>
+                <i data-lucide="shield-alert" style="color: var(--accent-purple);"></i>
+              </div>
+              <div class="card-title">4. Gestión de Riesgo y Monte Carlo</div>
+              <p class="card-desc">El pilar del trading exitoso. Aprende a aplicar el Criterio de Kelly, calcular tamaños de posición y simular la probabilidad de ruina financiera.</p>
+            </div>
+            <div class="card-footer">
+              <div class="card-status" id="status-mod4"><i data-lucide="circle"></i> Pendiente</div>
+              <button class="card-btn" onclick="switchTab('tab-module4')">Comenzar</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Hidden Certificate -->
+        <div class="certificate-card" id="certificate-box">
+          <i class="cert-icon" data-lucide="award"></i>
+          <h3 class="cert-title">Certificado de Finalización Cuantitativa</h3>
+          <p class="cert-text">
+            Otorgado a: <strong style="color: var(--accent-cyan);">Quant Trader Profesional</strong><br>
+            Por completar exitosamente todos los módulos interactivos, simulaciones y aprobar las evaluaciones teóricas del programa de <strong>Trading Algorítmico y Finanzas Cuantitativas de AutoNovations</strong>.
+          </p>
+          <button class="cert-print-btn" onclick="window.print()"><i data-lucide="printer"></i> Imprimir Certificado</button>
+        </div>
+
+      </div>
+
+      <!-- TAB 1: MODULE 1 -->
+      <div class="tab-pane" id="tab-module1">
+        <div class="module-grid">
+          
+          <!-- Theory and Simulator Column -->
+          <div class="module-left">
+            <div class="learning-section">
+              <h2><i data-lucide="book-open"></i> Introducción a la Microestructura de Mercado</h2>
+              <p>
+                El trading algorítmico consiste en el uso de programas de computadora que ejecutan reglas automáticas para enviar órdenes de compra y venta al mercado. Para construir un algoritmo rentable, primero debemos comprender cómo funciona el mercado electrónico centralizado por dentro.
+              </p>
+              
+              <h3>El Libro de Órdenes (Order Book)</h3>
+              <p>
+                En los exchanges y mercados de acciones modernos (como el NASDAQ o Binance), las órdenes se organizan en el <strong>Libro de Órdenes</strong>. Este libro es una base de datos en tiempo real dividida en dos lados:
+              </p>
+              <ul>
+                <li><strong>Bids (Compradores):</strong> Ofertas de traders que quieren comprar un activo a un precio inferior al actual. Se ordenan de mayor a menor precio.</li>
+                <li><strong>Asks (Vendedores):</strong> Ofertas de traders que quieren vender a un precio superior al actual. Se ordenan de menor a mayor precio.</li>
+                <li><strong>Spread (Diferencial):</strong> La brecha de precio entre el comprador más alto (Best Bid) y el vendedor más bajo (Best Ask).</li>
+              </ul>
+
+              <h3>Tipos de Órdenes Principales</h3>
+              <p>
+                Un algoritmo interactúa con el mercado principalmente a través de dos tipos de órdenes:
+              </p>
+              <ul>
+                <li><strong>Orden a Mercado (Market Order):</strong> Se ejecuta **inmediatamente** al mejor precio disponible en el lado contrario del libro. Garantiza la ejecución instantánea pero no el precio exacto (debido al spread y profundidad).</li>
+                <li><strong>Orden Límite (Limit Order):</strong> Se coloca en la cola del libro a un **precio específico**. Solo se ejecuta si el precio del mercado se desplaza hasta tocar tu orden. Garantiza el precio pero no la ejecución.</li>
+              </ul>
+
+              <div class="alert-box info">
+                <i data-lucide="info"></i>
+                <div class="alert-box-text">
+                  <strong>Concepto clave: Slippage (Deslizamiento).</strong> Si envías una orden a mercado demasiado grande, consumirá múltiples niveles del libro de órdenes, provocando que tu precio promedio de compra sea superior (peor) al precio inicial que veías.
+                </div>
+              </div>
+
+              <!-- Simulator Widget -->
+              <div class="interactive-widget">
+                <div class="widget-title">
+                  <i data-lucide="play-circle"></i> Simulador del Libro de Órdenes & Profundidad en Vivo
+                </div>
+                
+                <div class="ob-container">
+                  <!-- Control Form -->
+                  <div class="ob-controls">
+                    <div>
+                      <label class="control-label">Dirección</label>
+                      <div class="btn-group-row">
+                        <button class="toggle-btn active buy" id="ob-side-buy" onclick="setOBSide('BUY')">COMPRA</button>
+                        <button class="toggle-btn sell" id="ob-side-sell" onclick="setOBSide('SELL')">VENTA</button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label class="control-label">Tipo de Orden</label>
+                      <div class="btn-group-row">
+                        <button class="toggle-btn active type" id="ob-type-mkt" onclick="setOBType('MKT')">MERCADO</button>
+                        <button class="toggle-btn type" id="ob-type-limit" onclick="setOBType('LIMIT')">LÍMITE</button>
+                      </div>
+                    </div>
+
+                    <div id="ob-price-input-group" style="display:none;">
+                      <label class="control-label" for="ob-price">Precio Límite ($)</label>
+                      <input type="number" id="ob-price" class="input-field" value="100.00" step="0.05">
+                    </div>
+
+                    <div>
+                      <label class="control-label" for="ob-size">Cantidad (Contratos/Acciones)</label>
+                      <input type="number" id="ob-size" class="input-field" value="10" min="1" max="100">
+                    </div>
+
+                    <button class="submit-order-btn" onclick="submitSimulatedOrder()">Enviar Orden a Mercado</button>
+                  </div>
+
+                  <!-- The Order Book Ladder -->
+                  <div class="ob-ladder">
+                    <div class="ob-header-row">
+                      <span>Precio ($)</span>
+                      <span style="text-align: right;">Tamaño</span>
+                      <span style="text-align: right;">Total Acum.</span>
+                    </div>
+                    
+                    <!-- Asks (Red) -->
+                    <div id="asks-container"></div>
+
+                    <!-- Spread Indicator -->
+                    <div class="ob-spread-bar">
+                      <div>Spread: <span id="ob-spread-val">$0.10</span></div>
+                      <div style="font-size: 0.9rem;">Último: <span id="ob-last-price" style="color: var(--accent-cyan);">$100.00</span></div>
+                    </div>
+
+                    <!-- Bids (Green) -->
+                    <div id="bids-container"></div>
+                  </div>
+
+                  <!-- Execution Trades Log -->
+                  <div class="ob-trades-log">
+                    <div class="trades-log-title">Historial de Ejecuciones</div>
+                    <div class="trades-list" id="ob-trades-list">
+                      <!-- Trades printed here -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Quiz Column -->
+          <div class="module-right">
+            <div class="quiz-panel" id="quiz-mod1">
+              <div class="quiz-title">
+                <i data-lucide="check-square"></i> Evaluación del Módulo 1
+              </div>
+              
+              <div class="quiz-question" data-qid="q1_1">
+                <div class="q-text">1. ¿Cuál es el principal beneficio del trading algorítmico frente al trading manual?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q1_1')">A) Elimina las pérdidas por completo de manera matemática.</button>
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q1_1')">B) Permite consistencia, velocidad de ejecución y elimina sesgos emocionales.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q1_1')">C) Garantiza operar de forma gratuita sin requerir capital.</button>
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="q1_2">
+                <div class="q-text">2. ¿Qué diferencia fundamental hay entre una orden Market y una orden Limit?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q1_2')">A) La orden Market garantiza el precio pero no la ejecución.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q1_2')">B) La orden Limit se ejecuta inmediatamente al mejor precio disponible.</button>
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q1_2')">C) La orden Market garantiza ejecución inmediata; la Limit garantiza precio específico pero no la ejecución.</button>
+                </div>
+              </div>
+
+              <div class="quiz-success-msg" id="quiz-success-mod1">
+                ¡Módulo 1 Completado con éxito! +25% de progreso global.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="module-actions">
+          <div class="read-confirmation">
+            <input type="checkbox" id="read-mod1" class="read-checkbox" onchange="toggleModuleRead(1)">
+            <label for="read-mod1" class="read-label">Marcar teoría del Módulo 1 como leída</label>
+          </div>
+          <button class="action-btn primary" onclick="switchTab('tab-module2')">Siguiente Módulo <i data-lucide="arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- TAB 2: MODULE 2 -->
+      <div class="tab-pane" id="tab-module2">
+        <div class="module-grid">
+          
+          <div class="module-left">
+            <div class="learning-section">
+              <h2><i data-lucide="bar-chart-2"></i> Análisis Técnico Cuantitativo e Indicadores</h2>
+              <p>
+                Los algoritmos sistemáticos necesitan traducir el caos de los precios en señales numéricas. El enfoque más común para los traders de retail y cuantitativos de frecuencia media es el **Análisis Técnico Cuantitativo**.
+              </p>
+
+              <h3>Series de Tiempo Financieras & Velas</h3>
+              <p>
+                La evolución temporal de los precios se registra típicamente mediante velas japonesas. Cada vela contiene 4 datos esenciales (OHLC) de un periodo:
+                <strong>Open</strong> (Apertura), <strong>High</strong> (Máximo), <strong>Low</strong> (Mínimo) y <strong>Close</strong> (Cierre).
+              </p>
+
+              <h3>Indicadores de Tendencia: Medias Móviles</h3>
+              <p>
+                Una media móvil suaviza los datos de precios para crear una sola línea fluida de tendencia.
+              </p>
+              <ul>
+                <li><strong>Media Móvil Simple (SMA):</strong> Es el promedio aritmético de los precios de cierre de los últimos N periodos.
+                  <div class="code-snippet">SMA = (P1 + P2 + ... + PN) / N</div>
+                </li>
+                <li><strong>Media Móvil Exponencial (EMA):</strong> Asigna más peso a los precios recientes, reaccionando más rápido a los cambios del mercado.</li>
+              </ul>
+
+              <h3>Indicadores de Impulso (Momentum): RSI</h3>
+              <p>
+                El <strong>Índice de Fuerza Relativa (RSI)</strong> es un oscilador matemático acotado entre 0 y 100 que mide la velocidad y el cambio de los movimientos de precios:
+              </p>
+              <ul>
+                <li><strong>Sobrecompra (RSI &gt; 70):</strong> Sugiere que el precio ha subido demasiado rápido y podría ocurrir una reversión bajista.</li>
+                <li><strong>Sobreventa (RSI &lt; 30):</strong> Sugiere que el precio ha caído demasiado rápido y podría ocurrir una reversión alcista.</li>
+              </ul>
+
+              <div class="alert-box warn">
+                <i data-lucide="alert-triangle"></i>
+                <div class="alert-box-text">
+                  <strong>Peligro de lagging (retraso).</strong> Todos los indicadores matemáticos basados en precios históricos tienen retraso inherentemente. Cuanto mayor sea el periodo (N) seleccionado, más limpia será la señal pero más tarde llegará la ejecución.
+                </div>
+              </div>
+
+              <!-- Simulator Widget -->
+              <div class="interactive-widget">
+                <div class="widget-title">
+                  <i data-lucide="sliders"></i> Simulador Gráfico e Indicadores Cuantitativos en Tiempo Real
+                </div>
+
+                <div class="canvas-container">
+                  <canvas id="indicator-canvas" class="graph-canvas"></canvas>
+                  <div class="canvas-tooltip" id="indicator-tooltip"></div>
+                </div>
+
+                <div class="param-panel">
+                  <div class="slider-group">
+                    <div class="slider-title">Periodo de la SMA: <span class="slider-val" id="sma-period-val">20</span></div>
+                    <input type="range" id="sma-period-input" class="slider-input" min="5" max="40" value="20" oninput="updateIndicatorParams()">
+                  </div>
+
+                  <div class="slider-group">
+                    <div class="slider-title">RSI Sobrecompra (Sell): <span class="slider-val" id="rsi-overbought-val">70</span></div>
+                    <input type="range" id="rsi-overbought-input" class="slider-input" min="65" max="85" value="70" oninput="updateIndicatorParams()">
+                  </div>
+
+                  <div class="slider-group">
+                    <div class="slider-title">RSI Sobreventa (Buy): <span class="slider-val" id="rsi-oversold-val">30</span></div>
+                    <input type="range" id="rsi-oversold-input" class="slider-input" min="15" max="35" value="30" oninput="updateIndicatorParams()">
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Quiz Column -->
+          <div class="module-right">
+            <div class="quiz-panel" id="quiz-mod2">
+              <div class="quiz-title">
+                <i data-lucide="check-square"></i> Evaluación del Módulo 2
+              </div>
+              
+              <div class="quiz-question" data-qid="q2_1">
+                <div class="q-text">1. ¿Qué interpretación técnica estándar se le asigna a un RSI por encima de 70?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q2_1')">A) El activo está sobrecomprado y podría haber una corrección a la baja.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q2_1')">B) Es una señal inequívoca de compra porque la fuerza alcista es máxima.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q2_1')">C) Indica que el volumen del mercado se ha desplomado a cero.</button>
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="q2_2">
+                <div class="q-text">2. Si el precio cruza hacia arriba una SMA de 50 periodos, ¿qué señal técnica representa?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q2_2')">A) Señal bajista (Death Cross).</button>
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q2_2')">B) Señal alcista de continuación o cambio de tendencia.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q2_2')">C) Ninguna, las medias móviles no miden cruces de precio.</button>
+                </div>
+              </div>
+
+              <div class="quiz-success-msg" id="quiz-success-mod2">
+                ¡Módulo 2 Completado con éxito! +25% de progreso global.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="module-actions">
+          <div class="read-confirmation">
+            <input type="checkbox" id="read-mod2" class="read-checkbox" onchange="toggleModuleRead(2)">
+            <label for="read-mod2" class="read-label">Marcar teoría del Módulo 2 como leída</label>
+          </div>
+          <button class="action-btn primary" onclick="switchTab('tab-module3')">Siguiente Módulo <i data-lucide="arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- TAB 3: MODULE 3 -->
+      <div class="tab-pane" id="tab-module3">
+        <div class="module-grid">
+          
+          <div class="module-left">
+            <div class="learning-section">
+              <h2><i data-lucide="cpu"></i> Simulación Histórica (Backtesting)</h2>
+              <p>
+                Antes de arriesgar dinero real en el mercado, un Quant Trader debe simular el comportamiento de su algoritmo en el pasado. Este proceso matemático se conoce como **Backtesting**.
+              </p>
+
+              <h3>Métricas Clave de Rendimiento</h3>
+              <p>
+                No basta con medir la ganancia neta. Para juzgar si un algoritmo es bueno, evaluamos el rendimiento en relación al riesgo asumido:
+              </p>
+              <ul>
+                <li><strong>Max Drawdown (Máxima Caída):</strong> La pérdida máxima acumulada desde un pico hasta el punto más bajo (valle) en la curva de capital. Mide el peor escenario de pérdida temporal de la estrategia.</li>
+                <li><strong>Sharpe Ratio (Ratio de Sharpe):</strong> Evalúa el retorno excedente de la estrategia por unidad de volatilidad. Un Sharpe &gt; 1.0 es aceptable, &gt; 2.0 es excelente y &gt; 3.0 es sobresaliente.
+                  <div class="code-snippet">Sharpe Ratio = (Retorno de Estrategia - Tasa Libre de Riesgo) / Desviación Estándar de Retornos</div>
+                </li>
+                <li><strong>Win Rate:</strong> Porcentaje de operaciones cerradas con beneficio neto positivo.</li>
+              </ul>
+
+              <h3>Sesgos Fatales en Backtesting</h3>
+              <p>
+                Un backtest exitoso a menudo fracasa en vivo debido a errores de modelado lógico:
+              </p>
+              <ul>
+                <li><strong>Look-ahead Bias (Mirar al futuro):</strong> Cuando el código de tu algoritmo toma decisiones usando información que no estaría disponible cronológicamente en ese instante.</li>
+                <li><strong>Overfitting (Sobreajuste de Curva):</strong> Optimizar demasiado los parámetros de la estrategia para encajar perfectamente con el ruido histórico. Produce excelentes curvas pasadas y pérdidas catastróficas en el futuro.</li>
+              </ul>
+
+              <div class="alert-box danger">
+                <i data-lucide="alert-octagon"></i>
+                <div class="alert-box-text">
+                  <strong>La ilusión del simulador.</strong> Un backtest óptimo debe modelar costos de transacción (comisiones) e impacto de mercado. Si omites estos factores, estarás simulando un entorno utópico e irreal.
+                </div>
+              </div>
+
+              <!-- Simulator Widget -->
+              <div class="interactive-widget">
+                <div class="widget-title">
+                  <i data-lucide="terminal"></i> Motor de Backtesting & Generador de Equity Curve
+                </div>
+
+                <!-- Metrics Output Row -->
+                <div class="metrics-grid">
+                  <div class="metric-card">
+                    <div class="metric-label">Retorno Neto</div>
+                    <div class="metric-val" id="bt-return">--</div>
+                  </div>
+                  <div class="metric-card">
+                    <div class="metric-label">Sharpe Ratio</div>
+                    <div class="metric-val" id="bt-sharpe">--</div>
+                  </div>
+                  <div class="metric-card">
+                    <div class="metric-label">Max Drawdown</div>
+                    <div class="metric-val" id="bt-drawdown" style="color: var(--accent-red-neon);">--</div>
+                  </div>
+                  <div class="metric-card">
+                    <div class="metric-label">Win Rate</div>
+                    <div class="metric-val" id="bt-winrate">--</div>
+                  </div>
+                </div>
+
+                <div class="canvas-container">
+                  <canvas id="backtest-canvas" class="graph-canvas"></canvas>
+                  <div class="canvas-tooltip" id="backtest-tooltip"></div>
+                </div>
+
+                <div class="param-panel">
+                  <div class="slider-group">
+                    <label class="control-label" for="bt-strategy">Estrategia</label>
+                    <select id="bt-strategy" class="input-field" style="margin-top: 5px;" onchange="toggleBtStrategyUI()">
+                      <option value="crossover">Cruce de Medias (SMA Crossover)</option>
+                      <option value="rsi">Reversión de Medias RSI</option>
+                    </select>
+                  </div>
+
+                  <!-- Dynamic inputs -->
+                  <div class="slider-group" id="bt-param-fast-sma">
+                    <div class="slider-title">SMA Rápida (Periodos): <span class="slider-val" id="bt-fast-val">10</span></div>
+                    <input type="range" id="bt-fast-input" class="slider-input" min="5" max="15" value="10" oninput="document.getElementById('bt-fast-val').innerText = this.value">
+                  </div>
+
+                  <div class="slider-group" id="bt-param-slow-sma">
+                    <div class="slider-title">SMA Lenta (Periodos): <span class="slider-val" id="bt-slow-val">30</span></div>
+                    <input type="range" id="bt-slow-input" class="slider-input" min="20" max="50" value="30" oninput="document.getElementById('bt-slow-val').innerText = this.value">
+                  </div>
+
+                  <div class="slider-group" id="bt-param-rsi-period" style="display:none;">
+                    <div class="slider-title">RSI Periodo: <span class="slider-val" id="bt-rsi-val">14</span></div>
+                    <input type="range" id="bt-rsi-input" class="slider-input" min="7" max="25" value="14" oninput="document.getElementById('bt-rsi-val').innerText = this.value">
+                  </div>
+
+                  <div class="slider-group" style="justify-content: flex-end;">
+                    <button class="submit-order-btn" style="background: var(--accent-green-neon); color: #070b13;" onclick="runBacktestSimulation()">
+                      <i data-lucide="play" style="display: inline-block; vertical-align: middle; width:16px;"></i> Ejecutar Backtest
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Quiz Column -->
+          <div class="module-right">
+            <div class="quiz-panel" id="quiz-mod3">
+              <div class="quiz-title">
+                <i data-lucide="check-square"></i> Evaluación del Módulo 3
+              </div>
+              
+              <div class="quiz-question" data-qid="q3_1">
+                <div class="q-text">1. ¿Qué es el sesgo de "Look-ahead" en backtesting?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q3_1')">A) Optimizar en exceso los periodos de los indicadores.</button>
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q3_1')">B) Usar datos del futuro que no estarían disponibles en el instante de decidir.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q3_1')">C) Ignorar comisiones en el cálculo de ganancias.</button>
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="q3_2">
+                <div class="q-text">2. Un ratio de Sharpe alto (ej: 2.2) nos indica:</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q3_2')">A) Que la estrategia genera un buen retorno ajustado a su volatilidad.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q3_2')">B) Que el algoritmo no tiene pérdidas operativas en ningún escenario.</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q3_2')">C) Que la estrategia está libre de overfitting.</button>
+                </div>
+              </div>
+
+              <div class="quiz-success-msg" id="quiz-success-mod3">
+                ¡Módulo 3 Completado con éxito! +25% de progreso global.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="module-actions">
+          <div class="read-confirmation">
+            <input type="checkbox" id="read-mod3" class="read-checkbox" onchange="toggleModuleRead(3)">
+            <label for="read-mod3" class="read-label">Marcar teoría del Módulo 3 como leída</label>
+          </div>
+          <button class="action-btn primary" onclick="switchTab('tab-module4')">Siguiente Módulo <i data-lucide="arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- TAB 4: MODULE 4 -->
+      <div class="tab-pane" id="tab-module4">
+        <div class="module-grid">
+          
+          <div class="module-left">
+            <div class="learning-section">
+              <h2><i data-lucide="shield-alert"></i> Gestión Monetaria & Riesgo de Ruina</h2>
+              <p>
+                La diferencia entre un trader amateur y un Quant profesional radica en el tamaño de posición (Position Sizing). Incluso una estrategia con un Win Rate del 60% puede quebrar una cuenta en una racha inevitable de pérdidas si el apalancamiento es demasiado elevado.
+              </p>
+
+              <h3>El Criterio de Kelly</h3>
+              <p>
+                El **Criterio de Kelly** es una fórmula matemática para maximizar el crecimiento del capital en juegos con esperanza positiva determinando la fracción óptima a apostar:
+              </p>
+              <div class="code-snippet">Fracción Kelly (f*) = W - [(1 - W) / R]</div>
+              <p>
+                Donde <strong>W</strong> es el Win Rate (Tasa de acierto) y <strong>R</strong> es el Ratio de Riesgo-Beneficio (Ganancia promedio / Pérdida promedio). Normalmente se aplica "Half-Kelly" (mitad del valor sugerido) para proteger la cuenta ante incertidumbres reales.
+              </p>
+
+              <h3>Dimensionamiento Fraccional Fijo</h3>
+              <p>
+                Establece arriesgar un porcentaje fijo (por ejemplo, el 1% o 2%) del capital total de la cuenta en cada trade. La fórmula para determinar las unidades a comprar es:
+              </p>
+              <div class="code-snippet">Posición (Unidades) = (Capital × % de Riesgo) / Distancia del Stop Loss</div>
+
+              <h3>El Riesgo de Ruina</h3>
+              <p>
+                La probabilidad de que una cuenta toque un punto de no retorno (como perder un 50% del saldo). El riesgo de ruina no es lineal: subir el riesgo por operación del 2% al 15% incrementa de forma asombrosa la probabilidad de insolvencia, incluso con estrategias matemáticamente ganadoras a largo plazo.
+              </p>
+
+              <div class="alert-box warn">
+                <i data-lucide="shield-alert"></i>
+                <div class="alert-box-text">
+                  <strong>La trampa del drawdown.</strong> Si pierdes un 50% de tu capital, necesitas ganar un 100% de tu saldo restante solo para volver al punto de equilibrio (break-even). Por eso, defender tu capital es la regla dorada del trading.
+                </div>
+              </div>
+
+              <!-- Simulator Widget -->
+              <div class="interactive-widget">
+                <div class="widget-title">
+                  <i data-lucide="line-chart"></i> Calculador de Tamaño de Posición & Simulación Monte Carlo
+                </div>
+
+                <div class="mc-grid">
+                  <!-- Inputs panel -->
+                  <div class="mc-inputs">
+                    <div style="margin-bottom: 12px;">
+                      <label class="control-label" for="mc-balance">Capital de Cuenta ($)</label>
+                      <input type="number" id="mc-balance" class="input-field" value="10000" step="1000">
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                      <div class="slider-title">Riesgo por Trade: <span class="slider-val" id="mc-risk-val">2%</span></div>
+                      <input type="range" id="mc-risk-input" class="slider-input" min="1" max="25" value="2" oninput="updateMonteCarloParams()">
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                      <div class="slider-title">Tasa de Acierto (Win Rate): <span class="slider-val" id="mc-wr-val">55%</span></div>
+                      <input type="range" id="mc-wr-input" class="slider-input" min="35" max="75" value="55" oninput="updateMonteCarloParams()">
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                      <label class="control-label" for="mc-ratio">Ratio Riesgo-Beneficio (R:R)</label>
+                      <input type="number" id="mc-ratio" class="input-field" value="2.0" step="0.1" min="0.5" max="5.0" oninput="updateMonteCarloParams()">
+                    </div>
+
+                    <div class="ruin-gauge-box">
+                      <div class="metric-label">Riesgo de Ruina Proyectado</div>
+                      <div class="ruin-text safe" id="mc-ruin-pct">0.0%</div>
+                      <div class="progress-details" id="mc-ruin-desc">Perfil de Riesgo Seguro</div>
+                    </div>
+                  </div>
+
+                  <!-- Output Chart -->
+                  <div>
+                    <div class="canvas-container" style="height: 310px;">
+                      <canvas id="mc-canvas" class="graph-canvas" style="height: 310px;"></canvas>
+                    </div>
+                    <button class="submit-order-btn" style="background: var(--accent-purple); color: white;" onclick="runMonteCarloSimulation()">
+                      <i data-lucide="refresh-cw" style="display: inline-block; vertical-align: middle; width:16px;"></i> Simular 50 Caminos
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Quiz Column -->
+          <div class="module-right">
+            <div class="quiz-panel" id="quiz-mod4">
+              <div class="quiz-title">
+                <i data-lucide="check-square"></i> Evaluación del Módulo 4
+              </div>
+              
+              <div class="quiz-question" data-qid="q4_1">
+                <div class="q-text">1. Según el Criterio de Kelly, ¿cómo se determina la fracción óptima de capital a arriesgar?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_1')">A) Arriesgando todo el capital tras una pérdida.</button>
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q4_1')">B) Asignando una fracción proporcional a la ventaja matemática (Win Rate y R:R).</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_1')">C) Manteniendo siempre fijo un 50% de la cuenta sin importar la ventaja.</button>
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="q4_2">
+                <div class="q-text">2. Si pierdes el 50% de tu cuenta de trading, ¿qué porcentaje debes recuperar para volver al punto inicial?</div>
+                <div class="q-options">
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_2')">A) 50%</button>
+                  <button class="q-option" onclick="checkAnswer(this, true, 'q4_2')">B) 100%</button>
+                  <button class="q-option" onclick="checkAnswer(this, false, 'q4_2')">C) 75%</button>
+                </div>
+              </div>
+
+              <div class="quiz-success-msg" id="quiz-success-mod4">
+                ¡Módulo 4 Completado con éxito! +25% de progreso global.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="module-actions">
+          <div class="read-confirmation">
+            <input type="checkbox" id="read-mod4" class="read-checkbox" onchange="toggleModuleRead(4)">
+            <label for="read-mod4" class="read-label">Marcar teoría del Módulo 4 como leída</label>
+          </div>
+          <button class="action-btn primary" onclick="switchTab('tab-dashboard')"><i data-lucide="layout-dashboard"></i> Volver al Resumen</button>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <script>
+    // System state
+    let state = {
+      theme: 'dark',
+      progress: {
+        read: [false, false, false, false], // index 0-3 maps to mod 1-4
+        quizzes: [false, false, false, false]
+      },
+      ob: {
+        side: 'BUY',
+        type: 'MKT',
+        bids: [
+          {price: 99.90, size: 45},
+          {price: 99.85, size: 85},
+          {price: 99.80, size: 120},
+          {price: 99.75, size: 150},
+          {price: 99.70, size: 210}
+        ],
+        asks: [
+          {price: 100.10, size: 35},
+          {price: 100.15, size: 60},
+          {price: 100.20, size: 110},
+          {price: 100.25, size: 145},
+          {price: 100.30, size: 230}
+        ],
+        lastPrice: 100.00,
+        trades: [
+          {time: '12:04:12', price: 100.00, size: 10, side: 'BUY'},
+          {time: '12:04:05', price: 99.95, size: 5, side: 'SELL'},
+          {time: '12:03:55', price: 100.00, size: 15, side: 'BUY'}
+        ]
+      },
+      indicator: {
+        sma: 20,
+        rsiOB: 70,
+        rsiOS: 30,
+        prices: []
+      },
+      backtest: {
+        prices: [],
+        equity: [],
+        drawdown: [],
+        trades: [],
+        run: false
+      }
+    };
+
+    // Initialize Page
+    window.addEventListener('DOMContentLoaded', () => {
+      // Setup Lucide Icons
+      lucide.createIcons();
+
+      // Theme logic setup
+      setupTheme();
+
+      // Navigation
+      setupNavigation();
+
+      // Load interactive tools initial state
+      initOrderBook();
+      initIndicatorChart();
+      initBacktestChart();
+      initMonteCarlo();
+      
+      // Load saved state if any
+      loadFromStorage();
+      
+      // Update overall progress bars
+      updateProgress();
+    });
+
+    // NAVIGATION TABS
+    function setupNavigation() {
+      const navItems = document.querySelectorAll('.nav-list .nav-item');
+      navItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const tabId = item.getAttribute('data-tab');
+          switchTab(tabId);
+        });
+      });
+
+      // Mobile Menu toggle
+      const toggle = document.getElementById('sidebar-toggle');
+      const sidebar = document.getElementById('sidebar');
+      if (toggle && sidebar) {
+        toggle.addEventListener('click', (e) => {
+          sidebar.classList.toggle('open');
+          e.stopPropagation();
+        });
+        document.body.addEventListener('click', () => {
+          sidebar.classList.remove('open');
+        });
+      }
+    }
+
+    function switchTab(tabId) {
+      // Hide all panes
+      document.querySelectorAll('.tab-pane').forEach(pane => {
+        pane.classList.remove('active');
+      });
+      // Show active pane
+      const targetPane = document.getElementById(tabId);
+      if (targetPane) targetPane.classList.add('active');
+
+      // Update sidebar active state
+      document.querySelectorAll('.nav-list .nav-item').forEach(item => {
+        if (item.getAttribute('data-tab') === tabId) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+
+      // Update Top Header Subtitle based on tab
+      const mainTitle = document.getElementById('main-title');
+      const mainSubtitle = document.getElementById('main-subtitle');
+      
+      if (tabId === 'tab-dashboard') {
+        mainTitle.innerHTML = `<i data-lucide="graduation-cap"></i> Portal de Trading Algorítmico`;
+        mainSubtitle.innerText = `Domina las finanzas cuantitativas con simuladores de alta fidelidad.`;
+      } else if (tabId === 'tab-module1') {
+        mainTitle.innerHTML = `<i data-lucide="book-open"></i> Módulo 1: Fundamentos del Mercado`;
+        mainSubtitle.innerText = `Anatomía de los exchanges, tipos de órdenes y estructura del Libro de Órdenes.`;
+        // Resize canvas if needed
+      } else if (tabId === 'tab-module2') {
+        mainTitle.innerHTML = `<i data-lucide="bar-chart-2"></i> Módulo 2: Indicadores Técnicos`;
+        mainSubtitle.innerText = `Lógica matemática de las Medias Móviles y del Oscilador de Fuerza Relativa (RSI).`;
+        setTimeout(drawIndicatorChart, 50);
+      } else if (tabId === 'tab-module3') {
+        mainTitle.innerHTML = `<i data-lucide="cpu"></i> Módulo 3: Motor de Backtesting`;
+        mainSubtitle.innerText = `Evalúa el rendimiento de tus estrategias con métricas de Sharpe y Drawdown.`;
+        setTimeout(drawBacktestChart, 50);
+      } else if (tabId === 'tab-module4') {
+        mainTitle.innerHTML = `<i data-lucide="shield-alert"></i> Módulo 4: Gestión de Riesgo`;
+        mainSubtitle.innerText = `Aplica dimensionamiento de posición fraccional y evita la ruina del capital.`;
+        setTimeout(drawMonteCarloChart, 50);
+      }
+
+      // Recreate Lucide Icons for dynamic content
+      lucide.createIcons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // THEME SWITCHER
+    function setupTheme() {
+      const themeBtn = document.getElementById('theme-toggle');
+      const sunIcon = document.getElementById('theme-icon-sun');
+      const moonIcon = document.getElementById('theme-icon-moon');
+      
+      const updateThemeUI = (isLight) => {
+        if (isLight) {
+          sunIcon.style.display = 'block';
+          moonIcon.style.display = 'none';
+        } else {
+          sunIcon.style.display = 'none';
+          moonIcon.style.display = 'block';
+        }
+      };
+
+      // Set initial UI state
+      updateThemeUI(document.documentElement.classList.contains('light'));
+
+      themeBtn.addEventListener('click', () => {
+        const currentLight = document.documentElement.classList.toggle('light');
+        localStorage.setItem('preferredTheme', currentLight ? 'light' : 'dark');
+        updateThemeUI(currentLight);
+        
+        // Redraw active charts to match styling colors
+        drawIndicatorChart();
+        drawBacktestChart();
+        drawMonteCarloChart();
+      });
+    }
+
+    // STATE SAVING
+    function saveToStorage() {
+      localStorage.setItem('quant_course_progress', JSON.stringify(state.progress));
+    }
+    
+    function loadFromStorage() {
+      const saved = localStorage.getItem('quant_course_progress');
+      if (saved) {
+        try {
+          state.progress = JSON.parse(saved);
+          
+          // Apply checkboxes
+          for(let i=0; i<4; i++) {
+            document.getElementById(`read-mod${i+1}`).checked = state.progress.read[i];
+          }
+          
+          // Apply quizzes finished UI
+          for(let i=0; i<4; i++) {
+            if (state.progress.quizzes[i]) {
+              document.getElementById(`quiz-success-mod${i+1}`).style.display = 'block';
+              // Disable choices
+              const quizBlock = document.getElementById(`quiz-mod${i+1}`);
+              quizBlock.querySelectorAll('.q-option').forEach(btn => {
+                btn.style.pointerEvents = 'none';
+              });
+            }
+          }
+        } catch(e) {
+          console.error(e);
+        }
+      }
+    }
+
+    // PROGRESS TRACKING SYSTEM
+    function toggleModuleRead(modNum) {
+      const checkbox = document.getElementById(`read-mod${modNum}`);
+      state.progress.read[modNum - 1] = checkbox.checked;
+      saveToStorage();
+      updateProgress();
+    }
+
+    function checkAnswer(button, isCorrect, qid) {
+      const parentBlock = button.closest('.q-options');
+      // Clear siblings
+      parentBlock.querySelectorAll('.q-option').forEach(btn => {
+        btn.classList.remove('correct', 'incorrect');
+      });
+
+      if (isCorrect) {
+        button.classList.add('correct');
+        // Play success beep
+        playTone(600, 0.1, 'sine');
+        
+        // Check if all questions in this quiz block are correct
+        checkQuizStatus(button.closest('.quiz-panel'), qid);
+      } else {
+        button.classList.add('incorrect');
+        // Play fail beep
+        playTone(180, 0.2, 'sawtooth');
+      }
+    }
+
+    function checkQuizStatus(quizPanel, justAnsweredQid) {
+      // Find all questions in this panel
+      const questions = quizPanel.querySelectorAll('.quiz-question');
+      let allPassed = true;
+      questions.forEach(q => {
+        const correctSelected = q.querySelector('.q-option.correct');
+        if (!correctSelected) {
+          allPassed = false;
+        }
+      });
+
+      if (allPassed) {
+        const modId = quizPanel.id; // e.g. quiz-mod1
+        const modIndex = parseInt(modId.replace('quiz-mod', '')) - 1;
+        
+        if (!state.progress.quizzes[modIndex]) {
+          state.progress.quizzes[modIndex] = true;
+          // Show message
+          const successMsg = document.getElementById(`quiz-success-${modId}`);
+          if (successMsg) {
+            successMsg.style.display = 'block';
+            successMsg.style.animation = 'fadeIn 0.5s ease';
+          }
+          // Disable further clicks
+          quizPanel.querySelectorAll('.q-option').forEach(btn => {
+            btn.style.pointerEvents = 'none';
+          });
+          
+          saveToStorage();
+          updateProgress();
+          playTone(880, 0.25, 'sine');
+        }
+      }
+    }
+
+    function updateProgress() {
+      // 8 items in total (4 read checkboxes + 4 quizzes)
+      let completedCount = 0;
+      for (let i = 0; i < 4; i++) {
+        if (state.progress.read[i]) completedCount++;
+        if (state.progress.quizzes[i]) completedCount++;
+      }
+
+      const percentage = Math.round((completedCount / 8) * 100);
+      
+      // Update sidebar text & details
+      document.getElementById('course-progress-pct').innerText = `${percentage}%`;
+      document.getElementById('course-progress-details').innerText = `${completedCount} de 8 tareas completadas`;
+
+      // Update sidebar circle SVG
+      // SVG perimeter = 2 * PI * r = 2 * 3.14159 * 45 = 282.74
+      const strokeOffset = 283 - (percentage / 100) * 283;
+      document.getElementById('course-progress-circle').style.strokeDashoffset = strokeOffset;
+
+      // Update cards statuses on Dashboard
+      for (let i = 0; i < 4; i++) {
+        const statusEl = document.getElementById(`status-mod${i+1}`);
+        const readDone = state.progress.read[i];
+        const quizDone = state.progress.quizzes[i];
+        
+        if (readDone && quizDone) {
+          statusEl.innerHTML = `<i data-lucide="check-circle-2"></i> Completado`;
+          statusEl.className = 'card-status completed';
+        } else if (readDone || quizDone) {
+          statusEl.innerHTML = `<i data-lucide="loader"></i> En curso`;
+          statusEl.className = 'card-status';
+        } else {
+          statusEl.innerHTML = `<i data-lucide="circle"></i> Pendiente`;
+          statusEl.className = 'card-status';
+        }
+      }
+
+      // Unlock certificate if 100%
+      const certEl = document.getElementById('certificate-box');
+      if (percentage === 100) {
+        certEl.classList.add('unlocked');
+      } else {
+        certEl.classList.remove('unlocked');
+      }
+
+      lucide.createIcons();
+    }
+
+
+    // WIDGET 1: ORDER BOOK LOGIC
+    function initOrderBook() {
+      renderOrderBook();
+      
+      // Run background order flow simulation to make book feel alive
+      setInterval(() => {
+        simulateRandomTrades();
+      }, 2500);
+    }
+
+    function setOBSide(side) {
+      state.ob.side = side;
+      document.getElementById('ob-side-buy').className = `toggle-btn ${side === 'BUY' ? 'active buy' : ''}`;
+      document.getElementById('ob-side-sell').className = `toggle-btn ${side === 'SELL' ? 'active sell' : ''}`;
+    }
+
+    function setOBType(type) {
+      state.ob.type = type;
+      document.getElementById('ob-type-mkt').className = `toggle-btn ${type === 'MKT' ? 'active type' : ''}`;
+      document.getElementById('ob-type-limit').className = `toggle-btn ${type === 'LIMIT' ? 'active type' : ''}`;
+      
+      const priceGroup = document.getElementById('ob-price-input-group');
+      const submitBtn = document.querySelector('.submit-order-btn');
+      
+      if (type === 'LIMIT') {
+        priceGroup.style.display = 'block';
+        priceGroup.style.animation = 'fadeIn 0.2s ease';
+        submitBtn.innerText = 'Enviar Orden Límite';
+      } else {
+        priceGroup.style.display = 'none';
+        submitBtn.innerText = 'Enviar Orden a Mercado';
+      }
+    }
+
+    function renderOrderBook() {
+      const bidsCont = document.getElementById('bids-container');
+      const asksCont = document.getElementById('asks-container');
+      
+      // Calculate max accumulation depth for depth bars scaling
+      let askAcc = 0;
+      const asksDepth = state.ob.asks.map(a => askAcc += a.size);
+      let bidAcc = 0;
+      const bidsDepth = state.ob.bids.map(b => bidAcc += b.size);
+      const maxAcc = Math.max(askAcc, bidAcc);
+
+      // Render Asks (reverse order: higher asks on top)
+      asksCont.innerHTML = state.ob.asks.slice().reverse().map((ask, idx) => {
+        const revIdx = state.ob.asks.length - 1 - idx;
+        const accum = asksDepth[revIdx];
+        const depthPct = Math.min((accum / maxAcc) * 100, 100);
+        return `
+          <div class="ob-row ask">
+            <div class="ob-row-val">${ask.price.toFixed(2)}</div>
+            <div class="ob-row-val text-right">${ask.size}</div>
+            <div class="ob-row-val text-right">${accum}</div>
+            <div class="ob-row-depth ask" style="width: ${depthPct}%;"></div>
+          </div>
+        `;
+      }).join('');
+
+      // Render Bids (highest bid first)
+      bidsCont.innerHTML = state.ob.bids.map((bid, idx) => {
+        const accum = bidsDepth[idx];
+        const depthPct = Math.min((accum / maxAcc) * 100, 100);
+        return `
+          <div class="ob-row bid">
+            <div class="ob-row-val">${bid.price.toFixed(2)}</div>
+            <div class="ob-row-val text-right">${bid.size}</div>
+            <div class="ob-row-val text-right">${accum}</div>
+            <div class="ob-row-depth bid" style="width: ${depthPct}%;"></div>
+          </div>
+        `;
+      }).join('');
+
+      // Spread and last price
+      const bestBid = state.ob.bids[0].price;
+      const bestAsk = state.ob.asks[0].price;
+      const spread = bestAsk - bestBid;
+      
+      document.getElementById('ob-spread-val').innerText = `$${spread.toFixed(2)}`;
+      document.getElementById('ob-last-price').innerText = `$${state.ob.lastPrice.toFixed(2)}`;
+    }
+
+    function addSimTradeLog(price, size, side) {
+      const now = new Date();
+      const timeStr = now.toTimeString().split(' ')[0];
+      state.ob.trades.unshift({time: timeStr, price, size, side});
+      if (state.ob.trades.length > 8) state.ob.trades.pop();
+
+      const tradesList = document.getElementById('ob-trades-list');
+      tradesList.innerHTML = state.ob.trades.map(t => `
+        <div class="trade-print ${t.side.toLowerCase()}">
+          <span>${t.time}</span>
+          <span style="font-weight:600;">$${t.price.toFixed(2)}</span>
+          <span>${t.size} contratos</span>
+        </div>
+      `).join('');
+    }
+
+    function submitSimulatedOrder() {
+      const sizeInput = document.getElementById('ob-size');
+      let size = parseInt(sizeInput.value);
+      if (isNaN(size) || size <= 0) size = 10;
+      
+      const priceInput = document.getElementById('ob-price');
+      let limitPrice = parseFloat(priceInput.value);
+
+      if (state.ob.type === 'MKT') {
+        // Match against book immediately
+        if (state.ob.side === 'BUY') {
+          // Take asks
+          let filled = 0;
+          while (size > 0 && state.ob.asks.length > 0) {
+            let topAsk = state.ob.asks[0];
+            let matchSize = Math.min(size, topAsk.size);
+            filled += matchSize;
+            size -= matchSize;
+            topAsk.size -= matchSize;
+            state.ob.lastPrice = topAsk.price;
+            
+            addSimTradeLog(topAsk.price, matchSize, 'BUY');
+
+            if (topAsk.size === 0) {
+              state.ob.asks.shift();
+            }
+          }
+          // Play matching audio
+          playTone(660, 0.08, 'sine');
+          // Replenish order book liquidity if empty
+          if (state.ob.asks.length === 0) {
+            replenishLiquidity('ASK');
+          }
+        } else {
+          // Take bids
+          let filled = 0;
+          while (size > 0 && state.ob.bids.length > 0) {
+            let topBid = state.ob.bids[0];
+            let matchSize = Math.min(size, topBid.size);
+            filled += matchSize;
+            size -= matchSize;
+            topBid.size -= matchSize;
+            state.ob.lastPrice = topBid.price;
+
+            addSimTradeLog(topBid.price, matchSize, 'SELL');
+
+            if (topBid.size === 0) {
+              state.ob.bids.shift();
+            }
+          }
+          playTone(550, 0.08, 'sine');
+          if (state.ob.bids.length === 0) {
+            replenishLiquidity('BID');
+          }
+        }
+      } else {
+        // LIMIT order logic
+        if (isNaN(limitPrice) || limitPrice <= 0) return;
+
+        if (state.ob.side === 'BUY') {
+          // If limit price >= best ask, match it immediately as market order
+          if (limitPrice >= state.ob.asks[0].price) {
+            alert("El precio límite cruza el spread. Se ejecutará como orden a Mercado.");
+            setOBType('MKT');
+            submitSimulatedOrder();
+            return;
+          }
+          // Insert into bids sorted
+          insertLimitOrder(state.ob.bids, limitPrice, size, 'BUY');
+        } else {
+          // If limit price <= best bid, match immediately
+          if (limitPrice <= state.ob.bids[0].price) {
+            alert("El precio límite cruza el spread. Se ejecutará como orden a Mercado.");
+            setOBType('MKT');
+            submitSimulatedOrder();
+            return;
+          }
+          insertLimitOrder(state.ob.asks, limitPrice, size, 'SELL');
+        }
+        playTone(400, 0.15, 'sine');
+      }
+
+      renderOrderBook();
+    }
+
+    function insertLimitOrder(book, price, size, side) {
+      const newOrder = {price, size};
+      book.push(newOrder);
+      
+      // Sort: Bids descending, Asks ascending
+      if (side === 'BUY') {
+        book.sort((a, b) => b.price - a.price);
+      } else {
+        book.sort((a, b) => a.price - b.price);
+      }
+    }
+
+    function replenishLiquidity(side) {
+      if (side === 'ASK') {
+        let base = state.ob.lastPrice + 0.10;
+        state.ob.asks = [
+          {price: base, size: 20},
+          {price: base + 0.05, size: 50},
+          {price: base + 0.10, size: 100},
+          {price: base + 0.15, size: 150},
+          {price: base + 0.20, size: 200}
+        ];
+      } else {
+        let base = state.ob.lastPrice - 0.10;
+        state.ob.bids = [
+          {price: base, size: 20},
+          {price: base - 0.05, size: 50},
+          {price: base - 0.10, size: 100},
+          {price: base - 0.15, size: 150},
+          {price: base - 0.20, size: 200}
+        ];
+      }
+    }
+
+    // Passive Orderbook Noise
+    function simulateRandomTrades() {
+      // 70% chance of random market order filling levels
+      if (Math.random() > 0.4) {
+        const randomSide = Math.random() > 0.5 ? 'BUY' : 'SELL';
+        const randomSize = Math.floor(Math.random() * 8) + 2;
+
+        if (randomSide === 'BUY' && state.ob.asks.length > 0) {
+          let topAsk = state.ob.asks[0];
+          let fillAmt = Math.min(randomSize, topAsk.size);
+          topAsk.size -= fillAmt;
+          state.ob.lastPrice = topAsk.price;
+          addSimTradeLog(topAsk.price, fillAmt, 'BUY');
+          if (topAsk.size === 0) state.ob.asks.shift();
+        } else if (randomSide === 'SELL' && state.ob.bids.length > 0) {
+          let topBid = state.ob.bids[0];
+          let fillAmt = Math.min(randomSize, topBid.size);
+          topBid.size -= fillAmt;
+          state.ob.lastPrice = topBid.price;
+          addSimTradeLog(topBid.price, fillAmt, 'SELL');
+          if (topBid.size === 0) state.ob.bids.shift();
+        }
+
+        // Randomly modify/add minor levels to ensure depth
+        if (state.ob.asks.length < 5) replenishLiquidity('ASK');
+        if (state.ob.bids.length < 5) replenishLiquidity('BID');
+
+        // Random adjustments to order sizes to create motion
+        state.ob.bids.forEach(b => { if (Math.random() > 0.7) b.size = Math.max(10, b.size + (Math.random() > 0.5 ? 5 : -5)); });
+        state.ob.asks.forEach(a => { if (Math.random() > 0.7) a.size = Math.max(10, a.size + (Math.random() > 0.5 ? 5 : -5)); });
+
+        renderOrderBook();
+      }
+    }
+
+
+    // WIDGET 2: TECHNICAL CHART & INDICATOR SYSTEM
+    function initIndicatorChart() {
+      // Generate synthetic historical candles
+      generateHistoricalPrices();
+      
+      const canvas = document.getElementById('indicator-canvas');
+      const tooltip = document.getElementById('indicator-tooltip');
+
+      canvas.addEventListener('mousemove', (e) => {
+        showTooltip(e, canvas, tooltip);
+      });
+      canvas.addEventListener('mouseleave', () => {
+        tooltip.style.display = 'none';
+        drawIndicatorChart(); // Redraw to remove crosshair
+      });
+
+      drawIndicatorChart();
+    }
+
+    function generateHistoricalPrices() {
+      let prices = [];
+      let basePrice = 120.00;
+      let date = new Date(2026, 0, 1);
+      
+      // Let's create some trends
+      for (let i = 0; i < 60; i++) {
+        let open, high, low, close;
+        let change = (Math.random() - 0.48) * 4; // slight upward drift
+        
+        // Add specific trend sections
+        if (i > 15 && i < 30) change -= 2.2; // deep sell-off to trigger oversold
+        if (i >= 30 && i < 48) change += 2.8; // sharp rally to trigger overbought
+
+        open = basePrice;
+        close = basePrice + change;
+        high = Math.max(open, close) + Math.random() * 1.5;
+        low = Math.min(open, close) - Math.random() * 1.5;
+        
+        prices.push({
+          index: i,
+          date: date.toLocaleDateString('es-ES', {month: 'short', day: 'numeric'}),
+          open: open,
+          high: high,
+          low: low,
+          close: close,
+          volume: Math.floor(Math.random() * 1000) + 200
+        });
+        basePrice = close;
+        date.setDate(date.getDate() + 1);
+      }
+      state.indicator.prices = prices;
+    }
+
+    function updateIndicatorParams() {
+      state.indicator.sma = parseInt(document.getElementById('sma-period-input').value);
+      state.indicator.rsiOB = parseInt(document.getElementById('rsi-overbought-input').value);
+      state.indicator.rsiOS = parseInt(document.getElementById('rsi-oversold-input').value);
+
+      document.getElementById('sma-period-val').innerText = state.indicator.sma;
+      document.getElementById('rsi-overbought-val').innerText = state.indicator.rsiOB;
+      document.getElementById('rsi-oversold-val').innerText = state.indicator.rsiOS;
+
+      drawIndicatorChart();
+    }
+
+    function calculateSMA(prices, period) {
+      let smaValues = [];
+      for (let i = 0; i < prices.length; i++) {
+        if (i < period - 1) {
+          smaValues.push(null);
+        } else {
+          let sum = 0;
+          for (let j = 0; j < period; j++) {
+            sum += prices[i - j].close;
+          }
+          smaValues.push(sum / period);
+        }
+      }
+      return smaValues;
+    }
+
+    function calculateRSI(prices, period = 14) {
+      let rsiValues = [];
+      let gains = [];
+      let losses = [];
+      
+      // Calculate daily diffs
+      for (let i = 1; i < prices.length; i++) {
+        let diff = prices[i].close - prices[i-1].close;
+        gains.push(diff > 0 ? diff : 0);
+        losses.push(diff < 0 ? -diff : 0);
+      }
+
+      for (let i = 0; i < prices.length; i++) {
+        if (i < period) {
+          rsiValues.push(50); // baseline
+        } else {
+          let avgGain = gains.slice(i - period, i).reduce((a,b)=>a+b, 0) / period;
+          let avgLoss = losses.slice(i - period, i).reduce((a,b)=>a+b, 0) / period;
+          
+          if (avgLoss === 0) {
+            rsiValues.push(100);
+          } else {
+            let rs = avgGain / avgLoss;
+            rsiValues.push(100 - (100 / (1 + rs)));
+          }
+        }
+      }
+      return rsiValues;
+    }
+
+    function drawIndicatorChart(hoverIndex = -1, crosshairX = -1) {
+      const canvas = document.getElementById('indicator-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      
+      // Fit responsive parent sizing
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      ctx.clearRect(0, 0, width, height);
+
+      // Colors styling
+      const isLight = document.documentElement.classList.contains('light');
+      const gridColor = isLight ? '#e5e7eb' : '#1e293b';
+      const textColor = isLight ? '#4b5563' : '#9ca3af';
+      const upCandle = isLight ? '#059669' : '#10b981';
+      const downCandle = isLight ? '#dc2626' : '#ef4444';
+
+      const padding = 40;
+      const rsiPanelHeight = 70;
+      const spacingBetweenPanels = 20;
+      const chartHeight = height - padding * 2 - rsiPanelHeight - spacingBetweenPanels;
+      
+      const prices = state.indicator.prices;
+      const numCandles = prices.length;
+      const candleWidth = (width - padding * 2) / numCandles;
+
+      // Min/Max of price window
+      const closes = prices.map(p => p.close);
+      const highs = prices.map(p => p.high);
+      const lows = prices.map(p => p.low);
+      const maxPrice = Math.max(...highs) * 1.01;
+      const minPrice = Math.min(...lows) * 0.99;
+      const priceRange = maxPrice - minPrice;
+
+      // Coordinate converter
+      const getX = (idx) => padding + idx * candleWidth + candleWidth / 2;
+      const getY = (price) => padding + chartHeight - ((price - minPrice) / priceRange) * chartHeight;
+      const getRsiY = (rsiVal) => height - padding - (rsiVal / 100) * rsiPanelHeight;
+
+      // Calculate SMA & RSI vectors
+      const sma = calculateSMA(prices, state.indicator.sma);
+      const rsi = calculateRSI(prices, 14); // fixed period
+
+      // DRAW GRIDS & AXIS for main chart
+      ctx.strokeStyle = gridColor;
+      ctx.lineWidth = 1;
+      ctx.fillStyle = textColor;
+      ctx.font = '10px Fira Code';
+      
+      // Horizontal Price Grid
+      for(let i=0; i<=4; i++) {
+        let pr = minPrice + (priceRange / 4) * i;
+        let y = getY(pr);
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
+        ctx.stroke();
+        
+        ctx.fillText(pr.toFixed(1), width - padding + 5, y + 3);
+      }
+
+      // DRAW CANDLESTICKS
+      prices.forEach((p, i) => {
+        let x = padding + i * candleWidth;
+        let yOpen = getY(p.open);
+        let yClose = getY(p.close);
+        let yHigh = getY(p.high);
+        let yLow = getY(p.low);
+
+        ctx.strokeStyle = p.close >= p.open ? upCandle : downCandle;
+        ctx.fillStyle = p.close >= p.open ? upCandle : downCandle;
+
+        // Wick
+        ctx.beginPath();
+        ctx.moveTo(x + candleWidth / 2, yHigh);
+        ctx.lineTo(x + candleWidth / 2, yLow);
+        ctx.stroke();
+
+        // Body
+        let bodyH = Math.abs(yClose - yOpen);
+        ctx.fillRect(x + 2, Math.min(yOpen, yClose), candleWidth - 4, Math.max(1, bodyH));
+      });
+
+      // DRAW SMA LINE
+      ctx.strokeStyle = isLight ? '#2563eb' : '#00f0ff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      let firstSma = true;
+      sma.forEach((val, i) => {
+        if (val !== null) {
+          let x = getX(i);
+          let y = getY(val);
+          if (firstSma) {
+            ctx.moveTo(x, y);
+            firstSma = false;
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+      });
+      ctx.stroke();
+
+      // DRAW RSI PANEL
+      // Grid bounds
+      ctx.strokeStyle = gridColor;
+      ctx.strokeRect(padding, height - padding - rsiPanelHeight, width - padding * 2, rsiPanelHeight);
+      
+      // RSI Bounds (Overbought/Oversold thresholds)
+      ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)'; // Amber dim
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      
+      let obY = getRsiY(state.indicator.rsiOB);
+      let osY = getRsiY(state.indicator.rsiOS);
+      
+      ctx.beginPath();
+      ctx.moveTo(padding, obY);
+      ctx.lineTo(width - padding, obY);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(padding, osY);
+      ctx.lineTo(width - padding, osY);
+      ctx.stroke();
+      ctx.setLineDash([]); // Reset
+      
+      // Labels for thresholds
+      ctx.fillStyle = isLight ? '#d97706' : '#ff9d00';
+      ctx.fillText(`${state.indicator.rsiOB}`, padding - 22, obY + 3);
+      ctx.fillText(`${state.indicator.rsiOS}`, padding - 22, osY + 3);
+
+      // Draw RSI Curve
+      ctx.strokeStyle = isLight ? '#7c3aed' : '#8b5cf6'; // Purple
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      rsi.forEach((val, i) => {
+        let x = getX(i);
+        let y = getRsiY(val);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // EVALUATE SIGNALS AND DRAW SIGNAL SHAPES
+      // Strategy rules: Buy when RSI goes below Oversold and returns up, or Sell when crosses above Overbought.
+      // We will place green triangles (BUY) and red triangles (SELL)
+      for(let i=2; i<prices.length; i++) {
+        let rsiPrev = rsi[i-1];
+        let rsiCurr = rsi[i];
+        
+        // Buy condition: RSI hooks up from below oversold
+        if (rsiPrev < state.indicator.rsiOS && rsiCurr >= state.indicator.rsiOS) {
+          let x = getX(i);
+          let y = getY(prices[i].low) + 12;
+          ctx.fillStyle = upCandle;
+          ctx.beginPath();
+          ctx.moveTo(x, y - 8);
+          ctx.lineTo(x - 6, y + 4);
+          ctx.lineTo(x + 6, y + 4);
+          ctx.fill();
+        }
+        
+        // Sell condition: RSI hooks down from above overbought
+        if (rsiPrev > state.indicator.rsiOB && rsiCurr <= state.indicator.rsiOB) {
+          let x = getX(i);
+          let y = getY(prices[i].high) - 12;
+          ctx.fillStyle = downCandle;
+          ctx.beginPath();
+          ctx.moveTo(x, y + 8);
+          ctx.lineTo(x - 6, y - 4);
+          ctx.lineTo(x + 6, y - 4);
+          ctx.fill();
+        }
+      }
+
+      // Draw crosshair on hover
+      if (hoverIndex >= 0 && crosshairX >= 0) {
+        ctx.strokeStyle = isLight ? '#9ca3af' : '#4b5563';
+        ctx.lineWidth = 0.5;
+        
+        // Vertical line
+        ctx.beginPath();
+        ctx.moveTo(crosshairX, padding);
+        ctx.lineTo(crosshairX, height - padding);
+        ctx.stroke();
+      }
+    }
+
+    function showTooltip(e, canvas, tooltip) {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const padding = 40;
+      const numCandles = state.indicator.prices.length;
+      const candleWidth = (canvas.width - padding * 2) / numCandles;
+      
+      const idx = Math.floor((x - padding) / candleWidth);
+      if (idx >= 0 && idx < numCandles) {
+        const item = state.indicator.prices[idx];
+        const smaVal = calculateSMA(state.indicator.prices, state.indicator.sma)[idx];
+        const rsiVal = calculateRSI(state.indicator.prices, 14)[idx];
+        
+        tooltip.style.left = `${e.clientX - rect.left + 15}px`;
+        tooltip.style.top = `${e.clientY - rect.top - 80}px`;
+        tooltip.style.display = 'block';
+
+        tooltip.innerHTML = `
+          <div style="color:var(--accent-cyan); font-weight:700;">Fecha: ${item.date}</div>
+          <div>O: $${item.open.toFixed(2)} | H: $${item.high.toFixed(2)}</div>
+          <div>L: $${item.low.toFixed(2)} | C: $${item.close.toFixed(2)}</div>
+          <div style="border-top:1px solid var(--border); margin-top:4px; padding-top:4px;">
+            SMA: ${smaVal ? '$' + smaVal.toFixed(2) : '--'}<br>
+            RSI: ${rsiVal ? rsiVal.toFixed(1) : '--'}
+          </div>
+        `;
+        
+        drawIndicatorChart(idx, x);
+      }
+    }
+
+
+    // WIDGET 3: BACKTEST ENGINE LOGIC
+    function initBacktestChart() {
+      // Generate synthetic historical candles for backtester (longer series)
+      let prices = [];
+      let basePrice = 100.00;
+      let date = new Date(2025, 0, 1);
+      
+      for (let i = 0; i < 180; i++) {
+        let open = basePrice;
+        let change = (Math.random() - 0.47) * 3;
+        
+        // Create 2 major trend cycles
+        if (i < 40) change += 0.5;
+        if (i >= 40 && i < 90) change -= 0.8;
+        if (i >= 90 && i < 140) change += 0.9;
+        
+        let close = basePrice + change;
+        prices.push({ open, high: Math.max(open, close) + Math.random()*1, low: Math.min(open, close) - Math.random()*1, close, index: i });
+        basePrice = close;
+      }
+      state.backtest.prices = prices;
+      drawBacktestChart();
+    }
+
+    function toggleBtStrategyUI() {
+      const strat = document.getElementById('bt-strategy').value;
+      if (strat === 'crossover') {
+        document.getElementById('bt-param-fast-sma').style.display = 'block';
+        document.getElementById('bt-param-slow-sma').style.display = 'block';
+        document.getElementById('bt-param-rsi-period').style.display = 'none';
+      } else {
+        document.getElementById('bt-param-fast-sma').style.display = 'none';
+        document.getElementById('bt-param-slow-sma').style.display = 'none';
+        document.getElementById('bt-param-rsi-period').style.display = 'block';
+      }
+    }
+
+    function runBacktestSimulation() {
+      const strategy = document.getElementById('bt-strategy').value;
+      const prices = state.backtest.prices;
+      
+      let balance = 10000;
+      let position = 0; // units
+      let equity = [];
+      let trades = [];
+      let drawdowns = [];
+      let maxPeak = balance;
+      let maxDD = 0;
+      
+      // Calculate indicators
+      let fastSma = [];
+      let slowSma = [];
+      let rsi = [];
+      
+      if (strategy === 'crossover') {
+        const fastP = parseInt(document.getElementById('bt-fast-input').value);
+        const slowP = parseInt(document.getElementById('bt-slow-input').value);
+        fastSma = calculateSMA(prices, fastP);
+        slowSma = calculateSMA(prices, slowP);
+      } else {
+        const rsiP = parseInt(document.getElementById('bt-rsi-input').value);
+        rsi = calculateRSI(prices, rsiP);
+      }
+
+      // Loop through time
+      for (let i = 0; i < prices.length; i++) {
+        let price = prices[i].close;
+        let todayVal = balance + position * price;
+        
+        // Track Drawdown
+        if (todayVal > maxPeak) maxPeak = todayVal;
+        let dd = ((maxPeak - todayVal) / maxPeak) * 100;
+        if (dd > maxDD) maxDD = dd;
+        drawdowns.push(dd);
+
+        equity.push(todayVal);
+
+        // Core trading logic
+        if (i < 40) continue; // warmup period
+
+        if (strategy === 'crossover') {
+          // Buy on Fast crossing above Slow
+          let prevFast = fastSma[i-1];
+          let prevSlow = slowSma[i-1];
+          let currFast = fastSma[i];
+          let currSlow = slowSma[i];
+
+          if (position === 0 && prevFast <= prevSlow && currFast > currSlow) {
+            // BUY ALL IN
+            position = balance / price;
+            balance = 0;
+            trades.push({type: 'BUY', index: i, price});
+          } else if (position > 0 && prevFast >= prevSlow && currFast < currSlow) {
+            // SELL ALL IN
+            balance = position * price;
+            position = 0;
+            trades.push({type: 'SELL', index: i, price});
+          }
+        } else {
+          // RSI Reversion
+          let prevRsi = rsi[i-1];
+          let currRsi = rsi[i];
+          
+          if (position === 0 && prevRsi < 30 && currRsi >= 30) {
+            position = balance / price;
+            balance = 0;
+            trades.push({type: 'BUY', index: i, price});
+          } else if (position > 0 && prevRsi > 70 && currRsi <= 70) {
+            balance = position * price;
+            position = 0;
+            trades.push({type: 'SELL', index: i, price});
+          }
+        }
+      }
+
+      // Close open trade
+      if (position > 0) {
+        balance = position * prices[prices.length - 1].close;
+        trades.push({type: 'SELL', index: prices.length - 1, price: prices[prices.length - 1].close});
+      }
+
+      // Performance calculations
+      const returnPct = ((balance - 10000) / 10000) * 100;
+      
+      // Calculate Sharpe Ratio (simplified daily standard dev)
+      let dailyReturns = [];
+      for(let j=1; j<equity.length; j++) {
+        dailyReturns.push((equity[j] - equity[j-1]) / equity[j-1]);
+      }
+      const meanRet = dailyReturns.reduce((a,b)=>a+b, 0) / dailyReturns.length;
+      const variance = dailyReturns.reduce((a,b)=>a + Math.pow(b - meanRet, 2), 0) / dailyReturns.length;
+      const stdDev = Math.sqrt(variance);
+      const sharpe = stdDev > 0 ? (meanRet / stdDev) * Math.sqrt(252) : 0;
+
+      // Win Rate calculation
+      let wins = 0;
+      let totalTrades = 0;
+      for (let k = 0; k < trades.length; k += 2) {
+        if (k + 1 < trades.length) {
+          totalTrades++;
+          let buyP = trades[k].price;
+          let sellP = trades[k+1].price;
+          if (sellP > buyP) wins++;
+        }
+      }
+      const winRate = totalTrades > 0 ? (wins / totalTrades) * 100 : 0;
+
+      // Update state
+      state.backtest.equity = equity;
+      state.backtest.drawdown = drawdowns;
+      state.backtest.trades = trades;
+      state.backtest.run = true;
+
+      // UI animations
+      animateBacktestExecution(returnPct, sharpe, maxDD, winRate);
+    }
+
+    function animateBacktestExecution(ret, sharpe, dd, wr) {
+      // Audio trigger
+      playTone(520, 0.1, 'sine');
+      setTimeout(() => playTone(660, 0.1, 'sine'), 100);
+      setTimeout(() => playTone(880, 0.15, 'sine'), 200);
+
+      // Fade metrics in
+      const retEl = document.getElementById('bt-return');
+      const sharpeEl = document.getElementById('bt-sharpe');
+      const ddEl = document.getElementById('bt-drawdown');
+      const wrEl = document.getElementById('bt-winrate');
+
+      retEl.innerText = `${ret >= 0 ? '+' : ''}${ret.toFixed(1)}%`;
+      retEl.className = `metric-val ${ret >= 0 ? 'profit' : 'loss'}`;
+      
+      sharpeEl.innerText = sharpe.toFixed(2);
+      ddEl.innerText = `-${dd.toFixed(1)}%`;
+      wrEl.innerText = `${wr.toFixed(0)}%`;
+
+      // Animate line draw on canvas
+      let totalSteps = state.backtest.prices.length;
+      let step = 0;
+      
+      function drawStep() {
+        if (step <= totalSteps) {
+          drawBacktestChart(step);
+          step += 4; // draw speed multiplier
+          requestAnimationFrame(drawStep);
+        } else {
+          drawBacktestChart(); // final complete draw
+        }
+      }
+      drawStep();
+    }
+
+    function drawBacktestChart(cutIndex = -1) {
+      const canvas = document.getElementById('backtest-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+
+      const isLight = document.documentElement.classList.contains('light');
+      const gridColor = isLight ? '#e5e7eb' : '#1e293b';
+      const textColor = isLight ? '#4b5563' : '#9ca3af';
+
+      const padding = 40;
+      const bottomHeight = 60;
+      const chartHeight = height - padding * 2 - bottomHeight - 15;
+      
+      const prices = state.backtest.prices;
+      const numPoints = prices.length;
+      const xGap = (width - padding * 2) / numPoints;
+
+      // MinMax prices
+      const closePrices = prices.map(p => p.close);
+      let eqValues = state.backtest.run ? state.backtest.equity : [10000];
+      
+      const maxVal = Math.max(...closePrices, ...(state.backtest.run ? eqValues : [10000])) * 1.02;
+      const minVal = Math.min(...closePrices, ...(state.backtest.run ? eqValues : [10000])) * 0.98;
+      const range = maxVal - minVal;
+
+      const getX = (idx) => padding + idx * xGap;
+      const getY = (val) => padding + chartHeight - ((val - minVal) / range) * chartHeight;
+
+      // Draw Grid
+      ctx.strokeStyle = gridColor;
+      ctx.lineWidth = 1;
+      ctx.fillStyle = textColor;
+      ctx.font = '10px Fira Code';
+      for (let i = 0; i <= 4; i++) {
+        let val = minVal + (range / 4) * i;
+        let y = getY(val);
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
+        ctx.stroke();
+        
+        ctx.fillText(val.toFixed(0), width - padding + 5, y + 3);
+      }
+
+      // Draw Asset Price (underlying benchmark)
+      ctx.strokeStyle = 'rgba(156, 163, 175, 0.45)'; // grey benchmark
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      prices.forEach((p, idx) => {
+        if (cutIndex !== -1 && idx > cutIndex) return;
+        let x = getX(idx);
+        let y = getY(p.close);
+        if (idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Draw Equity Curve
+      if (state.backtest.run) {
+        ctx.strokeStyle = isLight ? '#10b981' : '#39ff14'; // neon green
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        state.backtest.equity.forEach((eq, idx) => {
+          if (cutIndex !== -1 && idx > cutIndex) return;
+          let x = getX(idx);
+          let y = getY(eq);
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // Draw buy/sell triangles
+        state.backtest.trades.forEach(t => {
+          if (cutIndex !== -1 && t.index > cutIndex) return;
+          let x = getX(t.index);
+          let y = getY(t.price);
+          
+          if (t.type === 'BUY') {
+            ctx.fillStyle = isLight ? '#059669' : '#10b981';
+            ctx.beginPath();
+            ctx.moveTo(x, y - 6);
+            ctx.lineTo(x - 5, y + 4);
+            ctx.lineTo(x + 5, y + 4);
+            ctx.fill();
+          } else {
+            ctx.fillStyle = isLight ? '#dc2626' : '#ef4444';
+            ctx.beginPath();
+            ctx.moveTo(x, y + 6);
+            ctx.lineTo(x - 5, y - 4);
+            ctx.lineTo(x + 5, y - 4);
+            ctx.fill();
+          }
+        });
+      }
+    }
+
+
+    // WIDGET 4: RISK & MONTE CARLO SIMULATION LOGIC
+    function initMonteCarlo() {
+      runMonteCarloSimulation();
+    }
+
+    function updateMonteCarloParams() {
+      const risk = parseInt(document.getElementById('mc-risk-input').value);
+      const wr = parseInt(document.getElementById('mc-wr-input').value);
+      const ratio = parseFloat(document.getElementById('mc-ratio').value);
+
+      document.getElementById('mc-risk-val').innerText = `${risk}%`;
+      document.getElementById('mc-wr-val').innerText = `${wr}%`;
+    }
+
+    function runMonteCarloSimulation() {
+      const balance = parseFloat(document.getElementById('mc-balance').value) || 10000;
+      const riskPct = parseInt(document.getElementById('mc-risk-input').value) / 100;
+      const winRate = parseInt(document.getElementById('mc-wr-input').value) / 100;
+      const rrRatio = parseFloat(document.getElementById('mc-ratio').value) || 2.0;
+
+      // Monte Carlo generation
+      // Generate 50 paths of 50 steps
+      let paths = [];
+      let ruinCount = 0; // Ruin threshold = losing 50% of capital
+
+      for(let p = 0; p < 50; p++) {
+        let currentCap = balance;
+        let path = [currentCap];
+        let hitRuin = false;
+        
+        for(let step = 0; step < 50; step++) {
+          let outcome = Math.random() < winRate; // Win/Loss
+          let riskAmount = currentCap * riskPct;
+          
+          if (outcome) {
+            currentCap += riskAmount * rrRatio;
+          } else {
+            currentCap -= riskAmount;
+          }
+          if (currentCap < 0) currentCap = 0;
+          if (currentCap <= balance * 0.5) {
+            hitRuin = true;
+          }
+          path.push(currentCap);
+        }
+        if (hitRuin) ruinCount++;
+        paths.push(path);
+      }
+
+      // Calculate ruin probability
+      const ruinProb = (ruinCount / 50) * 100;
+      const ruinTextEl = document.getElementById('mc-ruin-pct');
+      const ruinDescEl = document.getElementById('mc-ruin-desc');
+      
+      ruinTextEl.innerText = `${ruinProb.toFixed(1)}%`;
+      
+      if (ruinProb < 10) {
+        ruinTextEl.className = 'ruin-text safe';
+        ruinDescEl.innerText = 'Riesgo Seguro. Estabilidad financiera excelente.';
+      } else if (ruinProb >= 10 && ruinProb < 40) {
+        ruinTextEl.className = 'ruin-text warning';
+        ruinDescEl.innerText = 'Riesgo Moderado. Ten precaución.';
+      } else {
+        ruinTextEl.className = 'ruin-text danger';
+        ruinDescEl.innerText = '¡ALTO RIESGO DE RUINA! Reduce el riesgo por operación.';
+      }
+
+      // Draw Paths on Canvas
+      drawMonteCarloChart(paths, balance);
+      playTone(440, 0.08, 'sine');
+    }
+
+    function drawMonteCarloChart(paths = [], startingBalance = 10000) {
+      const canvas = document.getElementById('mc-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+
+      const isLight = document.documentElement.classList.contains('light');
+      const gridColor = isLight ? '#e5e7eb' : '#1e293b';
+      const textColor = isLight ? '#4b5563' : '#9ca3af';
+
+      const padding = 40;
+      const chartHeight = height - padding * 2;
+      
+      if (paths.length === 0) return;
+
+      // Find global min/max coordinates
+      let allVal = paths.flat();
+      const maxVal = Math.max(...allVal, startingBalance * 2) * 1.02;
+      const minVal = Math.min(...allVal, 0);
+      const range = maxVal - minVal;
+
+      const getX = (idx) => padding + idx * ((width - padding * 2) / 50);
+      const getY = (val) => padding + chartHeight - ((val - minVal) / range) * chartHeight;
+
+      // Draw Grid & Labels
+      ctx.strokeStyle = gridColor;
+      ctx.lineWidth = 1;
+      ctx.fillStyle = textColor;
+      ctx.font = '9px Fira Code';
+      for(let i=0; i<=4; i++) {
+        let val = minVal + (range / 4) * i;
+        let y = getY(val);
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
+        ctx.stroke();
+
+        ctx.fillText(`$${val.toFixed(0)}`, padding - 35, y + 3);
+      }
+
+      // Draw ruin threshold line at 50% starting capital
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([5, 5]);
+      let ruinY = getY(startingBalance * 0.5);
+      ctx.beginPath();
+      ctx.moveTo(padding, ruinY);
+      ctx.lineTo(width - padding, ruinY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Draw paths
+      paths.forEach((path, pIdx) => {
+        // Color depends on ending value
+        const endVal = path[path.length - 1];
+        let color = 'rgba(16, 185, 129, 0.2)'; // green
+        if (endVal < startingBalance) color = 'rgba(239, 68, 68, 0.2)'; // red
+        if (endVal === 0) color = 'rgba(239, 68, 68, 0.4)';
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        path.forEach((val, idx) => {
+          let x = getX(idx);
+          let y = getY(val);
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+      });
+    }
+
+
+    // MULTIMEDIA FEEDBACK (WEB AUDIO API BEEP)
+    let audioCtx = null;
+    function playTone(frequency, duration, type = 'sine') {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        
+        // Resume context if suspended (browser security blocks autoplay)
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.type = type;
+        oscillator.frequency.value = frequency;
+        
+        gainNode.gain.setValueAtTime(0.04, audioCtx.currentTime); // low volume
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + duration);
+      } catch(err) {
+        // Fallback silently if audio context not supported
+        console.warn("AudioContext block: ", err);
+      }
+    }
+
+  </script>
+</body>
+</html>
