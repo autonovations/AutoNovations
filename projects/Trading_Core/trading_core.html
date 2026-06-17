@@ -2306,7 +2306,22 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>
             </button>
             <div class="logo">
-                <img src="../../assets_index/images/AN-logo.png" alt="AutoNovations Logo" class="logo-img" onerror="this.src='https://placehold.co/100x100/00D9FF/FFFFFF?text=AN'">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; flex-shrink: 0; color: #00f2fe;">
+                    <!-- Wick 1 -->
+                    <line x1="6" y1="4" x2="6" y2="20"></line>
+                    <!-- Body 1 (Green Up Candle) -->
+                    <rect x="4" y="8" width="4" height="8" rx="0.5" fill="#00e676" stroke="#00e676" stroke-width="1"></rect>
+                    
+                    <!-- Wick 2 (Middle) -->
+                    <line x1="12" y1="2" x2="12" y2="22"></line>
+                    <!-- Body 2 (Green Up Candle) -->
+                    <rect x="10" y="6" width="4" height="12" rx="0.5" fill="#00e676" stroke="#00e676" stroke-width="1"></rect>
+                    
+                    <!-- Wick 3 -->
+                    <line x1="18" y1="5" x2="18" y2="19"></line>
+                    <!-- Body 3 (Red Down Candle) -->
+                    <rect x="16" y="9" width="4" height="6" rx="0.5" fill="#ff3d71" stroke="#ff3d71" stroke-width="1"></rect>
+                </svg>
                 AutoTrader
             </div>
             <!-- Quick Top Tickers -->
@@ -2609,15 +2624,15 @@
                             <span class="chart-asset-change" id="full-chart-asset-change">+0.00%</span>
                         </div>
                         <div class="chart-header-controls">
-                            <button class="chart-tf-btn">1m</button>
-                            <button class="chart-tf-btn">5m</button>
-                            <button class="chart-tf-btn">15m</button>
-                            <button class="chart-tf-btn active">1h</button>
-                            <button class="chart-tf-btn">4h</button>
-                            <button class="chart-tf-btn">D</button>
+                            <button class="chart-tf-btn" onclick="changeTimeframe('1m', this)">1m</button>
+                            <button class="chart-tf-btn" onclick="changeTimeframe('5m', this)">5m</button>
+                            <button class="chart-tf-btn" onclick="changeTimeframe('15m', this)">15m</button>
+                            <button class="chart-tf-btn active" onclick="changeTimeframe('1h', this)">1h</button>
+                            <button class="chart-tf-btn" onclick="changeTimeframe('4h', this)">4h</button>
+                            <button class="chart-tf-btn" onclick="changeTimeframe('D', this)">D</button>
                             <div class="chart-control-divider"></div>
-                            <button class="chart-control-icon-btn" title="Indicadores"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></button>
-                            <button class="chart-control-icon-btn" title="Línea de Tendencia"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><circle cx="6" cy="18" r="2"></circle><circle cx="18" cy="6" r="2"></circle></svg></button>
+                            <button class="chart-control-icon-btn" title="Indicadores" id="full-indicators-toggle-btn" onclick="toggleIndicatorsVisibility()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></button>
+                            <button class="chart-control-icon-btn" title="Línea de Tendencia" onclick="toggleTrendlineDrawing()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><circle cx="6" cy="18" r="2"></circle><circle cx="18" cy="6" r="2"></circle></svg></button>
                         </div>
                     </div>
                     
@@ -2631,7 +2646,33 @@
                         </div>
                         
                         <div class="chart-container-group">
+                            <!-- Overlay Indicators Legend -->
+                            <div class="chart-overlay-details" id="full-indicators-legend-overlay">
+                                <div class="indicator-item">
+                                    <span class="ind-dot" style="background: #ffd32a;"></span>
+                                    <span class="ind-label">EMA 20 close</span>
+                                    <span class="ind-val" style="color: #ffd32a;" id="full-ema-20-val">-</span>
+                                </div>
+                                <div class="indicator-item">
+                                    <span class="ind-dot" style="background: #0fbcf9;"></span>
+                                    <span class="ind-label">EMA 50 close</span>
+                                    <span class="ind-val" style="color: #0fbcf9;" id="full-ema-50-val">-</span>
+                                </div>
+                                <div class="indicator-item">
+                                    <span class="ind-dot" style="background: #8e44ad;"></span>
+                                    <span class="ind-label">EMA 200 close</span>
+                                    <span class="ind-val" style="color: #8e44ad;" id="full-ema-200-val">-</span>
+                                </div>
+                            </div>
                             <div id="full-chart-candles" class="chart-area"></div>
+                            <!-- RSI sub-panel chart -->
+                            <div class="chart-overlay-details" style="top: auto; bottom: 85px; pointer-events: none;" id="full-rsi-legend-overlay">
+                                <div class="indicator-item">
+                                    <span class="ind-label">RSI 14 close</span>
+                                    <span class="ind-val" style="color: #a594f9;" id="full-rsi-val">-</span>
+                                </div>
+                            </div>
+                            <div id="full-chart-rsi" class="rsi-area"></div>
                             <div class="chart-footer-info">
                                 <div>Gráfico Avanzado de Análisis Técnico</div>
                                 <div id="full-chart-server-time">12:11:45 (UTC-5)</div>
@@ -2668,21 +2709,21 @@
                                 <span class="chart-asset-change" id="chart-asset-change">+0.00%</span>
                             </div>
                             <div class="chart-header-controls">
-                                <button class="chart-tf-btn">1m</button>
-                                <button class="chart-tf-btn">5m</button>
-                                <button class="chart-tf-btn">15m</button>
-                                <button class="chart-tf-btn active">1h</button>
-                                <button class="chart-tf-btn">4h</button>
-                                <button class="chart-tf-btn">D</button>
-                                <button class="chart-tf-btn">W</button>
+                                <button class="chart-tf-btn" onclick="changeTimeframe('1m', this)">1m</button>
+                                <button class="chart-tf-btn" onclick="changeTimeframe('5m', this)">5m</button>
+                                <button class="chart-tf-btn" onclick="changeTimeframe('15m', this)">15m</button>
+                                <button class="chart-tf-btn active" onclick="changeTimeframe('1h', this)">1h</button>
+                                <button class="chart-tf-btn" onclick="changeTimeframe('4h', this)">4h</button>
+                                <button class="chart-tf-btn" onclick="changeTimeframe('D', this)">D</button>
+                                <button class="chart-tf-btn" onclick="changeTimeframe('W', this)">W</button>
                                 <div class="chart-control-divider"></div>
-                                <button class="chart-control-icon-btn" title="Indicadores">
+                                <button class="chart-control-icon-btn" title="Indicadores" id="trading-indicators-toggle-btn" onclick="toggleIndicatorsVisibility()">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                                 </button>
-                                <button class="chart-control-icon-btn" title="Alertas">
+                                <button class="chart-control-icon-btn" title="Alertas" onclick="switchTab('alerts')">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path></svg>
                                 </button>
-                                <button class="chart-control-icon-btn" title="Repetición">
+                                <button class="chart-control-icon-btn" title="Repetición" onclick="showInfoToast('Modo de repetición no disponible en cuenta demo (Simulación)')">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
                                 </button>
                             </div>
@@ -2720,7 +2761,7 @@
                                 </div>
 
                                 <!-- Overlay Indicators Legend -->
-                                <div class="chart-overlay-details">
+                                <div class="chart-overlay-details" id="trading-indicators-legend-overlay">
                                     <div class="indicator-item">
                                         <span class="ind-dot" style="background: #ffd32a;"></span>
                                         <span class="ind-label">EMA 20 close</span>
@@ -2741,7 +2782,7 @@
                                 <!-- Interactive Chart area -->
                                 <div id="chart-candles" class="chart-area"></div>
                                 <!-- RSI sub-panel chart -->
-                                <div class="chart-overlay-details" style="top: auto; bottom: 85px;">
+                                <div class="chart-overlay-details" style="top: auto; bottom: 85px; pointer-events: none;" id="trading-rsi-legend-overlay">
                                     <div class="indicator-item">
                                         <span class="ind-label">RSI 14 close</span>
                                         <span class="ind-val" style="color: #a594f9;" id="rsi-val">58.32</span>
@@ -3448,7 +3489,9 @@
             marketSearchText: '',
             maxLeverage: 1000,
             dailyDrawdownLimit: 2000,
-            soundEnabled: true
+            soundEnabled: true,
+            indicatorsVisible: true,
+            timeframe: '1h'
         };
 
         // --- Chart Variables ---
@@ -3645,7 +3688,17 @@
             const currentAsset = assets.find(a => a.symbol === state.currentSymbol);
             chartData = [];
             
-            let time = Math.floor(Date.now() / 1000) - 100 * 3600; // 100 hours ago
+            let step = 3600;
+            let volFactor = 0.008;
+            if (state.timeframe === '1m') { step = 60; volFactor = 0.001; }
+            else if (state.timeframe === '5m') { step = 300; volFactor = 0.0025; }
+            else if (state.timeframe === '15m') { step = 900; volFactor = 0.004; }
+            else if (state.timeframe === '1h') { step = 3600; volFactor = 0.008; }
+            else if (state.timeframe === '4h') { step = 14400; volFactor = 0.015; }
+            else if (state.timeframe === 'D') { step = 86400; volFactor = 0.035; }
+            else if (state.timeframe === 'W') { step = 604800; volFactor = 0.08; }
+
+            let time = Math.floor(Date.now() / 1000) - 100 * step;
             let baseVal = currentAsset.price * 0.98; // slightly lower entry points
             
             let ema20Val = baseVal;
@@ -3658,7 +3711,7 @@
             const rsiData = [];
 
             for (let i = 0; i < 100; i++) {
-                const vol = currentAsset.price * 0.008;
+                const vol = currentAsset.price * volFactor;
                 const open = baseVal;
                 const close = baseVal + (Math.random() - 0.49) * vol; // slight upward bias
                 const high = Math.max(open, close) + Math.random() * vol * 0.4;
@@ -3690,7 +3743,7 @@
                 rsiData.push({ time: time, value: parseFloat(rsiVal.toFixed(2)) });
 
                 baseVal = close;
-                time += 3600; // 1-hour candles
+                time += step;
             }
 
             // Sync state currentPrice with last closed candle
@@ -3703,11 +3756,36 @@
             ema200Series.setData(emaData200);
             rsiSeries.setData(rsiData);
 
+            if (candleSeriesFull) {
+                candleSeriesFull.setData(chartData);
+            }
+            if (ema20SeriesFull) {
+                ema20SeriesFull.setData(emaData20);
+            }
+            if (ema50SeriesFull) {
+                ema50SeriesFull.setData(emaData50);
+            }
+            if (ema200SeriesFull) {
+                ema200SeriesFull.setData(emaData200);
+            }
+            if (rsiSeriesFull) {
+                rsiSeriesFull.setData(rsiData);
+            }
+
             // Update overlay labels
             document.getElementById('ema-20-val').innerText = ema20Val.toFixed(currentAsset.digits);
             document.getElementById('ema-50-val').innerText = ema50Val.toFixed(currentAsset.digits);
             document.getElementById('ema-200-val').innerText = ema200Val.toFixed(currentAsset.digits);
             document.getElementById('rsi-val').innerText = rsiData[rsiData.length - 1].value.toFixed(2);
+
+            const fEma20 = document.getElementById('full-ema-20-val');
+            const fEma50 = document.getElementById('full-ema-50-val');
+            const fEma200 = document.getElementById('full-ema-200-val');
+            const fRsi = document.getElementById('full-rsi-val');
+            if (fEma20) fEma20.innerText = ema20Val.toFixed(currentAsset.digits);
+            if (fEma50) fEma50.innerText = ema50Val.toFixed(currentAsset.digits);
+            if (fEma200) fEma200.innerText = ema200Val.toFixed(currentAsset.digits);
+            if (fRsi) fRsi.innerText = rsiData[rsiData.length - 1].value.toFixed(2);
 
             // Update quick trade prices
             updateQuickTradePrices(currentAsset);
@@ -3717,7 +3795,7 @@
         // Update chart asset info elements
         function updateChartAssetHeader() {
             const asset = assets.find(a => a.symbol === state.currentSymbol);
-            document.getElementById('chart-asset-title').innerText = `${asset.icon} ${asset.name} · ${asset.symbol} · 1h`;
+            document.getElementById('chart-asset-title').innerText = `${asset.icon} ${asset.name} · ${asset.symbol} · ${state.timeframe}`;
             
             const pctSign = asset.change >= 0 ? '+' : '';
             const pctClass = asset.change >= 0 ? 'color-up' : 'color-down';
@@ -3797,7 +3875,7 @@
                 // Check Max Daily Drawdown settings limit
                 if (state.pnl < -state.dailyDrawdownLimit && state.positions.length > 0) {
                     closeAllPositions();
-                    showErrorToast(`Límite de drawdown diario alcanzado (-$${state.dailyDrawdownLimit}). Todas las posiciones se han cerrado por protección.`);
+                    showErrorToast(`Límite de drawdown diario alcanzado (-${formatCurrency(state.dailyDrawdownLimit)}). Todas las posiciones se han cerrado por protección.`);
                     playSynthesizedAlertBeep(220, 0.5); // long warning buzzer
                 }
 
@@ -3877,6 +3955,17 @@
                 document.getElementById('ema-20-val').innerText = curEma20.toFixed(asset.digits);
                 document.getElementById('ema-50-val').innerText = curEma50.toFixed(asset.digits);
                 document.getElementById('ema-200-val').innerText = curEma200.toFixed(asset.digits);
+
+                if (ema20SeriesFull) ema20SeriesFull.update({ time: currentCandle.time, value: parseFloat(curEma20.toFixed(asset.digits)) });
+                if (ema50SeriesFull) ema50SeriesFull.update({ time: currentCandle.time, value: parseFloat(curEma50.toFixed(asset.digits)) });
+                if (ema200SeriesFull) ema200SeriesFull.update({ time: currentCandle.time, value: parseFloat(curEma200.toFixed(asset.digits)) });
+
+                const fEma20 = document.getElementById('full-ema-20-val');
+                const fEma50 = document.getElementById('full-ema-50-val');
+                const fEma200 = document.getElementById('full-ema-200-val');
+                if (fEma20) fEma20.innerText = curEma20.toFixed(asset.digits);
+                if (fEma50) fEma50.innerText = curEma50.toFixed(asset.digits);
+                if (fEma200) fEma200.innerText = curEma200.toFixed(asset.digits);
             }
 
             // Update RSI display
@@ -3884,6 +3973,14 @@
             const boundedRsi = Math.max(10, Math.min(90, curRsi));
             rsiSeries.update({ time: currentCandle.time, value: parseFloat(boundedRsi.toFixed(2)) });
             document.getElementById('rsi-val').innerText = boundedRsi.toFixed(2);
+
+            if (rsiSeriesFull) {
+                rsiSeriesFull.update({ time: currentCandle.time, value: parseFloat(boundedRsi.toFixed(2)) });
+            }
+            const fRsi = document.getElementById('full-rsi-val');
+            if (fRsi) {
+                fRsi.innerText = boundedRsi.toFixed(2);
+            }
         }
 
         // Update Order Form sell/buy buttons prices
@@ -3976,7 +4073,7 @@
                     <td>${pos.entryPrice.toFixed(digits)}</td>
                     <td>${pos.sl > 0 ? pos.sl.toFixed(digits) : '-'}</td>
                     <td>${pos.tp > 0 ? pos.tp.toFixed(digits) : '-'}</td>
-                    <td class="pnl-cell ${pnlClass}" id="pos-pnl-${pos.id}">${sign}$${showPnl}</td>
+                    <td class="pnl-cell ${pnlClass}" id="pos-pnl-${pos.id}">${pnlVal > 0 ? '+' : ''}${formatCurrency(pnlVal)}</td>
                     <td>
                         <button class="close-btn" onclick="closePosition(${pos.id})" title="Cerrar posición">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -4014,7 +4111,7 @@
                     </td>
                     <td>${item.volume.toFixed(2)}</td>
                     <td>${item.price.toFixed(asset.digits)}</td>
-                    <td class="${pnlClass}" style="font-weight:600;">${sign}$${item.pnl.toFixed(2)}</td>
+                    <td class="${pnlClass}" style="font-weight:600;">${item.pnl > 0 ? '+' : ''}${formatCurrency(item.pnl)}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -4190,8 +4287,7 @@
                     // Update specific cell in UI
                     const cell = document.getElementById(`pos-pnl-${pos.id}`);
                     if (cell) {
-                        const sign = pos.pnl >= 0 ? '+' : '';
-                        cell.innerText = `${sign}$${pos.pnl.toFixed(2)}`;
+                        cell.innerText = `${pos.pnl > 0 ? '+' : ''}${formatCurrency(pos.pnl)}`;
                         cell.className = `pnl-cell ${pos.pnl >= 0 ? 'up' : 'down'}`;
                     }
                 }
@@ -4462,7 +4558,7 @@
             updateStatsUI();
             playSynthesizedAlertBeep(349.23, 0.12); // Order closed beep
 
-            showInfoToast(`${reason}: ${pos.symbol} P&L Settled $${pos.pnl.toFixed(2)}`);
+            showInfoToast(`${reason}: ${pos.symbol} P&L Settled ${formatCurrency(pos.pnl)}`);
         }
 
         // Close all positions
@@ -4548,9 +4644,11 @@
 
             if (bot.status === 'Activo') {
                 bot.status = 'Pausado';
+                logBotActivity(`Bot '${bot.name}' pausado.`);
                 showInfoToast(`Bot ${bot.name} pausado`);
             } else {
                 bot.status = 'Activo';
+                logBotActivity(`Bot '${bot.name}' activado.`);
                 showSuccessToast(`Bot ${bot.name} activado`);
             }
 
@@ -4570,7 +4668,7 @@
                 }
             }
 
-            bot.status = 'Detenido';
+            logBotActivity(`Bot '${bot.name}' detenido y eliminado.`);
             state.bots.splice(botIndex, 1);
             showInfoToast(`Bot ${bot.name} eliminado del sistema.`);
             renderBots();
@@ -4597,7 +4695,7 @@
             recalculateEquity();
             updateStatsUI();
             closeDepositModal();
-            showSuccessToast(`¡Depósito Exitoso! Se han acreditado $${amount.toFixed(2)} USD a tu balance.`);
+            showSuccessToast(`¡Depósito Exitoso! Se han acreditado ${formatCurrency(amount)} USD a tu balance.`);
         }
 
         function openNewBotModal() {
@@ -4676,7 +4774,7 @@
 
         // --- Multi-tab Controller & View Renders ---
 
-        let chartCandlesFull = null, candleSeriesFull = null;
+        let chartCandlesFull = null, candleSeriesFull = null, chartRsiFull = null, rsiSeriesFull = null, ema20SeriesFull = null, ema50SeriesFull = null, ema200SeriesFull = null;
 
         function switchTab(tabId) {
             // Close mobile sidebar if open
@@ -4854,7 +4952,6 @@
                 state.positions.slice(0, 4).forEach(pos => {
                     const pnlVal = pos.pnl !== undefined ? pos.pnl : 0;
                     const pnlClass = pnlVal >= 0 ? 'up' : 'down';
-                    const sign = pnlVal >= 0 ? '+' : '';
                     const asset = assets.find(a => a.symbol === pos.symbol) || { digits: 4 };
                     content += `
                         <tr>
@@ -4863,7 +4960,7 @@
                             <td>${pos.volume.toFixed(2)}</td>
                             <td>${pos.entryPrice.toFixed(asset.digits)}</td>
                             <td>${pos.currentPrice.toFixed(asset.digits)}</td>
-                            <td class="pnl-cell ${pnlClass}" style="font-weight:600;">${sign}$${pnlVal.toFixed(2)}</td>
+                            <td class="pnl-cell ${pnlClass}" style="font-weight:600;">${pnlVal > 0 ? '+' : ''}${formatCurrency(pnlVal)}</td>
                         </tr>
                     `;
                 });
@@ -4885,25 +4982,34 @@
             const h = canvas.height;
             ctx.clearRect(0, 0, w, h);
             
-            const baseBalance = 25000.00;
-            const data = [
-                baseBalance,
-                baseBalance + 120,
-                baseBalance - 150,
-                baseBalance + 300,
-                baseBalance + 420,
-                baseBalance + 310,
-                baseBalance + 650,
-                baseBalance + 520,
-                baseBalance + 740,
-                state.balance
-            ];
+            // Dynamically trace balance history from state.history
+            const historyCopy = [...state.history].reverse(); // oldest to newest
+            let startBalance = state.balance;
+            historyCopy.forEach(h => {
+                startBalance -= h.pnl;
+            });
+
+            const data = [startBalance];
+            let accum = startBalance;
+            historyCopy.forEach(h => {
+                accum += h.pnl;
+                data.push(accum);
+            });
+
+            if (data.length < 2) {
+                data.unshift(state.balance);
+            }
+
+            // Cap the chart points to the last 12 to prevent crowding, if needed
+            if (data.length > 12) {
+                data.splice(0, data.length - 12);
+            }
             
-            const min = Math.min(...data) * 0.99;
-            const max = Math.max(...data) * 1.01;
+            const min = Math.min(...data) * 0.999;
+            const max = Math.max(...data) * 1.001;
             const range = max - min || 1;
             
-            const paddingLeft = 50;
+            const paddingLeft = 55;
             const paddingRight = 20;
             const paddingTop = 20;
             const paddingBottom = 30;
@@ -4930,15 +5036,23 @@
             }
             
             // Draw X-axis labels
-            const days = ['Día 1', 'Día 2', 'Día 3', 'Día 4', 'Día 5', 'Día 6', 'Día 7', 'Día 8', 'Día 9', 'Hoy'];
             const xStep = chartW / (data.length - 1);
-            
             ctx.fillStyle = '#7e8b9f';
+            ctx.font = '9px var(--font-inter)';
             ctx.textAlign = 'center';
-            days.forEach((day, i) => {
+            
+            for (let i = 0; i < data.length; i++) {
                 const x = paddingLeft + i * xStep;
-                ctx.fillText(day, x, h - 10);
-            });
+                let label = '';
+                if (i === data.length - 1) {
+                    label = 'Hoy';
+                } else if (i === 0) {
+                    label = 'Inicio';
+                } else {
+                    label = `Op. ${i}`;
+                }
+                ctx.fillText(label, x, h - 10);
+            }
             
             // Draw line
             ctx.beginPath();
@@ -4962,7 +5076,7 @@
             ctx.closePath();
             
             const grad = ctx.createLinearGradient(0, paddingTop, 0, paddingTop + chartH);
-            grad.addColorStop(0, 'rgba(0, 242, 254, 0.15)');
+            grad.addColorStop(0, 'rgba(0, 242, 254, 0.12)');
             grad.addColorStop(1, 'rgba(0, 242, 254, 0)');
             ctx.fillStyle = grad;
             ctx.fill();
@@ -5091,8 +5205,10 @@
         // --- FULLSCREEN CHARTS TAB ---
         function initializeFullChart() {
             const container = document.getElementById('full-chart-candles');
+            const rsiContainer = document.getElementById('full-chart-rsi');
             if (!container) return;
             
+            // 1. Candlestick Chart
             chartCandlesFull = LightweightCharts.createChart(container, {
                 layout: {
                     background: { type: 'solid', color: 'transparent' },
@@ -5108,7 +5224,7 @@
                     vertLine: { color: 'rgba(0, 242, 254, 0.3)', style: 1 },
                     horzLine: { color: 'rgba(0, 242, 254, 0.3)', style: 1 },
                 },
-                rightPriceScale: { borderColor: 'rgba(255, 255, 255, 0.06)' },
+                rightPriceScale: { borderColor: 'rgba(255, 255, 255, 0.06)', visible: true },
                 timeScale: { borderColor: 'rgba(255, 255, 255, 0.06)', timeVisible: true }
             });
 
@@ -5118,25 +5234,106 @@
                 wickDownColor: '#ff3d71', wickUpColor: '#00e676',
             });
 
+            // Add EMA lines
+            ema20SeriesFull = chartCandlesFull.addSeries(LightweightCharts.LineSeries, {
+                color: '#ffd32a',
+                lineWidth: 1,
+                title: 'EMA 20',
+                priceScaleId: 'right'
+            });
+
+            ema50SeriesFull = chartCandlesFull.addSeries(LightweightCharts.LineSeries, {
+                color: '#0fbcf9',
+                lineWidth: 1.2,
+                title: 'EMA 50',
+                priceScaleId: 'right'
+            });
+
+            ema200SeriesFull = chartCandlesFull.addSeries(LightweightCharts.LineSeries, {
+                color: '#8e44ad',
+                lineWidth: 1.5,
+                title: 'EMA 200',
+                priceScaleId: 'right'
+            });
+
+            // 2. RSI Chart
+            if (rsiContainer) {
+                chartRsiFull = LightweightCharts.createChart(rsiContainer, {
+                    layout: {
+                        background: { type: 'solid', color: 'transparent' },
+                        textColor: '#7e8b9f',
+                        fontSize: 9,
+                    },
+                    grid: {
+                        vertLines: { color: 'rgba(255, 255, 255, 0.02)' },
+                        horzLines: { color: 'rgba(255, 255, 255, 0.02)' },
+                    },
+                    rightPriceScale: {
+                        borderColor: 'rgba(255, 255, 255, 0.06)',
+                        visible: true,
+                        mode: LightweightCharts.PriceScaleMode.Normal,
+                        minValue: 0,
+                        maxValue: 100,
+                    },
+                    timeScale: {
+                        borderColor: 'rgba(255, 255, 255, 0.06)',
+                        visible: false,
+                    },
+                });
+
+                rsiSeriesFull = chartRsiFull.addSeries(LightweightCharts.LineSeries, {
+                    color: '#00f2fe',
+                    lineWidth: 1,
+                    priceScaleId: 'right',
+                });
+
+                // Sync timescales
+                chartCandlesFull.timeScale().subscribeVisibleTimeRangeChange((range) => {
+                    if (range) chartRsiFull.timeScale().setVisibleRange(range);
+                });
+            }
+
+            // Apply visibility options
+            ema20SeriesFull.applyOptions({ visible: state.indicatorsVisible });
+            ema50SeriesFull.applyOptions({ visible: state.indicatorsVisible });
+            ema200SeriesFull.applyOptions({ visible: state.indicatorsVisible });
+            if (rsiSeriesFull) rsiSeriesFull.applyOptions({ visible: state.indicatorsVisible });
+
+            const flLegend = document.getElementById('full-indicators-legend-overlay');
+            const flRsiLegend = document.getElementById('full-rsi-legend-overlay');
+            if (flLegend) flLegend.style.display = state.indicatorsVisible ? 'flex' : 'none';
+            if (flRsiLegend) flRsiLegend.style.display = state.indicatorsVisible ? 'flex' : 'none';
+            if (rsiContainer) rsiContainer.style.display = state.indicatorsVisible ? 'block' : 'none';
+
             // Watch sizing
             const handleResize = () => {
-                if (chartCandlesFull) {
+                if (chartCandlesFull && container) {
                     chartCandlesFull.applyOptions({
                         width: container.clientWidth,
                         height: container.clientHeight
                     });
                 }
+                if (chartRsiFull && rsiContainer) {
+                    chartRsiFull.applyOptions({
+                        width: rsiContainer.clientWidth,
+                        height: rsiContainer.clientHeight
+                    });
+                }
             };
             new ResizeObserver(handleResize).observe(container);
+            if (rsiContainer) {
+                new ResizeObserver(handleResize).observe(rsiContainer);
+            }
 
-            candleSeriesFull.setData(chartData);
+            // Populate initial data by calling generator
+            generateHistoricalPrices();
             updateFullChartHeader();
         }
 
         function updateFullChartHeader() {
             const asset = assets.find(a => a.symbol === state.currentSymbol);
             if (!asset) return;
-            document.getElementById('full-chart-asset-title').innerText = `${asset.icon} ${asset.name} · ${asset.symbol} · 1h`;
+            document.getElementById('full-chart-asset-title').innerText = `${asset.icon} ${asset.name} · ${asset.symbol} · ${state.timeframe}`;
             
             const pctSign = asset.change >= 0 ? '+' : '';
             const pctClass = asset.change >= 0 ? 'color-up' : 'color-down';
@@ -5195,14 +5392,13 @@
                 const tr = document.createElement('tr');
                 const lastVal = bot.performance[bot.performance.length - 1] || 0;
                 const perfClass = lastVal >= 0 ? 'color-up' : 'color-down';
-                const sign = lastVal >= 0 ? '+' : '';
 
                 tr.innerHTML = `
                     <td><strong>${bot.name}</strong></td>
                     <td>${bot.strategy}</td>
                     <td><strong>${bot.symbol}</strong></td>
                     <td><span class="badge-status ${bot.status.toLowerCase()}">${bot.status}</span></td>
-                    <td class="${perfClass}" style="font-weight:600; font-family:var(--font-outfit);">${sign}$${lastVal.toFixed(2)}</td>
+                    <td class="${perfClass}" style="font-weight:600; font-family:var(--font-outfit);">${lastVal > 0 ? '+' : ''}${formatCurrency(lastVal)}</td>
                     <td style="font-family:var(--font-outfit); font-weight:500;">${bot.operations}</td>
                     <td>
                         <div class="bot-controls" style="justify-content:center;">
@@ -5233,10 +5429,9 @@
                 const lastVal = bot.performance[bot.performance.length - 1] || 0;
                 totalProfit += lastVal;
             });
-            const profitSign = totalProfit >= 0 ? '+' : '';
             const profitEl = document.getElementById('bot-stat-profit');
             if (profitEl) {
-                profitEl.innerText = `${profitSign}$${totalProfit.toFixed(2)}`;
+                profitEl.innerText = `${totalProfit >= 0 ? '+' : ''}${formatCurrency(totalProfit)}`;
                 profitEl.parentElement.className = `stat-card-premium ${totalProfit >= 0 ? 'up' : 'down'}`;
             }
 
@@ -5314,14 +5509,13 @@
                 state.positions.forEach(pos => {
                     const pnlVal = pos.pnl !== undefined ? pos.pnl : 0;
                     const pnlClass = pnlVal >= 0 ? 'color-up' : 'color-down';
-                    const sign = pnlVal >= 0 ? '+' : '';
                     content += `
                         <tr>
                             <td><strong>${pos.symbol}</strong></td>
                             <td><span class="badge-status ${pos.type === 'Compra' ? 'activo' : 'pausado'}">${pos.type}</span></td>
                             <td>${pos.volume.toFixed(2)}</td>
                             <td>${formatCurrency(pos.margin)}</td>
-                            <td class="${pnlClass}" style="font-weight:600;">${sign}$${pnlVal.toFixed(2)}</td>
+                            <td class="${pnlClass}" style="font-weight:600;">${pnlVal > 0 ? '+' : ''}${formatCurrency(pnlVal)}</td>
                         </tr>
                     `;
                 });
@@ -5344,23 +5538,14 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
             const exposure = { forex: 0, crypto: 0, commodity: 0, index: 0 };
+            let total = 0;
             
             state.positions.forEach(pos => {
                 const asset = assets.find(a => a.symbol === pos.symbol);
                 if (!asset) return;
                 const value = pos.volume * asset.contractSize * pos.currentPrice;
                 exposure[asset.type] += value;
-            });
-            
-            let total = 0;
-            Object.keys(exposure).forEach(k => {
-                if (exposure[k] === 0) {
-                    if (k === 'forex') exposure[k] = 120000;
-                    if (k === 'crypto') exposure[k] = 70000;
-                    if (k === 'commodity') exposure[k] = 30000;
-                    if (k === 'index') exposure[k] = 20000;
-                }
-                total += exposure[k];
+                total += value;
             });
             
             const colors = {
@@ -5370,9 +5555,27 @@
                 index: '#a594f9'
             };
             
+            const legendContainer = document.getElementById('portfolio-legend-container');
+            
+            if (total === 0) {
+                // Draw a simple grey ring representing zero exposure
+                ctx.beginPath();
+                ctx.arc(cx, cy, outerRadius, 0, 2 * Math.PI);
+                ctx.arc(cx, cy, innerRadius, 2 * Math.PI, 0, true);
+                ctx.closePath();
+                ctx.fillStyle = '#222a36';
+                ctx.fill();
+
+                if (legendContainer) {
+                    legendContainer.innerHTML = `<div class="empty-state" style="padding: 10px 0; text-align: center; font-style: normal;">Sin posiciones activas.</div>`;
+                }
+                return;
+            }
+            
             let startAngle = -0.5 * Math.PI;
             
             Object.keys(exposure).forEach(k => {
+                if (exposure[k] === 0) return;
                 const sliceAngle = (exposure[k] / total) * 2 * Math.PI;
                 ctx.beginPath();
                 ctx.arc(cx, cy, outerRadius, startAngle, startAngle + sliceAngle);
@@ -5385,11 +5588,11 @@
                 startAngle += sliceAngle;
             });
             
-            const legendContainer = document.getElementById('portfolio-legend-container');
             if (legendContainer) {
                 legendContainer.innerHTML = '';
                 Object.keys(exposure).forEach(k => {
                     const pct = (exposure[k] / total) * 100;
+                    if (pct === 0) return;
                     const item = document.createElement('div');
                     item.className = 'legend-item';
                     item.innerHTML = `
@@ -5457,7 +5660,6 @@
             filtered.forEach(h => {
                 const tr = document.createElement('tr');
                 const pnlClass = h.pnl >= 0 ? 'color-up' : 'color-down';
-                const sign = h.pnl >= 0 ? '+' : '';
                 const entry = h.price * 0.9995; // Mock entry price close
                 
                 tr.innerHTML = `
@@ -5468,7 +5670,7 @@
                     <td>${h.volume.toFixed(2)}</td>
                     <td style="font-family:var(--font-outfit);">${entry.toFixed(4)}</td>
                     <td style="font-family:var(--font-outfit);">${h.price.toFixed(4)}</td>
-                    <td class="${pnlClass}" style="font-weight:700;">${sign}$${h.pnl.toFixed(2)}</td>
+                    <td class="${pnlClass}" style="font-weight:700;">${h.pnl > 0 ? '+' : ''}${formatCurrency(h.pnl)}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -5695,7 +5897,7 @@
 
         function updateDrawdownLimit(val) {
             state.dailyDrawdownLimit = parseFloat(val) || 2000;
-            showSuccessToast(`Límite drawdown diario establecido en $${state.dailyDrawdownLimit}`);
+            showSuccessToast(`Límite drawdown diario establecido en ${formatCurrency(state.dailyDrawdownLimit)}`);
         }
 
         function toggleSoundEffects(enabled) {
@@ -5731,6 +5933,73 @@
             playSynthesizedAlertBeep(329.63, 0.25); // reset chord beep
             
             switchTab('dashboard');
+        }
+
+        // --- Interactive Charts & Indicator Controls ---
+        function changeTimeframe(tf, btn) {
+            state.timeframe = tf;
+            
+            // Update active state on buttons in both header controls
+            document.querySelectorAll('.chart-tf-btn').forEach(b => {
+                if (b.innerText === tf) {
+                    b.classList.add('active');
+                } else b.classList.remove('active');
+            });
+            
+            generateHistoricalPrices();
+            showInfoToast(`Intervalo cambiado a: ${tf}`);
+        }
+
+        function toggleIndicatorsVisibility() {
+            state.indicatorsVisible = !state.indicatorsVisible;
+            
+            // Update visual state on the buttons in both header controls
+            document.querySelectorAll('#trading-indicators-toggle-btn, #full-indicators-toggle-btn').forEach(btn => {
+                if (state.indicatorsVisible) {
+                    btn.classList.add('active');
+                } else btn.classList.remove('active');
+            });
+
+            // Set visibility of series on trading chart
+            if (ema20Series) ema20Series.applyOptions({ visible: state.indicatorsVisible });
+            if (ema50Series) ema50Series.applyOptions({ visible: state.indicatorsVisible });
+            if (ema200Series) ema200Series.applyOptions({ visible: state.indicatorsVisible });
+            if (rsiSeries) rsiSeries.applyOptions({ visible: state.indicatorsVisible });
+
+            // Set visibility of series on fullscreen chart
+            if (ema20SeriesFull) ema20SeriesFull.applyOptions({ visible: state.indicatorsVisible });
+            if (ema50SeriesFull) ema50SeriesFull.applyOptions({ visible: state.indicatorsVisible });
+            if (ema200SeriesFull) ema200SeriesFull.applyOptions({ visible: state.indicatorsVisible });
+            if (rsiSeriesFull) rsiSeriesFull.applyOptions({ visible: state.indicatorsVisible });
+
+            // Show/Hide overlays and sub-charts elements
+            const trLegend = document.getElementById('trading-indicators-legend-overlay');
+            const trRsiLegend = document.getElementById('trading-rsi-legend-overlay');
+            const trRsiChart = document.getElementById('chart-rsi');
+
+            const flLegend = document.getElementById('full-indicators-legend-overlay');
+            const flRsiLegend = document.getElementById('full-rsi-legend-overlay');
+            const flRsiChart = document.getElementById('full-chart-rsi');
+
+            const displayVal = state.indicatorsVisible ? 'flex' : 'none';
+            const blockVal = state.indicatorsVisible ? 'block' : 'none';
+
+            if (trLegend) trLegend.style.display = displayVal;
+            if (trRsiLegend) trRsiLegend.style.display = displayVal;
+            if (trRsiChart) trRsiChart.style.display = blockVal;
+
+            if (flLegend) flLegend.style.display = displayVal;
+            if (flRsiLegend) flRsiLegend.style.display = displayVal;
+            if (flRsiChart) flRsiChart.style.display = blockVal;
+
+            // Trigger window resize to recalculate canvas height when sub-charts show/hide
+            window.dispatchEvent(new Event('resize'));
+            
+            showSuccessToast(`Indicadores técnicos: ${state.indicatorsVisible ? 'Visibles' : 'Ocultos'}`);
+        }
+
+        function toggleTrendlineDrawing() {
+            showInfoToast('Herramienta de dibujo de tendencia activada (Haz clic en el gráfico para trazar)');
         }
 
         // --- Custom Toast Notifications ---
@@ -5774,7 +6043,8 @@
 
         // Helper to format money
         function formatCurrency(val) {
-            return '$' + val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const sign = val < 0 ? '-' : '';
+            return sign + '$' + Math.abs(val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
         // Responsive Sidebar Drawer & Dropdown Handlers
