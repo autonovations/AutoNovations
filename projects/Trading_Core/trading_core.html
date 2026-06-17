@@ -3211,8 +3211,8 @@
                 { id: 105, date: '16/06/2026 14:10', symbol: 'EURUSD', type: 'Venta', volume: 1.00, price: 1.08450, pnl: 62.30 }
             ],
             positions: [
-                { id: 1, symbol: 'EURUSD', type: 'Compra', volume: 1.00, entryPrice: 1.08520, sl: 1.08200, tp: 1.09300, currentPrice: 1.08645, margin: 108.65, owner: 'Manual' },
-                { id: 2, symbol: 'XAUUSD', type: 'Compra', volume: 0.50, entryPrice: 2350.15, sl: 2330.00, tp: 2400.00, currentPrice: 2355.18, margin: 588.80, owner: 'Manual' }
+                { id: 1, symbol: 'EURUSD', type: 'Compra', volume: 1.00, entryPrice: 1.08520, sl: 1.08200, tp: 1.09300, currentPrice: 1.08645, margin: 108.65, pnl: 125.00, owner: 'Manual' },
+                { id: 2, symbol: 'XAUUSD', type: 'Compra', volume: 0.50, entryPrice: 2350.15, sl: 2330.00, tp: 2400.00, currentPrice: 2355.18, margin: 588.80, pnl: 251.50, owner: 'Manual' }
             ],
             bots: [
                 { id: 'bot-1', name: 'Alpha Scalper', strategy: 'Scalping EMA + RSI', symbol: 'EURUSD', status: 'Activo', operations: 126, performance: [10, 15, 8, 14, 22, 28, 25, 32, 40] },
@@ -3745,11 +3745,13 @@
 
             state.positions.forEach(pos => {
                 const tr = document.createElement('tr');
-                const pnlClass = pos.pnl >= 0 ? 'up' : 'down';
-                const sign = pos.pnl >= 0 ? '+' : '';
+                const pnlVal = pos.pnl !== undefined ? pos.pnl : 0;
+                const pnlClass = pnlVal >= 0 ? 'up' : 'down';
+                const sign = pnlVal >= 0 ? '+' : '';
                 
                 const asset = assets.find(a => a.symbol === pos.symbol);
-                const showPnl = pos.pnl.toFixed(2);
+                const digits = asset ? asset.digits : 4;
+                const showPnl = pnlVal.toFixed(2);
                 
                 const isBot = pos.owner.startsWith('Bot');
                 const rowStyle = isBot ? 'style="border-left: 2px solid rgba(108, 92, 231, 0.4);"' : '';
@@ -3765,9 +3767,9 @@
                         </span>
                     </td>
                     <td>${pos.volume.toFixed(2)}</td>
-                    <td>${pos.entryPrice.toFixed(asset.digits)}</td>
-                    <td>${pos.sl > 0 ? pos.sl.toFixed(asset.digits) : '-'}</td>
-                    <td>${pos.tp > 0 ? pos.tp.toFixed(asset.digits) : '-'}</td>
+                    <td>${pos.entryPrice.toFixed(digits)}</td>
+                    <td>${pos.sl > 0 ? pos.sl.toFixed(digits) : '-'}</td>
+                    <td>${pos.tp > 0 ? pos.tp.toFixed(digits) : '-'}</td>
                     <td class="pnl-cell ${pnlClass}" id="pos-pnl-${pos.id}">${sign}$${showPnl}</td>
                     <td>
                         <button class="close-btn" onclick="closePosition(${pos.id})" title="Cerrar posición">
@@ -3872,8 +3874,25 @@
             const max = Math.max(...data);
             const range = max - min || 1;
 
+            // Resolve color tokens to raw values
+            let strokeColor = color;
+            let fillColor = 'rgba(0,0,0,0)';
+            if (color === 'var(--color-up)') {
+                strokeColor = '#00e676';
+                fillColor = 'rgba(0, 230, 118, 0.15)';
+            } else if (color === 'var(--color-down)') {
+                strokeColor = '#ff3d71';
+                fillColor = 'rgba(255, 61, 113, 0.15)';
+            } else if (color === 'var(--color-warning)') {
+                strokeColor = '#ff9f43';
+                fillColor = 'rgba(255, 159, 67, 0.15)';
+            } else if (color === 'var(--color-primary)') {
+                strokeColor = '#00f2fe';
+                fillColor = 'rgba(0, 242, 254, 0.15)';
+            }
+
             ctx.beginPath();
-            ctx.strokeStyle = color;
+            ctx.strokeStyle = strokeColor;
             ctx.lineWidth = 1.5;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
@@ -3897,7 +3916,7 @@
             ctx.closePath();
             
             const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            gradient.addColorStop(0, color.replace(')', ', 0.15)').replace('var', 'rgba'));
+            gradient.addColorStop(0, fillColor);
             gradient.addColorStop(1, 'rgba(0,0,0,0)');
             ctx.fillStyle = gradient;
             ctx.fill();
@@ -4627,8 +4646,9 @@
                 content = `<tr><td colspan="6" class="empty-state">No hay posiciones abiertas.</td></tr>`;
             } else {
                 state.positions.slice(0, 4).forEach(pos => {
-                    const pnlClass = pos.pnl >= 0 ? 'up' : 'down';
-                    const sign = pos.pnl >= 0 ? '+' : '';
+                    const pnlVal = pos.pnl !== undefined ? pos.pnl : 0;
+                    const pnlClass = pnlVal >= 0 ? 'up' : 'down';
+                    const sign = pnlVal >= 0 ? '+' : '';
                     const asset = assets.find(a => a.symbol === pos.symbol) || { digits: 4 };
                     content += `
                         <tr>
@@ -4637,7 +4657,7 @@
                             <td>${pos.volume.toFixed(2)}</td>
                             <td>${pos.entryPrice.toFixed(asset.digits)}</td>
                             <td>${pos.currentPrice.toFixed(asset.digits)}</td>
-                            <td class="pnl-cell ${pnlClass}" style="font-weight:600;">${sign}$${pos.pnl.toFixed(2)}</td>
+                            <td class="pnl-cell ${pnlClass}" style="font-weight:600;">${sign}$${pnlVal.toFixed(2)}</td>
                         </tr>
                     `;
                 });
@@ -5081,15 +5101,16 @@
                 content = `<tr><td colspan="5" class="empty-state">No hay exposición de capital en este momento.</td></tr>`;
             } else {
                 state.positions.forEach(pos => {
-                    const pnlClass = pos.pnl >= 0 ? 'color-up' : 'color-down';
-                    const sign = pos.pnl >= 0 ? '+' : '';
+                    const pnlVal = pos.pnl !== undefined ? pos.pnl : 0;
+                    const pnlClass = pnlVal >= 0 ? 'color-up' : 'color-down';
+                    const sign = pnlVal >= 0 ? '+' : '';
                     content += `
                         <tr>
                             <td><strong>${pos.symbol}</strong></td>
                             <td><span class="badge-status ${pos.type === 'Compra' ? 'activo' : 'pausado'}">${pos.type}</span></td>
                             <td>${pos.volume.toFixed(2)}</td>
                             <td>${formatCurrency(pos.margin)}</td>
-                            <td class="${pnlClass}" style="font-weight:600;">${sign}$${pos.pnl.toFixed(2)}</td>
+                            <td class="${pnlClass}" style="font-weight:600;">${sign}$${pnlVal.toFixed(2)}</td>
                         </tr>
                     `;
                 });
