@@ -123,8 +123,11 @@
     <div class="absolute inset-0 grid-bg pointer-events-none z-0"></div>
     <div id="alarmOverlay" class="fixed inset-0 pointer-events-none z-10 transition-all duration-700 opacity-0 bg-red-600/5"></div>
 
+    <!-- Sidebar backdrop for mobile overlay -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-35 hidden lg:hidden transition-all duration-300" onclick="closeMobileSidebar()"></div>
+
     <!-- SIDEBAR -->
-    <aside id="sidebar" class="w-64 shrink-0 bg-[#05070c] border-r border-slate-900/60 flex flex-col justify-between py-6 px-4 z-20 transition-all duration-300 relative">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 lg:static w-64 shrink-0 bg-[#05070c] border-r border-slate-900/60 flex flex-col justify-between py-6 px-4 transition-all duration-300 ease-in-out">
         <div class="space-y-6">
             <!-- Logo area -->
             <div class="flex items-center gap-3 px-2 mb-2">
@@ -202,13 +205,19 @@
     </aside>
 
     <!-- CONTENT WRAPPER -->
-    <div class="flex-grow flex flex-col min-w-0 overflow-y-auto z-10 relative">
+    <div id="content-wrapper" class="flex-grow flex flex-col min-w-0 overflow-y-auto z-10 relative">
         
         <!-- HEADER -->
         <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 py-4 px-8 border-b border-slate-900 bg-[#06080e]/95 backdrop-blur-md sticky top-0 z-30">
-            <div>
-                <h2 class="text-xl font-bold text-white tracking-tight" id="view-title">Vista General</h2>
-                <p class="text-xs text-slate-400 mt-0.5" id="view-subtitle">Resumen de la postura de seguridad y operaciones en tiempo real.</p>
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <!-- Mobile Sidebar Toggle -->
+                <button onclick="toggleMobileSidebar()" class="lg:hidden p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800 transition-all shrink-0 focus:outline-none" id="btn-sidebar-mobile-toggle">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+                <div>
+                    <h2 class="text-xl font-bold text-white tracking-tight" id="view-title">Vista General</h2>
+                    <p class="text-xs text-slate-400 mt-0.5" id="view-subtitle">Resumen de la postura de seguridad y operaciones en tiempo real.</p>
+                </div>
             </div>
 
             <!-- Controls and Tickers -->
@@ -266,7 +275,7 @@
             <!-- VIEW: VISTA GENERAL (DASHBOARD) -->
             <div id="view-general-container" class="space-y-6">
                 <!-- KPI Stats Cards Row (6 columns) -->
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                     <!-- KPI Card 1: Alertas Totales -->
                     <div class="glass-card p-4 rounded-xl flex flex-col justify-between h-[105px]">
                         <div class="flex justify-between items-start">
@@ -510,8 +519,8 @@
                                         <th class="py-2 pr-2 font-semibold" id="tbl-h-time">TIEMPO</th>
                                         <th class="py-2 px-2 font-semibold" id="tbl-h-severity">SEVERIDAD</th>
                                         <th class="py-2 px-2 font-semibold" id="tbl-h-rule">REGLA / DESCRIPCIÓN</th>
-                                        <th class="py-2 px-2 font-semibold" id="tbl-h-source">FUENTE</th>
-                                        <th class="py-2 pl-2 font-semibold" id="tbl-h-dest">DESTINO</th>
+                                        <th class="py-2 px-2 font-semibold hidden md:table-cell" id="tbl-h-source">FUENTE</th>
+                                        <th class="py-2 pl-2 font-semibold hidden md:table-cell" id="tbl-h-dest">DESTINO</th>
                                     </tr>
                                 </thead>
                                 <tbody id="recent-alerts-tbody" class="divide-y divide-slate-900/60 cursor-pointer select-none">
@@ -750,7 +759,7 @@
                         </div>
 
                         <!-- Node Status Summary Grid -->
-                        <div class="grid grid-cols-5 gap-2 mb-4 text-center font-mono text-[10px]">
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4 text-center font-mono text-[10px]">
                             <div class="p-2 rounded bg-slate-950/60 border border-slate-900">
                                 <div class="text-slate-500" id="lbl-node-total">NODOS</div>
                                 <div class="font-bold text-white text-sm mt-1">5</div>
@@ -956,8 +965,8 @@
                                     <th class="py-2 pr-2 font-semibold">TIEMPO / TIME</th>
                                     <th class="py-2 px-2 font-semibold">SEVERIDAD / SEVERITY</th>
                                     <th class="py-2 px-2 font-semibold">REGLA / RULE</th>
-                                    <th class="py-2 px-2 font-semibold">FUENTE / SOURCE</th>
-                                    <th class="py-2 pl-2 font-semibold">DESTINO / DESTINATION</th>
+                                    <th class="py-2 px-2 font-semibold hidden md:table-cell">FUENTE / SOURCE</th>
+                                    <th class="py-2 pl-2 font-semibold hidden md:table-cell">DESTINO / DESTINATION</th>
                                 </tr>
                             </thead>
                             <tbody id="alerts-view-tbody" class="divide-y divide-slate-900/60 cursor-pointer select-none">
@@ -996,7 +1005,7 @@
                 </div>
 
                 <!-- Kanban Board -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 min-h-[400px]">
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 min-h-[400px]">
                     <!-- Column: NEW -->
                     <div class="glass-card p-4 rounded-xl flex flex-col bg-slate-950/20">
                         <div class="flex justify-between items-center pb-2 border-b border-slate-900 mb-3">
@@ -1204,15 +1213,15 @@
                         </h3>
                         <span id="lbl-assets-count" class="text-slate-500 text-[10px] font-mono">8 Activos Monitoreados</span>
                     </div>
-                    <div class="flex-grow overflow-y-auto">
+                    <div class="flex-grow overflow-y-auto overflow-x-auto">
                         <table class="w-full text-left text-[11px] font-mono border-collapse">
                             <thead>
                                 <tr class="border-b border-slate-900 text-slate-500">
                                     <th class="py-2 pr-2 font-semibold">ACTIVO / DEVICE</th>
                                     <th class="py-2 px-2 font-semibold">DIRECCIÓN IP / MAC</th>
                                     <th class="py-2 px-2 font-semibold">ESTADO / STATUS</th>
-                                    <th class="py-2 px-2 font-semibold">USO DE TELEMETRÍA (CPU/RAM/DISK)</th>
-                                    <th class="py-2 px-2 font-semibold">VULN / CVE</th>
+                                    <th class="py-2 px-2 font-semibold hidden md:table-cell">USO DE TELEMETRÍA (CPU/RAM/DISK)</th>
+                                    <th class="py-2 px-2 font-semibold hidden sm:table-cell">VULN / CVE</th>
                                     <th class="py-2 pl-2 font-semibold text-right">ACCIONES / ACTIONS</th>
                                 </tr>
                             </thead>
@@ -1236,14 +1245,14 @@
                             </h3>
                             <input type="text" id="users-search" oninput="renderUsersView()" placeholder="Buscar usuario..." class="bg-slate-950/80 text-slate-200 border border-slate-900 rounded px-2 py-1 outline-none text-[11px] w-40 focus:border-blue-500 transition-colors" />
                         </div>
-                        <div class="flex-grow overflow-y-auto">
+                        <div class="flex-grow overflow-y-auto overflow-x-auto">
                             <table class="w-full text-left text-[11px] font-mono border-collapse">
                                 <thead>
                                     <tr class="border-b border-slate-900 text-slate-500">
                                         <th class="py-2 pr-2 font-semibold">USUARIO / USERNAME</th>
                                         <th class="py-2 px-2 font-semibold">ROL / ROLE</th>
                                         <th class="py-2 px-2 font-semibold">RIESGO / RISK</th>
-                                        <th class="py-2 px-2 font-semibold">DIRECCIÓN IP / SOURCE</th>
+                                        <th class="py-2 px-2 font-semibold hidden sm:table-cell">DIRECCIÓN IP / SOURCE</th>
                                         <th class="py-2 pl-2 font-semibold">ESTADO / STATUS</th>
                                     </tr>
                                 </thead>
@@ -1346,8 +1355,8 @@
                                     <th class="py-2 pr-2 font-semibold">CÓDIGO / CVE</th>
                                     <th class="py-2 px-2 font-semibold">IMPACTO / CVSS</th>
                                     <th class="py-2 px-2 font-semibold">SEVERIDAD / SEVERITY</th>
-                                    <th class="py-2 px-2 font-semibold">AFECTA A / HOST TARGET</th>
-                                    <th class="py-2 px-2 font-semibold">DESCRIPCIÓN / INFO</th>
+                                    <th class="py-2 px-2 font-semibold hidden md:table-cell">AFECTA A / HOST TARGET</th>
+                                    <th class="py-2 px-2 font-semibold hidden lg:table-cell">DESCRIPCIÓN / INFO</th>
                                     <th class="py-2 px-2 font-semibold">ESTADO / STATUS</th>
                                     <th class="py-2 pl-2 font-semibold text-right">ACCIONES / ACTION</th>
                                 </tr>
@@ -2279,6 +2288,11 @@
 
         function switchTab(tabId) {
             playSound.click();
+            closeMobileSidebar();
+            const contentWrapper = document.getElementById('content-wrapper');
+            if (contentWrapper) {
+                contentWrapper.scrollTop = 0;
+            }
             
             // Remove active classes from all tab buttons
             const nav = document.getElementById('sidebar-nav');
@@ -2323,6 +2337,7 @@
                     doughnutChart.resize();
                     lineChart.resize();
                 }
+                resizeMapCanvas();
             } else if (tabId === 'monitoreo') {
                 document.getElementById('view-monitoreo-container').classList.remove('hidden');
                 titleEl.innerText = currentLang === 'es' ? "Monitoreo de Nodos" : "Node Monitoring";
@@ -2402,6 +2417,31 @@
             lucide.createIcons();
         }
 
+        let mobileSidebarOpen = false;
+        function toggleMobileSidebar() {
+            playSound.click();
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if(mobileSidebarOpen) {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+                mobileSidebarOpen = false;
+            } else {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+                mobileSidebarOpen = true;
+            }
+        }
+        function closeMobileSidebar() {
+            if(mobileSidebarOpen) {
+                const sidebar = document.getElementById('sidebar');
+                const backdrop = document.getElementById('sidebar-backdrop');
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+                mobileSidebarOpen = false;
+            }
+        }
+
         function toggleSidebar() {
             playSound.click();
             const sidebar = document.getElementById('sidebar');
@@ -2410,16 +2450,18 @@
 
             if(sidebarCollapsed) {
                 // Expand
-                sidebar.className = "w-64 shrink-0 bg-[#05070c] border-r border-slate-900/60 flex flex-col justify-between py-6 px-4 z-20 transition-all duration-300 relative";
-                collapseIcon.className = "w-4.5 h-4.5 transition-transform duration-300";
+                sidebar.classList.remove('w-16', 'px-3', 'items-center', 'text-center');
+                sidebar.classList.add('w-64', 'px-4');
+                collapseIcon.classList.remove('rotate-180');
                 setTimeout(() => {
                     textElements.forEach(el => el.classList.remove('hidden'));
                 }, 100);
                 sidebarCollapsed = false;
             } else {
                 // Collapse
-                sidebar.className = "w-16 shrink-0 bg-[#05070c] border-r border-slate-900/60 flex flex-col justify-between py-6 px-3 z-20 transition-all duration-300 relative items-center text-center";
-                collapseIcon.className = "w-4.5 h-4.5 transition-transform duration-300 rotate-180";
+                sidebar.classList.remove('w-64', 'px-4');
+                sidebar.classList.add('w-16', 'px-3', 'items-center', 'text-center');
+                collapseIcon.classList.add('rotate-180');
                 textElements.forEach(el => el.classList.add('hidden'));
                 sidebarCollapsed = true;
             }
@@ -2721,6 +2763,9 @@
             document.getElementById('diag-panel').classList.remove('hidden');
             
             renderNodeDetails(nodeId);
+            if (window.innerWidth < 1024) {
+                document.getElementById('diag-panel').scrollIntoView({ behavior: 'smooth' });
+            }
         }
 
         function renderNodeDetails(nodeId) {
@@ -2983,8 +3028,8 @@
                         <span class="px-2 py-0.5 rounded text-[9px] uppercase tracking-wide inline-block ${sevBadgeClass}">${currentLang === 'en' ? (alert.severity === 'CRITICAL' ? 'CRITICAL' : alert.severity) : (alert.severity === 'CRITICAL' ? 'CRÍTICA' : alert.severity)}</span>
                     </td>
                     <td class="py-2.5 px-2 text-slate-200">${alert.rule}</td>
-                    <td class="py-2.5 px-2 text-slate-400">${alert.source}</td>
-                    <td class="py-2.5 pl-2 text-slate-400">${alert.destination}</td>
+                    <td class="py-2.5 px-2 text-slate-400 hidden md:table-cell">${alert.source}</td>
+                    <td class="py-2.5 pl-2 text-slate-400 hidden md:table-cell">${alert.destination}</td>
                 `;
 
                 // Add popup forensics click handler
@@ -3814,8 +3859,8 @@
                         <span class="px-2 py-0.5 rounded text-[9px] uppercase tracking-wide inline-block ${sevBadgeClass}">${displaySev}</span>
                     </td>
                     <td class="py-2.5 px-2 text-slate-200">${alert.rule}</td>
-                    <td class="py-2.5 px-2 text-slate-400 font-mono">${alert.source}</td>
-                    <td class="py-2.5 pl-2 text-slate-400 font-mono">${alert.destination}</td>
+                    <td class="py-2.5 px-2 text-slate-400 font-mono hidden md:table-cell">${alert.source}</td>
+                    <td class="py-2.5 pl-2 text-slate-400 font-mono hidden md:table-cell">${alert.destination}</td>
                 `;
 
                 tr.addEventListener('click', () => {
@@ -4061,6 +4106,9 @@
                     selectedCaseId = c.id;
                     playSound.click();
                     renderCasesView();
+                    if (window.innerWidth < 1024) {
+                        document.getElementById('case-detail-content').scrollIntoView({ behavior: 'smooth' });
+                    }
                 });
 
                 listContainer.appendChild(card);
@@ -4351,16 +4399,16 @@
                 tr.innerHTML = `
                     <td class="py-3 pr-2">
                         <div class="font-bold text-white text-[11px]">${asset.name}</div>
-                        <div class="text-[9px] text-slate-500">${asset.os} | ${asset.type}</div>
+                        <div class="text-[9px] text-slate-500"><span class="hidden sm:inline">${asset.os} | </span>${asset.type}</div>
                     </td>
                     <td class="py-3 px-2 font-mono">
                         <div>${asset.ip}</div>
-                        <div class="text-[9px] text-slate-500">${asset.mac}</div>
+                        <div class="text-[9px] text-slate-500 hidden lg:block">${asset.mac}</div>
                     </td>
                     <td class="py-3 px-2">
                         <span class="px-2 py-0.5 rounded text-[9px] uppercase tracking-wide inline-block ${statusBadge}">${actualStatus.toUpperCase()}</span>
                     </td>
-                    <td class="py-3 px-2 font-mono text-[10px] w-48">
+                    <td class="py-3 px-2 font-mono text-[10px] w-48 hidden md:table-cell">
                         <div class="space-y-1">
                             <div class="flex justify-between">
                                 <span>CPU: ${actualCpu}%</span>
@@ -4372,7 +4420,7 @@
                             </div>
                         </div>
                     </td>
-                    <td class="py-3 px-2">
+                    <td class="py-3 px-2 hidden sm:table-cell">
                         ${patchBadge}
                         ${asset.vulnerabilities.length > 0 ? `<div class="text-[9px] text-red-400 mt-1 font-bold font-mono">${asset.vulnerabilities.join(', ')}</div>` : ''}
                     </td>
@@ -4561,7 +4609,7 @@
                     </td>
                     <td class="py-2.5 px-2 text-slate-300 font-mono text-[10px]">${user.role}</td>
                     <td class="py-2.5 px-2 ${riskColor} text-[10px]">${user.risk}%</td>
-                    <td class="py-2.5 px-2 text-slate-400 font-mono text-[10px]">${user.ip}</td>
+                    <td class="py-2.5 px-2 text-slate-400 font-mono text-[10px] hidden sm:table-cell">${user.ip}</td>
                     <td class="py-2.5 pl-2">
                         <span class="px-2 py-0.5 rounded text-[8px] uppercase font-bold tracking-wider inline-block ${statusBadge}">${user.status.toUpperCase()}</span>
                     </td>
@@ -4571,6 +4619,9 @@
                     selectedUsername = user.username;
                     playSound.click();
                     renderUsersView();
+                    if (window.innerWidth < 1024) {
+                        document.getElementById('user-audit-content').scrollIntoView({ behavior: 'smooth' });
+                    }
                 });
 
                 tbody.appendChild(tr);
@@ -4699,8 +4750,8 @@
                     <td class="py-3 px-2">
                         <span class="px-1.5 py-0.5 rounded text-[8px] font-bold ${v.severity === 'CRITICAL' ? 'text-red-500 bg-red-500/15' : 'text-orange-500 bg-orange-500/15'}">${displaySev}</span>
                     </td>
-                    <td class="py-3 px-2 text-white">${v.asset}</td>
-                    <td class="py-3 px-2 text-slate-400 text-[10px] font-body w-60">${v.desc}</td>
+                    <td class="py-3 px-2 text-white hidden md:table-cell">${v.asset}</td>
+                    <td class="py-3 px-2 text-slate-400 text-[10px] font-body w-60 hidden lg:table-cell">${v.desc}</td>
                     <td class="py-3 px-2">${statusBadge}</td>
                     <td class="py-3 pl-2 text-right">${actionBtn}</td>
                 `;
