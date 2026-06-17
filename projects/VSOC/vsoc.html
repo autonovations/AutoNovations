@@ -40,12 +40,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        :root {
-            --glow-cyber: 0 0 15px rgba(0, 240, 255, 0.25);
-            --glow-alert: 0 0 15px rgba(255, 0, 60, 0.25);
-            --glow-warning: 0 0 15px rgba(249, 115, 22, 0.25);
-        }
-
         body {
             background-color: #080b11;
             color: #f8fafc;
@@ -59,6 +53,8 @@
             border: 1px solid rgba(255, 255, 255, 0.04);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            position: relative;
         }
         .glass-card:hover {
             border-color: rgba(255, 255, 255, 0.08);
@@ -90,15 +86,6 @@
             background: rgba(59, 130, 246, 0.5);
         }
 
-        /* Pulse red alerts */
-        @keyframes redPulse {
-            0%, 100% { background-color: rgba(255, 0, 60, 0.03); }
-            50% { background-color: rgba(255, 0, 60, 0.15); }
-        }
-        .alarm-alert {
-            animation: redPulse 1.5s infinite;
-        }
-
         /* SweetAlert Cyber Customizations */
         .vsoc-swal-popup {
             background: rgba(13, 18, 34, 0.95) !important;
@@ -118,9 +105,10 @@
         }
     </style>
 </head>
-<body class="font-body selection:bg-blue-600 selection:text-white min-h-screen flex relative overflow-y-auto lg:overflow-hidden">
+<body class="font-body selection:bg-blue-600 selection:text-white h-screen flex relative overflow-hidden">
     <!-- Grid overlay & alarm active layer -->
     <div class="absolute inset-0 grid-bg pointer-events-none z-0"></div>
+    <canvas id="matrixCanvas" class="absolute inset-0 pointer-events-none z-0 opacity-0 transition-opacity duration-1000"></canvas>
     <div id="alarmOverlay" class="fixed inset-0 pointer-events-none z-10 transition-all duration-700 opacity-0 bg-red-600/5"></div>
 
     <!-- Sidebar backdrop for mobile overlay -->
@@ -205,7 +193,7 @@
     </aside>
 
     <!-- CONTENT WRAPPER -->
-    <div id="content-wrapper" class="flex-grow flex flex-col min-w-0 overflow-y-visible lg:overflow-y-auto z-10 relative">
+    <div id="content-wrapper" class="flex-grow flex flex-col min-w-0 overflow-y-auto z-10 relative">
         
         <!-- HEADER -->
         <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 py-4 px-8 border-b border-slate-900 bg-[#06080e]/95 backdrop-blur-md sticky top-0 z-30">
@@ -277,7 +265,7 @@
                 <!-- KPI Stats Cards Row (6 columns) -->
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                     <!-- KPI Card 1: Alertas Totales -->
-                    <div class="glass-card p-4 rounded-xl flex flex-col justify-between h-[105px]">
+                    <div class="glass-card p-3.5 rounded-xl flex flex-col justify-between h-[112px] relative overflow-hidden">
                         <div class="flex justify-between items-start">
                             <span class="text-[10px] font-bold text-slate-400 tracking-wide uppercase" id="lbl-card-total">Alertas Totales</span>
                             <div class="p-1.5 rounded-lg bg-red-500/10 text-red-500 shrink-0">
@@ -292,12 +280,12 @@
                                 <i data-lucide="arrow-down-right" class="w-3.5 h-3.5"></i>
                                 <span>18% vs ayer</span>
                             </span>
-                            <canvas id="sparkline-total" class="w-[60px] h-[18px]"></canvas>
+                            <canvas id="sparkline-total" class="w-[48px] xl:w-[60px] h-[18px] shrink-0"></canvas>
                         </div>
                     </div>
 
                     <!-- KPI Card 2: Alertas Criticas -->
-                    <div class="glass-card p-4 rounded-xl flex flex-col justify-between h-[105px]">
+                    <div class="glass-card p-3.5 rounded-xl flex flex-col justify-between h-[112px] relative overflow-hidden">
                         <div class="flex justify-between items-start">
                             <span class="text-[10px] font-bold text-slate-400 tracking-wide uppercase" id="lbl-card-critical">Alertas Críticas</span>
                             <div class="p-1.5 rounded-lg bg-red-600/10 text-red-500 shrink-0 shadow-[0_0_8px_rgba(239,68,68,0.1)]">
@@ -312,12 +300,12 @@
                                 <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
                                 <span>22% vs ayer</span>
                             </span>
-                            <canvas id="sparkline-critical" class="w-[60px] h-[18px]"></canvas>
+                            <canvas id="sparkline-critical" class="w-[48px] xl:w-[60px] h-[18px] shrink-0"></canvas>
                         </div>
                     </div>
 
                     <!-- KPI Card 3: Alertas Altas -->
-                    <div class="glass-card p-4 rounded-xl flex flex-col justify-between h-[105px]">
+                    <div class="glass-card p-3.5 rounded-xl flex flex-col justify-between h-[112px] relative overflow-hidden">
                         <div class="flex justify-between items-start">
                             <span class="text-[10px] font-bold text-slate-400 tracking-wide uppercase" id="lbl-card-high">Alertas Altas</span>
                             <div class="p-1.5 rounded-lg bg-orange-500/10 text-orange-500 shrink-0">
@@ -332,12 +320,12 @@
                                 <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
                                 <span>15% vs ayer</span>
                             </span>
-                            <canvas id="sparkline-high" class="w-[60px] h-[18px]"></canvas>
+                            <canvas id="sparkline-high" class="w-[48px] xl:w-[60px] h-[18px] shrink-0"></canvas>
                         </div>
                     </div>
 
                     <!-- KPI Card 4: Incidentes Activos -->
-                    <div class="glass-card p-4 rounded-xl flex flex-col justify-between h-[105px]">
+                    <div class="glass-card p-3.5 rounded-xl flex flex-col justify-between h-[112px] relative overflow-hidden">
                         <div class="flex justify-between items-start">
                             <span class="text-[10px] font-bold text-slate-400 tracking-wide uppercase" id="lbl-card-active">Incidentes Activos</span>
                             <div class="p-1.5 rounded-lg bg-purple-500/10 text-purple-400 shrink-0">
@@ -352,12 +340,12 @@
                                 <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
                                 <span>12% vs ayer</span>
                             </span>
-                            <canvas id="sparkline-incidents" class="w-[60px] h-[18px]"></canvas>
+                            <canvas id="sparkline-incidents" class="w-[48px] xl:w-[60px] h-[18px] shrink-0"></canvas>
                         </div>
                     </div>
 
                     <!-- KPI Card 5: Activos Monitoreados -->
-                    <div class="glass-card p-4 rounded-xl flex flex-col justify-between h-[105px]">
+                    <div class="glass-card p-3.5 rounded-xl flex flex-col justify-between h-[112px] relative overflow-hidden">
                         <div class="flex justify-between items-start">
                             <span class="text-[10px] font-bold text-slate-400 tracking-wide uppercase" id="lbl-card-assets">Activos Monitoreados</span>
                             <div class="p-1.5 rounded-lg bg-blue-500/10 text-blue-400 shrink-0">
@@ -372,12 +360,12 @@
                                 <i data-lucide="arrow-down-right" class="w-3.5 h-3.5"></i>
                                 <span>8% vs ayer</span>
                             </span>
-                            <canvas id="sparkline-assets" class="w-[60px] h-[18px]"></canvas>
+                            <canvas id="sparkline-assets" class="w-[48px] xl:w-[60px] h-[18px] shrink-0"></canvas>
                         </div>
                     </div>
 
                     <!-- KPI Card 6: Usuarios Monitoreados -->
-                    <div class="glass-card p-4 rounded-xl flex flex-col justify-between h-[105px]">
+                    <div class="glass-card p-3.5 rounded-xl flex flex-col justify-between h-[112px] relative overflow-hidden">
                         <div class="flex justify-between items-start">
                             <span class="text-[10px] font-bold text-slate-400 tracking-wide uppercase" id="lbl-card-users">Usuarios Monitoreados</span>
                             <div class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 shrink-0">
@@ -392,7 +380,7 @@
                                 <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
                                 <span>6% vs ayer</span>
                             </span>
-                            <canvas id="sparkline-users" class="w-[60px] h-[18px]"></canvas>
+                            <canvas id="sparkline-users" class="w-[48px] xl:w-[60px] h-[18px] shrink-0"></canvas>
                         </div>
                     </div>
                 </div>
@@ -1557,12 +1545,10 @@
                 lblDiagPlaceholder: "Haz clic en cualquier nodo del diagrama de topología de la izquierda para ver su telemetría y aplicar acciones preventivas o correctivas en tiempo real.",
                 lblMapTitle: "Mapa de Amenazas en Tiempo Real",
                 lblLiveRadar: "Radar Vivo",
-                lblLogsTitle: "Eventos de Seguridad",
-                lblClickLog: "Click log para forense",
                 lblStatusMesh: "RED DE INTEGRIDAD MESH GLOBAL: ESTABLE",
                 consoleInit: "Inicializando Consola de Defensa Autonovations... Escribe 'help' para ver la lista de comandos disponibles.",
                 defconCriticalTitle: "¡ALERTA DE INTROMISIÓN MÁXIMA!",
-                defconCriticalText: "¡Múltiples servidores han sido comprometidos! El score de seguridad ha descendido críticamente. Despliega escudos o reinicia los nodos afectados.",
+                defconCriticalText: "¡Múltiples servidores han sido compromised! El score de seguridad ha descendido críticamente. Despliega escudos o reinicia los nodos afectados.",
                 defconSafeTitle: "Sistema Asegurado",
                 defconSafeText: "Todos los servidores están operando de forma óptima bajo protección activa.",
                 diagFirewallTitle: "Sistema de Cortafuegos Principal (Firewall)",
@@ -1584,10 +1570,10 @@
                            "- <span class='text-blue-400'>status</span>: Imprime el estado detallado de todos los servidores.<br>" +
                            "- <span class='text-blue-400'>scan</span>: Realiza un análisis de vulnerabilidades a nivel de red.<br>" +
                            "- <span class='text-blue-400'>shield [nodo]</span>: Activa el blindaje en un nodo específico (api, auth, app, db, backup).<br>" +
-                           "- <span class='text-blue-400'>reboot [nodo]</span>: Reinicia un nodo comprometido para limpiarlo.<br>" +
+                           "- <span class='text-blue-400'>reboot [nodo]</span>: Reinicia un nodo compromised para limpiarlo.<br>" +
                            "- <span class='text-blue-400'>block [ip]</span>: Bloquea manualmente una dirección IP sospechosa.<br>" +
                            "- <span class='text-blue-400'>simulate</span>: Lanza una simulación aleatoria de ataque externo.<br>" +
-                           "- <span class='text-blue-400'>matrix</span>: Activa o desactiva el fondo de lluvia de código digital.<br>" +
+                           "- <span class='text-blue-400'>matrix</span>: Activa o desactiva el fondo de lluvia de código digital (Easter Egg).<br>" +
                            "- <span class='text-blue-400'>clear</span>: Limpia la pantalla de la terminal.",
                 
                 // Redesign additions
@@ -1607,7 +1593,6 @@
                 lblDevelopmentText: "Esta sección se encuentra en desarrollo activo para la versión corporativa de AutoNovations VSOC.",
                 lblBackToOverview: "Volver a Vista General",
                 lblShift: "Turno: NOC - Tarde",
-                lblActiveAnalyst: "Analista En línea",
                 lblClickForensics: "Click en fila para forense",
                 lblClickRemediate: "Remediar al hacer click",
                 lblIntegrationsTitle: "Integraciones y Fuentes de Datos",
@@ -1616,7 +1601,6 @@
                 lblDoughnutTitle: "Alertas por Severidad",
                 lblTrendTitle: "Tendencia de Alertas",
                 lblDiagTitle: "Telemetría de Servidores",
-                lblDiagPlaceholder: "Haz clic en cualquier nodo del diagrama de topología de la izquierda para ver su telemetría y aplicar acciones preventivas o correctivas en tiempo real.",
                 
                 // Módulos Completados Additions
                 lblAlertsViewTitle: "COLA DE ALERTAS",
@@ -1625,6 +1609,7 @@
                 lblSeverityHigh: "Alta",
                 lblSeverityMedium: "Media",
                 lblSeverityLow: "Baja",
+                lblSeverityInformative: "Informativas",
                 lblAlertsSearchPlaceholder: "Buscar por IP/Regla...",
                 lblAlertsLiveOn: "LIVE: ON",
                 lblAlertsLiveOff: "LIVE: OFF",
@@ -1688,7 +1673,45 @@
                 lblReportExportCsv: "Exportar CSV",
                 lblDashBarTitle: "PROCEDENCIA DE CIBERATAQUES BLOQUEADOS",
                 lblDashPolarTitle: "DISTRIBUCIÓN DE VECTORES DE AMENAZA",
-                lblDashRadarTitle: "CUMPLIMIENTO DE VECTORES DE DEFENSA CORE"
+                lblDashRadarTitle: "CUMPLIMIENTO DE VECTORES DE DEFENSA CORE",
+
+                // Migrated hardcoded keys
+                lblConnected: "Conectado",
+                lblTabGeneral: "VISTA GENERAL",
+                lblTabAlertas: "ALERTAS",
+                lblTabIncidentes: "INCIDENTES",
+                lblTabCasos: "CASOS",
+                lblTabThreats: "INTELIGENCIA AMENAZAS",
+                lblTabMonitoreo: "MONITOREO DE NODOS",
+                lblTabActivos: "ACTIVOS",
+                lblTabUsuarios: "USUARIOS",
+                lblTabVulnerabilidades: "VULNERABILIDADES",
+                lblTabReportes: "REPORTES",
+                lblTabDashboards: "DASHBOARDS",
+                lblTabConfiguracion: "CONSOLA (CONFIG)",
+                lblViewAllAlerts: "Ver todas las alertas",
+                lblViewFullReport: "Ver reporte completo",
+                lblViewAllIncidents: "Ver todos los incidentes",
+                lblTotal: "Total",
+                tblHTime: "TIEMPO",
+                tblHSeverity: "SEVERIDAD",
+                tblHRule: "REGLA / DESCRIPCIÓN",
+                tblHSource: "FUENTE",
+                tblHDest: "DESTINO",
+                lblTimeLast24h: "Últimas 24 horas",
+                lblTimeLast7d: "Últimos 7 días",
+                lblReportOptSummary: "Resumen Operativo Mensual",
+                lblReportOptIncident: "SLA de Respuesta a Incidentes",
+                lblReportOptIso: "Cumplimiento Auditoría ISO 27001",
+                lblReportOptThreats: "Actividad de Amenazas Perimetrales",
+                lblReportOptRange24h: "Últimas 24 Horas",
+                lblReportOptRange7d: "Últimos 7 Días",
+                lblReportOptRange30d: "Últimos 30 Días",
+                lblLegCrit: "Crítico",
+                lblLegHigh: "Alto",
+                lblLegMed: "Medio",
+                lblLegLow: "Bajo",
+                lblLegInfo: "Informativo"
             },
             en: {
                 title: "AutoNovations | Virtual Security Operations Center (VSOC)",
@@ -1712,8 +1735,6 @@
                 lblDiagPlaceholder: "Click on any node in the topology diagram on the left to view its telemetry and apply preventative or corrective actions in real time.",
                 lblMapTitle: "Real-time Cyber Attack Map",
                 lblLiveRadar: "Live Radar",
-                lblLogsTitle: "Security Events",
-                lblClickLog: "Click log for forensics",
                 lblStatusMesh: "GLOBAL INTEGRITY MESH NET: STABLE",
                 consoleInit: "Initializing Autonovations Defense Console... Type 'help' to see the list of available commands.",
                 defconCriticalTitle: "CRITICAL BREACH WARNING!",
@@ -1742,7 +1763,7 @@
                            "- <span class='text-blue-400'>reboot [node]</span>: Reboots a compromised server to purge threats.<br>" +
                            "- <span class='text-blue-400'>block [ip]</span>: Add IP address manually to firewall blacklist.<br>" +
                            "- <span class='text-blue-400'>simulate</span>: Triggers a mock external cyber attack sequence.<br>" +
-                           "- <span class='text-blue-400'>matrix</span>: Toggles matrix code digital rain background.<br>" +
+                           "- <span class='text-blue-400'>matrix</span>: Toggles matrix code digital rain background (Easter Egg).<br>" +
                            "- <span class='text-blue-400'>clear</span>: Clears console terminal screen history.",
                 
                 // Redesign additions
@@ -1762,7 +1783,6 @@
                 lblDevelopmentText: "This section is currently under active development for the enterprise release of AutoNovations VSOC.",
                 lblBackToOverview: "Back to Overview",
                 lblShift: "Shift: NOC - Evening",
-                lblActiveAnalyst: "Analyst Online",
                 lblClickForensics: "Click row for forensics",
                 lblClickRemediate: "Remediate on click",
                 lblIntegrationsTitle: "Integrations & Data Sources",
@@ -1771,7 +1791,6 @@
                 lblDoughnutTitle: "Alerts by Severity",
                 lblTrendTitle: "Alerts Trend",
                 lblDiagTitle: "Servers Telemetry",
-                lblDiagPlaceholder: "Click on any node in the topology diagram on the left to view its telemetry and apply preventative or corrective actions in real time.",
                 
                 // Módulos Completados Additions
                 lblAlertsViewTitle: "ALERTS QUEUE",
@@ -1780,6 +1799,7 @@
                 lblSeverityHigh: "High",
                 lblSeverityMedium: "Medium",
                 lblSeverityLow: "Low",
+                lblSeverityInformative: "Informative",
                 lblAlertsSearchPlaceholder: "Search by IP/Rule...",
                 lblAlertsLiveOn: "LIVE: ON",
                 lblAlertsLiveOff: "LIVE: OFF",
@@ -1843,12 +1863,48 @@
                 lblReportExportCsv: "Export CSV",
                 lblDashBarTitle: "ORIGIN OF BLOCKED CYBER ATTACKS",
                 lblDashPolarTitle: "THREAT VECTORS DISTRIBUTION",
-                lblDashRadarTitle: "CORE DEFENSE VECTORS COMPLIANCE"
+                lblDashRadarTitle: "CORE DEFENSE VECTORS COMPLIANCE",
+
+                // Migrated hardcoded keys
+                lblConnected: "Connected",
+                lblTabGeneral: "OVERVIEW",
+                lblTabAlertas: "ALERTS",
+                lblTabIncidentes: "INCIDENTS",
+                lblTabCasos: "CASES",
+                lblTabThreats: "THREAT INTEL",
+                lblTabMonitoreo: "NODE MONITORING",
+                lblTabActivos: "ASSETS",
+                lblTabUsuarios: "USERS",
+                lblTabVulnerabilidades: "VULNERABILITIES",
+                lblTabReportes: "REPORTS",
+                lblTabDashboards: "DASHBOARDS",
+                lblTabConfiguracion: "CONSOLE (CONFIG)",
+                lblViewAllAlerts: "View all alerts",
+                lblViewFullReport: "View full report",
+                lblViewAllIncidents: "View all incidents",
+                lblTotal: "Total",
+                tblHTime: "TIME",
+                tblHSeverity: "SEVERITY",
+                tblHRule: "RULE / DESCRIPTION",
+                tblHSource: "SOURCE",
+                tblHDest: "DESTINATION",
+                lblTimeLast24h: "Last 24 hours",
+                lblTimeLast7d: "Last 7 days",
+                lblReportOptSummary: "Monthly Operational Summary",
+                lblReportOptIncident: "Incident Response SLA Report",
+                lblReportOptIso: "ISO 27001 Compliance Audit",
+                lblReportOptThreats: "Perimeter Threat Activity Report",
+                lblReportOptRange24h: "Last 24 Hours",
+                lblReportOptRange7d: "Last 7 Days",
+                lblReportOptRange30d: "Last 30 Days",
+                lblLegCrit: "Critical",
+                lblLegHigh: "High",
+                lblLegMed: "Medium",
+                lblLegLow: "Low",
+                lblLegInfo: "Informative"
             }
         };
 
-        let currentLang = localStorage.getItem('preferredLang') || 'es';
-        
         function changeLang(lang) {
             currentLang = lang;
             localStorage.setItem('preferredLang', lang);
@@ -1884,12 +1940,12 @@
             document.getElementById('lbl-news-read-1').innerText = t.lblNewsRead;
             document.getElementById('lbl-news-read-2').innerText = t.lblNewsRead;
             document.getElementById('lbl-integrations-title').innerText = t.lblIntegrationsTitle;
-            document.getElementById('status-siem-lbl').innerText = lang === 'es' ? 'Conectado' : 'Connected';
-            document.getElementById('status-edr-lbl').innerText = lang === 'es' ? 'Conectado' : 'Connected';
-            document.getElementById('status-fw-lbl').innerText = lang === 'es' ? 'Conectado' : 'Connected';
-            document.getElementById('status-ids-lbl').innerText = lang === 'es' ? 'Conectado' : 'Connected';
-            document.getElementById('status-intel-lbl').innerText = lang === 'es' ? 'Conectado' : 'Connected';
-            document.getElementById('status-cloud-lbl').innerText = lang === 'es' ? 'Conectado' : 'Connected';
+            document.getElementById('status-siem-lbl').innerText = t.lblConnected;
+            document.getElementById('status-edr-lbl').innerText = t.lblConnected;
+            document.getElementById('status-fw-lbl').innerText = t.lblConnected;
+            document.getElementById('status-ids-lbl').innerText = t.lblConnected;
+            document.getElementById('status-intel-lbl').innerText = t.lblConnected;
+            document.getElementById('status-cloud-lbl').innerText = t.lblConnected;
             
             // Headers/Footers
             document.getElementById('lbl-shift').innerText = t.lblShift;
@@ -1897,59 +1953,59 @@
             document.getElementById('lbl-status-mesh').innerText = t.lblStatusMesh;
             
             // Sidebar buttons
-            document.getElementById('btn-tab-general').querySelector('span').innerText = lang === 'es' ? 'VISTA GENERAL' : 'OVERVIEW';
-            document.getElementById('btn-tab-alertas').querySelector('span').innerText = lang === 'es' ? 'ALERTAS' : 'ALERTS';
-            document.getElementById('btn-tab-incidentes').querySelector('span').innerText = lang === 'es' ? 'INCIDENTES' : 'INCIDENTS';
-            document.getElementById('btn-tab-casos').querySelector('span').innerText = lang === 'es' ? 'CASOS' : 'CASES';
-            document.getElementById('btn-tab-amenazas').querySelector('span').innerText = lang === 'es' ? 'INTELIGENCIA AMENAZAS' : 'THREAT INTEL';
-            document.getElementById('btn-tab-monitoreo').querySelector('span').innerText = lang === 'es' ? 'MONITOREO DE NODOS' : 'NODE MONITORING';
-            document.getElementById('btn-tab-activos').querySelector('span').innerText = lang === 'es' ? 'ACTIVOS' : 'ASSETS';
-            document.getElementById('btn-tab-usuarios').querySelector('span').innerText = lang === 'es' ? 'USUARIOS' : 'USERS';
-            document.getElementById('btn-tab-vulnerabilidades').querySelector('span').innerText = lang === 'es' ? 'VULNERABILIDADES' : 'VULNERABILITIES';
-            document.getElementById('btn-tab-reportes').querySelector('span').innerText = lang === 'es' ? 'REPORTES' : 'REPORTS';
-            document.getElementById('btn-tab-dashboards').querySelector('span').innerText = lang === 'es' ? 'DASHBOARDS' : 'DASHBOARDS';
-            document.getElementById('btn-tab-configuracion').querySelector('span').innerText = lang === 'es' ? 'CONSOLA (CONFIG)' : 'CONSOLE (CONFIG)';
+            document.getElementById('btn-tab-general').querySelector('span').innerText = t.lblTabGeneral;
+            document.getElementById('btn-tab-alertas').querySelector('span').innerText = t.lblTabAlertas;
+            document.getElementById('btn-tab-incidentes').querySelector('span').innerText = t.lblTabIncidentes;
+            document.getElementById('btn-tab-casos').querySelector('span').innerText = t.lblTabCasos;
+            document.getElementById('btn-tab-amenazas').querySelector('span').innerText = t.lblTabThreats;
+            document.getElementById('btn-tab-monitoreo').querySelector('span').innerText = t.lblTabMonitoreo;
+            document.getElementById('btn-tab-activos').querySelector('span').innerText = t.lblTabActivos;
+            document.getElementById('btn-tab-usuarios').querySelector('span').innerText = t.lblTabUsuarios;
+            document.getElementById('btn-tab-vulnerabilidades').querySelector('span').innerText = t.lblTabVulnerabilidades;
+            document.getElementById('btn-tab-reportes').querySelector('span').innerText = t.lblTabReportes;
+            document.getElementById('btn-tab-dashboards').querySelector('span').innerText = t.lblTabDashboards;
+            document.getElementById('btn-tab-configuracion').querySelector('span').innerText = t.lblTabConfiguracion;
             document.getElementById('lbl-collapse-menu').innerText = t.lblCollapseMenu;
 
             // View 1 (Dashboard panels text)
             document.getElementById('lbl-recent-alerts-title').innerText = t.lblRecentAlerts;
             document.getElementById('lbl-click-forensics').innerText = t.lblClickForensics;
-            document.getElementById('lbl-view-all-alerts').innerHTML = (lang === 'es' ? 'Ver todas las alertas' : 'View all alerts') + ` <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>`;
+            document.getElementById('lbl-view-all-alerts').innerHTML = t.lblViewAllAlerts + ` <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>`;
             document.getElementById('lbl-top-threats-title').innerText = t.lblTopThreats;
-            document.getElementById('lbl-view-all-reports').innerHTML = (lang === 'es' ? 'Ver reporte completo' : 'View full report') + ` <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>`;
+            document.getElementById('lbl-view-all-reports').innerHTML = t.lblViewFullReport + ` <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>`;
             document.getElementById('lbl-active-incidents-title').innerText = t.lblActiveIncidents;
             document.getElementById('lbl-click-remediate').innerText = t.lblClickRemediate;
-            document.getElementById('lbl-view-all-incidents').innerHTML = (lang === 'es' ? 'Ver todos los incidentes' : 'View all incidents') + ` <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>`;
+            document.getElementById('lbl-view-all-incidents').innerHTML = t.lblViewAllIncidents + ` <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>`;
             document.getElementById('lbl-doughnut-title').innerText = t.lblDoughnutTitle;
-            document.getElementById('lbl-total-doughnut-label').innerText = lang === 'es' ? 'Total' : 'Total';
+            document.getElementById('lbl-total-doughnut-label').innerText = t.lblTotal;
             document.getElementById('lbl-trend-title').innerText = t.lblTrendTitle;
 
             // Table headers
-            document.getElementById('tbl-h-time').innerText = lang === 'es' ? 'TIEMPO' : 'TIME';
-            document.getElementById('tbl-h-severity').innerText = lang === 'es' ? 'SEVERIDAD' : 'SEVERITY';
-            document.getElementById('tbl-h-rule').innerText = lang === 'es' ? 'REGLA / DESCRIPCIÓN' : 'RULE / DESCRIPTION';
-            document.getElementById('tbl-h-source').innerText = lang === 'es' ? 'FUENTE' : 'SOURCE';
-            document.getElementById('tbl-h-dest').innerText = lang === 'es' ? 'DESTINO' : 'DESTINATION';
+            document.getElementById('tbl-h-time').innerText = t.tblHTime;
+            document.getElementById('tbl-h-severity').innerText = t.tblHSeverity;
+            document.getElementById('tbl-h-rule').innerText = t.tblHRule;
+            document.getElementById('tbl-h-source').innerText = t.tblHSource;
+            document.getElementById('tbl-h-dest').innerText = t.tblHDest;
 
             // Legends
-            document.getElementById('leg-det-crit').innerText = lang === 'es' ? 'Críticas' : 'Critical';
-            document.getElementById('leg-det-high').innerText = lang === 'es' ? 'Altas' : 'High';
-            document.getElementById('leg-det-med').innerText = lang === 'es' ? 'Medias' : 'Medium';
-            document.getElementById('leg-det-low').innerText = lang === 'es' ? 'Bajas' : 'Low';
-            document.getElementById('leg-det-info').innerText = lang === 'es' ? 'Informativas' : 'Informative';
+            document.getElementById('leg-det-crit').innerText = t.lblSeverityCritical;
+            document.getElementById('leg-det-high').innerText = t.lblSeverityHigh;
+            document.getElementById('leg-det-med').innerText = t.lblSeverityMedium;
+            document.getElementById('leg-det-low').innerText = t.lblSeverityLow;
+            document.getElementById('leg-det-info').innerText = t.lblSeverityInformative;
             
-            document.getElementById('trend-leg-crit').innerText = lang === 'es' ? 'Críticas' : 'Critical';
-            document.getElementById('trend-leg-high').innerText = lang === 'es' ? 'Altas' : 'High';
-            document.getElementById('trend-leg-med').innerText = lang === 'es' ? 'Medias' : 'Medium';
-            document.getElementById('trend-leg-low').innerText = lang === 'es' ? 'Bajas' : 'Low';
-            document.getElementById('trend-leg-info').innerText = lang === 'es' ? 'Informativas' : 'Informative';
+            document.getElementById('trend-leg-crit').innerText = t.lblSeverityCritical;
+            document.getElementById('trend-leg-high').innerText = t.lblSeverityHigh;
+            document.getElementById('trend-leg-med').innerText = t.lblSeverityMedium;
+            document.getElementById('trend-leg-low').innerText = t.lblSeverityLow;
+            document.getElementById('trend-leg-info').innerText = t.lblSeverityInformative;
 
-            document.getElementById('lbl-map-legend').innerText = lang === 'es' ? 'NIVEL DE AMENAZA' : 'THREAT LEVEL';
-            document.getElementById('lbl-leg-crit').innerText = lang === 'es' ? 'Crítico' : 'Critical';
-            document.getElementById('lbl-leg-high').innerText = lang === 'es' ? 'Alto' : 'High';
-            document.getElementById('lbl-leg-med').innerText = lang === 'es' ? 'Medio' : 'Medium';
-            document.getElementById('lbl-leg-low').innerText = lang === 'es' ? 'Bajo' : 'Low';
-            document.getElementById('lbl-leg-info').innerText = lang === 'es' ? 'Informativo' : 'Informative';
+            document.getElementById('lbl-map-legend').innerText = t.lblMapLegend;
+            document.getElementById('lbl-leg-crit').innerText = t.lblLegCrit;
+            document.getElementById('lbl-leg-high').innerText = t.lblLegHigh;
+            document.getElementById('lbl-leg-med').innerText = t.lblLegMed;
+            document.getElementById('lbl-leg-low').innerText = t.lblLegLow;
+            document.getElementById('lbl-leg-info').innerText = t.lblLegInfo;
 
             // View 2 (Monitoring Node text)
             document.getElementById('lbl-topology-title').innerText = t.lblTopologyTitle;
@@ -2068,16 +2124,16 @@
             
             if (document.getElementById('report-type')) {
                 const sel = document.getElementById('report-type');
-                sel.options[0].text = lang === 'es' ? "Resumen Operativo Mensual" : "Monthly Operational Summary";
-                sel.options[1].text = lang === 'es' ? "SLA de Respuesta a Incidentes" : "Incident Response SLA Report";
-                sel.options[2].text = lang === 'es' ? "Cumplimiento Auditoría ISO 27001" : "ISO 27001 Compliance Audit";
-                sel.options[3].text = lang === 'es' ? "Actividad de Amenazas Perimetrales" : "Perimeter Threat Activity Report";
+                sel.options[0].text = t.lblReportOptSummary;
+                sel.options[1].text = t.lblReportOptIncident;
+                sel.options[2].text = t.lblReportOptIso;
+                sel.options[3].text = t.lblReportOptThreats;
             }
             if (document.getElementById('report-range')) {
                 const sel = document.getElementById('report-range');
-                sel.options[0].text = lang === 'es' ? "Últimas 24 Horas" : "Last 24 Hours";
-                sel.options[1].text = lang === 'es' ? "Últimos 7 Días" : "Last 7 Days";
-                sel.options[2].text = lang === 'es' ? "Últimos 30 Días" : "Last 30 Days";
+                sel.options[0].text = t.lblReportOptRange24h;
+                sel.options[1].text = t.lblReportOptRange7d;
+                sel.options[2].text = t.lblReportOptRange30d;
             }
 
             // Dashboards
@@ -2086,9 +2142,9 @@
             if (document.getElementById('dash-radar-title')) document.getElementById('dash-radar-title').innerText = t.lblDashRadarTitle;
 
             // Translate dropdown select options
-            document.getElementById('dropdown-doughnut-time').options[0].text = lang === 'es' ? 'Últimas 24 horas' : 'Last 24 hours';
-            document.getElementById('dropdown-trend-time').options[0].text = lang === 'es' ? 'Últimos 7 días' : 'Last 7 days';
-            document.getElementById('dropdown-threats-time').options[0].text = lang === 'es' ? 'Últimas 24 horas' : 'Last 24 hours';
+            document.getElementById('dropdown-doughnut-time').options[0].text = t.lblTimeLast24h;
+            document.getElementById('dropdown-trend-time').options[0].text = t.lblTimeLast7d;
+            document.getElementById('dropdown-threats-time').options[0].text = t.lblTimeLast24h;
 
             // Active diagnostics panel node details update if selected
             if(selectedNodeId) {
@@ -2331,13 +2387,20 @@
                 document.getElementById('view-general-container').classList.remove('hidden');
                 titleEl.innerText = currentLang === 'es' ? "Vista General" : "Overview";
                 subtitleEl.innerText = currentLang === 'es' ? "Resumen de la postura de seguridad y operaciones en tiempo real." : "Real-time summary of security posture and operations.";
+                const wasNotGeneral = (activeTab !== 'general');
                 activeTab = 'general';
-                // Trigger chart update / redraw
+                // Trigger catch-up rendering and resizing
+                updateCharts();
                 if(doughnutChart) {
                     doughnutChart.resize();
                     lineChart.resize();
                 }
+                drawAllSparklines();
+                renderRecentAlertsTable();
                 resizeMapCanvas();
+                if (wasNotGeneral) {
+                    requestAnimationFrame(drawThreatMap);
+                }
             } else if (tabId === 'monitoreo') {
                 document.getElementById('view-monitoreo-container').classList.remove('hidden');
                 titleEl.innerText = currentLang === 'es' ? "Monitoreo de Nodos" : "Node Monitoring";
@@ -2481,9 +2544,18 @@
             const canvas = document.getElementById(canvasId);
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
-            const width = canvas.width = 65;
-            const height = canvas.height = 18;
-            ctx.clearRect(0, 0, width, height);
+            const logicalWidth = 65;
+            const logicalHeight = 18;
+            const dpr = window.devicePixelRatio || 1;
+            
+            canvas.width = logicalWidth * dpr;
+            canvas.height = logicalHeight * dpr;
+            canvas.style.width = logicalWidth + 'px';
+            canvas.style.height = logicalHeight + 'px';
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.scale(dpr, dpr);
+            
             ctx.strokeStyle = color;
             ctx.lineWidth = 1.8;
             ctx.lineCap = 'round';
@@ -2495,20 +2567,20 @@
             const range = max - min || 1;
 
             for (let i = 0; i < points.length; i++) {
-                const x = (i / (points.length - 1)) * width;
-                const y = height - ((points[i] - min) / range) * (height - 4) - 2;
+                const x = (i / (points.length - 1)) * logicalWidth;
+                const y = logicalHeight - ((points[i] - min) / range) * (logicalHeight - 4) - 2;
                 if (i === 0) ctx.moveTo(x, y);
                 else ctx.lineTo(x, y);
             }
             ctx.stroke();
 
             // Gradient fill
-            const grad = ctx.createLinearGradient(0, 0, 0, height);
+            const grad = ctx.createLinearGradient(0, 0, 0, logicalHeight);
             grad.addColorStop(0, color + '20');
             grad.addColorStop(1, color + '00');
             ctx.fillStyle = grad;
-            ctx.lineTo(width, height);
-            ctx.lineTo(0, height);
+            ctx.lineTo(logicalWidth, logicalHeight);
+            ctx.lineTo(0, logicalHeight);
             ctx.closePath();
             ctx.fill();
         }
@@ -3401,6 +3473,9 @@
                     playSound.click();
                     consoleOutput.innerHTML = '';
                     break;
+                case 'matrix':
+                    toggleMatrixEffect();
+                    break;
                 default:
                     playSound.error();
                     showTerminalOutput(`[!] Error: Command '${cmd}' not recognized. Type 'help' for support manual.`, 'text-red-500');
@@ -3456,8 +3531,10 @@
             kpiSparkData.total.shift();
 
             // Refresh cards & sparklines & charts
-            drawAllSparklines();
-            updateCharts();
+            if (activeTab === 'general') {
+                drawAllSparklines();
+                updateCharts();
+            }
 
             const alertObj = {
                 time: time,
@@ -3484,7 +3561,9 @@
                 }
             }
 
-            renderRecentAlertsTable();
+            if (activeTab === 'general') {
+                renderRecentAlertsTable();
+            }
 
             // Periodically sync active views
             if (activeTab === 'alertas') renderAlertsView();
@@ -3524,6 +3603,95 @@
             }
         }
 
+        // --- MATRIX DIGITAL RAIN EASTER EGG ---
+        let matrixActive = false;
+        let matrixCanvas = null;
+        let matrixCtx = null;
+        let matrixAnimationFrameId = null;
+        let matrixColumns = [];
+        const matrixFontSize = 14;
+
+        function initMatrixEffect() {
+            matrixCanvas = document.getElementById('matrixCanvas');
+            if (!matrixCanvas) return;
+            matrixCtx = matrixCanvas.getContext('2d');
+            resizeMatrixCanvas();
+            window.addEventListener('resize', resizeMatrixCanvas);
+        }
+
+        function resizeMatrixCanvas() {
+            if (!matrixCanvas || !matrixActive) return;
+            matrixCanvas.width = window.innerWidth;
+            matrixCanvas.height = window.innerHeight;
+            const numCols = Math.floor(matrixCanvas.width / matrixFontSize) + 1;
+            matrixColumns = [];
+            for (let i = 0; i < numCols; i++) {
+                matrixColumns.push(Math.random() * -100);
+            }
+        }
+
+        function drawMatrixFrame() {
+            if (!matrixActive) return;
+            
+            matrixCtx.fillStyle = 'rgba(8, 11, 17, 0.08)';
+            matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+            
+            matrixCtx.fillStyle = '#22c55e';
+            matrixCtx.font = matrixFontSize + 'px monospace';
+            
+            for (let i = 0; i < matrixColumns.length; i++) {
+                const char = String.fromCharCode(33 + Math.floor(Math.random() * 93));
+                const x = i * matrixFontSize;
+                const y = matrixColumns[i] * matrixFontSize;
+                
+                if (Math.random() > 0.98) {
+                    matrixCtx.fillStyle = '#ffffff';
+                } else {
+                    matrixCtx.fillStyle = 'rgba(34, 197, 94, 0.85)';
+                }
+                
+                matrixCtx.fillText(char, x, y);
+                
+                if (y > matrixCanvas.height && Math.random() > 0.975) {
+                    matrixColumns[i] = 0;
+                }
+                
+                matrixColumns[i]++;
+            }
+            
+            matrixAnimationFrameId = requestAnimationFrame(drawMatrixFrame);
+        }
+
+        function toggleMatrixEffect() {
+            const canvas = document.getElementById('matrixCanvas');
+            if (!canvas) return;
+            
+            matrixActive = !matrixActive;
+            
+            if (matrixActive) {
+                canvas.classList.remove('opacity-0');
+                canvas.classList.add('opacity-25');
+                
+                if (!matrixCtx) {
+                    initMatrixEffect();
+                } else {
+                    resizeMatrixCanvas();
+                }
+                
+                drawMatrixFrame();
+                showTerminalOutput(`[+] EASTER EGG SYSTEM INITIATED: Matrix Digital Rain activated in background.`, 'text-emerald-400 font-bold animate-pulse');
+            } else {
+                canvas.classList.add('opacity-0');
+                canvas.classList.remove('opacity-25');
+                
+                if (matrixAnimationFrameId) {
+                    cancelAnimationFrame(matrixAnimationFrameId);
+                }
+                
+                showTerminalOutput(`[-] EASTER EGG SYSTEM SUSPENDED: Matrix Digital Rain deactivated.`, 'text-slate-400');
+            }
+        }
+
 
         // --- MAP CANVAS RENDERER ---
         const mapCanvas = document.getElementById('threatMapCanvas');
@@ -3534,10 +3702,13 @@
 
         function resizeMapCanvas() {
             const rect = mapCanvas.parentNode.getBoundingClientRect();
-            mapCanvas.width = rect.width;
-            mapCanvas.height = rect.height;
-            mapWidth = mapCanvas.width;
-            mapHeight = mapCanvas.height;
+            const dpr = window.devicePixelRatio || 1;
+            mapCanvas.width = rect.width * dpr;
+            mapCanvas.height = rect.height * dpr;
+            mapCanvas.style.width = rect.width + 'px';
+            mapCanvas.style.height = rect.height + 'px';
+            mapWidth = rect.width;
+            mapHeight = rect.height;
         }
 
         // Continents normalized coordinate polygons representing landmass background
@@ -3668,9 +3839,10 @@
 
         function drawThreatMap() {
             if (activeTab !== 'general') {
-                requestAnimationFrame(drawThreatMap);
-                return; // Disable rendering computation if tab is inactive
+                return; // Stop animation loop when tab is inactive to save CPU
             }
+            const dpr = window.devicePixelRatio || 1;
+            mapCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
             mapCtx.clearRect(0, 0, mapWidth, mapHeight);
 
             // Draw hacker background grid
@@ -5052,10 +5224,13 @@
                 }
             }, 1000);
 
-            // Audio Context initialization on first gesture click
-            window.addEventListener('click', () => {
+            // Audio Context initialization on first gesture
+            const initEvents = ['click', 'keydown', 'mousedown', 'touchstart'];
+            const handleInitAudio = () => {
                 initAudio();
-            }, { once: true });
+                initEvents.forEach(evt => window.removeEventListener(evt, handleInitAudio));
+            };
+            initEvents.forEach(evt => window.addEventListener(evt, handleInitAudio, { passive: true }));
 
             // Initialize charts and drawings
             resizeMapCanvas();
