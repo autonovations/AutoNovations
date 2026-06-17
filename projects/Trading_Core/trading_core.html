@@ -1328,15 +1328,16 @@
             display: none;
             align-items: center;
             gap: 6px;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--panel-border);
-            padding: 6px 12px;
-            border-radius: 8px;
+            padding: 5px 10px;
+            border-radius: 20px;
             color: var(--text-main);
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
+            white-space: nowrap;
         }
         .stats-trigger-btn:hover {
             background: rgba(255, 255, 255, 0.08);
@@ -1411,8 +1412,15 @@
                 padding: 0 12px;
                 height: 55px;
             }
+            .header-left {
+                gap: 8px !important;
+            }
+            .header-right {
+                gap: 8px !important;
+            }
             .hamburger-btn {
                 display: flex !important;
+                margin-right: 4px !important;
             }
             .logo {
                 font-size: 18px;
@@ -1425,10 +1433,15 @@
                 width: calc(100% - 24px) !important;
                 margin: 12px;
             }
+            .header-icons {
+                display: none !important; /* Hide secondary icons to avoid squeezing deposit button on mobile/tablet */
+            }
 
             /* Stats dropdown styles for Mobile */
             .stats-trigger-btn {
                 display: flex !important;
+                padding: 4px 8px !important;
+                font-size: 11px !important;
             }
             .account-stats {
                 display: none;
@@ -1614,6 +1627,58 @@
             #tab-markets .table-container {
                 overflow-x: hidden !important;
             }
+
+            /* Prevent horizontal scrolling in other tables by hiding secondary columns on mobile/tablet */
+            #tab-trading .bots-panel table th:nth-child(2),
+            #tab-trading .bots-panel table td:nth-child(2),
+            #tab-trading .bots-panel table th:nth-child(5),
+            #tab-trading .bots-panel table td:nth-child(5) {
+                display: none !important;
+            }
+            #tab-trading .bots-panel .table-container {
+                overflow-x: hidden !important;
+            }
+
+            #tab-bots table th:nth-child(2),
+            #tab-bots table td:nth-child(2),
+            #tab-bots table th:nth-child(6),
+            #tab-bots table td:nth-child(6) {
+                display: none !important;
+            }
+            #tab-bots .table-container {
+                overflow-x: hidden !important;
+            }
+
+            #tab-trading .positions-panel table th:nth-child(5),
+            #tab-trading .positions-panel table td:nth-child(5),
+            #tab-trading .positions-panel table th:nth-child(6),
+            #tab-trading .positions-panel table td:nth-child(6) {
+                display: none !important;
+            }
+            #tab-trading .positions-panel .table-container {
+                overflow-x: hidden !important;
+            }
+
+            #tab-dashboard table th:nth-child(3),
+            #tab-dashboard table td:nth-child(3),
+            #tab-dashboard table th:nth-child(4),
+            #tab-dashboard table td:nth-child(4) {
+                display: none !important;
+            }
+            #tab-dashboard .table-container {
+                overflow-x: hidden !important;
+            }
+
+            #tab-trading .history-panel table th:nth-child(1),
+            #tab-trading .history-panel table td:nth-child(1),
+            #tab-trading .history-panel table th:nth-child(4),
+            #tab-trading .history-panel table td:nth-child(4) {
+                display: none !important;
+            }
+            #tab-trading .history-panel .table-container {
+                overflow-x: hidden !important;
+            }
+
             .market-table-action-btn {
                 padding: 4px 6px !important;
                 font-size: 9px !important;
@@ -1694,7 +1759,7 @@
             }
             .stats-trigger-btn {
                 font-size: 11px !important;
-                padding: 6px 8px !important;
+                padding: 4px 8px !important;
             }
         }
 
@@ -4071,7 +4136,8 @@
             
             const triggerEquity = document.getElementById('trigger-equity-label');
             if (triggerEquity) {
-                triggerEquity.innerText = `Equity: ${formatCurrency(state.equity)}`;
+                const label = window.innerWidth <= 480 ? 'Eq' : 'Equity';
+                triggerEquity.innerText = `${label}: ${formatCurrency(state.equity)}`;
             }
         }
 
