@@ -1346,6 +1346,11 @@
             transition: transform 0.2s;
         }
 
+        /* General resets for CSS Grid/Flex items to enable proper shrinking */
+        .col-left, .col-middle, .col-right, .dash-left, .dash-right, .panel, .chart-inner-wrapper, .chart-container-group {
+            min-width: 0;
+        }
+
         /* Media Queries for Responsive Design */
         @media (max-width: 1200px) {
             .dashboard-grid {
@@ -1390,6 +1395,9 @@
             }
             .charts-sidebar-watchlist {
                 width: 100% !important;
+            }
+            .charts-fullscreen-layout {
+                min-height: 380px !important;
             }
         }
 
@@ -1553,6 +1561,68 @@
                 padding: 6px 12px;
                 font-size: 12px;
             }
+
+            /* Responsive Markets Search Bar and Category Filters */
+            .markets-search-bar {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 10px !important;
+            }
+            .search-input-wrapper {
+                width: 100% !important;
+            }
+            .market-category-filters {
+                overflow-x: auto !important;
+                white-space: nowrap !important;
+                padding-bottom: 6px !important;
+                width: 100% !important;
+                display: flex !important;
+                gap: 6px !important;
+                -webkit-overflow-scrolling: touch;
+            }
+            .market-category-filters::-webkit-scrollbar {
+                height: 4px;
+            }
+            .market-filter-btn {
+                flex-shrink: 0 !important;
+            }
+
+            /* Panel headers wrapping for search/buttons */
+            .panel-header {
+                flex-wrap: wrap !important;
+                gap: 10px !important;
+            }
+            .panel-header .search-input-wrapper {
+                width: 100% !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            /* Chart header stacking and scroll controls */
+            .chart-header-custom {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 8px !important;
+                padding: 8px 12px !important;
+            }
+            .chart-header-controls {
+                width: 100% !important;
+                overflow-x: auto !important;
+                white-space: nowrap !important;
+                padding-bottom: 4px !important;
+                display: flex !important;
+                gap: 6px !important;
+                -webkit-overflow-scrolling: touch;
+            }
+            .chart-header-controls::-webkit-scrollbar {
+                height: 3px;
+            }
+            .chart-tf-btn, .chart-control-icon-btn {
+                flex-shrink: 0 !important;
+            }
+            .chart-overlay-details {
+                display: none !important; /* Hide overlay details to avoid overlapping quick trade buttons on tiny screens */
+            }
         }
 
         @media (max-width: 480px) {
@@ -1571,6 +1641,28 @@
             .btn-deposit {
                 padding: 6px 10px;
                 font-size: 11px;
+            }
+
+            /* Stack SL/TP inputs inside the order form */
+            .bot-param-row {
+                flex-direction: column !important;
+                gap: 10px !important;
+            }
+            .bot-param-row .order-field {
+                width: 100% !important;
+            }
+
+            /* Compact Header & Logo for very narrow screens */
+            .logo {
+                font-size: 15px !important;
+                gap: 4px !important;
+            }
+            .logo-icon {
+                display: none !important; /* Hide logo icon to save horizontal space */
+            }
+            .stats-trigger-btn {
+                font-size: 11px !important;
+                padding: 6px 8px !important;
             }
         }
 
