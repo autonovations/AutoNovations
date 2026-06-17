@@ -1587,6 +1587,34 @@
                 flex-shrink: 0 !important;
             }
 
+            /* Mobile Markets Table improvements */
+            .market-full-name-mobile {
+                display: block !important;
+            }
+            #tab-markets table th:nth-child(2),
+            #tab-markets table td:nth-child(2),
+            #tab-markets table th:nth-child(5),
+            #tab-markets table td:nth-child(5),
+            #tab-markets table th:nth-child(6),
+            #tab-markets table td:nth-child(6) {
+                display: none !important;
+            }
+            #tab-markets table th:nth-child(7),
+            #tab-markets table td:nth-child(7) {
+                width: auto !important;
+                max-width: 120px !important;
+            }
+            #tab-markets table td:nth-child(7) > div {
+                justify-content: flex-end !important;
+            }
+            #tab-markets .table-container {
+                overflow-x: hidden !important;
+            }
+            .market-table-action-btn {
+                padding: 4px 6px !important;
+                font-size: 9px !important;
+            }
+
             /* Panel headers wrapping for search/buttons */
             .panel-header {
                 flex-wrap: wrap !important;
@@ -1847,6 +1875,17 @@
         .market-table-action-btn.buy { background: var(--color-blue); }
         .market-table-action-btn.sell { background: var(--color-down); }
         .market-table-action-btn:hover { transform: scale(1.05); }
+        .market-symbol-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+        .market-full-name-mobile {
+            display: none;
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-top: 2px;
+        }
 
         /* --- Gráficos Tab --- */
         .charts-fullscreen-layout {
@@ -4885,7 +4924,12 @@
                 const max24 = asset.price * 1.011;
 
                 tr.innerHTML = `
-                    <td><strong>${asset.icon} ${asset.symbol}</strong></td>
+                    <td>
+                        <div class="market-symbol-wrapper">
+                            <strong>${asset.icon} ${asset.symbol}</strong>
+                            <span class="market-full-name-mobile">${asset.name}</span>
+                        </div>
+                    </td>
                     <td style="color:var(--text-muted);">${asset.name}</td>
                     <td style="font-family:var(--font-outfit); font-weight:600;">${asset.price.toFixed(asset.digits)}</td>
                     <td class="${pctClass}" style="font-weight:600;">${pctSign}${asset.change.toFixed(2)}%</td>
