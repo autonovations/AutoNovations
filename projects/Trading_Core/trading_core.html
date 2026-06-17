@@ -252,6 +252,7 @@
             flex-grow: 1;
             display: flex;
             overflow: hidden;
+            min-height: 0;
         }
 
         /* Sidebar */
@@ -371,7 +372,7 @@
             display: grid;
             grid-template-columns: minmax(600px, 2.2fr) minmax(280px, 1fr) minmax(280px, 1fr);
             gap: 16px;
-            overflow: y-auto;
+            overflow-y: auto;
             overflow-x: auto;
         }
 
@@ -1490,6 +1491,9 @@
             /* Workspace padding adjustments */
             .tab-content {
                 padding: 10px !important;
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
             }
             
             /* Tab content adjustments */
@@ -1611,7 +1615,7 @@
                 justify-content: flex-end !important;
             }
             #tab-markets .table-container {
-                overflow-x: hidden !important;
+                overflow: visible !important;
             }
 
             /* Prevent horizontal scrolling in other tables by hiding secondary columns on mobile/tablet */
@@ -1622,7 +1626,7 @@
                 display: none !important;
             }
             #tab-trading .bots-panel .table-container {
-                overflow-x: hidden !important;
+                overflow: visible !important;
             }
 
             #tab-bots table th:nth-child(2),
@@ -1632,7 +1636,7 @@
                 display: none !important;
             }
             #tab-bots .table-container {
-                overflow-x: hidden !important;
+                overflow: visible !important;
             }
 
             #tab-trading .positions-panel table th:nth-child(5),
@@ -1642,7 +1646,7 @@
                 display: none !important;
             }
             #tab-trading .positions-panel .table-container {
-                overflow-x: hidden !important;
+                overflow: visible !important;
             }
 
             #tab-dashboard table th:nth-child(3),
@@ -1652,7 +1656,7 @@
                 display: none !important;
             }
             #tab-dashboard .table-container {
-                overflow-x: hidden !important;
+                overflow: visible !important;
             }
 
             #tab-trading .history-panel table th:nth-child(1),
@@ -1662,7 +1666,7 @@
                 display: none !important;
             }
             #tab-trading .history-panel .table-container {
-                overflow-x: hidden !important;
+                overflow: visible !important;
             }
 
             #tab-history table th:nth-child(1),
@@ -1676,7 +1680,7 @@
                 display: none !important;
             }
             #tab-history .table-container {
-                overflow-x: hidden !important;
+                overflow: visible !important;
             }
 
             .market-table-action-btn {
@@ -1770,12 +1774,14 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            min-height: 0;
         }
         .tab-content {
             display: none;
             width: 100%;
             height: 100%;
             overflow-y: auto;
+            overflow-x: hidden;
             padding: 16px;
         }
         .tab-content.active {
