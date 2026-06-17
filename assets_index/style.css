@@ -896,6 +896,8 @@ html.light .hover\:bg-neon:hover {
     font-family: 'Space Grotesk', sans-serif !important;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    width: 90% !important;
+    max-width: 512px !important;
 }
 
 html.light .autonovations-swal-popup {
