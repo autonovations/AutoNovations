@@ -118,7 +118,7 @@
         }
     </style>
 </head>
-<body class="font-body selection:bg-blue-600 selection:text-white min-h-screen flex relative overflow-hidden">
+<body class="font-body selection:bg-blue-600 selection:text-white min-h-screen flex relative overflow-y-auto lg:overflow-hidden">
     <!-- Grid overlay & alarm active layer -->
     <div class="absolute inset-0 grid-bg pointer-events-none z-0"></div>
     <div id="alarmOverlay" class="fixed inset-0 pointer-events-none z-10 transition-all duration-700 opacity-0 bg-red-600/5"></div>
@@ -205,7 +205,7 @@
     </aside>
 
     <!-- CONTENT WRAPPER -->
-    <div id="content-wrapper" class="flex-grow flex flex-col min-w-0 overflow-y-auto z-10 relative">
+    <div id="content-wrapper" class="flex-grow flex flex-col min-w-0 overflow-y-visible lg:overflow-y-auto z-10 relative">
         
         <!-- HEADER -->
         <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 py-4 px-8 border-b border-slate-900 bg-[#06080e]/95 backdrop-blur-md sticky top-0 z-30">
@@ -504,7 +504,7 @@
                 <!-- Content Grid Row 2 (Recent Alerts + Top Threats + Active Incidents) -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <!-- Alertas Recientes (5 cols) -->
-                    <div class="glass-card p-5 rounded-2xl lg:col-span-5 flex flex-col h-[340px]">
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-5 flex flex-col lg:h-[340px]">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase">
                                 <i data-lucide="list" class="w-4 h-4"></i>
@@ -537,7 +537,7 @@
                     </div>
 
                     <!-- Top Amenazas Detectadas (3 cols) -->
-                    <div class="glass-card p-5 rounded-2xl lg:col-span-3 flex flex-col h-[340px]">
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-3 flex flex-col lg:h-[340px]">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase">
                                 <i data-lucide="activity" class="w-4 h-4"></i>
@@ -619,7 +619,7 @@
                     </div>
 
                     <!-- Incidentes Activos (4 cols) -->
-                    <div class="glass-card p-5 rounded-2xl lg:col-span-4 flex flex-col h-[340px]">
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-4 flex flex-col lg:h-[340px]">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase">
                                 <i data-lucide="shield-alert" class="w-4 h-4"></i>
@@ -627,7 +627,7 @@
                             </h3>
                             <span class="text-[9px] font-mono text-slate-500" id="lbl-click-remediate">Remediar al hacer click</span>
                         </div>
-                        <div class="flex-grow overflow-y-auto space-y-2 pr-1" id="active-incidents-list">
+                        <div class="flex-grow overflow-y-visible lg:overflow-y-auto lg:max-h-[200px] space-y-2 pr-1" id="active-incidents-list">
                             <!-- Populated dynamically based on compromised servers and static mocks -->
                         </div>
                         <div class="mt-3 pt-3 border-t border-slate-900 flex justify-start">
@@ -749,7 +749,7 @@
             <div id="view-monitoreo-container" class="space-y-6 hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <!-- Topology Card (7 cols) -->
-                    <div class="glass-card p-5 rounded-2xl lg:col-span-7 flex flex-col h-[520px]">
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-7 flex flex-col lg:h-[520px]">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase">
                                 <i data-lucide="network" class="w-4 h-4"></i>
@@ -850,7 +850,7 @@
                     </div>
 
                     <!-- Diagnostics Card (5 cols) -->
-                    <div class="glass-card p-5 rounded-2xl lg:col-span-5 flex flex-col h-[520px] justify-between">
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-5 flex flex-col lg:h-[520px] justify-between">
                         <div>
                             <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase mb-4">
                                 <i data-lucide="stethoscope" class="w-4 h-4"></i>
@@ -905,7 +905,7 @@
 
             <!-- VIEW: CONSOLA DE COMANDOS (TERMINAL) -->
             <div id="view-configuracion-container" class="space-y-6 hidden">
-                <div class="glass-card p-5 rounded-2xl flex flex-col h-[520px]">
+                <div class="glass-card p-5 rounded-2xl flex flex-col h-[400px] lg:h-[520px]">
                     <div class="flex justify-between items-center border-b border-slate-900 pb-3 mb-4">
                         <div class="flex items-center gap-2">
                             <div class="flex gap-1.5">
@@ -1012,7 +1012,7 @@
                             <span id="lbl-kanban-new" class="font-tech text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Nuevo (New)</span>
                             <span id="kanban-count-new" class="px-2 py-0.5 rounded bg-slate-900 text-slate-400 font-bold text-[9px]">0</span>
                         </div>
-                        <div id="kanban-col-new" class="flex-grow space-y-2 overflow-y-auto max-h-[350px] pr-1"></div>
+                        <div id="kanban-col-new" class="flex-grow space-y-2 overflow-y-visible lg:overflow-y-auto lg:max-h-[350px] pr-1"></div>
                     </div>
                     <!-- Column: INVESTIGATING -->
                     <div class="glass-card p-4 rounded-xl flex flex-col bg-slate-950/20">
@@ -1020,7 +1020,7 @@
                             <span id="lbl-kanban-investigating" class="font-tech text-[10px] text-blue-400 font-bold uppercase tracking-wider">Investigando (Investigating)</span>
                             <span id="kanban-count-investigating" class="px-2 py-0.5 rounded bg-slate-900 text-slate-400 font-bold text-[9px]">0</span>
                         </div>
-                        <div id="kanban-col-investigating" class="flex-grow space-y-2 overflow-y-auto max-h-[350px] pr-1"></div>
+                        <div id="kanban-col-investigating" class="flex-grow space-y-2 overflow-y-visible lg:overflow-y-auto lg:max-h-[350px] pr-1"></div>
                     </div>
                     <!-- Column: CONTAINING -->
                     <div class="glass-card p-4 rounded-xl flex flex-col bg-slate-950/20">
@@ -1028,7 +1028,7 @@
                             <span id="lbl-kanban-containing" class="font-tech text-[10px] text-purple-400 font-bold uppercase tracking-wider">Conteniendo (Containing)</span>
                             <span id="kanban-count-containing" class="px-2 py-0.5 rounded bg-slate-900 text-slate-400 font-bold text-[9px]">0</span>
                         </div>
-                        <div id="kanban-col-containing" class="flex-grow space-y-2 overflow-y-auto max-h-[350px] pr-1"></div>
+                        <div id="kanban-col-containing" class="flex-grow space-y-2 overflow-y-visible lg:overflow-y-auto lg:max-h-[350px] pr-1"></div>
                     </div>
                     <!-- Column: RESOLVED -->
                     <div class="glass-card p-4 rounded-xl flex flex-col bg-slate-950/20 opacity-75">
@@ -1036,7 +1036,7 @@
                             <span id="lbl-kanban-resolved" class="font-tech text-[10px] text-slate-500 font-bold uppercase tracking-wider">Resuelto (Resolved)</span>
                             <span id="kanban-count-resolved" class="px-2 py-0.5 rounded bg-slate-900 text-slate-400 font-bold text-[9px]">0</span>
                         </div>
-                        <div id="kanban-col-resolved" class="flex-grow space-y-2 overflow-y-auto max-h-[350px] pr-1"></div>
+                        <div id="kanban-col-resolved" class="flex-grow space-y-2 overflow-y-visible lg:overflow-y-auto lg:max-h-[350px] pr-1"></div>
                     </div>
                 </div>
             </div>
@@ -1045,18 +1045,18 @@
             <div id="view-casos-container" class="space-y-6 hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <!-- Cases List (5 cols) -->
-                    <div class="glass-card p-5 rounded-2xl lg:col-span-5 flex flex-col h-[500px]">
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-5 flex flex-col lg:h-[500px]">
                         <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase mb-4">
                             <i data-lucide="folder-kanban" class="w-4 h-4"></i>
                             <span id="cases-list-title">EXPEDIENTES ACTIVOS</span>
                         </h3>
-                        <div class="flex-grow overflow-y-auto space-y-2 pr-1" id="cases-list-container">
+                        <div class="flex-grow overflow-y-visible lg:overflow-y-auto lg:max-h-[380px] space-y-2 pr-1" id="cases-list-container">
                             <!-- Populated dynamically -->
                         </div>
                     </div>
                     <!-- Case Detail Panel (7 cols) -->
-                    <div class="glass-card p-5 rounded-2xl lg:col-span-7 flex flex-col h-[500px] justify-between">
-                        <div class="overflow-y-auto flex-grow pr-1 space-y-4">
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-7 flex flex-col lg:h-[500px] justify-between">
+                        <div class="overflow-y-visible lg:overflow-y-auto flex-grow pr-1 space-y-4">
                             <div id="case-detail-placeholder" class="text-slate-500 text-xs text-center font-mono py-20">
                                 <i data-lucide="folder" class="w-8 h-8 text-blue-400/50 inline-block mb-3"></i>
                                 <p id="lbl-case-detail-placeholder">Selecciona un expediente en la lista para ver el análisis forense extendido, notas de analistas y timeline de contención.</p>
@@ -1119,7 +1119,7 @@
             <div id="view-amenazas-container" class="space-y-6 hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <!-- Blacklist Firewall IPs (5 cols) -->
-                    <div class="glass-card p-5 rounded-2xl lg:col-span-5 flex flex-col h-[500px]">
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-5 flex flex-col lg:h-[500px]">
                         <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase mb-4">
                             <i data-lucide="shield-x" class="w-4 h-4"></i>
                             <span id="threats-firewall-title">CORTAFUEGOS PERIMETRAL (IPS BLOQUEADAS)</span>
@@ -1130,7 +1130,7 @@
                                 Bloquear
                             </button>
                         </div>
-                        <div class="flex-grow overflow-y-auto">
+                        <div class="flex-grow overflow-y-visible lg:overflow-y-auto lg:max-h-[380px]">
                             <table class="w-full text-left text-[11px] font-mono border-collapse">
                                 <thead>
                                     <tr class="border-b border-slate-900 text-slate-500">
@@ -1146,7 +1146,7 @@
                     </div>
 
                     <!-- Threat Feed & APT Groups (7 cols) -->
-                    <div class="glass-card p-5 rounded-2xl lg:col-span-7 flex flex-col h-[500px] justify-between">
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-7 flex flex-col lg:h-[500px] justify-between">
                         <div class="space-y-4">
                             <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase mb-1">
                                 <i data-lucide="globe-2" class="w-4 h-4"></i>
@@ -1156,7 +1156,7 @@
                             <!-- Threat Intel Feed -->
                             <div class="space-y-2">
                                 <h4 id="lbl-threats-iocs-title" class="text-blue-400 font-bold font-mono text-[9px] uppercase">Indicadores de Compromiso Recientes (IOCs):</h4>
-                                <div class="space-y-1.5 font-mono text-[10px] text-slate-400 max-h-[130px] overflow-y-auto bg-slate-950/40 p-2.5 border border-slate-900 rounded-lg">
+                                <div class="space-y-1.5 font-mono text-[10px] text-slate-400 lg:max-h-[130px] overflow-y-visible lg:overflow-y-auto bg-slate-950/40 p-2.5 border border-slate-900 rounded-lg">
                                     <div class="flex justify-between border-b border-slate-900 pb-1 mb-1"><span class="text-red-400 font-semibold">[HASH] Trickbot Loader Payload</span><span class="text-slate-500">md5: f12a56bc8901b234</span></div>
                                     <div class="flex justify-between border-b border-slate-900 pb-1 mb-1"><span class="text-orange-400 font-semibold">[C2] foreignstorage.net/upload</span><span class="text-slate-500">Domain C2 Server</span></div>
                                     <div class="flex justify-between border-b border-slate-900 pb-1 mb-1"><span class="text-yellow-400 font-semibold">[SHA256] Ransomware Decrypter Mock</span><span class="text-slate-500">sha256: 4ab1f...c890e</span></div>
@@ -1205,7 +1205,7 @@
 
             <!-- VIEW: ACTIVOS Container -->
             <div id="view-activos-container" class="space-y-6 hidden">
-                <div class="glass-card p-5 rounded-2xl flex flex-col h-[500px]">
+                <div class="glass-card p-5 rounded-2xl flex flex-col lg:h-[500px]">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase">
                             <i data-lucide="server" class="w-4 h-4"></i>
@@ -1213,7 +1213,7 @@
                         </h3>
                         <span id="lbl-assets-count" class="text-slate-500 text-[10px] font-mono">8 Activos Monitoreados</span>
                     </div>
-                    <div class="flex-grow overflow-y-auto overflow-x-auto">
+                    <div class="flex-grow overflow-y-visible lg:overflow-y-auto lg:max-h-[380px] overflow-x-auto">
                         <table class="w-full text-left text-[11px] font-mono border-collapse">
                             <thead>
                                 <tr class="border-b border-slate-900 text-slate-500">
@@ -1237,7 +1237,7 @@
             <div id="view-usuarios-container" class="space-y-6 hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <!-- User list (7 cols) -->
-                    <div class="glass-card p-5 rounded-2xl lg:col-span-7 flex flex-col h-[500px]">
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-7 flex flex-col lg:h-[500px]">
                         <div class="flex justify-between items-center mb-3">
                             <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase">
                                 <i data-lucide="users" class="w-4 h-4"></i>
@@ -1245,7 +1245,7 @@
                             </h3>
                             <input type="text" id="users-search" oninput="renderUsersView()" placeholder="Buscar usuario..." class="bg-slate-950/80 text-slate-200 border border-slate-900 rounded px-2 py-1 outline-none text-[11px] w-40 focus:border-blue-500 transition-colors" />
                         </div>
-                        <div class="flex-grow overflow-y-auto overflow-x-auto">
+                        <div class="flex-grow overflow-y-visible lg:overflow-y-auto lg:max-h-[380px] overflow-x-auto">
                             <table class="w-full text-left text-[11px] font-mono border-collapse">
                                 <thead>
                                     <tr class="border-b border-slate-900 text-slate-500">
@@ -1263,8 +1263,8 @@
                         </div>
                     </div>
                     <!-- Audit details (5 cols) -->
-                    <div class="glass-card p-5 rounded-2xl lg:col-span-5 flex flex-col h-[500px] justify-between">
-                        <div class="overflow-y-auto flex-grow space-y-4">
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-5 flex flex-col lg:h-[500px] justify-between">
+                        <div class="overflow-y-visible lg:overflow-y-auto flex-grow space-y-4">
                             <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase">
                                 <i data-lucide="shield-check" class="w-4 h-4"></i>
                                 <span id="lbl-users-audit-title">REGISTRO DE ACCESOS Y AUDITORÍA</span>
@@ -1373,7 +1373,7 @@
             <div id="view-reportes-container" class="space-y-6 hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <!-- Selection side (4 cols) -->
-                    <div class="glass-card p-5 rounded-2xl lg:col-span-4 flex flex-col font-mono text-xs justify-between h-[480px]">
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-4 flex flex-col font-mono text-xs justify-between lg:h-[480px]">
                         <div class="space-y-4">
                             <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase">
                                 <i data-lucide="file-text" class="w-4 h-4"></i>
@@ -1407,8 +1407,8 @@
                     </div>
 
                     <!-- PDF Preview (8 cols) -->
-                    <div class="glass-card p-5 rounded-2xl lg:col-span-8 flex flex-col h-[480px] justify-between">
-                        <div class="flex-grow overflow-y-auto bg-slate-950/80 border border-slate-900 rounded-xl p-5 relative font-mono text-[11px] text-slate-300 leading-relaxed max-h-[380px]">
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-8 flex flex-col lg:h-[480px] justify-between">
+                        <div class="flex-grow overflow-y-visible lg:overflow-y-auto bg-slate-950/80 border border-slate-900 rounded-xl p-5 relative font-mono text-[11px] text-slate-300 leading-relaxed lg:max-h-[380px]">
                             <!-- Empty State -->
                             <div id="report-empty" class="text-slate-500 text-center py-28 text-xs">
                                 <i data-lucide="file-bar-chart" class="w-8 h-8 text-blue-400/50 inline-block mb-3"></i>
@@ -1476,7 +1476,7 @@
             <div id="view-dashboards-container" class="space-y-6 hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <!-- Attacks by Country Bar Chart (7 cols) -->
-                    <div class="glass-card p-5 rounded-2xl lg:col-span-7 flex flex-col h-[350px]">
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-7 flex flex-col lg:h-[350px]">
                         <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase mb-4">
                             <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
                             <span id="dash-bar-title">PROCEDENCIA DE CIBERATAQUES BLOQUEADOS</span>
@@ -1486,7 +1486,7 @@
                         </div>
                     </div>
                     <!-- Threats distribution Polar Chart (5 cols) -->
-                    <div class="glass-card p-5 rounded-2xl lg:col-span-5 flex flex-col h-[350px]">
+                    <div class="glass-card p-5 rounded-2xl lg:col-span-5 flex flex-col lg:h-[350px]">
                         <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase mb-4">
                             <i data-lucide="pie-chart" class="w-4 h-4"></i>
                             <span id="dash-polar-title">DISTRIBUCIÓN DE VECTORES DE AMENAZA</span>
@@ -1497,7 +1497,7 @@
                     </div>
                 </div>
                 <!-- Radar Compliance Chart -->
-                <div class="glass-card p-5 rounded-2xl flex flex-col h-[380px]">
+                <div class="glass-card p-5 rounded-2xl flex flex-col lg:h-[380px]">
                     <h3 class="font-tech text-xs tracking-wider text-blue-400 flex items-center gap-2 uppercase mb-4">
                         <i data-lucide="activity" class="w-4 h-4"></i>
                         <span id="dash-radar-title">CUMPLIMIENTO DE VECTORES DE DEFENSA CORE</span>
