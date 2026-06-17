@@ -16,8 +16,8 @@
             --panel-border: rgba(255, 255, 255, 0.06);
             --text-main: #f5f7fa;
             --text-muted: #7e8b9f;
-            --color-primary: #6c5ce7;
-            --color-primary-hover: #5b4cc4;
+            --color-primary: #00f2fe;
+            --color-primary-hover: #00c2cb;
             --color-up: #00e676;
             --color-up-bg: rgba(0, 230, 118, 0.12);
             --color-down: #ff3d71;
@@ -41,7 +41,7 @@
         body {
             background-color: var(--bg-base);
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(108, 92, 231, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 10% 20%, rgba(0, 242, 254, 0.05) 0%, transparent 40%),
                 radial-gradient(circle at 90% 80%, rgba(0, 230, 118, 0.03) 0%, transparent 40%);
             color: var(--text-main);
             height: 100vh;
@@ -91,7 +91,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            background: linear-gradient(135deg, #a594f9, #6c5ce7);
+            background: linear-gradient(135deg, #00f2fe, #0070f3);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -0.5px;
@@ -100,12 +100,12 @@
         .logo-icon {
             width: 24px;
             height: 24px;
-            background: linear-gradient(135deg, #a594f9, #6c5ce7);
+            background: linear-gradient(135deg, #00f2fe, #0070f3);
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 12px rgba(108, 92, 231, 0.4);
+            box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
         }
 
         .logo-icon::before {
@@ -306,7 +306,7 @@
         }
 
         .menu-item.active {
-            background: rgba(108, 92, 231, 0.1);
+            background: rgba(0, 242, 254, 0.1);
             color: var(--color-primary);
             font-weight: 600;
         }
@@ -353,7 +353,7 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--color-primary), #fd79a8);
+            background: linear-gradient(135deg, var(--color-primary), #0070f3);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1118,7 +1118,7 @@
         .toast {
             background: rgba(18, 26, 41, 0.85);
             backdrop-filter: blur(12px);
-            border: 1px solid var(--panel-border);
+            border: 1px solid var(--color-primary);
             padding: 12px 16px;
             border-radius: 8px;
             color: white;
@@ -1126,7 +1126,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 10px rgba(0, 242, 254, 0.15);
             transform: translateX(120%);
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
@@ -1280,6 +1280,72 @@
         .badge-commodity { background: rgba(255, 234, 167, 0.1); color: #ffeaa7; }
         .badge-index { background: rgba(108, 92, 231, 0.1); color: #a594f9; }
 
+        /* Hamburger Button styles */
+        .hamburger-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            margin-right: 8px;
+        }
+        .hamburger-btn:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Sidebar backdrop overlay style */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Stats Dropdown container */
+        .stats-dropdown-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .stats-trigger-btn {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--panel-border);
+            padding: 6px 12px;
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .stats-trigger-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        .stats-trigger-btn svg {
+            transition: transform 0.2s;
+        }
+
         /* Media Queries for Responsive Design */
         @media (max-width: 1200px) {
             .dashboard-grid {
@@ -1291,6 +1357,15 @@
             }
             .watchlist-panel, .history-panel {
                 flex: 1;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .top-tickers {
+                display: none !important; /* Hide tickers to make room for stats */
+            }
+            .dashboard-overview {
+                grid-template-columns: 1fr !important; /* Stack dashboard columns */
             }
         }
 
@@ -1309,6 +1384,193 @@
             }
             .sidebar .avatar {
                 margin: 0 auto;
+            }
+            #tab-charts.active {
+                flex-direction: column-reverse;
+            }
+            .charts-sidebar-watchlist {
+                width: 100% !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Mobile header adjustments */
+            header {
+                padding: 0 12px;
+                height: 55px;
+            }
+            .hamburger-btn {
+                display: flex !important;
+            }
+            .logo {
+                font-size: 18px;
+            }
+            .logo-icon {
+                width: 20px;
+                height: 20px;
+            }
+            .modal {
+                width: calc(100% - 24px) !important;
+                margin: 12px;
+            }
+
+            /* Stats dropdown styles for Mobile */
+            .stats-trigger-btn {
+                display: flex !important;
+            }
+            .account-stats {
+                display: none;
+                position: absolute;
+                top: calc(100% + 8px);
+                right: 0;
+                background: var(--bg-panel);
+                border: 1px solid var(--panel-border);
+                border-radius: 12px;
+                padding: 14px;
+                flex-direction: column !important;
+                gap: 10px;
+                min-width: 200px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+                z-index: 200;
+            }
+            .account-stats.show-dropdown {
+                display: flex !important;
+            }
+            .account-stats .stat-item {
+                text-align: left !important;
+                flex-direction: row;
+                justify-content: space-between;
+                width: 100%;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+                padding-bottom: 6px;
+            }
+            .account-stats .stat-item:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+            
+            /* Sidebar convert to sliding Drawer */
+            .sidebar {
+                position: fixed !important;
+                top: 0;
+                left: -260px;
+                height: 100vh;
+                width: 250px !important;
+                z-index: 1000;
+                transition: left 0.3s ease;
+                box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
+            }
+            .sidebar.show {
+                left: 0;
+            }
+            .sidebar .menu-item span, .sidebar .support-btn span, .sidebar .profile-info {
+                display: flex !important; /* Force show text on drawer mobile */
+            }
+            .sidebar .avatar {
+                margin: 0 !important;
+            }
+            .sidebar-bottom {
+                padding: 0 12px;
+            }
+            .profile-card {
+                padding: 12px 0;
+            }
+            
+            /* Workspace padding adjustments */
+            .tab-content {
+                padding: 10px !important;
+            }
+            
+            /* Tab content adjustments */
+            .dashboard-overview {
+                grid-template-columns: 1fr !important;
+            }
+            .stats-cards-grid {
+                grid-template-columns: repeat(2, 1fr) !important; /* 2x2 grid for stats cards */
+                gap: 8px !important;
+            }
+            
+            /* Trading Tab columns stack */
+            .dashboard-grid {
+                grid-template-columns: 1fr !important;
+                padding: 10px !important;
+                gap: 12px !important;
+            }
+            .chart-panel {
+                min-height: 320px !important;
+            }
+            .chart-quick-trade {
+                top: 6px;
+                right: 6px;
+            }
+            .chart-overlay-details {
+                left: 6px;
+            }
+            
+            /* Bots Tab stacking */
+            .bots-metrics-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px !important;
+            }
+            
+            /* Portfolio Tab stack */
+            .portfolio-grid {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+            }
+            
+            /* History Tab statistics row */
+            .history-stats-row {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px !important;
+            }
+            
+            /* Alerts Tab stack */
+            .alerts-layout {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+            }
+            
+            /* News Tab stack */
+            .news-layout {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+            }
+            
+            /* General font size reductions for tables and cards */
+            table th, table td {
+                padding: 8px 6px !important;
+                font-size: 11px !important;
+            }
+            .stat-card-premium .card-value {
+                font-size: 16px !important;
+            }
+            
+            .header-icons {
+                gap: 8px;
+            }
+            .btn-deposit {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-cards-grid {
+                grid-template-columns: 1fr !important; /* single column for narrowest screens */
+            }
+            .bots-metrics-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .history-stats-row {
+                grid-template-columns: 1fr !important;
+            }
+            .header-icons {
+                display: none !important; /* Hide secondary icons to avoid squeezing deposit button */
+            }
+            .btn-deposit {
+                padding: 6px 10px;
+                font-size: 11px;
             }
         }
 
@@ -1834,6 +2096,9 @@
     <!-- Header -->
     <header>
         <div class="header-left">
+            <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Abrir menú">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>
+            </button>
             <div class="logo">
                 <div class="logo-icon"></div>
                 CoreTrade
@@ -1845,23 +2110,30 @@
         </div>
 
         <div class="header-right">
-            <!-- Balance & Account Stats -->
-            <div class="account-stats">
-                <div class="stat-item">
-                    <span class="stat-label">Balance</span>
-                    <span class="stat-value" id="stat-balance">$0.00</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Equity</span>
-                    <span class="stat-value" id="stat-equity">$0.00</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">P&L</span>
-                    <span class="stat-value" id="stat-pnl">$0.00</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Margen Libre</span>
-                    <span class="stat-value" id="stat-margin">$0.00</span>
+            <!-- Stats Dropdown for Mobile / Standard Stats for Desktop -->
+            <div class="stats-dropdown-container">
+                <button class="stats-trigger-btn" onclick="toggleStatsDropdown(event)" aria-label="Ver estadísticas de cuenta">
+                    <span id="trigger-equity-label">Equity: $0.00</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <!-- Balance & Account Stats -->
+                <div class="account-stats" id="header-account-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Balance</span>
+                        <span class="stat-value" id="stat-balance">$0.00</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Equity</span>
+                        <span class="stat-value" id="stat-equity">$0.00</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">P&L</span>
+                        <span class="stat-value" id="stat-pnl">$0.00</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Margen Libre</span>
+                        <span class="stat-value" id="stat-margin">$0.00</span>
+                    </div>
                 </div>
             </div>
 
@@ -1880,6 +2152,9 @@
             </div>
         </div>
     </header>
+
+    <!-- Sidebar backdrop overlay for mobile -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <!-- Main Workspace Container -->
     <div class="workspace">        <!-- Sidebar Navigation -->
@@ -3064,8 +3339,8 @@
                 },
                 crosshair: {
                     mode: LightweightCharts.CrosshairMode.Normal,
-                    vertLine: { color: 'rgba(108, 92, 231, 0.3)', style: 1 },
-                    horzLine: { color: 'rgba(108, 92, 231, 0.3)', style: 1 },
+                    vertLine: { color: 'rgba(0, 242, 254, 0.3)', style: 1 },
+                    horzLine: { color: 'rgba(0, 242, 254, 0.3)', style: 1 },
                 },
                 rightPriceScale: {
                     borderColor: 'rgba(255, 255, 255, 0.06)',
@@ -3134,7 +3409,7 @@
             });
 
             rsiSeries = chartRsi.addSeries(LightweightCharts.LineSeries, {
-                color: '#a594f9',
+                color: '#00f2fe',
                 lineWidth: 1,
                 priceScaleId: 'right',
             });
@@ -3639,6 +3914,11 @@
             pnlEl.className = `stat-value ${state.pnl >= 0 ? 'up' : 'down'}`;
 
             document.getElementById('stat-margin').innerText = formatCurrency(state.marginFree);
+            
+            const triggerEquity = document.getElementById('trigger-equity-label');
+            if (triggerEquity) {
+                triggerEquity.innerText = `Equity: ${formatCurrency(state.equity)}`;
+            }
         }
 
         // --- Core Finance Calculations ---
@@ -4174,6 +4454,12 @@
         let chartCandlesFull = null, candleSeriesFull = null;
 
         function switchTab(tabId) {
+            // Close mobile sidebar if open
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar && sidebar.classList.contains('show')) {
+                toggleSidebar();
+            }
+
             // Update active menu item
             document.querySelectorAll('.sidebar .menu-item').forEach(item => {
                 const label = item.querySelector('span').innerText.toLowerCase();
@@ -4440,7 +4726,7 @@
                 }
             });
             
-            ctx.strokeStyle = '#6c5ce7';
+            ctx.strokeStyle = '#00f2fe';
             ctx.lineWidth = 2.5;
             ctx.stroke();
             
@@ -4450,8 +4736,8 @@
             ctx.closePath();
             
             const grad = ctx.createLinearGradient(0, paddingTop, 0, paddingTop + chartH);
-            grad.addColorStop(0, 'rgba(108, 92, 231, 0.15)');
-            grad.addColorStop(1, 'rgba(108, 92, 231, 0)');
+            grad.addColorStop(0, 'rgba(0, 242, 254, 0.15)');
+            grad.addColorStop(1, 'rgba(0, 242, 254, 0)');
             ctx.fillStyle = grad;
             ctx.fill();
         }
@@ -4588,8 +4874,8 @@
                 },
                 crosshair: {
                     mode: LightweightCharts.CrosshairMode.Normal,
-                    vertLine: { color: 'rgba(108, 92, 231, 0.3)', style: 1 },
-                    horzLine: { color: 'rgba(108, 92, 231, 0.3)', style: 1 },
+                    vertLine: { color: 'rgba(0, 242, 254, 0.3)', style: 1 },
+                    horzLine: { color: 'rgba(0, 242, 254, 0.3)', style: 1 },
                 },
                 rightPriceScale: { borderColor: 'rgba(255, 255, 255, 0.06)' },
                 timeScale: { borderColor: 'rgba(255, 255, 255, 0.06)', timeVisible: true }
@@ -5258,6 +5544,51 @@
         function formatCurrency(val) {
             return '$' + val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
+
+        // Responsive Sidebar Drawer & Dropdown Handlers
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            if (sidebar && overlay) {
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+            }
+        }
+
+        function toggleStatsDropdown(event) {
+            event.stopPropagation();
+            const stats = document.getElementById('header-account-stats');
+            if (stats) {
+                stats.classList.toggle('show-dropdown');
+            }
+        }
+
+        // Close dropdowns and drawers on clicking outside
+        window.addEventListener('click', (e) => {
+            const stats = document.getElementById('header-account-stats');
+            if (stats && stats.classList.contains('show-dropdown')) {
+                const container = document.querySelector('.stats-dropdown-container');
+                if (container && !container.contains(e.target)) {
+                    stats.classList.remove('show-dropdown');
+                }
+            }
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar && sidebar.classList.contains('show') && e.target.classList.contains('sidebar-overlay')) {
+                toggleSidebar();
+            }
+        });
+
+        // Redraw responsive canvases on window resize
+        window.addEventListener('resize', () => {
+            const activeTab = document.querySelector('.tab-content.active');
+            if (activeTab) {
+                if (activeTab.id === 'tab-dashboard') {
+                    drawDashboardPerformanceChart();
+                } else if (activeTab.id === 'tab-portfolio') {
+                    drawPortfolioDonutChart();
+                }
+            }
+        });
 
     </script>
 </body>
