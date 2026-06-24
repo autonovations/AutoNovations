@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('deCourseTheme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.classList.add('light');
+    })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 5: Python para Data Engineering | Master Book DE 2026</title>
+<meta name="description" content="Python para Data Engineering: Pandas, Polars, SQLAlchemy, APIs REST, logging, testing y automatización de pipelines.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0A0A0A; --bg2: #121212; --bg3: rgba(18, 18, 18, 0.6); --bg4: #1e1e1e;
+  --blue: #00D9FF; --cyan: #00D9FF; --purple: #8b5cf6; --green: #10b981;
+  --orange: #f59e0b; --pink: #ec4899; --red: #ef4444;
+  --t1: #ffffff; --t2: #E0E0E0; --t3: #A0A0A0;
+  --border: rgba(0, 217, 255, 0.2);
+  --sidebar-width: 280px;
+
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--bg3);
+  --bg-card-hover: var(--bg4);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-muted: var(--t3);
+  --accent-cyan: var(--cyan);
+  --accent-blue: var(--blue);
+  --accent-green: var(--green);
+  --accent-orange: var(--orange);
+  --accent-purple: var(--purple);
+  --gradient-hero: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  --gradient-1: linear-gradient(135deg, var(--blue), var(--cyan));
+}
+html.light {
+  --bg: #F8FAFC; --bg2: #FFFFFF; --bg3: rgba(255, 255, 255, 0.7); --bg4: #E2E8F0;
+  --blue: #0088CC; --cyan: #00D9FF; --purple: #7c3aed; --green: #059669;
+  --orange: #d97706; --pink: #db2777; --red: #dc2626;
+  --t1: #0F172A; --t2: #334155; --t3: #64748B;
+  --border: rgba(0, 217, 255, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;display:flex;font-size:1.15rem;}
+.sidebar{width:280px;min-width:280px;background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 0;}
+.sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+.book-title{font-size:0.75rem;font-weight:700;color:var(--blue);letter-spacing:0.1em;text-transform:uppercase;}
+.chapter-title-sb{font-size:0.9rem;color:var(--t2);margin-top:0.25rem;}
+.nav-section{padding:0 1rem;margin-bottom:0.5rem;}
+.nav-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 0.5rem;margin-bottom:0.5rem;}
+.nav-item{display:block;padding:0.45rem 0.75rem;border-radius:8px;text-decoration:none;color:var(--t2);font-size:0.82rem;transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover,.nav-item.active{background:rgba(59,130,246,0.1);color:var(--blue);}
+.nav-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--t3);margin-right:0.4rem;}
+.nav-back{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;color:var(--t3);text-decoration:none;font-size:0.8rem;border-bottom:1px solid var(--border);margin-bottom:1rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--blue);}
+.content{flex:1;min-width:0;padding:3rem 4rem;max-width:100%;margin:0 auto;}
+.chapter-header{margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border);}
+.ch-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;color:var(--blue);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:1.1rem;color:var(--t2);max-width:680px;line-height:1.8;}
+.chapter-meta-bar{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--t3);}
+.meta-item strong{color:var(--t2);}
+h2{font-size:1.6rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--t1);padding-top:1rem;}
+h2::before{content:attr(data-num)' ';color:var(--blue);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 0.75rem;color:var(--t1);}
+h4{font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem;color:var(--cyan);}
+p{margin-bottom:1.25rem;color:var(--t2);font-size:0.95rem;}
+ul,ol{padding-left:1.5rem;margin-bottom:1.25rem;color:var(--t2);}
+li{margin-bottom:0.5rem;font-size:0.95rem;}
+strong{color:var(--t1);}
+code{font-family:'JetBrains Mono',monospace;background:var(--bg4);border:1px solid var(--border);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.85rem;color:var(--cyan);}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;}
+pre code{background:none;border:none;padding:0;font-size:0.85rem;color:var(--t1);line-height:1.8;}
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0;}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin:1.5rem 0;}
+.card-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1.25rem;transition:all 0.2s;}
+.card-item:hover{border-color:var(--blue);background:var(--bg4);}
+.card-item .icon{font-size:1.75rem;margin-bottom:0.75rem;}
+.card-item h4{margin:0 0 0.5rem;color:var(--t1);}
+.card-item p{font-size:0.82rem;color:var(--t3);margin:0;}
+.info-box{border-left:3px solid var(--blue);background:rgba(59,130,246,0.05);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1.5rem 0;}
+.info-box.warning{border-color:var(--orange);background:rgba(245,158,11,0.05);}
+.info-box.success{border-color:var(--green);background:rgba(16,185,129,0.05);}
+.info-box.purple{border-color:var(--purple);background:rgba(139,92,246,0.05);}
+.info-box-title{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.info-box .info-box-title{color:var(--blue);}
+.info-box.warning .info-box-title{color:var(--orange);}
+.info-box.success .info-box-title{color:var(--green);}
+.info-box.purple .info-box-title{color:var(--purple);}
+.table-wrap{overflow-x:auto;margin:1.5rem 0;}
+table{width:100%;border-collapse:collapse;font-size:0.875rem;}
+th{background:var(--bg4);color:var(--t1);font-weight:600;padding:0.75rem 1rem;text-align:left;border-bottom:2px solid var(--border);}
+td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--t2);}
+tr:hover td{background:var(--bg3);}
+td:first-child{font-weight:500;color:var(--t1);}
+.accordion{margin:1.5rem 0;}
+.accordion-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.accordion-header{padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:0.95rem;transition:background 0.2s;user-select:none;}
+.accordion-header:hover{background:var(--bg4);}
+.accordion-header .arrow{color:var(--blue);transition:transform 0.3s;}
+.accordion-item.open .accordion-header .arrow{transform:rotate(180deg);}
+.accordion-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease;}
+.accordion-body.open{max-height:5000px;padding:0 1.25rem 1.25rem;}
+.tabs{margin:2rem 0;}
+.tab-list{display:flex;gap:0.5rem;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.tab-btn{padding:0.6rem 1.25rem;background:none;border:none;color:var(--t3);font-size:0.875rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;font-family:'Inter',sans-serif;}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
+.tab-panel{display:none;padding:1.5rem;background:var(--bg3);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;}
+.tab-panel.active{display:block;}
+.chapter-nav{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem;}
+.ch-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--t2);transition:all 0.2s;flex:1;max-width:260px;}
+.ch-nav-btn:hover{border-color:var(--blue);color:var(--t1);}
+.ch-nav-btn.next{margin-left:auto;text-align:right;flex-direction:row-reverse;}
+.ch-nav-btn .arrow{font-size:1.25rem;color:var(--blue);}
+.ch-nav-meta{font-size:0.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;}
+.ch-nav-title{font-size:0.875rem;font-weight:600;margin-top:0.1rem;}
+@media(max-width:900px){.sidebar{display:none;}.content{padding:2rem 1.5rem;}}
+</style>
+</head>
+<body>
+
+
+<main class="content">
+  <div class="chapter-header">
+    <div class="ch-badge">🐍 Capítulo 5 · Nivel Intermedio-Avanzado</div>
+    <h1>Python para Data Engineering</h1>
+    <p class="lead">Python es el lenguaje de facto del Data Engineering moderno. Desde manipulación de datos con Pandas y Polars hasta la construcción de pipelines completos, APIs y testing automatizado.</p>
+    <div class="chapter-meta-bar">
+      <div class="meta-item">⏱️ <strong>Lectura:</strong> ~75 min</div>
+      <div class="meta-item">🎯 <strong>Nivel:</strong> Intermedio → Avanzado</div>
+      <div class="meta-item">📌 <strong>Python:</strong> 3.11+</div>
+    </div>
+  </div>
+
+  <!-- 5.0 -->
+  <section id="s1">
+    <h2 data-num="5.0">Python Esencial para Data Engineering</h2>
+    <p>Antes de las librerías, el dominio de Python puro es fundamental. Un Data Engineer escribe código de producción — limpio, testeable, mantenible y eficiente.</p>
+
+    <h3>Patrones Pythónicos Clave</h3>
+    <pre><code>"""
+Python patterns esenciales para Data Engineering
+Python 3.11+ features incluidos
+"""
+from __future__ import annotations
+from dataclasses import dataclass, field
+from typing import Generator, Iterator, Any
+from pathlib import Path
+from contextlib import contextmanager
+from functools import lru_cache, partial
+import itertools
+import json
+
+# ── DATACLASSES: Estructuras de datos tipadas ──────────────────────────────
+@dataclass
+class DataPipelineConfig:
+    """Configuración de pipeline con defaults y validación."""
+    source_url: str
+    batch_size: int = 1000
+    max_retries: int = 3
+    timeout_seconds: float = 30.0
+    output_path: Path = field(default_factory=lambda: Path("./output"))
+    tags: list[str] = field(default_factory=list)
+
+    def __post_init__(self):
+        # Validación al crear
+        if self.batch_size <= 0:
+            raise ValueError(f"batch_size debe ser positivo, got {self.batch_size}")
+        if not self.source_url.startswith(("http://", "https://", "gs://", "s3://")):
+            raise ValueError(f"URL de fuente inválida: {self.source_url}")
+        self.output_path.mkdir(parents=True, exist_ok=True)
+
+# ── GENERATORS: Procesamiento de datos en streaming sin cargar en memoria ──
+def read_csv_in_chunks(filepath: Path, chunk_size: int = 1000) -> Generator[list[dict], None, None]:
+    """Genera chunks de CSV sin cargar el archivo completo en memoria."""
+    with open(filepath, 'r', encoding='utf-8') as f:
+        import csv
+        reader = csv.DictReader(f)
+        batch = []
+        for i, row in enumerate(reader):
+            batch.append(row)
+            if len(batch) >= chunk_size:
+                yield batch
+                batch = []
+        if batch:  # Último batch (puede ser menor que chunk_size)
+            yield batch
+
+# Uso: procesa millones de filas con memoria constante
+for chunk in read_csv_in_chunks(Path("huge_file.csv"), chunk_size=5000):
+    process_batch(chunk)
+
+# ── CONTEXT MANAGERS: Gestión automática de recursos ──────────────────────
+@contextmanager
+def timer(operation_name: str) -> Iterator[None]:
+    """Context manager para medir tiempo de operaciones."""
+    import time
+    start = time.perf_counter()
+    try:
+        yield
+    finally:
+        elapsed = time.perf_counter() - start
+        print(f"⏱️ {operation_name}: {elapsed:.3f}s")
+
+with timer("Data extraction"):
+    data = extract_from_api()
+
+# ── TYPE HINTS AVANZADOS (Python 3.10+) ────────────────────────────────────
+from typing import TypeAlias, TypeVar
+
+DataRow: TypeAlias = dict[str, Any]
+T = TypeVar('T')
+
+def transform_rows(
+    rows: list[DataRow],
+    *transformers: Callable[[DataRow], DataRow],
+    filter_fn: Callable[[DataRow], bool] | None = None
+) -> list[DataRow]:
+    """Aplica una cadena de transformaciones a filas de datos."""
+    result = rows
+    for transform in transformers:
+        result = [transform(row) for row in result]
+    if filter_fn:
+        result = [row for row in result if filter_fn(row)]
+    return result
+
+# ── MATCH STATEMENT (Python 3.10+) ─────────────────────────────────────────
+def handle_api_response(response_data: dict) -> str:
+    """Maneja diferentes tipos de respuesta de API."""
+    match response_data:
+        case {"status": "success", "data": list() as items}:
+            return f"✅ {len(items)} registros recibidos"
+        case {"status": "error", "code": int(code), "message": str(msg)}:
+            return f"❌ Error {code}: {msg}"
+        case {"status": "partial", "data": items, "total": total}:
+            return f"⚠️ Parcial: {len(items)}/{total} registros"
+        case _:
+            return f"❓ Respuesta desconocida: {response_data}"</code></pre>
+
+    <h3>Manejo de Errores y Retry Logic</h3>
+    <pre><code>"""
+Patrones de resiliencia para pipelines de producción
+"""
+import time
+import logging
+from functools import wraps
+from typing import TypeVar, Callable
+from exceptions import PipelineError, TransientError
+
+F = TypeVar('F', bound=Callable)
+logger = logging.getLogger(__name__)
+
+def retry_with_backoff(
+    max_attempts: int = 3,
+    initial_delay: float = 1.0,
+    backoff_factor: float = 2.0,
+    exceptions: tuple[type[Exception], ...] = (TransientError,)
+):
+    """Decorador que reintenta automáticamente ante errores transientes."""
+    def decorator(func: F) -> F:
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            delay = initial_delay
+            for attempt in range(max_attempts):
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as e:
+                    if attempt == max_attempts - 1:
+                        logger.error(f"Max retries ({max_attempts}) exceeded: {e}")
+                        raise
+                    logger.warning(
+                        f"Attempt {attempt + 1}/{max_attempts} failed: {e}. "
+                        f"Retrying in {delay:.1f}s..."
+                    )
+                    time.sleep(delay)
+                    delay *= backoff_factor
+        return wrapper
+    return decorator
+
+@retry_with_backoff(max_attempts=5, initial_delay=2.0)
+def fetch_data_from_api(endpoint: str) -> dict:
+    """Fetch con retry automático."""
+    import requests
+    response = requests.get(endpoint, timeout=30)
+    response.raise_for_status()
+    return response.json()</code></pre>
+  </section>
+
+  <!-- 5.1 -->
+  <section id="s2">
+    <h2 data-num="5.1">Pandas: El Estándar de la Industria</h2>
+    <p>Pandas sigue siendo la librería más usada para manipulación de datos en Python. Dominar sus patrones avanzados es imprescindible.</p>
+
+    <pre><code>"""
+Pandas avanzado para Data Engineering
+pandas 2.x con mejoras de performance
+"""
+import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
+
+# ── LECTURA EFICIENTE ───────────────────────────────────────────────────────
+# Especificar dtypes al leer SIEMPRE (evita inferencia lenta)
+dtypes = {
+    'order_id':     'int64',
+    'customer_id':  'int32',
+    'total_amount': 'float32',  # float32 en lugar de float64 ahorra 50% memoria
+    'status':       'category',  # category para strings repetitivos
+}
+df = pd.read_csv('orders.csv',
+    dtype=dtypes,
+    parse_dates=['order_date'],
+    usecols=['order_id', 'customer_id', 'total_amount', 'status', 'order_date'],
+    chunksize=None  # O leer en chunks si el archivo es enorme
+)
+
+# Leer con chunks para archivos grandes
+reader = pd.read_csv('huge_file.csv', chunksize=50_000)
+processed_chunks = []
+for chunk in reader:
+    clean_chunk = chunk.dropna(subset=['customer_id']).copy()
+    processed_chunks.append(clean_chunk)
+df = pd.concat(processed_chunks, ignore_index=True)
+
+# ── TRANSFORMACIONES AVANZADAS ─────────────────────────────────────────────
+# .assign() para transformaciones encadenadas (más limpio que múltiples =)
+df_transformed = (df
+    .assign(
+        # Transformaciones de fecha
+        year       = lambda x: x['order_date'].dt.year,
+        month      = lambda x: x['order_date'].dt.month,
+        day_of_week= lambda x: x['order_date'].dt.day_name(),
+        week_num   = lambda x: x['order_date'].dt.isocalendar().week,
+        # Campos calculados
+        is_large_order = lambda x: x['total_amount'] > 500,
+        discount_amount= lambda x: np.where(x['status'] == 'vip', 
+                                             x['total_amount'] * 0.1, 0),
+        # Normalización
+        amount_normalized = lambda x: (x['total_amount'] - x['total_amount'].mean()) 
+                                      / x['total_amount'].std()
+    )
+    .query("status != 'cancelled'")
+    .drop_duplicates(subset=['order_id'])
+)
+
+# ── MERGE (JOIN) en Pandas ─────────────────────────────────────────────────
+orders = pd.read_csv('orders.csv')
+customers = pd.read_csv('customers.csv')
+products = pd.read_csv('products.csv')
+
+# JOIN múltiple encadenado
+result = (orders
+    .merge(customers, on='customer_id', how='left', suffixes=('', '_cust'))
+    .merge(products, on='product_id', how='inner', suffixes=('', '_prod'))
+)
+
+# ── GROUPBY AVANZADO ────────────────────────────────────────────────────────
+# agg() con múltiples funciones por columna
+customer_stats = df.groupby('customer_id').agg(
+    total_orders   = ('order_id', 'count'),
+    total_revenue  = ('total_amount', 'sum'),
+    avg_order      = ('total_amount', 'mean'),
+    max_order      = ('total_amount', 'max'),
+    first_purchase = ('order_date', 'min'),
+    last_purchase  = ('order_date', 'max'),
+    unique_statuses= ('status', 'nunique'),
+).reset_index()
+
+# Agregar métricas calculadas
+customer_stats['lifespan_days'] = (
+    customer_stats['last_purchase'] - customer_stats['first_purchase']
+).dt.days
+
+customer_stats['avg_days_between_orders'] = (
+    customer_stats['lifespan_days'] / customer_stats['total_orders']
+).round(1)
+
+# ── WINDOW FUNCTIONS equivalentes en Pandas ────────────────────────────────
+# transform: groupby pero mantiene el índice original (como WINDOW en SQL)
+df['customer_rank'] = df.groupby('customer_id')['total_amount'].rank(
+    method='dense', ascending=False
+)
+df['customer_total_rev'] = df.groupby('customer_id')['total_amount'].transform('sum')
+df['pct_of_customer_rev'] = df['total_amount'] / df['customer_total_rev']
+
+# Cumulative sum por grupo
+df_sorted = df.sort_values(['customer_id', 'order_date'])
+df_sorted['cumulative_spent'] = df_sorted.groupby('customer_id')['total_amount'].cumsum()
+
+# ── OPTIMIZACIÓN DE MEMORIA ─────────────────────────────────────────────────
+def optimize_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    """Reduce el uso de memoria del DataFrame automáticamente."""
+    original_mem = df.memory_usage(deep=True).sum() / 1024**2
+    
+    for col in df.columns:
+        col_type = df[col].dtype
+        if col_type == 'int64':
+            # Reducir int64 → int32 o int16 si es posible
+            if df[col].between(-32768, 32767).all():
+                df[col] = df[col].astype('int16')
+            elif df[col].between(-2147483648, 2147483647).all():
+                df[col] = df[col].astype('int32')
+        elif col_type == 'float64':
+            df[col] = df[col].astype('float32')
+        elif col_type == 'object':
+            # Si hay poca cardinalidad, usar category
+            if df[col].nunique() / len(df) < 0.5:
+                df[col] = df[col].astype('category')
+    
+    new_mem = df.memory_usage(deep=True).sum() / 1024**2
+    print(f"Memoria: {original_mem:.1f}MB → {new_mem:.1f}MB ({(1-new_mem/original_mem)*100:.0f}% reducción)")
+    return df</code></pre>
+  </section>
+
+  <!-- 5.2 -->
+  <section id="s3">
+    <h2 data-num="5.2">Polars: El Futuro del Procesamiento en Python</h2>
+    <p>Polars es la alternativa moderna a Pandas. Escrito en Rust, usa paralelismo nativo y operaciones lazy para ser <strong>5-100x más rápido</strong> que Pandas en la mayoría de operaciones.</p>
+
+    <div class="info-box success">
+      <div class="info-box-title">🚀 Por qué Polars en 2026</div>
+      <p style="margin:0;font-size:0.9rem;">Polars aprovecha todos los cores del CPU automáticamente, usa memoria eficientemente con Apache Arrow, tiene API lazy que optimiza queries automáticamente (como un motor SQL), y su API es más consistente que Pandas. Para nuevos proyectos, Polars es la opción recomendada.</p>
+    </div>
+
+    <pre><code>"""
+Polars para Data Engineering
+polars 0.20+
+"""
+import polars as pl
+from polars import col, lit, when
+from datetime import date
+
+# ── LECTURA: Lazy por defecto ──────────────────────────────────────────────
+# LazyFrame: define el plan sin ejecutar (como un query plan de SQL)
+lf = pl.scan_csv("orders.csv",
+    dtypes={
+        "order_id": pl.Int64,
+        "amount": pl.Float32,
+        "status": pl.Categorical,
+    },
+    try_parse_dates=True
+)
+
+# La query se optimiza ANTES de ejecutar
+result = (lf
+    .filter(col("status") != "cancelled")
+    .with_columns([
+        col("order_date").dt.year().alias("year"),
+        col("order_date").dt.month().alias("month"),
+        (col("amount") * 1.21).alias("amount_with_tax"),
+        when(col("amount") > 500).then(lit("large"))
+        .when(col("amount") > 100).then(lit("medium"))
+        .otherwise(lit("small")).alias("order_size"),
+    ])
+    .group_by(["year", "month", "status"])
+    .agg([
+        pl.count("order_id").alias("order_count"),
+        pl.sum("amount").alias("total_revenue"),
+        pl.mean("amount").alias("avg_amount"),
+        pl.quantile("amount", 0.9).alias("p90_amount"),
+    ])
+    .sort(["year", "month"])
+    .collect()  # Ejecutar el plan optimizado
+)
+
+# ── EXPRESIONES: más expresivas que Pandas ─────────────────────────────────
+df = pl.read_csv("sales.csv")
+
+# Múltiples transformaciones de una vez (más rápido que Pandas)
+df_clean = df.with_columns([
+    # String operations
+    col("name").str.strip_chars().str.to_lowercase().alias("name_clean"),
+    col("email").str.to_lowercase().alias("email_lower"),
+    # Date operations
+    col("order_date").str.strptime(pl.Date, "%Y-%m-%d"),
+    # Conditional
+    when(col("amount") >= 0).then(col("amount")).otherwise(lit(0)).alias("amount_positive"),
+    # Arithmetic
+    (col("price") * col("quantity") * (1 - col("discount_pct") / 100)).alias("net_amount"),
+])
+
+# ── GROUP BY: Mucho más rápido que Pandas ──────────────────────────────────
+stats = df.group_by(["category", "year"]).agg([
+    pl.count().alias("transactions"),
+    pl.sum("amount").alias("revenue"),
+    pl.n_unique("customer_id").alias("unique_customers"),
+    pl.col("amount").mean().alias("avg_amount"),
+    pl.col("amount").std().alias("std_amount"),
+    pl.col("amount").quantile(0.5).alias("median"),
+    pl.col("amount").filter(col("status") == "returned").sum().alias("returned_amount"),
+])
+
+# ── JOINS en Polars ────────────────────────────────────────────────────────
+orders = pl.read_csv("orders.csv")
+customers = pl.read_csv("customers.csv")
+
+joined = orders.join(customers, on="customer_id", how="left")
+
+# ── PANDAS vs POLARS: Comparativa de Performance ────────────────────────────
+import time
+
+# Pandas (1M rows)
+import pandas as pd
+df_pd = pd.DataFrame({"a": range(1_000_000), "b": [i % 100 for i in range(1_000_000)]})
+t1 = time.perf_counter()
+result_pd = df_pd.groupby("b")["a"].sum()
+pandas_time = time.perf_counter() - t1
+
+# Polars (mismo dataset)
+df_pl = pl.DataFrame({"a": range(1_000_000), "b": [i % 100 for i in range(1_000_000)]})
+t1 = time.perf_counter()
+result_pl = df_pl.group_by("b").agg(pl.sum("a"))
+polars_time = time.perf_counter() - t1
+
+print(f"Pandas: {pandas_time:.3f}s")
+print(f"Polars: {polars_time:.3f}s")
+print(f"Speedup: {pandas_time/polars_time:.1f}x")  # Típicamente 10-50x</code></pre>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Feature</th><th>Pandas</th><th>Polars</th></tr></thead>
+        <tbody>
+          <tr><td>Performance</td><td>Baseline</td><td>5-100x más rápido</td></tr>
+          <tr><td>Paralelismo</td><td>Single-threaded</td><td>Multi-threaded nativo</td></tr>
+          <tr><td>Memoria</td><td>Alta (copies)</td><td>Eficiente (Arrow, zero-copy)</td></tr>
+          <tr><td>API Lazy</td><td>No</td><td>Sí (scan_*, query planning)</td></tr>
+          <tr><td>Streaming</td><td>Manual chunks</td><td>Native streaming mode</td></tr>
+          <tr><td>Ecosistema</td><td>Maduro, enorme</td><td>Creciendo rápido</td></tr>
+          <tr><td>NaN handling</td><td>Confuso (NaN vs None)</td><td>Consistente (null)</td></tr>
+          <tr><td>Recomendación 2026</td><td>Legacy/integración</td><td>Nuevos proyectos</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 5.3 -->
+  <section id="s4">
+    <h2 data-num="5.3">SQLAlchemy: Python ↔ Bases de Datos</h2>
+    <pre><code>"""
+SQLAlchemy 2.0+ para Data Engineering
+ORM + Core + Connection pooling
+"""
+from sqlalchemy import create_engine, text, Column, Integer, String, Float, DateTime
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
+from sqlalchemy.dialects.postgresql import insert as pg_insert
+from contextlib import contextmanager
+import pandas as pd
+
+# ── ENGINE: Connection pooling automático ─────────────────────────────────
+engine = create_engine(
+    "postgresql+psycopg2://user:password@host:5432/dbname",
+    pool_size=10,           # Conexiones en el pool
+    max_overflow=20,         # Conexiones adicionales máximas
+    pool_pre_ping=True,      # Verifica conexiones antes de usarlas
+    pool_recycle=3600,       # Recicla conexiones cada hora
+    echo=False,              # True para debug (loguea SQL)
+    connect_args={
+        "connect_timeout": 10,
+        "application_name": "my_data_pipeline",
+    }
+)
+
+# ── ORM: Definir modelos ───────────────────────────────────────────────────
+class Base(DeclarativeBase):
+    pass
+
+class Order(Base):
+    __tablename__ = "orders"
+    
+    order_id    = Column(Integer, primary_key=True)
+    customer_id = Column(Integer, nullable=False, index=True)
+    amount      = Column(Float, nullable=False)
+    status      = Column(String(20), default="pending", index=True)
+    created_at  = Column(DateTime, nullable=False)
+
+# Crear tablas
+Base.metadata.create_all(engine)
+
+# ── SESSION: Transacciones ─────────────────────────────────────────────────
+SessionLocal = sessionmaker(bind=engine)
+
+@contextmanager
+def get_session():
+    """Context manager para sesiones con rollback automático."""
+    session = SessionLocal()
+    try:
+        yield session
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+# Uso
+with get_session() as session:
+    new_order = Order(customer_id=1, amount=299.99, status="pending")
+    session.add(new_order)
+    # Commit automático al salir del context manager
+
+# ── CORE: SQL expresivo ────────────────────────────────────────────────────
+from sqlalchemy import select, func, and_, or_, update, delete
+
+with engine.connect() as conn:
+    # SELECT con filtros
+    stmt = select(Order).where(
+        and_(Order.status == "pending", Order.amount > 100)
+    ).order_by(Order.created_at.desc()).limit(100)
+    
+    results = conn.execute(stmt).fetchall()
+    
+    # SQL raw con parámetros (seguro contra SQL injection)
+    result = conn.execute(
+        text("SELECT customer_id, SUM(amount) AS total FROM orders WHERE status = :status GROUP BY customer_id"),
+        {"status": "delivered"}
+    )
+
+# ── PANDAS + SQLAlchemy: el dúo perfecto ──────────────────────────────────
+# Leer query directamente en DataFrame
+df = pd.read_sql_query(
+    sql="SELECT * FROM orders WHERE order_date >= :since",
+    con=engine,
+    params={"since": "2026-01-01"}
+)
+
+# Escribir DataFrame a la base de datos
+df.to_sql(
+    name="fact_orders",
+    con=engine,
+    schema="analytics",
+    if_exists="append",
+    index=False,
+    method="multi",      # Batch inserts
+    chunksize=1000
+)
+
+# ── UPSERT: INSERT ON CONFLICT (PostgreSQL) ────────────────────────────────
+def upsert_dataframe(df: pd.DataFrame, table_name: str, primary_keys: list[str]) -> int:
+    """Upsert (INSERT or UPDATE) de un DataFrame en PostgreSQL."""
+    rows = df.to_dict(orient='records')
+    if not rows:
+        return 0
+    
+    with engine.begin() as conn:
+        stmt = pg_insert(table_name).values(rows)
+        update_columns = {
+            col: stmt.excluded[col]
+            for col in df.columns
+            if col not in primary_keys
+        }
+        stmt = stmt.on_conflict_do_update(
+            index_elements=primary_keys,
+            set_=update_columns
+        )
+        result = conn.execute(stmt)
+    
+    return result.rowcount</code></pre>
+  </section>
+
+  <!-- 5.4 -->
+  <section id="s5">
+    <h2 data-num="5.4">Ingesta desde APIs REST</h2>
+    <pre><code>"""
+Patrones para consumir APIs REST en Data Engineering
+httpx (async), requests, paginación, rate limiting
+"""
+import httpx
+import asyncio
+import time
+from typing import AsyncGenerator
+from dataclasses import dataclass
+
+@dataclass
+class APIConfig:
+    base_url: str
+    api_key: str
+    rate_limit_rps: float = 10.0  # Requests por segundo
+    timeout: float = 30.0
+
+class DataAPIClient:
+    def __init__(self, config: APIConfig):
+        self.config = config
+        self._last_request_time = 0.0
+    
+    def _rate_limit(self):
+        """Throttle para respetar rate limits."""
+        min_interval = 1.0 / self.config.rate_limit_rps
+        elapsed = time.monotonic() - self._last_request_time
+        if elapsed < min_interval:
+            time.sleep(min_interval - elapsed)
+        self._last_request_time = time.monotonic()
+    
+    @retry_with_backoff(max_attempts=3, exceptions=(httpx.HTTPError,))
+    def get(self, endpoint: str, params: dict = None) -> dict:
+        self._rate_limit()
+        with httpx.Client(
+            base_url=self.config.base_url,
+            headers={"Authorization": f"Bearer {self.config.api_key}"},
+            timeout=self.config.timeout
+        ) as client:
+            response = client.get(endpoint, params=params)
+            response.raise_for_status()
+            return response.json()
+    
+    def paginate(self, endpoint: str, page_size: int = 100) -> list[dict]:
+        """Maneja paginación automáticamente."""
+        all_data = []
+        page = 1
+        
+        while True:
+            response = self.get(endpoint, params={"page": page, "per_page": page_size})
+            
+            # Adaptar según el formato de la API
+            if isinstance(response, list):
+                data = response
+                has_more = len(data) == page_size
+            elif isinstance(response, dict):
+                data = response.get("data", response.get("results", []))
+                has_more = response.get("has_more", response.get("next") is not None)
+            
+            all_data.extend(data)
+            
+            if not has_more or not data:
+                break
+            
+            page += 1
+            print(f"  Página {page}: {len(all_data)} registros total")
+        
+        return all_data
+
+# ── ASYNC: Múltiples APIs en paralelo ─────────────────────────────────────
+async def fetch_all_endpoints(
+    base_url: str,
+    endpoints: list[str],
+    api_key: str
+) -> dict[str, list[dict]]:
+    """Fetcha múltiples endpoints en paralelo (mucho más rápido que secuencial)."""
+    async with httpx.AsyncClient(
+        base_url=base_url,
+        headers={"Authorization": f"Bearer {api_key}"},
+        timeout=30.0
+    ) as client:
+        async def fetch_one(endpoint: str) -> tuple[str, list]:
+            response = await client.get(endpoint)
+            response.raise_for_status()
+            return endpoint, response.json()
+        
+        results = await asyncio.gather(
+            *[fetch_one(ep) for ep in endpoints],
+            return_exceptions=True
+        )
+    
+    return {
+        endpoint: data
+        for endpoint, data in results
+        if not isinstance(data, Exception)
+    }
+
+# Uso: fetcha 10 endpoints en paralelo
+endpoints = ["/users", "/orders", "/products", "/categories", "/reviews"]
+all_data = asyncio.run(fetch_all_endpoints(BASE_URL, endpoints, API_KEY))
+# En lugar de 10 * 2s = 20s, tarda ~2s (el tiempo del endpoint más lento)</code></pre>
+  </section>
+
+  <!-- 5.5 -->
+  <section id="s6">
+    <h2 data-num="5.5">Logging Profesional para Pipelines</h2>
+    <pre><code>"""
+Logging estructurado para pipelines de producción
+JSON logging para parseo automatizado por ELK/Grafana
+"""
+import logging
+import json
+import sys
+from datetime import datetime, timezone
+
+class StructuredFormatter(logging.Formatter):
+    """Formatea logs como JSON para ingesta por sistemas de observabilidad."""
+    
+    def format(self, record: logging.LogRecord) -> str:
+        log_data = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "level":     record.levelname,
+            "logger":    record.name,
+            "message":   record.getMessage(),
+            "module":    record.module,
+            "function":  record.funcName,
+            "line":      record.lineno,
+        }
+        # Agregar contexto adicional si existe
+        if hasattr(record, 'pipeline_id'):
+            log_data['pipeline_id'] = record.pipeline_id
+        if hasattr(record, 'batch_id'):
+            log_data['batch_id'] = record.batch_id
+        if record.exc_info:
+            log_data['exception'] = self.formatException(record.exc_info)
+        
+        return json.dumps(log_data)
+
+def setup_logger(name: str, level: str = "INFO") -> logging.Logger:
+    """Configura logger estructurado."""
+    logger = logging.getLogger(name)
+    logger.setLevel(getattr(logging, level.upper()))
+    
+    # Console handler (JSON en producción, legible en dev)
+    handler = logging.StreamHandler(sys.stdout)
+    if os.getenv("ENV", "dev") == "production":
+        handler.setFormatter(StructuredFormatter())
+    else:
+        handler.setFormatter(logging.Formatter(
+            "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
+        ))
+    
+    logger.addHandler(handler)
+    return logger
+
+# Uso en un pipeline
+logger = setup_logger("pipeline.orders")
+
+class OrdersPipeline:
+    def __init__(self):
+        self.pipeline_id = f"orders_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    
+    def process_batch(self, batch_id: str, records: list) -> dict:
+        extra = {"pipeline_id": self.pipeline_id, "batch_id": batch_id}
+        logger.info(f"Processing batch: {len(records)} records", extra=extra)
+        
+        try:
+            processed = [self.transform(r) for r in records]
+            failed = [r for r in records if not self.validate(r)]
+            
+            logger.info(
+                f"Batch complete: {len(processed)} processed, {len(failed)} failed",
+                extra={**extra, "success_count": len(processed), "failed_count": len(failed)}
+            )
+            return {"processed": len(processed), "failed": len(failed)}
+        
+        except Exception as e:
+            logger.error(f"Batch failed: {e}", exc_info=True, extra=extra)
+            raise</code></pre>
+  </section>
+
+  <!-- 5.6 -->
+  <section id="s7">
+    <h2 data-num="5.6">Testing de Pipelines de Datos</h2>
+    <pre><code>"""
+Testing con pytest para Data Engineering
+pytest + pytest-mock + Great Expectations
+"""
+import pytest
+import pandas as pd
+import numpy as np
+from unittest.mock import Mock, patch, MagicMock
+from pathlib import Path
+
+# ── UNIT TESTS: Funciones de transformación ────────────────────────────────
+def normalize_email(email: str) -> str:
+    return email.strip().lower() if email else None
+
+def calculate_customer_ltv(orders_df: pd.DataFrame) -> pd.DataFrame:
+    return orders_df.groupby('customer_id').agg(
+        ltv=('amount', 'sum'),
+        orders=('order_id', 'count')
+    ).reset_index()
+
+class TestNormalizeEmail:
+    def test_lowercase_conversion(self):
+        assert normalize_email("ANA@EXAMPLE.COM") == "ana@example.com"
+    
+    def test_strip_whitespace(self):
+        assert normalize_email("  ana@example.com  ") == "ana@example.com"
+    
+    def test_none_input(self):
+        assert normalize_email(None) is None
+    
+    def test_empty_string(self):
+        assert normalize_email("") is None
+
+class TestCalculateCustomerLTV:
+    @pytest.fixture
+    def sample_orders(self):
+        return pd.DataFrame({
+            'order_id':    [1, 2, 3, 4, 5],
+            'customer_id': [101, 101, 102, 102, 103],
+            'amount':      [100.0, 200.0, 50.0, 150.0, 300.0]
+        })
+    
+    def test_correct_ltv_calculation(self, sample_orders):
+        result = calculate_customer_ltv(sample_orders)
+        customer_101 = result[result['customer_id'] == 101]
+        assert customer_101['ltv'].values[0] == pytest.approx(300.0)
+        assert customer_101['orders'].values[0] == 2
+    
+    def test_all_customers_present(self, sample_orders):
+        result = calculate_customer_ltv(sample_orders)
+        assert len(result) == 3  # 3 customers únicos
+    
+    def test_empty_dataframe(self):
+        empty_df = pd.DataFrame(columns=['order_id', 'customer_id', 'amount'])
+        result = calculate_customer_ltv(empty_df)
+        assert len(result) == 0
+
+# ── INTEGRATION TESTS: Mock de external services ───────────────────────────
+class TestAPIIngestion:
+    @patch('httpx.Client')
+    def test_successful_api_fetch(self, mock_client_class):
+        # Arrange
+        mock_response = Mock()
+        mock_response.json.return_value = [{"id": 1, "name": "Test"}]
+        mock_response.status_code = 200
+        mock_client = MagicMock()
+        mock_client.__enter__.return_value.get.return_value = mock_response
+        mock_client_class.return_value = mock_client
+        
+        # Act
+        client = DataAPIClient(APIConfig(base_url="http://api.test", api_key="key"))
+        result = client.get("/data")
+        
+        # Assert
+        assert len(result) == 1
+        assert result[0]["name"] == "Test"
+    
+    @patch('httpx.Client')
+    def test_retry_on_server_error(self, mock_client_class):
+        # Simulate 2 failures then success
+        import httpx
+        mock_get = Mock(side_effect=[
+            httpx.HTTPStatusError("500", request=Mock(), response=Mock(status_code=500)),
+            httpx.HTTPStatusError("503", request=Mock(), response=Mock(status_code=503)),
+            Mock(json=lambda: {"data": "ok"}, status_code=200)
+        ])
+        mock_client = MagicMock()
+        mock_client.__enter__.return_value.get = mock_get
+        mock_client_class.return_value = mock_client
+        
+        # Should succeed on 3rd attempt
+        result = client.get("/data")
+        assert mock_get.call_count == 3
+
+# ── DATA QUALITY TESTS: Validar schemas y constraints ──────────────────────
+class TestDataQuality:
+    def test_no_null_customer_ids(self, sample_orders):
+        assert sample_orders['customer_id'].notna().all(), \
+               "customer_id no debe tener valores nulos"
+    
+    def test_positive_amounts(self, sample_orders):
+        assert (sample_orders['amount'] >= 0).all(), \
+               "Los montos deben ser no-negativos"
+    
+    def test_unique_order_ids(self, sample_orders):
+        assert sample_orders['order_id'].is_unique, \
+               "order_id debe ser único"
+    
+    def test_schema_match(self, sample_orders):
+        expected_dtypes = {
+            'order_id': 'int64',
+            'customer_id': 'int64',
+            'amount': 'float64'
+        }
+        for col, expected_type in expected_dtypes.items():
+            assert str(sample_orders[col].dtype) == expected_type, \
+                   f"Columna {col}: esperado {expected_type}, got {sample_orders[col].dtype}"</code></pre>
+  </section>
+
+  <!-- 5.7 -->
+  <section id="s8">
+    <h2 data-num="5.7">Automatización de Pipelines</h2>
+    <pre><code>"""
+Pipeline modular y automatizado con patrones de producción
+"""
+from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
+
+# ── PATTERN: Pipeline con etapas intercambiables ───────────────────────────
+@runtime_checkable
+class PipelineStage(Protocol):
+    name: str
+    def process(self, data: pd.DataFrame) -> pd.DataFrame: ...
+
+class ExtractStage:
+    name = "extract"
+    def __init__(self, source: str):
+        self.source = source
+    def process(self, data: pd.DataFrame = None) -> pd.DataFrame:
+        return pd.read_csv(self.source)
+
+class CleanStage:
+    name = "clean"
+    def process(self, data: pd.DataFrame) -> pd.DataFrame:
+        return (data
+            .dropna(subset=['customer_id', 'amount'])
+            .drop_duplicates()
+            .assign(amount=lambda x: x['amount'].clip(lower=0))
+        )
+
+class Pipeline:
+    def __init__(self, stages: list[PipelineStage]):
+        self.stages = stages
+        self.logger = setup_logger(f"pipeline.{id(self)}")
+    
+    def run(self) -> pd.DataFrame:
+        data = None
+        for stage in self.stages:
+            self.logger.info(f"Running stage: {stage.name}")
+            with timer(stage.name):
+                data = stage.process(data)
+            self.logger.info(f"Stage {stage.name} complete: {len(data)} rows")
+        return data
+
+# Uso: composición flexible de stages
+pipeline = Pipeline([
+    ExtractStage("s3://bucket/orders.csv"),
+    CleanStage(),
+    TransformStage(),
+    LoadStage(engine=engine, table="fact_orders")
+])
+result = pipeline.run()</code></pre>
+
+    <div class="chapter-nav">
+      <a href="chapter-04-sql.html" class="ch-nav-btn">
+        <span class="arrow">←</span>
+        <div><div class="ch-nav-meta">Capítulo 4</div><div class="ch-nav-title">SQL Avanzado</div></div>
+      </a>
+      <a href="chapter-06-arquitecturas.html" class="ch-nav-btn next">
+        <span class="arrow">→</span>
+        <div><div class="ch-nav-meta">Capítulo 6</div><div class="ch-nav-title">Arquitecturas Modernas</div></div>
+      </a>
+    </div>
+  </section>
+</main>
+
+<script>
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const c=btn.closest('.tabs'),t=btn.dataset.tab;
+      c.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      c.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      c.querySelector(`.tab-panel[data-tab="${t}"]`).classList.add('active');
+    });
+  });
+  function toggleAccordion(h){
+    const item=h.parentElement,body=item.querySelector('.accordion-body'),isOpen=item.classList.contains('open');
+    h.closest('.accordion').querySelectorAll('.accordion-item').forEach(i=>{i.classList.remove('open');i.querySelector('.accordion-body').classList.remove('open');});
+    if(!isOpen){item.classList.add('open');body.classList.add('open');}
+  }
+</script>
+  <script src="nav.js"></script>
+</body>
+</html>

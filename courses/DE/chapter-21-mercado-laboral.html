@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('deCourseTheme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.classList.add('light');
+    })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 21: Mercado Laboral DE 2026 | Master Book DE</title>
+<meta name="description" content="Salarios, certificaciones recomendadas, roles y el futuro del Data Engineering en 2026.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0A0A0A; --bg2: #121212; --bg3: rgba(18, 18, 18, 0.6); --bg4: #1e1e1e;
+  --blue: #00D9FF; --cyan: #00D9FF; --purple: #8b5cf6; --green: #10b981;
+  --orange: #f59e0b; --pink: #ec4899; --red: #ef4444;
+  --t1: #ffffff; --t2: #E0E0E0; --t3: #A0A0A0;
+  --border: rgba(0, 217, 255, 0.2);
+  --sidebar-width: 280px;
+
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--bg3);
+  --bg-card-hover: var(--bg4);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-muted: var(--t3);
+  --accent-cyan: var(--cyan);
+  --accent-blue: var(--blue);
+  --accent-green: var(--green);
+  --accent-orange: var(--orange);
+  --accent-purple: var(--purple);
+  --gradient-hero: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  --gradient-1: linear-gradient(135deg, var(--blue), var(--cyan));
+}
+html.light {
+  --bg: #F8FAFC; --bg2: #FFFFFF; --bg3: rgba(255, 255, 255, 0.7); --bg4: #E2E8F0;
+  --blue: #0088CC; --cyan: #00D9FF; --purple: #7c3aed; --green: #059669;
+  --orange: #d97706; --pink: #db2777; --red: #dc2626;
+  --t1: #0F172A; --t2: #334155; --t3: #64748B;
+  --border: rgba(0, 217, 255, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;display:flex;font-size:1.15rem;}
+.sidebar{width:280px;min-width:280px;background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 0;}
+.sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+.book-title{font-size:0.75rem;font-weight:700;color:var(--mercado);letter-spacing:0.1em;text-transform:uppercase;}
+.chapter-title-sb{font-size:0.9rem;color:var(--t2);margin-top:0.25rem;}
+.nav-section{padding:0 1rem;margin-bottom:0.5rem;}
+.nav-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 0.5rem;margin-bottom:0.5rem;}
+.nav-item{display:block;padding:0.45rem 0.75rem;border-radius:8px;text-decoration:none;color:var(--t2);font-size:0.82rem;transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover,.nav-item.active{background:rgba(6,182,212,0.1);color:var(--mercado);}
+.nav-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--t3);margin-right:0.4rem;}
+.nav-back{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;color:var(--t3);text-decoration:none;font-size:0.8rem;border-bottom:1px solid var(--border);margin-bottom:1rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--mercado);}
+.content{flex:1;min-width:0;padding:3rem 4rem;max-width:920px;margin:0 auto;}
+.chapter-header{margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border);}
+.ch-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;color:var(--mercado);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:1.1rem;color:var(--t2);max-width:680px;line-height:1.8;}
+.chapter-meta-bar{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--t3);}
+.meta-item strong{color:var(--t2);}
+h2{font-size:1.6rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--t1);padding-top:1rem;}
+h2::before{content:attr(data-num)' ';color:var(--mercado);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 0.75rem;color:var(--t1);}
+h4{font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem;color:var(--cyan);}
+p{margin-bottom:1.25rem;color:var(--t2);font-size:0.95rem;}
+ul,ol{padding-left:1.5rem;margin-bottom:1.25rem;color:var(--t2);}
+li{margin-bottom:0.5rem;font-size:0.95rem;}
+strong{color:var(--t1);}
+.info-box{border-left:3px solid var(--mercado);background:rgba(6,182,212,0.05);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1.5rem 0;}
+.info-box.success{border-color:var(--green);background:rgba(16,185,129,0.05);}
+.info-box.warning{border-color:var(--orange);background:rgba(245,158,11,0.05);}
+.info-box-title{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.info-box .info-box-title{color:var(--mercado);}
+.info-box.success .info-box-title{color:var(--green);}
+.info-box.warning .info-box-title{color:var(--orange);}
+
+.salary-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.salary-role {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--t1);
+}
+.salary-amount {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--green);
+}
+
+.table-wrap{overflow-x:auto;margin:1.5rem 0;}
+table{width:100%;border-collapse:collapse;font-size:0.875rem;}
+th{background:var(--bg4);color:var(--t1);font-weight:600;padding:0.75rem 1rem;text-align:left;border-bottom:2px solid var(--border);}
+td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--t2);}
+tr:hover td{background:var(--bg3);}
+
+.chapter-nav{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem;}
+.ch-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--t2);transition:all 0.2s;flex:1;max-width:260px;}
+.ch-nav-btn:hover{border-color:var(--mercado);color:var(--t1);}
+.ch-nav-btn.next{margin-left:auto;text-align:right;flex-direction:row-reverse;}
+.ch-nav-btn .arrow{font-size:1.25rem;color:var(--mercado);}
+.ch-nav-meta{font-size:0.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;}
+.ch-nav-title{font-size:0.875rem;font-weight:600;margin-top:0.1rem;}
+
+@media(max-width:900px){.sidebar{display:none;}.content{padding:2rem 1.5rem;} .salary-card{flex-direction:column;align-items:flex-start;gap:0.5rem;}}
+</style>
+</head>
+<body>
+
+
+<main class="content">
+  <div class="chapter-header">
+    <div class="ch-badge">📈 Capítulo 21 · Carrera</div>
+    <h1>El Mercado Laboral de Data Engineering en 2026</h1>
+    <p class="lead">Con la explosión de la Inteligencia Artificial Generativa y los LLMs, los datos de alta calidad son más valiosos que nunca. Esto ha puesto a los Data Engineers en la cima de la demanda tecnológica.</p>
+    <div class="chapter-meta-bar">
+      <div class="meta-item">⏱️ <strong>Lectura:</strong> ~10 min</div>
+      <div class="meta-item">🎯 <strong>Nivel:</strong> Todos</div>
+    </div>
+  </div>
+
+  <!-- 21.1 -->
+  <section id="s1">
+    <h2 data-num="21.1">Expectativas Salariales</h2>
+    <p>Los salarios varían inmensamente según la región (EE. UU. vs LatAm vs Europa) y la modalidad (Presencial vs Remoto Global). Los siguientes datos representan estimaciones promedio para roles remotos o en hubs tecnológicos principales en <strong>Dólares Estadounidenses (USD) anuales</strong>.</p>
+    
+    <div class="salary-card">
+      <div>
+        <div class="salary-role">Junior Data Engineer (0-2 años)</div>
+        <div style="font-size:0.875rem;color:var(--t3);">LatAm / España Remoto Global</div>
+      </div>
+      <div class="salary-amount">$30k - $50k</div>
+    </div>
+
+    <div class="salary-card">
+      <div>
+        <div class="salary-role">Mid-Level Data Engineer (2-5 años)</div>
+        <div style="font-size:0.875rem;color:var(--t3);">Dominio de SQL, Python, Spark, dbt y Cloud</div>
+      </div>
+      <div class="salary-amount">$60k - $90k</div>
+    </div>
+
+    <div class="salary-card">
+      <div>
+        <div class="salary-role">Senior Data Engineer (5+ años)</div>
+        <div style="font-size:0.875rem;color:var(--t3);">Arquitectura, Streaming, DataOps, Mentoring</div>
+      </div>
+      <div class="salary-amount">$100k - $160k+</div>
+    </div>
+  </section>
+
+  <!-- 21.2 -->
+  <section id="s2">
+    <h2 data-num="21.2">Las Certificaciones que Importan</h2>
+    <p>Las certificaciones no te consiguen un trabajo mágicamente, pero te ayudan a pasar el primer filtro de Recursos Humanos. En 2026, las más respetadas son:</p>
+    
+    <ul>
+      <li><strong>Google Cloud Professional Data Engineer:</strong> Considerada la mejor en la industria. Profunda en diseño de sistemas y arquitectura de datos moderna.</li>
+      <li><strong>AWS Certified Data Engineer - Associate:</strong> Nueva y enfocada puramente en DE dentro del ecosistema AWS (Glue, Athena, Redshift, Kinesis).</li>
+      <li><strong>Snowflake SnowPro Core:</strong> Extremadamente demandada en empresas enterprise que usan el Modern Data Stack.</li>
+      <li><strong>Databricks Certified Data Engineer Associate / Professional:</strong> Vital si vas a trabajar con Spark y Lakehouse.</li>
+    </ul>
+    
+    <div class="info-box">
+      <div class="info-box-title">💡 Tip de Entrevista</div>
+      <p style="margin:0;font-size:0.875rem;">Si no tienes experiencia laboral previa como DE, un portafolio sólido (Capítulo 18) más la certificación <em>Google Cloud Data Engineer</em> es la mejor combinación para destacar como candidato Junior fuerte.</p>
+    </div>
+  </section>
+
+  <!-- 21.3 -->
+  <section id="s3">
+    <h2 data-num="21.3">Habilidades Más Demandadas (2026)</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Tecnología</th><th>Categoría</th><th>Importancia</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SQL Avanzado</td>
+            <td>Transformación / Análisis</td>
+            <td><strong style="color:var(--red);">Crítica (Must Have)</strong></td>
+          </tr>
+          <tr>
+            <td>Python (Pandas, PySpark)</td>
+            <td>Programación</td>
+            <td><strong style="color:var(--red);">Crítica (Must Have)</strong></td>
+          </tr>
+          <tr>
+            <td>Cloud (GCP, AWS o Azure)</td>
+            <td>Infraestructura</td>
+            <td><strong style="color:var(--orange);">Alta</strong></td>
+          </tr>
+          <tr>
+            <td>dbt (Data Build Tool)</td>
+            <td>Transformación ELT</td>
+            <td><strong style="color:var(--orange);">Alta</strong></td>
+          </tr>
+          <tr>
+            <td>Airflow / Dagster</td>
+            <td>Orquestación</td>
+            <td><strong style="color:var(--orange);">Alta</strong></td>
+          </tr>
+          <tr>
+            <td>Docker / Kubernetes</td>
+            <td>DevOps / DataOps</td>
+            <td>Media (Senior)</td>
+          </tr>
+          <tr>
+            <td>Kafka / Flink</td>
+            <td>Streaming</td>
+            <td>Específica según el rol</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 21.4 -->
+  <section id="s4">
+    <h2 data-num="21.4">El Futuro: AI y Data Engineering</h2>
+    <p>Con herramientas como ChatGPT y GitHub Copilot, escribir "código repetitivo" (boilerplate) es cada vez menos importante. El valor del Data Engineer ha migrado de <em>"escribir el script que mueve datos de A hacia B"</em> a:</p>
+    <ul>
+      <li><strong>Diseño de Sistemas (System Design):</strong> Pensar en la arquitectura, la escalabilidad y los costos.</li>
+      <li><strong>Ingeniería de Prompts y RAG (Retrieval-Augmented Generation):</strong> Los DEs ahora construyen las tuberías de datos vectoriales (Vector Databases) que alimentan a los LLMs con información privada de la empresa.</li>
+      <li><strong>Data Governance y Data Quality:</strong> Asegurar que los datos que consume la IA no estén sesgados o sean erróneos.</li>
+    </ul>
+  </section>
+
+  <div class="chapter-nav">
+    <a href="chapter-20-entrevistas.html" class="ch-nav-btn">
+      <span class="arrow">←</span>
+      <div><div class="ch-nav-meta">Capítulo 20</div><div class="ch-nav-title">Entrevistas</div></div>
+    </a>
+    <a href="chapter-22-buenas-practicas.html" class="ch-nav-btn next">
+      <span class="arrow">→</span>
+      <div><div class="ch-nav-meta">Capítulo 22</div><div class="ch-nav-title">Buenas Prácticas</div></div>
+    </a>
+  </div>
+</main>
+  <script src="nav.js"></script>
+</body>
+</html>

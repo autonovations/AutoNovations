@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('deCourseTheme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.classList.add('light');
+    })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 2: Fundamentos de Datos | Master Book DE 2026</title>
+<meta name="description" content="SQL, NoSQL, ETL/ELT, Data Warehouse, Data Lake, Lakehouse, Governance, OLTP vs OLAP y todos los fundamentos de datos.">
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0A0A0A; --bg2: #121212; --bg3: rgba(18, 18, 18, 0.6); --bg4: #1e1e1e;
+  --blue: #00D9FF; --cyan: #00D9FF; --purple: #8b5cf6; --green: #10b981;
+  --orange: #f59e0b; --pink: #ec4899; --red: #ef4444;
+  --t1: #ffffff; --t2: #E0E0E0; --t3: #A0A0A0;
+  --border: rgba(0, 217, 255, 0.2);
+  --sidebar-width: 280px;
+
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--bg3);
+  --bg-card-hover: var(--bg4);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-muted: var(--t3);
+  --accent-cyan: var(--cyan);
+  --accent-blue: var(--blue);
+  --accent-green: var(--green);
+  --accent-orange: var(--orange);
+  --accent-purple: var(--purple);
+  --gradient-hero: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  --gradient-1: linear-gradient(135deg, var(--blue), var(--cyan));
+}
+html.light {
+  --bg: #F8FAFC; --bg2: #FFFFFF; --bg3: rgba(255, 255, 255, 0.7); --bg4: #E2E8F0;
+  --blue: #0088CC; --cyan: #00D9FF; --purple: #7c3aed; --green: #059669;
+  --orange: #d97706; --pink: #db2777; --red: #dc2626;
+  --t1: #0F172A; --t2: #334155; --t3: #64748B;
+  --border: rgba(0, 217, 255, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;display:flex;font-size:1.15rem;}
+.sidebar{width:var(--sidebar-width);min-width:var(--sidebar-width);background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 0;}
+.sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+.sidebar-logo .book-title{font-size:0.75rem;font-weight:700;color:var(--green);letter-spacing:0.1em;text-transform:uppercase;}
+.sidebar-logo .chapter-title{font-size:0.9rem;color:var(--t2);margin-top:0.25rem;}
+.nav-section{padding:0 1rem;margin-bottom:0.5rem;}
+.nav-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 0.5rem;margin-bottom:0.5rem;}
+.nav-item{display:block;padding:0.45rem 0.75rem;border-radius:8px;text-decoration:none;color:var(--t2);font-size:0.82rem;transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover,.nav-item.active{background:rgba(16,185,129,0.1);color:var(--green);}
+.nav-item .nav-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--t3);margin-right:0.4rem;}
+.nav-back{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;color:var(--t3);text-decoration:none;font-size:0.8rem;border-bottom:1px solid var(--border);margin-bottom:1rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--green);}
+.content{flex:1;min-width:0;padding:3rem 4rem;max-width:100%;margin:0 auto;}
+.chapter-header{margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border);}
+.ch-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;color:var(--green);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+.chapter-header h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.chapter-header .lead{font-size:1.1rem;color:var(--t2);max-width:680px;line-height:1.8;}
+.chapter-meta-bar{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--t3);}
+.meta-item strong{color:var(--t2);}
+h2{font-size:1.6rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--t1);padding-top:1rem;}
+h2::before{content:attr(data-num)' ';color:var(--green);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 0.75rem;color:var(--t1);}
+h4{font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem;color:var(--cyan);}
+p{margin-bottom:1.25rem;color:var(--t2);font-size:0.95rem;}
+ul,ol{padding-left:1.5rem;margin-bottom:1.25rem;color:var(--t2);}
+li{margin-bottom:0.5rem;font-size:0.95rem;}
+strong{color:var(--t1);}
+code{font-family:'JetBrains Mono',monospace;background:var(--bg4);border:1px solid var(--border);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.85rem;color:var(--cyan);}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;}
+pre code{background:none;border:none;padding:0;font-size:0.85rem;color:var(--t1);line-height:1.6;}
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0;}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin:1.5rem 0;}
+.card-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1.25rem;transition:all 0.2s;}
+.card-item:hover{border-color:var(--green);background:var(--bg4);}
+.card-item .icon{font-size:1.75rem;margin-bottom:0.75rem;}
+.card-item h4{margin:0 0 0.5rem;color:var(--t1);}
+.card-item p{font-size:0.82rem;color:var(--t3);margin:0;}
+.info-box{border-left:3px solid var(--blue);background:rgba(59,130,246,0.05);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1.5rem 0;}
+.info-box.warning{border-color:var(--orange);background:rgba(245,158,11,0.05);}
+.info-box.success{border-color:var(--green);background:rgba(16,185,129,0.05);}
+.info-box.purple{border-color:var(--purple);background:rgba(139,92,246,0.05);}
+.info-box-title{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.info-box .info-box-title{color:var(--blue);}
+.info-box.warning .info-box-title{color:var(--orange);}
+.info-box.success .info-box-title{color:var(--green);}
+.info-box.purple .info-box-title{color:var(--purple);}
+.table-wrap{overflow-x:auto;margin:1.5rem 0;}
+table{width:100%;border-collapse:collapse;font-size:0.875rem;}
+th{background:var(--bg4);color:var(--t1);font-weight:600;padding:0.75rem 1rem;text-align:left;border-bottom:2px solid var(--border);}
+td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--t2);}
+tr:hover td{background:var(--bg3);}
+td:first-child{font-weight:500;color:var(--t1);}
+.accordion{margin:1.5rem 0;}
+.accordion-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.accordion-header{padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:0.95rem;transition:background 0.2s;user-select:none;}
+.accordion-header:hover{background:var(--bg4);}
+.accordion-header .arrow{color:var(--green);transition:transform 0.3s;font-size:1.2rem;}
+.accordion-item.open .accordion-header .arrow{transform:rotate(180deg);}
+.accordion-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease;}
+.accordion-body.open{max-height:2000px;padding:0 1.25rem 1.25rem;}
+.tabs{margin:2rem 0;}
+.tab-list{display:flex;gap:0.5rem;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.tab-btn{padding:0.6rem 1.25rem;background:none;border:none;color:var(--t3);font-size:0.875rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;font-family:'Inter',sans-serif;}
+.tab-btn:hover{color:var(--t2);}
+.tab-btn.active{color:var(--green);border-bottom-color:var(--green);}
+.tab-panel{display:none;padding:1.5rem;background:var(--bg3);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;}
+.tab-panel.active{display:block;}
+.mermaid-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:2rem;margin:2rem 0;overflow-x:auto;}
+.comparison-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:2rem 0;}
+.comparison-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;}
+.comparison-card h4{margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);}
+.comparison-card.left h4{color:var(--blue);}
+.comparison-card.right h4{color:var(--orange);}
+.comparison-card ul{padding-left:1.25rem;}
+.comparison-card li{font-size:0.875rem;color:var(--t2);margin-bottom:0.4rem;}
+.badge{display:inline-block;padding:0.15rem 0.5rem;border-radius:4px;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-left:0.35rem;}
+.badge-green{background:rgba(16,185,129,0.15);color:var(--green);}
+.badge-blue{background:rgba(59,130,246,0.15);color:var(--blue);}
+.badge-orange{background:rgba(245,158,11,0.15);color:var(--orange);}
+.badge-purple{background:rgba(139,92,246,0.15);color:var(--purple);}
+.chapter-nav{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem;}
+.ch-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--t2);transition:all 0.2s;flex:1;max-width:260px;}
+.ch-nav-btn:hover{border-color:var(--green);color:var(--t1);}
+.ch-nav-btn.next{margin-left:auto;text-align:right;flex-direction:row-reverse;}
+.ch-nav-btn .arrow{font-size:1.25rem;color:var(--green);}
+.ch-nav-meta{font-size:0.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;}
+.ch-nav-title{font-size:0.875rem;font-weight:600;margin-top:0.1rem;}
+.highlight-box{background:linear-gradient(135deg,rgba(16,185,129,0.05),rgba(59,130,246,0.05));border:1px solid rgba(16,185,129,0.2);border-radius:12px;padding:1.5rem;margin:2rem 0;}
+@media(max-width:900px){.sidebar{display:none;}.content{padding:2rem 1.5rem;}.comparison-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+
+<main class="content">
+  <div class="chapter-header">
+    <div class="ch-badge">📖 Capítulo 2 · Nivel Básico-Intermedio</div>
+    <h1>Fundamentos de Datos</h1>
+    <p class="lead">Los pilares conceptuales que todo Data Engineer debe dominar: desde los distintos tipos de bases de datos hasta los modelos de procesamiento, storage patterns y principios de governance.</p>
+    <div class="chapter-meta-bar">
+      <div class="meta-item">⏱️ <strong>Lectura:</strong> ~60 min</div>
+      <div class="meta-item">🎯 <strong>Nivel:</strong> Básico → Intermedio</div>
+      <div class="meta-item">📌 <strong>Prerrequisito:</strong> Cap. 01</div>
+    </div>
+  </div>
+
+  <!-- 2.0 -->
+  <section id="s1">
+    <h2 data-num="2.0">Bases de Datos Relacionales (RDBMS)</h2>
+    <p>Las bases de datos relacionales son el fundamento histórico del almacenamiento de datos estructurados. Organizan información en <strong>tablas</strong> con filas y columnas, donde las relaciones entre tablas se definen mediante <strong>llaves foráneas</strong> y se aseguran mediante <strong>constraints</strong>.</p>
+
+    <h3>Principios ACID</h3>
+    <p>Las bases de datos relacionales garantizan las propiedades ACID, fundamentales para sistemas transaccionales:</p>
+    <div class="card-grid">
+      <div class="card-item">
+        <div class="icon">⚛️</div>
+        <h4>Atomicity</h4>
+        <p>Una transacción es todo o nada. Si falla una parte, toda la transacción se revierte (ROLLBACK).</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔗</div>
+        <h4>Consistency</h4>
+        <p>La base de datos siempre pasa de un estado válido a otro válido. Las constraints nunca se violan.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔒</div>
+        <h4>Isolation</h4>
+        <p>Las transacciones concurrentes se comportan como si fueran secuenciales. No hay interferencia entre ellas.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">💾</div>
+        <h4>Durability</h4>
+        <p>Una vez confirmada (COMMIT), la transacción persiste incluso ante fallos del sistema.</p>
+      </div>
+    </div>
+
+    <h3>Bases de Datos Relacionales Populares</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Base de Datos</th><th>Tipo</th><th>Casos de Uso</th><th>Fortalezas</th></tr></thead>
+        <tbody>
+          <tr><td>PostgreSQL</td><td>Open Source</td><td>Aplicaciones web, analytics</td><td>Extensible, JSON support, performance</td></tr>
+          <tr><td>MySQL / MariaDB</td><td>Open Source</td><td>Aplicaciones web (LAMP)</td><td>Simple, amplio soporte, rápido en reads</td></tr>
+          <tr><td>Oracle Database</td><td>Comercial</td><td>Enterprise, Banking</td><td>Features avanzados, alta disponibilidad</td></tr>
+          <tr><td>SQL Server (MSSQL)</td><td>Comercial</td><td>Enterprise Windows</td><td>Integración Microsoft, SSIS, SSRS</td></tr>
+          <tr><td>SQLite</td><td>Open Source</td><td>Embedded, desarrollo local</td><td>Zero config, serverless, portable</td></tr>
+          <tr><td>Amazon Aurora</td><td>Cloud Managed</td><td>Cloud apps</td><td>MySQL/PG compatible, auto-scaling</td></tr>
+          <tr><td>Cloud Spanner</td><td>Cloud Managed</td><td>Global distributed apps</td><td>ACID a escala global, 99.999% SLA</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>SQL básico: Fundamentos</h3>
+    <pre><code>-- Crear tabla con constraints
+CREATE TABLE orders (
+    order_id    SERIAL PRIMARY KEY,
+    customer_id INTEGER NOT NULL REFERENCES customers(customer_id),
+    order_date  TIMESTAMP DEFAULT NOW(),
+    total_amount DECIMAL(10,2) CHECK (total_amount >= 0),
+    status      VARCHAR(20) DEFAULT 'pending'
+                CHECK (status IN ('pending','processing','shipped','delivered','cancelled'))
+);
+
+-- INSERT con valores
+INSERT INTO orders (customer_id, total_amount) 
+VALUES (1, 150.00), (2, 89.99);
+
+-- SELECT con JOIN básico
+SELECT 
+    o.order_id,
+    c.name AS customer_name,
+    o.total_amount,
+    o.status
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+WHERE o.status != 'cancelled'
+ORDER BY o.order_date DESC
+LIMIT 100;
+
+-- TRANSACTION ejemplo
+BEGIN;
+    UPDATE accounts SET balance = balance - 100 WHERE account_id = 1;
+    UPDATE accounts SET balance = balance + 100 WHERE account_id = 2;
+COMMIT;  -- o ROLLBACK si hay error</code></pre>
+  </section>
+
+  <!-- 2.1 -->
+  <section id="s2">
+    <h2 data-num="2.1">Bases de Datos NoSQL</h2>
+    <p>Las bases de datos NoSQL ("Not Only SQL") surgieron para resolver limitaciones de las RDBMS en escenarios de <strong>alta escala, datos no estructurados y flexibilidad de esquema</strong>. No son "mejores" que las relacionales — son herramientas diferentes para problemas diferentes.</p>
+
+    <div class="tabs" id="tabs-nosql">
+      <div class="tab-list">
+        <button class="tab-btn active" data-tab="document">📄 Documentos</button>
+        <button class="tab-btn" data-tab="keyvalue">🗝️ Key-Value</button>
+        <button class="tab-btn" data-tab="column">📊 Columnar</button>
+        <button class="tab-btn" data-tab="graph">🕸️ Grafo</button>
+        <button class="tab-btn" data-tab="timeseries">⏱️ Time Series</button>
+      </div>
+      <div class="tab-panel active" data-tab="document">
+        <h4>Document Stores — MongoDB, Firestore, CouchDB</h4>
+        <p>Almacenan documentos en formato JSON/BSON. Ideal cuando los datos tienen estructura variable o jerárquica.</p>
+        <pre><code>// MongoDB - Insertar documento
+db.users.insertOne({
+  _id: ObjectId(),
+  name: "Ana García",
+  email: "ana@example.com",
+  preferences: {
+    theme: "dark",
+    language: "es",
+    notifications: ["email", "push"]
+  },
+  orders: [
+    { order_id: "ORD-001", amount: 150.00, date: new Date() }
+  ],
+  tags: ["premium", "verified"],
+  created_at: new Date()
+});
+
+// Query con filtros anidados
+db.users.find({
+  "preferences.language": "es",
+  "orders.amount": { $gt: 100 }
+}).limit(10);</code></pre>
+        <p><strong>Casos de uso:</strong> Catálogos de productos, perfiles de usuario, CMS, aplicaciones con esquemas variables.</p>
+        <p><strong>Fortalezas:</strong> Esquema flexible, fácil de escalar horizontalmente, consultas en documentos anidados.</p>
+      </div>
+      <div class="tab-panel" data-tab="keyvalue">
+        <h4>Key-Value Stores — Redis, DynamoDB, Memcached</h4>
+        <p>La forma más simple de NoSQL. Cada dato se identifica por una clave única y su valor puede ser cualquier estructura.</p>
+        <pre><code># Redis - Operaciones básicas
+# String
+SET user:1:session "abc123" EX 3600  # TTL de 1 hora
+
+# Hash (objeto)
+HSET user:1 name "Ana" email "ana@example.com"
+HGET user:1 name
+
+# List (cola FIFO)
+LPUSH notifications:1 "New order received"
+RPOP notifications:1
+
+# Sorted Set (leaderboard)
+ZADD leaderboard 1500 "player:1"
+ZADD leaderboard 2300 "player:2"
+ZREVRANGE leaderboard 0 9 WITHSCORES  # Top 10
+
+# Pub/Sub
+PUBLISH channel:orders "new_order:ORD-005"</code></pre>
+        <p><strong>Casos de uso:</strong> Caché, sesiones, leaderboards, colas de mensajes, rate limiting.</p>
+        <p><strong>Fortalezas:</strong> Latencia sub-milisegundo, extremadamente simple, muy alta throughput.</p>
+      </div>
+      <div class="tab-panel" data-tab="column">
+        <h4>Column-Family Stores — Cassandra, HBase, Bigtable</h4>
+        <p>Organizan datos en familias de columnas. Optimizados para escrituras masivas y consultas por rango de tiempo.</p>
+        <pre><code>-- Cassandra CQL (Cassandra Query Language)
+-- Diseñado para escrituras/lecturas masivas
+CREATE TABLE sensor_readings (
+    device_id   UUID,
+    timestamp   TIMESTAMP,
+    temperature DOUBLE,
+    humidity    DOUBLE,
+    pressure    DOUBLE,
+    PRIMARY KEY (device_id, timestamp)  
+    -- Partition key: device_id
+    -- Clustering key: timestamp (orden cronológico)
+) WITH CLUSTERING ORDER BY (timestamp DESC)
+  AND compaction = {'class': 'TimeWindowCompactionStrategy'};
+
+-- Insert masivo (diseñado para esto)
+INSERT INTO sensor_readings 
+  (device_id, timestamp, temperature, humidity)
+VALUES (uuid(), toTimestamp(now()), 22.5, 65.0);
+
+-- Query eficiente (usa partition key)
+SELECT * FROM sensor_readings 
+WHERE device_id = 550e8400-e29b-41d4-a716-446655440000
+  AND timestamp > '2026-01-01'
+LIMIT 1000;</code></pre>
+        <p><strong>Casos de uso:</strong> IoT data, series de tiempo, logs a escala masiva, datos de sensores.</p>
+        <p><strong>Fortalezas:</strong> Escalabilidad lineal, alta disponibilidad, writes de alta throughput, distribución geográfica.</p>
+      </div>
+      <div class="tab-panel" data-tab="graph">
+        <h4>Graph Databases — Neo4j, Amazon Neptune, TigerGraph</h4>
+        <p>Modelan datos como nodos y relaciones (aristas). Excelentes para datos altamente relacionados donde los JOINs serían prohibitivos.</p>
+        <pre><code>// Neo4j - Cypher Query Language
+// Crear nodos y relaciones
+CREATE (ana:Person {name: 'Ana', age: 28})
+CREATE (carlos:Person {name: 'Carlos', age: 32})
+CREATE (python:Skill {name: 'Python', level: 'Advanced'})
+CREATE (spark:Skill {name: 'Apache Spark', level: 'Intermediate'})
+
+CREATE (ana)-[:KNOWS]->(carlos)
+CREATE (ana)-[:HAS_SKILL]->(python)
+CREATE (ana)-[:HAS_SKILL]->(spark)
+CREATE (carlos)-[:HAS_SKILL]->(spark)
+
+// Consultar: amigos con skill en Spark
+MATCH (p:Person)-[:KNOWS]-(friend)-[:HAS_SKILL]->(s:Skill)
+WHERE p.name = 'Ana' AND s.name = 'Apache Spark'
+RETURN friend.name, s.level</code></pre>
+        <p><strong>Casos de uso:</strong> Redes sociales, detección de fraude, sistemas de recomendación, conocimiento empresarial, grafos de conocimiento.</p>
+        <p><strong>Fortalezas:</strong> Traversal de relaciones complejo en tiempo constante, consultas de grafos naturales.</p>
+      </div>
+      <div class="tab-panel" data-tab="timeseries">
+        <h4>Time Series Databases — InfluxDB, TimescaleDB, Prometheus</h4>
+        <p>Optimizadas específicamente para datos secuenciales en el tiempo. Comprensión nativa del concepto de "timestamp".</p>
+        <pre><code>-- TimescaleDB (extensión de PostgreSQL)
+-- Crear hypertable (tabla optimizada para time series)
+CREATE TABLE cpu_metrics (
+    time        TIMESTAMPTZ NOT NULL,
+    host        TEXT NOT NULL,
+    cpu_usage   DOUBLE PRECISION,
+    memory_usage DOUBLE PRECISION
+);
+
+SELECT create_hypertable('cpu_metrics', 'time');
+
+-- Insert data
+INSERT INTO cpu_metrics VALUES
+(NOW(), 'server-01', 45.2, 72.1),
+(NOW(), 'server-02', 23.1, 55.3);
+
+-- Time-series query con bucketing
+SELECT 
+    time_bucket('5 minutes', time) AS bucket,
+    host,
+    AVG(cpu_usage) as avg_cpu,
+    MAX(cpu_usage) as max_cpu
+FROM cpu_metrics
+WHERE time > NOW() - INTERVAL '1 hour'
+GROUP BY bucket, host
+ORDER BY bucket DESC;</code></pre>
+        <p><strong>Casos de uso:</strong> Monitoring de infraestructura, métricas de aplicaciones, datos financieros (OHLCV), IoT, observabilidad.</p>
+      </div>
+    </div>
+
+    <h3>CAP Theorem: El Triángulo Imposible</h3>
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+graph TD
+    C["🔗 Consistency<br/>(Todos los nodos ven los mismos datos)"]
+    A["✅ Availability<br/>(Siempre hay respuesta)"]
+    P["🌐 Partition Tolerance<br/>(Soporta fallos de red)"]
+
+    C --- A
+    A --- P
+    P --- C
+
+    CA["RDBMS tradicional<br/>MySQL, PostgreSQL<br/>(sin sharding)"]
+    CP["MongoDB, HBase,<br/>Zookeeper"]
+    AP["Cassandra, DynamoDB,<br/>CouchDB"]
+
+    C -.-> CA
+    A -.-> CA
+    C -.-> CP
+    P -.-> CP
+    A -.-> AP
+    P -.-> AP
+
+    style C fill:#1e40af,stroke:#3b82f6,color:#fff
+    style A fill:#065f46,stroke:#10b981,color:#fff
+    style P fill:#7c3aed,stroke:#8b5cf6,color:#fff
+      </div>
+    </div>
+    <p>El teorema CAP afirma que un sistema distribuido solo puede garantizar 2 de las 3 propiedades simultáneamente. <strong>La tolerancia a particiones (P) es inevitable en sistemas distribuidos</strong>, por lo que el trade-off real es entre Consistency y Availability.</p>
+  </section>
+
+  <!-- 2.2 -->
+  <section id="s3">
+    <h2 data-num="2.2">ETL vs ELT: Paradigmas de Integración</h2>
+    <p>ETL (Extract, Transform, Load) y ELT (Extract, Load, Transform) son los dos grandes paradigmas para mover datos entre sistemas. La elección impacta directamente el rendimiento, costo y flexibilidad de tus pipelines.</p>
+
+    <div class="comparison-grid">
+      <div class="comparison-card left">
+        <h4>🔄 ETL — Extract, Transform, Load</h4>
+        <ul>
+          <li>Transformaciones ocurren <strong>antes</strong> de cargar al destino</li>
+          <li>Requiere un servidor/motor de transformación intermedio</li>
+          <li>El destino recibe datos ya limpios y listos</li>
+          <li>Ideal cuando el destino tiene recursos limitados</li>
+          <li>Herramientas: Informatica, Talend, SSIS, Pentaho</li>
+          <li>Común en DWH tradicionales on-premise</li>
+        </ul>
+      </div>
+      <div class="comparison-card right">
+        <h4>📥 ELT — Extract, Load, Transform</h4>
+        <ul>
+          <li>Datos se cargan crudos primero, transformaciones <strong>después</strong></li>
+          <li>Usa el poder computacional del destino (DWH cloud)</li>
+          <li>Más flexible: puedes re-transformar sin re-extraer</li>
+          <li>Ideal para cloud DWH (BigQuery, Snowflake, Redshift)</li>
+          <li>Herramientas: dbt, Fivetran + dbt, Airbyte + dbt</li>
+          <li>Estándar moderno (2020+)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+graph LR
+    subgraph ETL
+        A1[Source DB] --> B1[Transform Engine<br/>Spark / Python]
+        B1 --> C1[Data Warehouse<br/>Cleaned Data]
+    end
+    subgraph ELT
+        A2[Source DB] --> B2[Raw Storage<br/>S3 / GCS / ADLS]
+        B2 --> C2[Cloud DWH<br/>BigQuery / Snowflake]
+        C2 --> D2[dbt Models<br/>Transform in DWH]
+    end
+    style B1 fill:#1e40af,stroke:#3b82f6,color:#fff
+    style D2 fill:#5b21b6,stroke:#8b5cf6,color:#fff
+      </div>
+    </div>
+
+    <h3>Pipeline ETL completo en Python</h3>
+    <pre><code>import pandas as pd
+import sqlalchemy as sa
+from datetime import datetime
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+class ETLPipeline:
+    def __init__(self, source_conn: str, dest_conn: str):
+        self.source_engine = sa.create_engine(source_conn)
+        self.dest_engine = sa.create_engine(dest_conn)
+    
+    # EXTRACT
+    def extract(self, query: str) -> pd.DataFrame:
+        logger.info(f"Extracting data...")
+        df = pd.read_sql(query, self.source_engine)
+        logger.info(f"Extracted {len(df):,} rows")
+        return df
+    
+    # TRANSFORM
+    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        logger.info("Transforming data...")
+        # Limpiar nulos
+        df = df.dropna(subset=['customer_id', 'amount'])
+        # Normalizar tipos
+        df['amount'] = df['amount'].astype(float)
+        df['order_date'] = pd.to_datetime(df['order_date'])
+        # Calcular métricas derivadas
+        df['year_month'] = df['order_date'].dt.to_period('M').astype(str)
+        df['is_large_order'] = df['amount'] > 500
+        # Eliminar duplicados
+        df = df.drop_duplicates(subset=['order_id'])
+        logger.info(f"After transform: {len(df):,} rows")
+        return df
+    
+    # LOAD
+    def load(self, df: pd.DataFrame, table_name: str) -> None:
+        logger.info(f"Loading {len(df):,} rows into {table_name}...")
+        df.to_sql(
+            table_name, 
+            self.dest_engine,
+            if_exists='append',   # 'replace', 'append', 'fail'
+            index=False,
+            method='multi',       # Batch insert
+            chunksize=1000
+        )
+        logger.info("Load complete ✓")
+    
+    # ORCHESTRATE
+    def run(self) -> dict:
+        start = datetime.now()
+        query = """
+            SELECT order_id, customer_id, amount, order_date
+            FROM orders
+            WHERE updated_at > NOW() - INTERVAL '1 day'
+        """
+        raw_df = self.extract(query)
+        clean_df = self.transform(raw_df)
+        self.load(clean_df, 'fact_orders')
+        elapsed = (datetime.now() - start).seconds
+        return {"rows_processed": len(clean_df), "elapsed_seconds": elapsed}
+
+# Ejecución
+pipeline = ETLPipeline(
+    source_conn="postgresql://user:pass@source-db:5432/prod",
+    dest_conn="postgresql://user:pass@dw:5432/warehouse"
+)
+result = pipeline.run()
+print(f"Pipeline completed: {result}")</code></pre>
+  </section>
+
+  <!-- 2.3 -->
+  <section id="s4">
+    <h2 data-num="2.3">Data Warehouse, Data Lake y Lakehouse</h2>
+    <p>Estos tres paradigmas de almacenamiento han dominado diferentes eras del Data Engineering. En 2026, el Lakehouse es el estándar emergente que intenta combinar lo mejor de ambos mundos.</p>
+
+    <div class="tabs" id="tabs-storage">
+      <div class="tab-list">
+        <button class="tab-btn active" data-tab="dwh">🏛️ Data Warehouse</button>
+        <button class="tab-btn" data-tab="datalake">🌊 Data Lake</button>
+        <button class="tab-btn" data-tab="lakehouse">🏠 Lakehouse</button>
+      </div>
+      <div class="tab-panel active" data-tab="dwh">
+        <h4>Data Warehouse (DWH)</h4>
+        <p>Un Data Warehouse es un repositorio centralizado de datos <strong>estructurados, limpios y optimizados para análisis</strong>. Los datos llegan transformados y listos para consulta.</p>
+        <ul>
+          <li><strong>Estructura:</strong> Esquema definido (schema-on-write). Datos altamente estructurados.</li>
+          <li><strong>Formato:</strong> Tabular. Datos almacenados en formato columnar interno.</li>
+          <li><strong>Datos:</strong> Solo datos estructurados. No acepta video, audio, texto libre sin procesar.</li>
+          <li><strong>Costo:</strong> Más caro por GB (almacenamiento + cómputo acoplados en soluciones legacy).</li>
+          <li><strong>Ejemplos modernos:</strong> Snowflake, BigQuery, Redshift, Azure Synapse.</li>
+          <li><strong>Velocidad de query:</strong> Muy rápida. Optimizado para SQL analytics.</li>
+          <li><strong>Casos de uso:</strong> BI, reporting, dashboards, análisis histórico estructurado.</li>
+        </ul>
+        <div class="info-box">
+          <div class="info-box-title">💡 Arquitectura típica de DWH</div>
+          <p style="margin:0;font-size:0.875rem;">Bronze/Raw → Silver/Cleaned → Gold/Aggregated. Cada capa tiene un propósito y nivel de calidad definido.</p>
+        </div>
+      </div>
+      <div class="tab-panel" data-tab="datalake">
+        <h4>Data Lake</h4>
+        <p>Un Data Lake es un repositorio que almacena datos <strong>en su formato nativo (crudo)</strong> hasta que sean necesarios. El principio es: "Store everything, figure out schema later".</p>
+        <ul>
+          <li><strong>Estructura:</strong> Schema-on-read. El esquema se aplica al leer, no al escribir.</li>
+          <li><strong>Formato:</strong> Todo: JSON, CSV, Parquet, Avro, imágenes, videos, logs, audio.</li>
+          <li><strong>Costo:</strong> Muy barato por GB (object storage: S3, GCS, ADLS).</li>
+          <li><strong>Escalabilidad:</strong> Prácticamente ilimitada. Exabytes posibles.</li>
+          <li><strong>Problema histórico:</strong> Fácil que se convierta en un "Data Swamp" (sin governance).</li>
+          <li><strong>Ejemplos:</strong> S3 + Hadoop, GCS + Dataproc, ADLS + Azure HDInsight.</li>
+          <li><strong>Casos de uso:</strong> ML training data, raw event storage, archivado, datos no estructurados.</li>
+        </ul>
+        <div class="info-box warning">
+          <div class="info-box-title">⚠️ El Problema del Data Swamp</div>
+          <p style="margin:0;font-size:0.875rem;">Sin governance, catalogación y calidad de datos, un Data Lake se convierte rápidamente en un Data Swamp donde nadie sabe qué hay, dónde está o si los datos son confiables. Esto fue el gran fracaso de muchos proyectos de Big Data 2010-2018.</p>
+        </div>
+      </div>
+      <div class="tab-panel" data-tab="lakehouse">
+        <h4>Lakehouse (El Estándar 2026)</h4>
+        <p>El Lakehouse combina la flexibilidad y el bajo costo del Data Lake con las capacidades analíticas y ACID del Data Warehouse. Permite SQL directo sobre object storage.</p>
+        <ul>
+          <li><strong>Tecnologías clave:</strong> Delta Lake (Databricks), Apache Iceberg, Apache Hudi</li>
+          <li><strong>ACID sobre object storage:</strong> Transacciones confiables sobre S3/GCS/ADLS</li>
+          <li><strong>Time Travel:</strong> Consultar versiones históricas de los datos</li>
+          <li><strong>Schema Evolution:</strong> Cambiar esquemas sin reescribir todos los datos</li>
+          <li><strong>Unified batch + streaming:</strong> El mismo sistema para ambos paradigmas</li>
+          <li><strong>Open formats:</strong> Parquet + metadata layer, sin vendor lock-in</li>
+          <li><strong>Casos de uso:</strong> El estándar para arquitecturas modernas que necesitan tanto ML como BI</li>
+        </ul>
+        <pre><code># Delta Lake con PySpark
+from pyspark.sql import SparkSession
+from delta import configure_spark_with_delta_pip
+
+spark = (configure_spark_with_delta_pip(
+    SparkSession.builder
+    .appName("lakehouse_demo")
+    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
+).getOrCreate())
+
+# Escribir como Delta Table
+df.write.format("delta").mode("overwrite").save("gs://my-lake/silver/orders/")
+
+# ACID MERGE (upsert)
+from delta.tables import DeltaTable
+delta_table = DeltaTable.forPath(spark, "gs://my-lake/silver/orders/")
+delta_table.alias("target").merge(
+    updates_df.alias("source"),
+    "target.order_id = source.order_id"
+).whenMatchedUpdateAll() \
+ .whenNotMatchedInsertAll() \
+ .execute()
+
+# Time Travel - consultar versión anterior
+df_yesterday = spark.read.format("delta") \
+    .option("versionAsOf", 5) \
+    .load("gs://my-lake/silver/orders/")</code></pre>
+      </div>
+    </div>
+
+    <h3>Comparativa Definitiva</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Característica</th><th>Data Warehouse</th><th>Data Lake</th><th>Lakehouse</th></tr></thead>
+        <tbody>
+          <tr><td>Schema</td><td>Schema-on-write</td><td>Schema-on-read</td><td>Ambos (flexible)</td></tr>
+          <tr><td>Tipo de datos</td><td>Solo estructurados</td><td>Todo tipo</td><td>Todo tipo</td></tr>
+          <tr><td>Costo storage</td><td>💰💰💰 Alto</td><td>💰 Bajo</td><td>💰 Bajo</td></tr>
+          <tr><td>Performance SQL</td><td>⚡⚡⚡ Excelente</td><td>⚡ Variable</td><td>⚡⚡ Muy buena</td></tr>
+          <tr><td>ACID</td><td>✅ Sí</td><td>❌ No nativo</td><td>✅ Sí (Delta/Iceberg)</td></tr>
+          <tr><td>ML workloads</td><td>❌ Limitado</td><td>✅ Nativo</td><td>✅ Nativo</td></tr>
+          <tr><td>Ejemplos</td><td>Snowflake, BigQuery</td><td>S3+Hadoop, GCS</td><td>Databricks, Delta Lake</td></tr>
+          <tr><td>Mejor para</td><td>BI, reporting</td><td>ML, raw storage</td><td>Todo en uno</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 2.4 -->
+  <section id="s5">
+    <h2 data-num="2.4">Batch Processing vs Stream Processing</h2>
+    <p>La elección entre procesamiento batch y streaming es una de las decisiones de arquitectura más importantes. Depende del <strong>caso de uso, la latencia requerida y el costo aceptable</strong>.</p>
+
+    <div class="comparison-grid">
+      <div class="comparison-card left">
+        <h4>📦 Batch Processing</h4>
+        <ul>
+          <li>Procesa datos en <strong>lotes grandes</strong> con periodicidad definida</li>
+          <li>Alta latencia (minutos, horas, días)</li>
+          <li>Alta throughput y eficiencia computacional</li>
+          <li>Más fácil de implementar, debuggear y mantener</li>
+          <li>Ideal para reportes nocturnos, ETL histórico</li>
+          <li>Herramientas: Spark, Hadoop MapReduce, dbt</li>
+          <li>Tolerante a fallos con retry fácil</li>
+        </ul>
+      </div>
+      <div class="comparison-card right">
+        <h4>⚡ Stream Processing</h4>
+        <ul>
+          <li>Procesa eventos <strong>uno a uno o en micro-batches</strong> continuamente</li>
+          <li>Baja latencia (milisegundos a segundos)</li>
+          <li>Mayor complejidad: estado, exactly-once, watermarks</li>
+          <li>Ideal para detección de fraude, recomendaciones en tiempo real</li>
+          <li>Herramientas: Kafka Streams, Flink, Spark Structured Streaming</li>
+          <li>Requiere gestión de estado (stateful processing)</li>
+          <li>Mayor costo operacional</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-box success">
+      <div class="info-box-title">💡 La Regla de Oro</div>
+      <p style="margin:0;font-size:0.9rem;">No uses streaming si batch es suficiente. Streaming añade complejidad significativa. La pregunta clave es: <strong>¿cuánto tiempo puedes esperar para actuar sobre este dato?</strong> Si la respuesta es "horas" → batch. Si es "segundos" → streaming. Si es "milisegundos" → streaming avanzado + consideraciones especiales.</p>
+    </div>
+
+    <h3>Casos de Uso por Paradigma</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Caso de Uso</th><th>Paradigma</th><th>Latencia Requerida</th><th>Herramienta</th></tr></thead>
+        <tbody>
+          <tr><td>Reporte de ventas mensual</td><td><span class="badge badge-blue">Batch</span></td><td>Días</td><td>dbt + Airflow</td></tr>
+          <tr><td>ETL nightly de OLTP a DWH</td><td><span class="badge badge-blue">Batch</span></td><td>Horas</td><td>Spark + Airflow</td></tr>
+          <tr><td>Detección de fraude bancario</td><td><span class="badge badge-orange">Stream</span></td><td>&lt;100ms</td><td>Kafka + Flink</td></tr>
+          <tr><td>Recomendaciones en tiempo real</td><td><span class="badge badge-orange">Stream</span></td><td>&lt;200ms</td><td>Kafka Streams</td></tr>
+          <tr><td>Dashboard en tiempo real</td><td><span class="badge badge-orange">Stream</span></td><td>Segundos</td><td>Spark Streaming</td></tr>
+          <tr><td>ML training data prep</td><td><span class="badge badge-blue">Batch</span></td><td>Horas</td><td>Spark</td></tr>
+          <tr><td>Analytics de logs</td><td><span class="badge badge-purple">Hybrid</span></td><td>Minutos</td><td>Kafka + Spark</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 2.5 -->
+  <section id="s6">
+    <h2 data-num="2.5">OLTP vs OLAP</h2>
+    <p>La distinción entre sistemas OLTP y OLAP es fundamental para entender por qué necesitamos Data Warehouses separados de bases de datos operacionales.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Aspecto</th><th>OLTP (Online Transaction Processing)</th><th>OLAP (Online Analytical Processing)</th></tr></thead>
+        <tbody>
+          <tr><td>Propósito</td><td>Operaciones diarias del negocio</td><td>Análisis histórico y reporting</td></tr>
+          <tr><td>Operaciones típicas</td><td>INSERT, UPDATE, DELETE frecuentes</td><td>SELECT complejos con agregaciones</td></tr>
+          <tr><td>Volumen de datos</td><td>MB a GB (datos actuales)</td><td>GB a PB (histórico completo)</td></tr>
+          <tr><td>Usuarios</td><td>Miles de usuarios concurrentes</td><td>Pocos analistas/ingenieros</td></tr>
+          <tr><td>Queries</td><td>Simples, rápidas (&lt;10ms)</td><td>Complejas, largas (segundos-minutos)</td></tr>
+          <tr><td>Schema</td><td>Normalizado (3NF)</td><td>Desnormalizado (Star/Snowflake)</td></tr>
+          <tr><td>Índices</td><td>Muchos índices en PKs y FKs</td><td>Pocos, orientados a columnas</td></tr>
+          <tr><td>Ejemplos</td><td>PostgreSQL, MySQL, Oracle</td><td>BigQuery, Snowflake, Redshift</td></tr>
+          <tr><td>Backup/Recovery</td><td>Crítico, RPO bajo</td><td>Menos crítico</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-box warning">
+      <div class="info-box-title">⚠️ Por qué NO hacer analytics en OLTP</div>
+      <p style="margin:0;font-size:0.875rem;">Una query analítica pesada (ej: "ventas totales por mes de los últimos 5 años") puede bloquear la base de datos operacional durante minutos, haciendo que las transacciones de usuarios fallen. <strong>Este es exactamente el problema que los Data Warehouses resuelven: aislar el workload analítico del transaccional.</strong></p>
+    </div>
+  </section>
+
+  <!-- 2.6 -->
+  <section id="s7">
+    <h2 data-num="2.6">Data Governance</h2>
+    <p>El Data Governance es el conjunto de políticas, procesos, roles y tecnologías que garantizan que los datos sean usados de forma segura, ética, consistente y conforme a regulaciones. Es el "sistema legal" del ecosistema de datos.</p>
+
+    <div class="accordion" id="acc-governance">
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>📋 Componentes del Data Governance</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>Data Ownership:</strong> Cada dataset tiene un dueño responsable de su calidad y definición.</li>
+            <li><strong>Data Stewardship:</strong> Roles dedicados a mantener la calidad y documentación de los datos.</li>
+            <li><strong>Data Catalog:</strong> Inventario centralizado de todos los datos disponibles con metadatos, linaje y documentación.</li>
+            <li><strong>Data Classification:</strong> Clasificar datos por sensibilidad: públicos, internos, confidenciales, PII.</li>
+            <li><strong>Access Control:</strong> Políticas de quién puede acceder a qué datos y con qué permisos.</li>
+            <li><strong>Data Retention:</strong> Políticas de cuánto tiempo se guardan los datos y cómo se eliminan.</li>
+            <li><strong>Compliance:</strong> Asegurar cumplimiento de GDPR, CCPA, HIPAA, SOC2, etc.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🌍 Regulaciones clave (GDPR, CCPA, LGPD)</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <p><strong>GDPR (Europa):</strong> Regula el tratamiento de datos personales de ciudadanos europeos. Aplica a cualquier empresa global que procese datos de europeos. Multas de hasta €20M o 4% del revenue global anual.</p>
+          <p><strong>CCPA (California):</strong> Regulación de privacidad de datos de residentes en California. Similar a GDPR pero con diferencias en derechos de consumidores.</p>
+          <p><strong>LGPD (Brasil):</strong> Lei Geral de Proteção de Dados. Inspirada en GDPR, aplica a datos de ciudadanos brasileños.</p>
+          <p><strong>Impacto para DE:</strong> Como Data Engineer, debes implementar:</p>
+          <ul>
+            <li>Right to be forgotten: capacidad de eliminar todos los datos de un usuario</li>
+            <li>Data portability: exportar datos de usuario en formato estándar</li>
+            <li>Data minimization: recolectar solo datos necesarios</li>
+            <li>Pseudonymization/Anonymization de datos PII en pipelines</li>
+          </ul>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🗂️ Data Catalog: Apache Atlas, DataHub, Alation</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <p>Un Data Catalog es el "Google de los datos internos". Permite a cualquier persona en la organización descubrir, entender y acceder a los datos correctos.</p>
+          <p><strong>Funcionalidades clave:</strong></p>
+          <ul>
+            <li>Search & Discovery: Buscar datasets por nombre, tags, descripción</li>
+            <li>Business Glossary: Definiciones estandarizadas de términos de negocio</li>
+            <li>Data Lineage: Rastrear el origen y transformaciones de cada campo</li>
+            <li>Metadata Management: Estadísticas, esquemas, dueños, SLAs</li>
+            <li>Collaboration: Comentarios, ratings, Q&A sobre datasets</li>
+          </ul>
+          <p><strong>Herramientas populares en 2026:</strong> LinkedIn DataHub (open source), Apache Atlas, Google Dataplex, Collibra, Alation, Atlan.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2.7 -->
+  <section id="s8">
+    <h2 data-num="2.7">Data Quality y Data Lineage</h2>
+    <p>La calidad de los datos es la diferencia entre insights útiles y decisiones erróneas. "Garbage in, garbage out" es la ley fundamental del Data Engineering.</p>
+
+    <h3>Las 6 Dimensiones de Data Quality</h3>
+    <div class="card-grid">
+      <div class="card-item">
+        <div class="icon">✅</div>
+        <h4>Completeness</h4>
+        <p>¿Todos los campos requeridos tienen valor? ¿Existen todos los registros esperados?</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🎯</div>
+        <h4>Accuracy</h4>
+        <p>¿Los datos representan la realidad correctamente? ¿Son precisos?</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔗</div>
+        <h4>Consistency</h4>
+        <p>¿Los mismos datos tienen el mismo valor en distintos sistemas?</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">⏰</div>
+        <h4>Timeliness</h4>
+        <p>¿Los datos están disponibles cuando se necesitan? ¿Son frescos?</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🏷️</div>
+        <h4>Uniqueness</h4>
+        <p>¿No hay duplicados? ¿Cada entidad tiene un identificador único?</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">✔️</div>
+        <h4>Validity</h4>
+        <p>¿Los datos siguen el formato y reglas de negocio definidas?</p>
+      </div>
+    </div>
+
+    <h3>Data Lineage: Rastreando el Origen</h3>
+    <p>El Data Lineage es la capacidad de rastrear el viaje de un dato desde su origen hasta su uso final. Es esencial para debugging, compliance y confianza en los datos.</p>
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+graph LR
+    A[(🗄️ PostgreSQL<br/>orders table)] -->|ETL diario| B[S3 Raw Layer<br/>orders/2026/01/01]
+    B -->|Spark job| C[Silver Layer<br/>orders_cleaned/]
+    C -->|dbt model| D[Gold Layer<br/>fact_orders]
+    D -->|dbt model| E[mart_sales_monthly]
+    E -->|BI connector| F[📊 Power BI<br/>Sales Dashboard]
+    F -->|Report| G[👔 CFO Report<br/>Q1 Revenue]
+
+    style A fill:#065f46,stroke:#10b981,color:#fff
+    style D fill:#1e40af,stroke:#3b82f6,color:#fff
+    style G fill:#7c3aed,stroke:#8b5cf6,color:#fff
+      </div>
+    </div>
+
+    <div class="info-box success">
+      <div class="info-box-title">💡 Por qué el lineage importa</div>
+      <p style="margin:0;font-size:0.875rem;">Cuando el CFO pregunta "¿por qué el revenue del Q1 en el dashboard es diferente al reporte contable?", el Data Lineage te permite rastrear exactamente qué transformación o fuente causó la discrepancia. Sin lineage, el debugging puede tomar días. Con lineage, minutos.</p>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter-01-introduccion.html" class="ch-nav-btn">
+        <span class="arrow">←</span>
+        <div><div class="ch-nav-meta">Capítulo 1</div><div class="ch-nav-title">Introducción</div></div>
+      </a>
+      <a href="chapter-03-modelado.html" class="ch-nav-btn next">
+        <span class="arrow">→</span>
+        <div><div class="ch-nav-meta">Capítulo 3</div><div class="ch-nav-title">Modelado de Datos</div></div>
+      </a>
+    </div>
+  </section>
+</main>
+
+<script>
+  const isLightMode = document.documentElement.classList.contains('light');
+  mermaid.initialize({startOnLoad:true,theme: isLightMode ? 'default' : 'dark',themeVariables: isLightMode ? { primaryColor: '#0088CC' } : {background:'#131c35',primaryColor:'#1e40af'}});
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const c=btn.closest('.tabs'),t=btn.dataset.tab;
+      c.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      c.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      c.querySelector(`.tab-panel[data-tab="${t}"]`).classList.add('active');
+    });
+  });
+  function toggleAccordion(h){
+    const item=h.parentElement,body=item.querySelector('.accordion-body'),isOpen=item.classList.contains('open');
+    h.closest('.accordion').querySelectorAll('.accordion-item').forEach(i=>{i.classList.remove('open');i.querySelector('.accordion-body').classList.remove('open');});
+    if(!isOpen){item.classList.add('open');body.classList.add('open');}
+  }
+</script>
+  <script src="nav.js"></script>
+</body>
+</html>

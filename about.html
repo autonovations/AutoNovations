@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autonovations | Felipe</title>
-    <meta name="description" content="Felipe - Full Stack Developer, Data Engineer, ML Ops, System Designer">
+    <meta name="description" content="Felipe - Full Stack Developer, Data Engineer, ML Ops, System Design">
     <link rel="icon" type="image/x-icon" href="assets_about/images/favicon.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -175,7 +175,7 @@
                             class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neon/30 bg-neon/5 backdrop-blur-sm mb-4">
                             <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span>
                             <span class="text-neon text-sm font-tech tracking-widest uppercase"
-                                data-i18n="profile_badge">System Designer &
+                                data-i18n="profile_badge">System Design &
                                 Creator</span>
                         </div>
 
@@ -196,7 +196,7 @@
                                 <i data-lucide="database" class="text-neon w-5 h-5"></i> <span
                                     data-i18n="profile_data">Data Engineer</span>
                             </h3>
-                            <span class="hidden sm:block text-gray-600">|</span>
+                            <div class="w-full hidden sm:block h-0 m-0 p-0"></div>
                             <h3
                                 class="font-tech text-gray-300 flex items-center gap-2 justify-center hover:text-neon transition-colors duration-300">
                                 <i data-lucide="infinity" class="text-neon w-5 h-5"></i> <span
@@ -206,7 +206,7 @@
                             <h3
                                 class="font-tech text-gray-300 flex items-center gap-2 justify-center hover:text-neon transition-colors duration-300">
                                 <i data-lucide="network" class="text-neon w-5 h-5"></i> <span
-                                    data-i18n="profile_sysdesign">System Designer</span>
+                                    data-i18n="profile_sysdesign">System Design</span>
                             </h3>
                         </div>
 
@@ -327,12 +327,7 @@
                                     alt="Kubernetes"
                                     class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(0,0,255,0.5)] transition-all duration-300">
                             </div>
-                            <div class="group relative flex-shrink-0">
-                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg"
-                                    alt="AWS"
-                                    class="h-10 md:h-12 object-contain group-hover:scale-125 group-hover:drop-shadow-[0_0_10px_rgba(255,165,0,0.5)] transition-all duration-300 filters-white"
-                                    style="filter: invert(1);">
-                            </div>
+                            
 
                             <!-- Second Set (Duplicate) -->
                             <div class="group relative flex-shrink-0">
@@ -464,6 +459,9 @@
                 <button
                     class="px-5 md:px-6 py-2 rounded-full border text-xs md:text-sm font-tech tracking-wider uppercase transition-all duration-300 hover:scale-105 filter-btn"
                     data-filter="data" data-i18n="cat_data_filter">Data Engineering</button>
+                <button
+                    class="px-5 md:px-6 py-2 rounded-full border text-xs md:text-sm font-tech tracking-wider uppercase transition-all duration-300 hover:scale-105 filter-btn"
+                    data-filter="datascience" data-i18n="cat_datascience_filter">Data Science</button>
                 <button
                     class="px-5 md:px-6 py-2 rounded-full border text-xs md:text-sm font-tech tracking-wider uppercase transition-all duration-300 hover:scale-105 filter-btn"
                     data-filter="ml" data-i18n="cat_ml_filter">ML & MLOps</button>
@@ -868,6 +866,22 @@
                             </a>
                         </div>
                     </div>
+
+
+
+
+
+
+
+                </div>
+            </div>
+
+            <!-- Category Data Science -->
+            <div class="mb-16 project-category-wrapper" data-category="datascience">
+                <h3 class="text-2xl font-tech text-white mb-8 border-l-4 border-neon pl-4 flex items-center gap-3">
+                    <i data-lucide="bar-chart-2" class="text-neon w-6 h-6"></i> <span data-i18n="cat_datascience">Data Science</span>
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- Project 12 -->
                     <div
                         class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
@@ -964,38 +978,6 @@
                             </a>
                         </div>
                     </div>
-
-
-
-                    <!-- Project 9 -->
-                    <div
-                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
-                        <div class="relative h-48 overflow-hidden bg-black/50">
-                            <div
-                                class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
-                            </div>
-                            <img src="assets_about/images/snake.png" alt="Snake Game"
-                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                        </div>
-                        <div
-                            class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
-                            <div>
-                                <h4
-                                    class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_snake_title">Snake Game</span>
-                                </h4>
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    <span
-                                        class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Python</span>
-                                </div>
-                            </div>
-                            <a href="https://factordeveloper.github.io/snake_game_python_tutle/" target="_blank"
-                                class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
-                                    class="w-4 h-4"></i>
-                            </a>
-                        </div>
-                    </div>
                     <!-- Project 10 -->
                     <div
                         class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
@@ -1022,37 +1004,6 @@
                             </div>
                             <a href="https://colab.research.google.com/drive/1NN3GwdTRFGPe5NR_Cafmt_WmHJNqyeLX?usp=sharing"
                                 target="_blank"
-                                class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
-                                <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
-                                    class="w-4 h-4"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <!-- Project 11 -->
-                    <div
-                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
-                        <div class="relative h-48 overflow-hidden bg-black/50">
-                            <div
-                                class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
-                            </div>
-                            <img src="assets_about/images/4_raya.png" alt="4 en Raya"
-                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                        </div>
-                        <div
-                            class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-dark/80 backdrop-blur-sm border-t border-white/5">
-                            <div>
-                                <h4
-                                    class="text-xl font-bold text-white font-tech mb-3 group-hover:text-neon transition-colors">
-                                    <span data-i18n="proj_connect4_title">Connect 4</span>
-                                </h4>
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    <span
-                                        class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Python</span>
-                                    <span
-                                        class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Jupyter</span>
-                                </div>
-                            </div>
-                            <a href="https://factordeveloper.github.io/cuatro_en_raya_python_jupyter/" target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
                                 <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
                                     class="w-4 h-4"></i>
@@ -1128,7 +1079,7 @@
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Python</span>
                                 </div>
                             </div>
-                            <a href="https://factordeveloper.github.io/ML_Trainee_project_celsius_farenheit/"
+                            <a href="https://autonovations.github.io/ML_Trainee_project_celsius_farenheit/"
                                 target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
                                 <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
@@ -1161,7 +1112,7 @@
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">JS</span>
                                 </div>
                             </div>
-                            <a href="https://factordeveloper.github.io/ML_Trainee_project_dibujar_numero/"
+                            <a href="https://autonovations.github.io/ML_Trainee_project_dibujar_numero/"
                                 target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
                                 <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
@@ -1194,7 +1145,7 @@
                                         class="text-xs px-2 py-1 bg-white/5 text-neon rounded-md border border-white/10 font-tech uppercase">Python</span>
                                 </div>
                             </div>
-                            <a href="https://factordeveloper.github.io/ML_Trainee_project_cat_vs_dogs/" target="_blank"
+                            <a href="https://autonovations.github.io/ML_Trainee_project_cat_vs_dogs/" target="_blank"
                                 class="inline-flex items-center gap-2 text-sm text-neon font-medium hover:text-white transition-colors mt-4 w-fit">
                                 <span data-i18n="proj_view_btn">View Project</span> <i data-lucide="external-link"
                                     class="w-4 h-4"></i>
@@ -1490,7 +1441,7 @@
     <!-- Footer -->
     <footer class="bg-[#020504] py-8 border-t border-white/5 relative z-10 text-center">
         <p class="text-gray-500 text-sm font-tech tracking-wide">
-            &copy; 2026 | <a href="https://factordeveloper.github.io/AutoNovations/"
+            &copy; 2026 | <a href="https://autonovations.github.io/AutoNovations/"
                 target="_blank"><b>Autonovations</b></a>. <span data-i18n="footer_rights">All rights reserved.</span>
         </p>
     </footer>

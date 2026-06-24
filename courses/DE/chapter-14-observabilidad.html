@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('deCourseTheme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.classList.add('light');
+    })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 14: Observabilidad de Datos | Master Book DE 2026</title>
+<meta name="description" content="Data Quality: Great Expectations, Soda, Monte Carlo, contratos de datos, SLAs y estrategias de monitoreo de calidad de datos.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0A0A0A; --bg2: #121212; --bg3: rgba(18, 18, 18, 0.6); --bg4: #1e1e1e;
+  --blue: #00D9FF; --cyan: #00D9FF; --purple: #8b5cf6; --green: #10b981;
+  --orange: #f59e0b; --pink: #ec4899; --red: #ef4444;
+  --t1: #ffffff; --t2: #E0E0E0; --t3: #A0A0A0;
+  --border: rgba(0, 217, 255, 0.2);
+  --sidebar-width: 280px;
+
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--bg3);
+  --bg-card-hover: var(--bg4);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-muted: var(--t3);
+  --accent-cyan: var(--cyan);
+  --accent-blue: var(--blue);
+  --accent-green: var(--green);
+  --accent-orange: var(--orange);
+  --accent-purple: var(--purple);
+  --gradient-hero: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  --gradient-1: linear-gradient(135deg, var(--blue), var(--cyan));
+}
+html.light {
+  --bg: #F8FAFC; --bg2: #FFFFFF; --bg3: rgba(255, 255, 255, 0.7); --bg4: #E2E8F0;
+  --blue: #0088CC; --cyan: #00D9FF; --purple: #7c3aed; --green: #059669;
+  --orange: #d97706; --pink: #db2777; --red: #dc2626;
+  --t1: #0F172A; --t2: #334155; --t3: #64748B;
+  --border: rgba(0, 217, 255, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;display:flex;font-size:1.15rem;}
+.sidebar{width:280px;min-width:280px;background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 0;}
+.sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+.book-title{font-size:0.75rem;font-weight:700;color:var(--green);letter-spacing:0.1em;text-transform:uppercase;}
+.chapter-title-sb{font-size:0.9rem;color:var(--t2);margin-top:0.25rem;}
+.nav-section{padding:0 1rem;margin-bottom:0.5rem;}
+.nav-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 0.5rem;margin-bottom:0.5rem;}
+.nav-item{display:block;padding:0.45rem 0.75rem;border-radius:8px;text-decoration:none;color:var(--t2);font-size:0.82rem;transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover,.nav-item.active{background:rgba(16,185,129,0.1);color:var(--green);}
+.nav-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--t3);margin-right:0.4rem;}
+.nav-back{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;color:var(--t3);text-decoration:none;font-size:0.8rem;border-bottom:1px solid var(--border);margin-bottom:1rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--green);}
+.content{flex:1;min-width:0;padding:3rem 4rem;max-width:920px;margin:0 auto;}
+.chapter-header{margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border);}
+.ch-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;color:var(--green);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:1.1rem;color:var(--t2);max-width:680px;line-height:1.8;}
+.chapter-meta-bar{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--t3);}
+.meta-item strong{color:var(--t2);}
+h2{font-size:1.6rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--t1);padding-top:1rem;}
+h2::before{content:attr(data-num)' ';color:var(--green);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 0.75rem;color:var(--t1);}
+h4{font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem;color:var(--cyan);}
+p{margin-bottom:1.25rem;color:var(--t2);font-size:0.95rem;}
+ul,ol{padding-left:1.5rem;margin-bottom:1.25rem;color:var(--t2);}
+li{margin-bottom:0.5rem;font-size:0.95rem;}
+strong{color:var(--t1);}
+code{font-family:'JetBrains Mono',monospace;background:var(--bg4);border:1px solid var(--border);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.85rem;color:var(--cyan);}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;}
+pre code{background:none;border:none;padding:0;font-size:0.85rem;color:var(--t1);line-height:1.8;}
+.dimension-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.25rem;border-left:4px solid var(--dc,var(--green));}
+.dimension-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin:1.5rem 0;}
+.info-box{border-left:3px solid var(--green);background:rgba(16,185,129,0.05);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1.5rem 0;}
+.info-box.warning{border-color:var(--orange);background:rgba(245,158,11,0.05);}
+.info-box.blue{border-color:var(--blue);background:rgba(59,130,246,0.05);}
+.info-box-title{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.info-box .info-box-title{color:var(--green);}
+.info-box.warning .info-box-title{color:var(--orange);}
+.info-box.blue .info-box-title{color:var(--blue);}
+.table-wrap{overflow-x:auto;margin:1.5rem 0;}
+table{width:100%;border-collapse:collapse;font-size:0.875rem;}
+th{background:var(--bg4);color:var(--t1);font-weight:600;padding:0.75rem 1rem;text-align:left;border-bottom:2px solid var(--border);}
+td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--t2);}
+tr:hover td{background:var(--bg3);}
+td:first-child{font-weight:500;color:var(--t1);}
+.chapter-nav{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem;}
+.ch-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--t2);transition:all 0.2s;flex:1;max-width:260px;}
+.ch-nav-btn:hover{border-color:var(--green);color:var(--t1);}
+.ch-nav-btn.next{margin-left:auto;text-align:right;flex-direction:row-reverse;}
+.ch-nav-btn .arrow{font-size:1.25rem;color:var(--green);}
+.ch-nav-meta{font-size:0.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;}
+.ch-nav-title{font-size:0.875rem;font-weight:600;margin-top:0.1rem;}
+@media(max-width:900px){.sidebar{display:none;}.content{padding:2rem 1.5rem;}}
+</style>
+</head>
+<body>
+
+
+<main class="content">
+  <div class="chapter-header">
+    <div class="ch-badge">✅ Capítulo 14 · Nivel Avanzado</div>
+    <h1>Observabilidad de Datos</h1>
+    <p class="lead">La calidad de datos es la disciplina que garantiza que los datos son precisos, completos, consistentes y oportunos. Sin calidad de datos, todos los análisis y modelos ML construidos sobre ellos son potencialmente inútiles o peligrosos.</p>
+    <div class="chapter-meta-bar">
+      <div class="meta-item">⏱️ <strong>Lectura:</strong> ~55 min</div>
+      <div class="meta-item">🎯 <strong>Nivel:</strong> Avanzado</div>
+      <div class="meta-item">📌 <strong>Herramientas:</strong> GE, Soda, dbt tests</div>
+    </div>
+  </div>
+
+  <!-- 13.0 -->
+  <section id="s1">
+    <h2 data-num="13.0">Las 6 Dimensiones de Calidad de Datos</h2>
+    
+    <div class="dimension-grid">
+      <div class="dimension-card" style="--dc:var(--green)">
+        <h4>✅ Completeness (Completitud)</h4>
+        <p style="color:var(--t2);font-size:0.875rem;margin:0;">¿Están todos los datos necesarios presentes? % de valores NULL o faltantes. Ej: 95% de clientes tienen email registrado.</p>
+      </div>
+      <div class="dimension-card" style="--dc:var(--blue)">
+        <h4>🎯 Accuracy (Precisión)</h4>
+        <p style="color:var(--t2);font-size:0.875rem;margin:0;">¿Los datos reflejan la realidad? Son correctos y libres de errores. Ej: el precio de un producto coincide con el precio real.</p>
+      </div>
+      <div class="dimension-card" style="--dc:var(--cyan)">
+        <h4>🔗 Consistency (Consistencia)</h4>
+        <p style="color:var(--t2);font-size:0.875rem;margin:0;">¿Los datos son coherentes entre sistemas? El mismo dato tiene el mismo valor en todas las fuentes. Ej: el total del pedido coincide en CRM y ERP.</p>
+      </div>
+      <div class="dimension-card" style="--dc:var(--orange)">
+        <h4>⏰ Timeliness (Oportunidad)</h4>
+        <p style="color:var(--t2);font-size:0.875rem;margin:0;">¿Los datos están disponibles cuando se necesitan? Freshness. Ej: los datos de ventas del día deben estar disponibles antes de las 8am.</p>
+      </div>
+      <div class="dimension-card" style="--dc:var(--purple)">
+        <h4>🆔 Uniqueness (Unicidad)</h4>
+        <p style="color:var(--t2);font-size:0.875rem;margin:0;">¿No hay duplicados no deseados? Cada entidad aparece una sola vez. Ej: un cliente no tiene dos registros con el mismo email.</p>
+      </div>
+      <div class="dimension-card" style="--dc:var(--red)">
+        <h4>✔️ Validity (Validez)</h4>
+        <p style="color:var(--t2);font-size:0.875rem;margin:0;">¿Los datos cumplen el formato y rango esperado? Ej: la edad está entre 0-150, el email tiene formato válido, el código de país es de 2 letras.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13.1 -->
+  <section id="s2">
+    <h2 data-num="13.1">Great Expectations</h2>
+    <p>Great Expectations (GX) es el framework Python más completo para validar, documentar y perfilar datos. Genera documentación HTML interactiva con los resultados de las validaciones.</p>
+
+    <pre><code">"""
+Great Expectations 0.18+ (GX Core)
+"""
+import great_expectations as gx
+import pandas as pd
+
+# ── SETUP ─────────────────────────────────────────────────────────────────
+context = gx.get_context()  # Data Context: gestiona configuración y artefactos
+
+# ── DEFINIR EXPECTATIONS (VALIDACIONES) ────────────────────────────────────
+# Desde un DataFrame
+df = pd.read_csv('orders.csv')
+validator = context.sources.pandas_default.read_dataframe(df)
+
+# Completitud
+validator.expect_column_values_to_not_be_null("order_id")
+validator.expect_column_values_to_not_be_null("customer_id")
+
+# Unicidad
+validator.expect_column_values_to_be_unique("order_id")
+
+# Valores permitidos
+validator.expect_column_values_to_be_in_set(
+    "status", 
+    {"pending", "processing", "shipped", "delivered", "cancelled", "returned"}
+)
+
+# Rangos numéricos
+validator.expect_column_values_to_be_between("amount", min_value=0, max_value=100000)
+validator.expect_column_min_to_be_between("amount", min_value=0)
+
+# Tipos de datos
+validator.expect_column_values_to_be_of_type("order_id", "int64")
+validator.expect_column_values_to_match_regex("email", r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
+
+# Integridad referencial (usando conjuntos de valores válidos)
+valid_customer_ids = set(pd.read_csv('customers.csv')['customer_id'])
+validator.expect_column_values_to_be_in_set("customer_id", valid_customer_ids)
+
+# Estadísticas y distribuciones
+validator.expect_column_mean_to_be_between("amount", min_value=50, max_value=500)
+validator.expect_column_quantile_values_to_be_between(
+    "amount",
+    quantile_ranges={"quantiles": [0.1, 0.5, 0.9], "value_ranges": [[0, 50], [50, 300], [300, 5000]]}
+)
+
+# Tendencia de filas: asegurar que llegan suficientes registros
+validator.expect_table_row_count_to_be_between(min_value=1000, max_value=100000)
+
+# Guardar el Suite de Expectations
+validator.save_expectation_suite("orders_expectations")
+
+# ── VALIDAR EN PRODUCCIÓN ──────────────────────────────────────────────────
+checkpoint = context.add_or_update_checkpoint(
+    name="orders_checkpoint",
+    validations=[{
+        "batch_request": {"datasource_name": "orders_datasource"},
+        "expectation_suite_name": "orders_expectations"
+    }],
+    action_list=[
+        # Notificar a Slack si hay fallos
+        {"name": "send_slack_alert", "action": {"class_name": "SlackNotificationAction",
+         "slack_webhook": "{{ ENV.SLACK_WEBHOOK }}",
+         "notify_on": "failure"}},
+        # Actualizar el sitio de documentación
+        {"name": "update_data_docs", "action": {"class_name": "UpdateDataDocsAction"}},
+        # Guardar resultados de validación
+        {"name": "store_validation_result", "action": {"class_name": "StoreValidationResultAction"}},
+    ]
+)
+
+result = checkpoint.run()
+
+if not result.success:
+    # Extraer expectativas fallidas
+    for validation_result in result.run_results.values():
+        for expectation_result in validation_result.results:
+            if not expectation_result.success:
+                print(f"❌ FAILED: {expectation_result.expectation_config.expectation_type}")
+                print(f"   Column: {expectation_result.expectation_config.kwargs.get('column')}")
+                print(f"   Observed: {expectation_result.result.get('observed_value')}")
+    raise ValueError("Data quality validation failed")</code></pre>
+  </section>
+
+  <!-- 13.2 -->
+  <section id="s3">
+    <h2 data-num="13.2">Soda Core</h2>
+    <p>Soda ofrece una sintaxis YAML más declarativa para data quality checks. Integra directamente con el Data Warehouse sin necesitar extraer datos.</p>
+
+    <pre><code"># ── SODA CHECKS en YAML (checks.yml) ──────────────────────────────────────
+# Mucho más legible para analistas no-técnicos
+# Se ejecuta directamente sobre la base de datos (pushdown)
+
+# checks.yml
+checks for orders:
+  # Completitud
+  - missing_count(order_id) = 0:
+      name: "No order_id vacíos"
+      fail: when > 0
+  
+  - missing_percent(customer_email) < 5%:
+      name: "Menos de 5% de emails faltantes"
+  
+  # Unicidad
+  - duplicate_count(order_id) = 0
+  
+  # Validez
+  - invalid_count(status) = 0:
+      valid values: [pending, processing, shipped, delivered, cancelled]
+  
+  - values_in_set(currency) = 0:
+      valid values: [USD, EUR, GBP, CAD, MXN, BRL]
+  
+  - min(amount) >= 0
+  - max(amount) < 100000
+  
+  # Tendencias (detectar anomalías)
+  - row_count between 1000 and 50000
+  - row_count between yesterday - 20% and yesterday + 20%:
+      name: "Filas de hoy similares a ayer"
+  
+  # Freshness: los datos no son muy viejos
+  - freshness(created_at) < 24h:
+      name: "Datos de las últimas 24 horas"
+  
+  # Distribución estadística
+  - avg(amount) between 80 and 200:
+      name: "Ticket promedio en rango esperado"
+  
+  # Integridad referencial (cross-check)
+  - values in (customer_id) must exist in customers (id):
+      name: "Todos los customer_id existen en tabla customers"
+
+# ── EJECUTAR SODA CHECKS ────────────────────────────────────────────────────
+# CLI
+# soda scan -d my_postgres_connection -c checks.yml
+
+# Python API
+from soda.scan import Scan
+
+scan = Scan()
+scan.set_data_source_name("warehouse")
+scan.add_configuration_yaml_file("soda_config.yml")
+scan.add_sodacl_yaml_file("checks.yml")
+scan.execute()
+
+# Resultados
+print(scan.get_scan_results())
+if scan.has_check_failures():
+    raise Exception("Data quality checks failed")</code></pre>
+  </section>
+
+  <!-- 13.3 -->
+  <section id="s4">
+    <h2 data-num="13.3">dbt Tests para Data Quality</h2>
+    <pre><code"># ── DBT TESTS: Tests integrados en el pipeline de transformación ───────────
+# schema.yml en tu proyecto dbt
+
+version: 2
+models:
+  - name: fct_orders
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:  # Integridad referencial
+              to: ref('dim_customers')
+              field: customer_id
+      - name: status
+        tests:
+          - accepted_values:
+              values: ['pending', 'shipped', 'delivered', 'cancelled']
+      - name: amount
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 100000
+
+# CUSTOM TESTS en SQL
+# tests/assert_no_negative_revenue.sql
+SELECT order_id
+FROM {{ ref('fct_orders') }}
+WHERE amount < 0  -- La query debe retornar 0 filas para pasar el test
+
+# GENERIC TEST personalizado
+# macros/test_column_not_in_future.sql
+{% test column_not_in_future(model, column_name) %}
+  SELECT {{ column_name }}, CURRENT_TIMESTAMP
+  FROM {{ model }}
+  WHERE {{ column_name }} > CURRENT_TIMESTAMP
+{% endtest %}
+
+# Uso en schema.yml
+# - name: order_date
+#   tests:
+#     - column_not_in_future</code></pre>
+  </section>
+
+  <!-- 13.4 -->
+  <section id="s5">
+    <h2 data-num="13.4">Data Contracts</h2>
+    <p>Los Data Contracts son acuerdos formales entre el productor de datos y sus consumidores. Definen el schema, semántica, SLAs y calidad esperada. Son el estándar emergente para Data Mesh en 2026.</p>
+
+    <pre><code"># ── DATA CONTRACT: YAML Schema ─────────────────────────────────────────────
+# orders_contract.yaml
+# Basado en Data Contract Specification (datacontract.com)
+
+dataContractSpecification: 0.9.3
+id: orders-api-v1
+info:
+  title: Orders Data Contract
+  version: 2.0.0
+  description: |
+    Contrato de datos del dominio de Órdenes.
+    Los consumidores de este contrato se comprometen a no leer directamente 
+    de las tablas fuente, sino solo a través de las interfaces definidas aquí.
+  owner: data-engineering@company.com
+  contact:
+    name: Orders Team
+    url: https://teams.microsoft.com/orders-team
+    email: orders-data@company.com
+
+servers:
+  production:
+    type: snowflake
+    account: mycompany.us-east-1
+    database: PRODUCTION
+    schema: GOLD
+
+terms:
+  usage: "Solo para uso interno. No compartir con terceros sin aprobación de Legal."
+  limitations: "Datos de clientes sujetos a GDPR. No usar para marketing sin consentimiento."
+  noticePeriod: P3M  # 3 meses de aviso para cambios breaking
+
+models:
+  orders:
+    description: "Todas las órdenes de clientes procesadas."
+    fields:
+      order_id:
+        type: long
+        required: true
+        unique: true
+        description: "Identificador único de la orden."
+      customer_id:
+        type: integer
+        required: true
+        description: "ID del cliente. Referencia a customers.customer_id."
+        pii: false
+      amount:
+        type: double
+        required: true
+        minimum: 0
+        description: "Monto total de la orden en USD."
+      status:
+        type: string
+        required: true
+        enum: [pending, processing, shipped, delivered, cancelled]
+      created_at:
+        type: timestamp
+        required: true
+        description: "Timestamp UTC de creación de la orden."
+
+quality:
+  - type: sql
+    description: "No debe haber order_ids nulos"
+    query: "SELECT COUNT(*) FROM orders WHERE order_id IS NULL"
+    mustBe: 0
+  - type: sql
+    description: "Cantidad de órdenes diarias esperada"
+    query: "SELECT COUNT(*) FROM orders WHERE DATE(created_at) = CURRENT_DATE - 1"
+    mustBeBetween: [100, 100000]
+
+serviceLevel:
+  availability: "99.9%"
+  retention: "3 años"
+  latency: "Los datos del día anterior disponibles antes de las 06:00 UTC"
+  freshness: "Actualizado cada hora"
+  support: "Respuesta en < 4 horas en días laborales"
+
+# ── VALIDAR EL CONTRATO ────────────────────────────────────────────────────
+# CLI: datacontract lint orders_contract.yaml
+# CLI: datacontract test orders_contract.yaml
+# CLI: datacontract publish orders_contract.yaml  # al Data Catalog</code></pre>
+  </section>
+
+  <!-- 13.5 -->
+  <section id="s6">
+    <h2 data-num="13.5">Monitoreo Continuo con Anomaly Detection</h2>
+    <pre><code">"""
+Detección de anomalías en datos con Monte Carlo / código propio
+"""
+import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
+from scipy import stats
+
+class DataAnomalyDetector:
+    """
+    Detecta anomalías estadísticas en métricas de datos.
+    Útil para detectar problemas de calidad antes de que impacten dashboards.
+    """
+    
+    def __init__(self, historical_df: pd.DataFrame, z_score_threshold: float = 3.0):
+        self.history = historical_df
+        self.threshold = z_score_threshold
+    
+    def detect_row_count_anomaly(self, table: str, current_count: int) -> dict:
+        """Detecta si el número de filas de hoy es anómalo vs historia."""
+        historical_counts = self.history[
+            (self.history['table'] == table) & 
+            (self.history['date'] >= datetime.now() - timedelta(days=30))
+        ]['row_count']
+        
+        if len(historical_counts) < 7:
+            return {"status": "insufficient_history"}
+        
+        mean = historical_counts.mean()
+        std = historical_counts.std()
+        z_score = (current_count - mean) / std if std > 0 else 0
+        
+        is_anomaly = abs(z_score) > self.threshold
+        
+        return {
+            "table": table,
+            "current_count": current_count,
+            "historical_mean": round(mean),
+            "historical_std": round(std),
+            "z_score": round(z_score, 2),
+            "is_anomaly": is_anomaly,
+            "severity": "critical" if abs(z_score) > 5 else "warning" if is_anomaly else "ok",
+            "message": f"Row count {current_count:,} is {'anomalous' if is_anomaly else 'normal'} "
+                      f"(expected ~{round(mean):,} ± {round(std):,})"
+        }
+    
+    def detect_null_rate_anomaly(self, column_stats: pd.Series, historical_null_rates: pd.Series) -> dict:
+        """Detecta cambios súbitos en la tasa de nulos."""
+        current_null_rate = column_stats['null_rate']
+        historical_avg = historical_null_rates.mean()
+        
+        # Cambio de más del 5% en tasa de nulos es sospechoso
+        if current_null_rate - historical_avg > 0.05:
+            return {
+                "status": "anomaly",
+                "type": "null_rate_spike",
+                "current": f"{current_null_rate:.1%}",
+                "expected": f"{historical_avg:.1%}",
+                "delta": f"+{(current_null_rate - historical_avg):.1%}",
+            }
+        return {"status": "ok"}
+    
+    def run_full_scan(self, current_stats: pd.DataFrame) -> list[dict]:
+        """Ejecuta detección completa y retorna lista de alertas."""
+        alerts = []
+        
+        for _, row in current_stats.iterrows():
+            result = self.detect_row_count_anomaly(row['table'], row['row_count'])
+            if result.get('is_anomaly'):
+                alerts.append(result)
+        
+        return alerts
+
+# Integración con Airflow
+from airflow.decorators import task
+
+@task
+def run_anomaly_detection(**context) -> dict:
+    """Task de Airflow para ejecutar detección de anomalías."""
+    current_stats = get_current_table_stats()
+    historical_stats = load_historical_stats(days=30)
+    
+    detector = DataAnomalyDetector(historical_stats)
+    alerts = detector.run_full_scan(current_stats)
+    
+    if alerts:
+        send_slack_alert(f"⚠️ {len(alerts)} data anomalies detected:\n" + 
+                         "\n".join([f"- {a['table']}: {a['message']}" for a in alerts]))
+    
+    return {"total_anomalies": len(alerts), "alerts": alerts}</code></pre>
+
+    <div class="chapter-nav">
+      <a href="chapter-13-devops.html" class="ch-nav-btn">
+        <span class="arrow">←</span>
+        <div><div class="ch-nav-meta">Capítulo 13</div><div class="ch-nav-title">DevOps</div></div>
+      </a>
+      <a href="chapter-15-seguridad.html" class="ch-nav-btn next">
+        <span class="arrow">→</span>
+        <div><div class="ch-nav-meta">Capítulo 15</div><div class="ch-nav-title">Seguridad</div></div>
+      </a>
+    </div>
+  </section>
+</main>
+  <script src="nav.js"></script>
+</body>
+</html>

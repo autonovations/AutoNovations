@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('deCourseTheme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.classList.add('light');
+    })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 6: Arquitecturas Modernas | Master Book DE 2026</title>
+<meta name="description" content="Lambda, Kappa, Medallion, Data Mesh y Data Fabric. Las arquitecturas de datos que dominan el mercado en 2026.">
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0A0A0A; --bg2: #121212; --bg3: rgba(18, 18, 18, 0.6); --bg4: #1e1e1e;
+  --blue: #00D9FF; --cyan: #00D9FF; --purple: #8b5cf6; --green: #10b981;
+  --orange: #f59e0b; --pink: #ec4899; --red: #ef4444;
+  --t1: #ffffff; --t2: #E0E0E0; --t3: #A0A0A0;
+  --border: rgba(0, 217, 255, 0.2);
+  --sidebar-width: 280px;
+
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--bg3);
+  --bg-card-hover: var(--bg4);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-muted: var(--t3);
+  --accent-cyan: var(--cyan);
+  --accent-blue: var(--blue);
+  --accent-green: var(--green);
+  --accent-orange: var(--orange);
+  --accent-purple: var(--purple);
+  --gradient-hero: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  --gradient-1: linear-gradient(135deg, var(--blue), var(--cyan));
+}
+html.light {
+  --bg: #F8FAFC; --bg2: #FFFFFF; --bg3: rgba(255, 255, 255, 0.7); --bg4: #E2E8F0;
+  --blue: #0088CC; --cyan: #00D9FF; --purple: #7c3aed; --green: #059669;
+  --orange: #d97706; --pink: #db2777; --red: #dc2626;
+  --t1: #0F172A; --t2: #334155; --t3: #64748B;
+  --border: rgba(0, 217, 255, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;display:flex;font-size:1.15rem;}
+.sidebar{width:280px;min-width:280px;background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 0;}
+.sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+.book-title{font-size:0.75rem;font-weight:700;color:var(--cyan);letter-spacing:0.1em;text-transform:uppercase;}
+.chapter-title-sb{font-size:0.9rem;color:var(--t2);margin-top:0.25rem;}
+.nav-section{padding:0 1rem;margin-bottom:0.5rem;}
+.nav-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 0.5rem;margin-bottom:0.5rem;}
+.nav-item{display:block;padding:0.45rem 0.75rem;border-radius:8px;text-decoration:none;color:var(--t2);font-size:0.82rem;transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover,.nav-item.active{background:rgba(6,182,212,0.1);color:var(--cyan);}
+.nav-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--t3);margin-right:0.4rem;}
+.nav-back{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;color:var(--t3);text-decoration:none;font-size:0.8rem;border-bottom:1px solid var(--border);margin-bottom:1rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--cyan);}
+.content{flex:1;min-width:0;padding:3rem 4rem;max-width:100%;margin:0 auto;}
+.chapter-header{margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border);}
+.ch-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;color:var(--cyan);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:1.1rem;color:var(--t2);max-width:680px;line-height:1.8;}
+.chapter-meta-bar{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--t3);}
+.meta-item strong{color:var(--t2);}
+h2{font-size:1.6rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--t1);padding-top:1rem;}
+h2::before{content:attr(data-num)' ';color:var(--cyan);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 0.75rem;color:var(--t1);}
+h4{font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem;color:var(--orange);}
+p{margin-bottom:1.25rem;color:var(--t2);font-size:0.95rem;}
+ul,ol{padding-left:1.5rem;margin-bottom:1.25rem;color:var(--t2);}
+li{margin-bottom:0.5rem;font-size:0.95rem;}
+strong{color:var(--t1);}
+code{font-family:'JetBrains Mono',monospace;background:var(--bg4);border:1px solid var(--border);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.85rem;color:var(--cyan);}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;}
+pre code{background:none;border:none;padding:0;font-size:0.85rem;color:var(--t1);line-height:1.8;}
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0;}
+.info-box{border-left:3px solid var(--cyan);background:rgba(6,182,212,0.05);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1.5rem 0;}
+.info-box.warning{border-color:var(--orange);background:rgba(245,158,11,0.05);}
+.info-box.success{border-color:var(--green);background:rgba(16,185,129,0.05);}
+.info-box.purple{border-color:var(--purple);background:rgba(139,92,246,0.05);}
+.info-box-title{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.info-box .info-box-title{color:var(--cyan);}
+.info-box.warning .info-box-title{color:var(--orange);}
+.info-box.success .info-box-title{color:var(--green);}
+.info-box.purple .info-box-title{color:var(--purple);}
+.table-wrap{overflow-x:auto;margin:1.5rem 0;}
+table{width:100%;border-collapse:collapse;font-size:0.875rem;}
+th{background:var(--bg4);color:var(--t1);font-weight:600;padding:0.75rem 1rem;text-align:left;border-bottom:2px solid var(--border);}
+td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--t2);}
+tr:hover td{background:var(--bg3);}
+td:first-child{font-weight:500;color:var(--t1);}
+.mermaid-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:2rem;margin:2rem 0;overflow-x:auto;}
+.arch-card{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:2rem;margin:2rem 0;position:relative;overflow:hidden;}
+.arch-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--ac,linear-gradient(90deg,var(--cyan),var(--purple)));}
+.arch-title{font-size:1.3rem;font-weight:800;margin-bottom:0.5rem;}
+.arch-year{font-size:0.75rem;color:var(--t3);font-family:'JetBrains Mono',monospace;margin-bottom:1rem;}
+.arch-meta{display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+.arch-tag{font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:4px;font-weight:600;}
+.arch-tag.pro{background:rgba(16,185,129,0.15);color:var(--green);}
+.arch-tag.con{background:rgba(239,68,68,0.15);color:var(--red);}
+.arch-tag.who{background:rgba(59,130,246,0.15);color:var(--blue);}
+.medallion-layer{border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:0.75rem;display:flex;gap:1rem;align-items:flex-start;}
+.medallion-layer.bronze{background:rgba(205,127,50,0.1);border:1px solid rgba(205,127,50,0.3);}
+.medallion-layer.silver{background:rgba(192,192,192,0.1);border:1px solid rgba(192,192,192,0.3);}
+.medallion-layer.gold{background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.3);}
+.layer-icon{font-size:1.5rem;min-width:2rem;}
+.layer-content h4{margin:0 0 0.35rem;font-size:0.95rem;}
+.layer-content p{margin:0;font-size:0.82rem;color:var(--t3);}
+.principles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin:1.5rem 0;}
+.principle-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1.25rem;border-left:3px solid var(--purple);}
+.principle-card h4{color:var(--purple);margin:0 0 0.5rem;font-size:0.9rem;}
+.principle-card p{font-size:0.8rem;color:var(--t3);margin:0;}
+.chapter-nav{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem;}
+.ch-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--t2);transition:all 0.2s;flex:1;max-width:260px;}
+.ch-nav-btn:hover{border-color:var(--cyan);color:var(--t1);}
+.ch-nav-btn.next{margin-left:auto;text-align:right;flex-direction:row-reverse;}
+.ch-nav-btn .arrow{font-size:1.25rem;color:var(--cyan);}
+.ch-nav-meta{font-size:0.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;}
+.ch-nav-title{font-size:0.875rem;font-weight:600;margin-top:0.1rem;}
+@media(max-width:900px){.sidebar{display:none;}.content{padding:2rem 1.5rem;}}
+</style>
+</head>
+<body>
+
+
+<main class="content">
+  <div class="chapter-header">
+    <div class="ch-badge">🏛️ Capítulo 6 · Nivel Avanzado</div>
+    <h1>Arquitecturas Modernas de Datos</h1>
+    <p class="lead">Las arquitecturas son los blueprints que definen cómo fluyen, se almacenan y se procesan los datos en una organización. Entender sus trade-offs es lo que diferencia a un Senior DE de un programador de pipelines.</p>
+    <div class="chapter-meta-bar">
+      <div class="meta-item">⏱️ <strong>Lectura:</strong> ~60 min</div>
+      <div class="meta-item">🎯 <strong>Nivel:</strong> Avanzado</div>
+      <div class="meta-item">🏆 <strong>Crucial para:</strong> entrevistas Senior</div>
+    </div>
+  </div>
+
+  <!-- 6.0 -->
+  <section id="s1">
+    <h2 data-num="6.0">Lambda Architecture</h2>
+    
+    <div class="arch-card" style="--ac:linear-gradient(90deg,#3b82f6,#06b6d4)">
+      <div class="arch-title">⚡ Lambda Architecture</div>
+      <div class="arch-year">Propuesta por Nathan Marz (2011) · Popularizada 2012-2018</div>
+      <div class="arch-meta">
+        <span class="arch-tag pro">✅ Alto throughput</span>
+        <span class="arch-tag pro">✅ Baja latencia</span>
+        <span class="arch-tag con">❌ Código duplicado</span>
+        <span class="arch-tag con">❌ Complejidad operacional</span>
+        <span class="arch-tag who">🏢 Twitter, Yahoo, Instagram (legacy)</span>
+      </div>
+      <p>Lambda divide el procesamiento en <strong>tres capas paralelas</strong> para manejar tanto datos históricos (batch) como datos en tiempo real (stream), combinando sus resultados en la capa de servicio.</p>
+    </div>
+
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+graph TD
+    subgraph Ingestion
+        A[📡 Data Sources<br/>Events, Logs, APIs]
+    end
+
+    subgraph "Batch Layer (Alto Throughput)"
+        B[🗄️ Immutable Master Dataset<br/>HDFS / S3]
+        C[⚡ Batch Processing<br/>Spark / MapReduce]
+        D[📊 Batch Views<br/>Precomputed Results]
+    end
+
+    subgraph "Speed Layer (Baja Latencia)"
+        E[🔄 Stream Processing<br/>Kafka Streams / Flink]
+        F[⚡ Real-time Views<br/>Redis / Cassandra]
+    end
+
+    subgraph "Serving Layer"
+        G[🔀 Query Merger<br/>Combina Batch + Speed]
+        H[📱 Applications & APIs]
+    end
+
+    A --> B
+    A --> E
+    B --> C
+    C --> D
+    E --> F
+    D --> G
+    F --> G
+    G --> H
+
+    style B fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    style E fill:#1a3a2a,stroke:#10b981,color:#fff
+    style G fill:#3d1a6b,stroke:#8b5cf6,color:#fff
+      </div>
+    </div>
+
+    <h3>Las 3 Capas de Lambda</h3>
+    <ul>
+      <li><strong>Batch Layer:</strong> Procesa el dataset completo histórico periódicamente (horas/días). Resultados precisos y exactos. Herramientas: Spark, Hadoop. Storage: HDFS, S3.</li>
+      <li><strong>Speed Layer:</strong> Procesa solo los datos recientes desde el último batch. Resultados aproximados pero de baja latencia. Herramientas: Kafka Streams, Flink, Spark Streaming.</li>
+      <li><strong>Serving Layer:</strong> Combina las vistas de batch y speed para responder queries. Responde la pregunta "¿cuál es el estado del sistema ahora mismo?" fusionando resultados exactos (batch) con los recientes (speed).</li>
+    </ul>
+
+    <div class="info-box warning">
+      <div class="info-box-title">⚠️ El Problema de Lambda: Código Duplicado</div>
+      <p style="margin:0;font-size:0.9rem;">La misma lógica de negocio debe implementarse DOS veces: una en batch (ej: PySpark) y otra en streaming (ej: Kafka Streams). Esto es el "lambda problem": los dos sistemas inevitablemente divergen, causando inconsistencias sutiles. Es la principal razón por la que la industria migró hacia Kappa Architecture.</p>
+    </div>
+  </section>
+
+  <!-- 6.1 -->
+  <section id="s2">
+    <h2 data-num="6.1">Kappa Architecture</h2>
+    
+    <div class="arch-card" style="--ac:linear-gradient(90deg,#10b981,#3b82f6)">
+      <div class="arch-title">🔄 Kappa Architecture</div>
+      <div class="arch-year">Propuesta por Jay Kreps (LinkedIn/Confluent) · 2014 · Dominante 2018-hoy</div>
+      <div class="arch-meta">
+        <span class="arch-tag pro">✅ Un solo codebase</span>
+        <span class="arch-tag pro">✅ Más simple de mantener</span>
+        <span class="arch-tag con">❌ Reprocessing costoso</span>
+        <span class="arch-tag con">❌ Requiere stream muy robusto</span>
+        <span class="arch-tag who">🏢 LinkedIn, Uber, Confluent</span>
+      </div>
+      <p>Kappa simplifica Lambda eliminando la batch layer. <strong>Todo es streaming</strong>. Para el reprocessing histórico, se replay los eventos desde el log (Kafka) como si fueran streaming reciente.</p>
+    </div>
+
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+graph LR
+    subgraph "Ingestion & Storage"
+        A[📡 Data Sources] --> B[📌 Kafka<br/>Event Log<br/>Replayable]
+    end
+
+    subgraph "Processing (Una sola capa)"
+        B --> C[⚡ Stream Processing<br/>Flink / Kafka Streams<br/>Spark Structured Streaming]
+    end
+
+    subgraph "Serving"
+        C --> D[🗄️ Serving Store<br/>Cassandra / Redis / DWH]
+        D --> E[📱 Applications]
+    end
+
+    subgraph "Reprocessing"
+        B -.->|Replay histórico| C
+        style B fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    end
+
+    style C fill:#1a3a2a,stroke:#10b981,color:#fff
+    style D fill:#3d1a6b,stroke:#8b5cf6,color:#fff
+      </div>
+    </div>
+
+    <h3>Kappa en Acción: Reprocessing</h3>
+    <pre><code># Kappa Architecture: Re-procesamiento desde Kafka
+# Cuando cambias la lógica, simplemente replay desde el offset 0
+
+from confluent_kafka import Consumer, Producer
+import json
+
+def reprocess_from_beginning(topic: str, new_processor):
+    """Replay todos los eventos desde el inicio para re-calcular resultados."""
+    consumer = Consumer({
+        'bootstrap.servers': 'kafka:9092',
+        'group.id': f'reprocess_{topic}_{datetime.now().timestamp()}',
+        'auto.offset.reset': 'earliest',  # 🔑 Desde el principio
+    })
+    consumer.subscribe([topic])
+    
+    print(f"🔄 Starting reprocessing of topic: {topic}")
+    processed = 0
+    
+    while True:
+        msg = consumer.poll(timeout=5.0)
+        if msg is None:
+            print(f"✅ Reprocessing complete: {processed:,} events")
+            break
+        if msg.error():
+            break
+        
+        event = json.loads(msg.value().decode('utf-8'))
+        new_processor.process(event)
+        processed += 1
+    
+    consumer.close()
+
+# Ventaja clave: cambiar la lógica = solo replay el topic
+# No hay batch layer que recalcular por separado</code></pre>
+  </section>
+
+  <!-- 6.2 -->
+  <section id="s3">
+    <h2 data-num="6.2">Medallion Architecture</h2>
+    
+    <div class="arch-card" style="--ac:linear-gradient(90deg,#f59e0b,#10b981)">
+      <div class="arch-title">🥇 Medallion Architecture (Bronze → Silver → Gold)</div>
+      <div class="arch-year">Popularizada por Databricks · 2019-presente · Estándar de facto en 2026</div>
+      <div class="arch-meta">
+        <span class="arch-tag pro">✅ Clara separación de calidad</span>
+        <span class="arch-tag pro">✅ Fácil de entender</span>
+        <span class="arch-tag pro">✅ Reusable entre equipos</span>
+        <span class="arch-tag con">❌ Storage aumenta con capas</span>
+        <span class="arch-tag who">🏢 Databricks, Azure, GCP, miles de empresas</span>
+      </div>
+      <p>La arquitectura Medallion organiza los datos en <strong>tres capas de calidad progresiva</strong>: Bronze (raw), Silver (cleaned), Gold (business-ready). Es la arquitectura más adoptada en el ecosistema cloud-native 2026.</p>
+    </div>
+
+    <div class="medallion-layer bronze">
+      <div class="layer-icon">🥉</div>
+      <div class="layer-content">
+        <h4>Bronze Layer — Raw Data (Zona de aterrizaje)</h4>
+        <p>Datos exactamente como llegan de la fuente. Sin transformaciones. Inmutable. Sirve como source of truth y permite replay. Formato: Parquet, Avro, Delta. Retención: larga (años). Schema: schema-on-read o schema del source.</p>
+      </div>
+    </div>
+    <div class="medallion-layer silver">
+      <div class="layer-icon">🥈</div>
+      <div class="layer-content">
+        <h4>Silver Layer — Cleaned & Enriched</h4>
+        <p>Datos limpios, deduplicados, con schemas validados, datos nulos manejados, tipos correctos, uniones básicas aplicadas. Ya es útil para Data Scientists y análisis ad-hoc. PII puede anonimizarse aquí.</p>
+      </div>
+    </div>
+    <div class="medallion-layer gold">
+      <div class="layer-icon">🥇</div>
+      <div class="layer-content">
+        <h4>Gold Layer — Business-Ready Aggregates</h4>
+        <p>Tablas de hechos y dimensiones, KPIs pre-calculados, modelos dbt finales, datos listos para BI tools. Alta calidad garantizada. Star schema, agregaciones, métricas de negocio. Optimizados para queries rápidas.</p>
+      </div>
+    </div>
+
+    <h3>Implementación con Delta Lake y dbt</h3>
+    <pre><code># ── BRONZE: Ingesta raw con Delta Lake ────────────────────────────────────
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName("medallion").getOrCreate()
+
+# Ingesta raw desde S3 → Bronze Delta Table
+raw_df = spark.read.json("s3://bucket/raw/orders/2026/01/01/")
+(raw_df
+    .withColumn("_ingested_at", current_timestamp())
+    .withColumn("_source_file", input_file_name())
+    .write.format("delta")
+    .mode("append")
+    .partitionBy("_ingested_date")
+    .save("s3://bucket/bronze/orders/")
+)
+
+# ── SILVER: Limpieza con PySpark ──────────────────────────────────────────
+from pyspark.sql.functions import col, when, trim, lower, to_timestamp
+
+bronze_df = spark.read.format("delta").load("s3://bucket/bronze/orders/")
+
+silver_df = (bronze_df
+    # Eliminar duplicados
+    .dropDuplicates(["order_id"])
+    # Limpiar tipos
+    .withColumn("order_date", to_timestamp(col("order_date"), "yyyy-MM-dd'T'HH:mm:ss"))
+    .withColumn("amount", col("amount").cast("decimal(10,2)"))
+    .withColumn("customer_email", lower(trim(col("customer_email"))))
+    # Filtrar inválidos
+    .filter(col("order_id").isNotNull())
+    .filter(col("amount") >= 0)
+    # SCD2 merge
+)
+
+DeltaTable.forPath(spark, "s3://bucket/silver/orders/") \
+    .alias("target").merge(
+        silver_df.alias("source"),
+        "target.order_id = source.order_id"
+    ).whenMatchedUpdateAll() \
+     .whenNotMatchedInsertAll() \
+     .execute()
+
+# ── GOLD: Agregaciones con dbt ────────────────────────────────────────────</code></pre>
+    <pre><code>-- dbt model: gold/mart_sales_monthly.sql
+-- Materialización como tabla (para mejor performance BI)
+{{ config(materialized='table', schema='gold') }}
+
+WITH silver_orders AS (
+    SELECT * FROM {{ ref('silver_orders') }}
+    WHERE order_status NOT IN ('cancelled', 'returned')
+),
+monthly_metrics AS (
+    SELECT
+        DATE_TRUNC('month', order_date) AS month,
+        customer_segment,
+        product_category,
+        COUNT(DISTINCT order_id)          AS order_count,
+        COUNT(DISTINCT customer_id)       AS unique_customers,
+        SUM(order_amount)                 AS gross_revenue,
+        SUM(discount_amount)              AS total_discounts,
+        SUM(order_amount - discount_amount) AS net_revenue,
+        AVG(order_amount)                 AS avg_order_value,
+        SUM(order_amount) / COUNT(DISTINCT customer_id) AS revenue_per_customer
+    FROM silver_orders
+    GROUP BY 1, 2, 3
+)
+SELECT
+    *,
+    SUM(net_revenue) OVER (PARTITION BY customer_segment ORDER BY month) AS cumulative_revenue,
+    net_revenue / SUM(net_revenue) OVER (PARTITION BY month) AS market_share
+FROM monthly_metrics</code></pre>
+  </section>
+
+  <!-- 6.3 -->
+  <section id="s4">
+    <h2 data-num="6.3">Data Mesh</h2>
+    
+    <div class="arch-card" style="--ac:linear-gradient(90deg,#8b5cf6,#ec4899)">
+      <div class="arch-title">🌐 Data Mesh</div>
+      <div class="arch-year">Introducido por Zhamak Dehghani (ThoughtWorks) · 2019 · Adoptado ampliamente 2022-presente</div>
+      <div class="arch-meta">
+        <span class="arch-tag pro">✅ Escala organizacionalmente</span>
+        <span class="arch-tag pro">✅ Ownership descentralizado</span>
+        <span class="arch-tag con">❌ Requiere madurez org.</span>
+        <span class="arch-tag con">❌ Governance complejo</span>
+        <span class="arch-tag who">🏢 Zalando, Intuit, Netflix, JPMorgan</span>
+      </div>
+      <p>Data Mesh no es una tecnología — es un <strong>paradigma sociotécnico</strong>. Propone descentralizar la propiedad de los datos, tratándolos como productos, con equipos de dominio responsables end-to-end de sus datos.</p>
+    </div>
+
+    <h3>Los 4 Principios del Data Mesh</h3>
+    <div class="principles-grid">
+      <div class="principle-card">
+        <h4>1️⃣ Domain Ownership</h4>
+        <p>Los datos son propiedad del dominio que los genera. El equipo de "Orders" es responsable de los datos de órdenes, no un equipo central de datos.</p>
+      </div>
+      <div class="principle-card">
+        <h4>2️⃣ Data as a Product</h4>
+        <p>Cada dominio trata sus datos como un producto con SLAs, documentación, calidad garantizada y usuarios. Los datos son "first-class citizens".</p>
+      </div>
+      <div class="principle-card">
+        <h4>3️⃣ Self-serve Platform</h4>
+        <p>Una plataforma de datos centralizada provee las herramientas para que cualquier dominio pueda publicar y consumir datos sin fricción.</p>
+      </div>
+      <div class="principle-card">
+        <h4>4️⃣ Federated Governance</h4>
+        <p>Governance global (estándares, seguridad, compliance) con implementación descentralizada. "Federación" como en gobierno federal.</p>
+      </div>
+    </div>
+
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+graph TD
+    subgraph "Self-Serve Platform (Central)"
+        P[🛠️ Data Platform<br/>Storage, Compute,<br/>Catalog, Governance]
+    end
+
+    subgraph "Dominio: Orders"
+        O1[📋 Orders Data Product]
+        O2[orders_v1 API]
+        O3[orders_stream topic]
+    end
+
+    subgraph "Dominio: Customers"
+        C1[👤 Customer Data Product]
+        C2[customers_v2 API]
+        C3[customer_events topic]
+    end
+
+    subgraph "Dominio: Finance"
+        F1[💰 Finance Data Product]
+        F2[revenue_metrics API]
+    end
+
+    subgraph "Consumidores"
+        ML[🤖 ML Team]
+        BI[📊 BI Team]
+        EXT[🌐 External Teams]
+    end
+
+    P --- O1
+    P --- C1
+    P --- F1
+    O1 --> O2
+    O1 --> O3
+    C1 --> C2
+    C1 --> C3
+    O2 --> F1
+    C2 --> F1
+    F2 --> ML
+    O2 --> BI
+    C2 --> BI
+    O3 --> EXT
+
+    style P fill:#3d1a6b,stroke:#8b5cf6,color:#fff
+    style O1 fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    style C1 fill:#065f46,stroke:#10b981,color:#fff
+    style F1 fill:#7c3a00,stroke:#f59e0b,color:#fff
+      </div>
+    </div>
+
+    <div class="info-box purple">
+      <div class="info-box-title">🔑 Data Mesh no elimina la ingeniería central</div>
+      <p style="margin:0;font-size:0.9rem;">La plataforma central (self-serve) sigue siendo necesaria — es el "sistema operativo" sobre el que todos los dominios trabajan. Lo que cambia es que cada dominio tiene sus propios Data Engineers que entienden profundamente el negocio de su dominio. Data Mesh requiere equipos maduros y es difícil de implementar en organizaciones pequeñas.</p>
+    </div>
+  </section>
+
+  <!-- 6.4 -->
+  <section id="s5">
+    <h2 data-num="6.4">Data Fabric</h2>
+    
+    <div class="arch-card" style="--ac:linear-gradient(90deg,#06b6d4,#10b981)">
+      <div class="arch-title">🕸️ Data Fabric</div>
+      <div class="arch-year">Término popularizado por Gartner · 2020-presente · Tecnología-first (vs Data Mesh que es org-first)</div>
+      <div class="arch-meta">
+        <span class="arch-tag pro">✅ Unified access layer</span>
+        <span class="arch-tag pro">✅ AI-augmented</span>
+        <span class="arch-tag con">❌ Vendor lock-in riesgo</span>
+        <span class="arch-tag con">❌ Complejo de implementar</span>
+        <span class="arch-tag who">🏢 TIBCO, Informatica, IBM (tech vendors)</span>
+      </div>
+      <p>Data Fabric es una capa de integración de datos que conecta fuentes heterogéneas mediante metadatos inteligentes, ML y automatización, sin necesariamente mover los datos. Es <strong>tecnología-first</strong> vs Data Mesh que es organización-first.</p>
+    </div>
+
+    <h3>Componentes del Data Fabric</h3>
+    <ul>
+      <li><strong>Knowledge Graph:</strong> Grafo de metadatos que conecta conceptos, datasets, transformaciones y usuarios</li>
+      <li><strong>Active Metadata:</strong> Metadatos que no solo describen sino que se usan para automatizar decisiones (qué pipeline correr, qué calidad validar)</li>
+      <li><strong>Unified Catalog:</strong> Vista única de todos los datos de la organización, sin importar dónde viven</li>
+      <li><strong>Intelligent Integration:</strong> ML que automatiza mapeos de datos, detección de anomalías y optimización de pipelines</li>
+      <li><strong>Virtual Data Access:</strong> Consultar datos en su ubicación original sin moverlos (data virtualization)</li>
+    </ul>
+
+    <div class="info-box">
+      <div class="info-box-title">📊 Data Mesh vs Data Fabric</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Aspecto</th><th>Data Mesh</th><th>Data Fabric</th></tr></thead>
+          <tbody>
+            <tr><td>Enfoque primario</td><td>Organizacional y cultural</td><td>Tecnológico e integración</td></tr>
+            <tr><td>Implementación</td><td>Bottom-up por dominios</td><td>Top-down con plataforma unificada</td></tr>
+            <tr><td>Ownership de datos</td><td>Descentralizado (dominios)</td><td>Puede ser centralizado</td></tr>
+            <tr><td>Movimiento de datos</td><td>Los datos viven en el dominio</td><td>Virtualización, puede ser in-place</td></tr>
+            <tr><td>ROI timeline</td><td>Largo (cultura + tech)</td><td>Más corto (es una capa de software)</td></tr>
+            <tr><td>Complementariedad</td><td colspan="2">Pueden coexistir: Data Mesh como org model, Data Fabric como tech layer</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6.5 -->
+  <section id="s6">
+    <h2 data-num="6.5">Comparativa Global de Arquitecturas</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Arquitectura</th>
+            <th>Paradigma</th>
+            <th>Madurez Org.</th>
+            <th>Latencia</th>
+            <th>Complejidad</th>
+            <th>Cuándo usar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Lambda</td>
+            <td>Batch + Stream paralelo</td>
+            <td>Cualquiera</td>
+            <td>Baja (speed layer)</td>
+            <td>🔴 Alta</td>
+            <td>Legacy. Evitar en nuevos proyectos</td>
+          </tr>
+          <tr>
+            <td>Kappa</td>
+            <td>Solo Streaming</td>
+            <td>Técnica media+</td>
+            <td>Muy baja</td>
+            <td>🟡 Media</td>
+            <td>Cuando todo es event-driven</td>
+          </tr>
+          <tr>
+            <td>Medallion</td>
+            <td>Capas de calidad</td>
+            <td>Cualquiera</td>
+            <td>Batch + near-RT</td>
+            <td>🟢 Baja</td>
+            <td>El estándar 2026 para la mayoría</td>
+          </tr>
+          <tr>
+            <td>Data Mesh</td>
+            <td>Dominios descentralizados</td>
+            <td>Alta</td>
+            <td>Variable</td>
+            <td>🔴 Alta (org)</td>
+            <td>Empresas grandes con múltiples dominios</td>
+          </tr>
+          <tr>
+            <td>Data Fabric</td>
+            <td>Integración virtual</td>
+            <td>Media+</td>
+            <td>Variable</td>
+            <td>🟡 Media</td>
+            <td>Múltiples silos, sin mover datos</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-box success">
+      <div class="info-box-title">💡 Recomendación para 2026</div>
+      <p style="margin:0;font-size:0.9rem;"><strong>Para la mayoría de empresas:</strong> Medallion Architecture + dbt para transformaciones es la combinación ganadora. Simple, bien documentada, con tooling maduro y compatibilidad con todos los cloud providers. Si la empresa crece y tiene múltiples equipos, evolucionar hacia Data Mesh en paralelo. Data Fabric como capa adicional si hay muchos sistemas legacy heterogéneos.</p>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter-05-python.html" class="ch-nav-btn">
+        <span class="arrow">←</span>
+        <div><div class="ch-nav-meta">Capítulo 5</div><div class="ch-nav-title">Python para DE</div></div>
+      </a>
+      <a href="chapter-07-herramientas.html" class="ch-nav-btn next">
+        <span class="arrow">→</span>
+        <div><div class="ch-nav-meta">Capítulo 7</div><div class="ch-nav-title">Herramientas Fundamentales</div></div>
+      </a>
+    </div>
+  </section>
+</main>
+
+<script>
+  const isLightMode = document.documentElement.classList.contains('light');
+  mermaid.initialize({startOnLoad:true,theme: isLightMode ? 'default' : 'dark',themeVariables: isLightMode ? { primaryColor: '#0088CC' } : {background:'#131c35',primaryColor:'#1e40af',edgeLabelBackground:'#0f1629'}});
+</script>
+  <script src="nav.js"></script>
+</body>
+</html>

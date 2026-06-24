@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('deCourseTheme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.classList.add('light');
+    })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 20: Preguntas de Entrevista DE | Master Book DE 2026</title>
+<meta name="description" content="Preguntas de entrevistas para Data Engineer (SQL, Python, System Design y Arquitectura).">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0A0A0A; --bg2: #121212; --bg3: rgba(18, 18, 18, 0.6); --bg4: #1e1e1e;
+  --blue: #00D9FF; --cyan: #00D9FF; --purple: #8b5cf6; --green: #10b981;
+  --orange: #f59e0b; --pink: #ec4899; --red: #ef4444;
+  --t1: #ffffff; --t2: #E0E0E0; --t3: #A0A0A0;
+  --border: rgba(0, 217, 255, 0.2);
+  --sidebar-width: 280px;
+
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--bg3);
+  --bg-card-hover: var(--bg4);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-muted: var(--t3);
+  --accent-cyan: var(--cyan);
+  --accent-blue: var(--blue);
+  --accent-green: var(--green);
+  --accent-orange: var(--orange);
+  --accent-purple: var(--purple);
+  --gradient-hero: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  --gradient-1: linear-gradient(135deg, var(--blue), var(--cyan));
+}
+html.light {
+  --bg: #F8FAFC; --bg2: #FFFFFF; --bg3: rgba(255, 255, 255, 0.7); --bg4: #E2E8F0;
+  --blue: #0088CC; --cyan: #00D9FF; --purple: #7c3aed; --green: #059669;
+  --orange: #d97706; --pink: #db2777; --red: #dc2626;
+  --t1: #0F172A; --t2: #334155; --t3: #64748B;
+  --border: rgba(0, 217, 255, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;display:flex;font-size:1.15rem;}
+.sidebar{width:280px;min-width:280px;background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 0;}
+.sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+.book-title{font-size:0.75rem;font-weight:700;color:var(--inter);letter-spacing:0.1em;text-transform:uppercase;}
+.chapter-title-sb{font-size:0.9rem;color:var(--t2);margin-top:0.25rem;}
+.nav-section{padding:0 1rem;margin-bottom:0.5rem;}
+.nav-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 0.5rem;margin-bottom:0.5rem;}
+.nav-item{display:block;padding:0.45rem 0.75rem;border-radius:8px;text-decoration:none;color:var(--t2);font-size:0.82rem;transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover,.nav-item.active{background:rgba(16,185,129,0.1);color:var(--inter);}
+.nav-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--t3);margin-right:0.4rem;}
+.nav-back{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;color:var(--t3);text-decoration:none;font-size:0.8rem;border-bottom:1px solid var(--border);margin-bottom:1rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--inter);}
+.content{flex:1;min-width:0;padding:3rem 4rem;max-width:920px;margin:0 auto;}
+.chapter-header{margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border);}
+.ch-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;color:var(--inter);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:1.1rem;color:var(--t2);max-width:680px;line-height:1.8;}
+.chapter-meta-bar{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--t3);}
+.meta-item strong{color:var(--t2);}
+h2{font-size:1.6rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--t1);padding-top:1rem;}
+h2::before{content:attr(data-num)' ';color:var(--inter);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 0.75rem;color:var(--t1);}
+h4{font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem;color:var(--cyan);}
+p{margin-bottom:1.25rem;color:var(--t2);font-size:0.95rem;}
+ul,ol{padding-left:1.5rem;margin-bottom:1.25rem;color:var(--t2);}
+li{margin-bottom:0.5rem;font-size:0.95rem;}
+strong{color:var(--t1);}
+code{font-family:'JetBrains Mono',monospace;background:var(--bg4);border:1px solid var(--border);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.85rem;color:var(--cyan);}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;}
+pre code{background:none;border:none;padding:0;font-size:0.85rem;color:var(--t1);line-height:1.8;}
+.info-box{border-left:3px solid var(--inter);background:rgba(16,185,129,0.05);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1.5rem 0;}
+.info-box.success{border-color:var(--green);background:rgba(16,185,129,0.05);}
+.info-box.warning{border-color:var(--orange);background:rgba(245,158,11,0.05);}
+.info-box-title{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.info-box .info-box-title{color:var(--inter);}
+.info-box.success .info-box-title{color:var(--green);}
+.info-box.warning .info-box-title{color:var(--orange);}
+
+/* Q&A Styles */
+.qa-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.qa-level {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+.lvl-jr { background: rgba(59,130,246,0.15); color: var(--blue); }
+.lvl-mid { background: rgba(245,158,11,0.15); color: var(--orange); }
+.lvl-sr { background: rgba(239,68,68,0.15); color: var(--red); }
+
+.qa-q { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--t1); }
+.qa-a { color: var(--t2); font-size: 0.95rem; }
+
+.chapter-nav{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem;}
+.ch-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--t2);transition:all 0.2s;flex:1;max-width:260px;}
+.ch-nav-btn:hover{border-color:var(--inter);color:var(--t1);}
+.ch-nav-btn.next{margin-left:auto;text-align:right;flex-direction:row-reverse;}
+.ch-nav-btn .arrow{font-size:1.25rem;color:var(--inter);}
+.ch-nav-meta{font-size:0.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;}
+.ch-nav-title{font-size:0.875rem;font-weight:600;margin-top:0.1rem;}
+
+@media(max-width:900px){.sidebar{display:none;}.content{padding:2rem 1.5rem;}}
+</style>
+</head>
+<body>
+
+
+<main class="content">
+  <div class="chapter-header">
+    <div class="ch-badge">🎯 Capítulo 20 · Carrera</div>
+    <h1>Preguntas de Entrevista</h1>
+    <p class="lead">Las preguntas reales que hacen compañías como Meta, Amazon y startups de alto crecimiento para roles de Data Engineering. No se trata de memorizar, sino de entender el "por qué".</p>
+    <div class="chapter-meta-bar">
+      <div class="meta-item">⏱️ <strong>Lectura:</strong> ~25 min</div>
+      <div class="meta-item">🎯 <strong>Nivel:</strong> Todos</div>
+    </div>
+  </div>
+
+  <!-- 20.1 -->
+  <section id="s1">
+    <h2 data-num="20.1">SQL Avanzado</h2>
+    
+    <div class="qa-card">
+      <div class="qa-level lvl-jr">Junior</div>
+      <div class="qa-q">¿Cuál es la diferencia entre RANK() y DENSE_RANK()?</div>
+      <div class="qa-a">
+        <p>Ambas son funciones de ventana (window functions). La diferencia ocurre cuando hay empates:</p>
+        <ul>
+          <li><strong>RANK():</strong> Deja un "hueco" en la numeración. Si dos filas empatan en el puesto 1, la siguiente fila recibe el puesto 3.</li>
+          <li><strong>DENSE_RANK():</strong> NO deja huecos. Si dos filas empatan en el puesto 1, la siguiente fila recibe el puesto 2.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-level lvl-mid">Mid-Level</div>
+      <div class="qa-q">¿Qué es el Skewness de datos en un JOIN en SQL y cómo lo solucionas?</div>
+      <div class="qa-a">
+        <p>Ocurre cuando la distribución de la clave de join está muy desbalanceada (ej. el 90% de las filas tienen <code>user_id = NULL</code> o <code>country = 'US'</code>). Esto causa que un solo nodo de procesamiento reciba todo el trabajo, causando OOM (Out of Memory) o lentitud.</p>
+        <p><strong>Soluciones:</strong></p>
+        <ul>
+          <li>Filtrar los nulos o valores anómalos antes del join.</li>
+          <li>"Salting": Agregar un número aleatorio a las claves de join en la tabla grande para distribuir el trabajo entre varios reducers.</li>
+          <li>Si una tabla es muy pequeña, forzar un Broadcast Join (Map-Side Join).</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20.2 -->
+  <section id="s2">
+    <h2 data-num="20.2">Modelado de Datos</h2>
+
+    <div class="qa-card">
+      <div class="qa-level lvl-mid">Mid-Level</div>
+      <div class="qa-q">Explica qué es un SCD Tipo 2 (Slowly Changing Dimension Type 2) y cuándo usarlo.</div>
+      <div class="qa-a">
+        <p>Es una técnica en data warehousing para rastrear el historial de cambios de una dimensión a lo largo del tiempo. En lugar de sobrescribir el registro antiguo (SCD Tipo 1), se inserta una nueva fila.</p>
+        <p>Se requieren 3 columnas extra: <code>valid_from</code> (fecha inicio), <code>valid_to</code> (fecha fin), y <code>is_active</code> (booleano). Es vital cuando quieres recrear reportes del pasado (ej. "¿En qué estado vivía el cliente cuando compró esto hace 2 años?").</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20.3 -->
+  <section id="s3">
+    <h2 data-num="20.3">Apache Spark</h2>
+
+    <div class="qa-card">
+      <div class="qa-level lvl-sr">Senior</div>
+      <div class="qa-q">Explica la diferencia entre Repartition y Coalesce en Spark. ¿Cuál usarías para reducir el número de particiones antes de guardar un archivo?</div>
+      <div class="qa-a">
+        <ul>
+          <li><strong>Repartition:</strong> Realiza un <em>full shuffle</em> (movimiento de datos por la red entre todos los nodos). Crea particiones casi exactamente del mismo tamaño. Puede aumentar o disminuir el número. Es una operación muy costosa.</li>
+          <li><strong>Coalesce:</strong> Minimiza el movimiento de datos agrupando particiones existentes en el mismo nodo. <strong>Solo</strong> sirve para disminuir particiones.</li>
+        </ul>
+        <p>Para reducir particiones antes de guardar un archivo sin hacer un <em>shuffle</em>, siempre usarías <strong>Coalesce</strong>. Sin embargo, si los datos originales estaban muy desbalanceados (skewed), el coalesce mantendrá ese desbalance, por lo que a veces Repartition es necesario antes de escribir en S3/HDFS para evitar archivos de distintos tamaños.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20.4 -->
+  <section id="s4">
+    <h2 data-num="20.4">System Design (Arquitectura)</h2>
+
+    <div class="qa-card">
+      <div class="qa-level lvl-sr">Senior / Lead</div>
+      <div class="qa-q">Nuestra aplicación móvil genera 50,000 eventos de "click" por segundo. Necesitamos un dashboard en tiempo real (retraso max 5 segundos) y también almacenar los datos para entrenar ML a fin de mes. Diseña la arquitectura.</div>
+      <div class="qa-a">
+        <p>Es un caso clásico para una Arquitectura Lambda o Kappa. Una solución moderna (Kappa) sería:</p>
+        <ol>
+          <li><strong>Ingesta:</strong> La API envía los eventos a un topic de <strong>Apache Kafka</strong> o <strong>AWS Kinesis</strong>.</li>
+          <li><strong>Tiempo Real (Serving):</strong> <strong>Apache Flink</strong> o <strong>Spark Structured Streaming</strong> lee de Kafka. Agrupa clics (tumbling windows de 1-2 segundos) y hace upsert de los contadores a una DB rápida como <strong>Redis</strong> o <strong>DynamoDB</strong>. El Dashboard lee directamente de Redis.</li>
+          <li><strong>Almacenamiento Batch (Lakehouse):</strong> Otro proceso lee del mismo topic de Kafka usando Kafka Connect y usa un sink a <strong>Amazon S3</strong> en formato Parquet (o usando Apache Iceberg). </li>
+          <li><strong>ML (Analytics):</strong> Los Data Scientists usan <strong>Amazon Athena</strong> o <strong>Snowflake</strong> para consultar S3 sin afectar el sistema de tiempo real.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <div class="chapter-nav">
+    <a href="chapter-19-proyecto-final.html" class="ch-nav-btn">
+      <span class="arrow">←</span>
+      <div><div class="ch-nav-meta">Capítulo 19</div><div class="ch-nav-title">Proyecto E2E</div></div>
+    </a>
+    <a href="chapter-21-mercado-laboral.html" class="ch-nav-btn next">
+      <span class="arrow">→</span>
+      <div><div class="ch-nav-meta">Capítulo 21</div><div class="ch-nav-title">Mercado Laboral</div></div>
+    </a>
+  </div>
+</main>
+  <script src="nav.js"></script>
+</body>
+</html>

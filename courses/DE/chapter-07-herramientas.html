@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('deCourseTheme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.classList.add('light');
+    })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 7: Herramientas Fundamentales | Master Book DE 2026</title>
+<meta name="description" content="Git, Docker, PostgreSQL, MongoDB, dbt, Snowflake, BigQuery y el stack completo del Data Engineer moderno.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0A0A0A; --bg2: #121212; --bg3: rgba(18, 18, 18, 0.6); --bg4: #1e1e1e;
+  --blue: #00D9FF; --cyan: #00D9FF; --purple: #8b5cf6; --green: #10b981;
+  --orange: #f59e0b; --pink: #ec4899; --red: #ef4444;
+  --t1: #ffffff; --t2: #E0E0E0; --t3: #A0A0A0;
+  --border: rgba(0, 217, 255, 0.2);
+  --sidebar-width: 280px;
+
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--bg3);
+  --bg-card-hover: var(--bg4);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-muted: var(--t3);
+  --accent-cyan: var(--cyan);
+  --accent-blue: var(--blue);
+  --accent-green: var(--green);
+  --accent-orange: var(--orange);
+  --accent-purple: var(--purple);
+  --gradient-hero: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  --gradient-1: linear-gradient(135deg, var(--blue), var(--cyan));
+}
+html.light {
+  --bg: #F8FAFC; --bg2: #FFFFFF; --bg3: rgba(255, 255, 255, 0.7); --bg4: #E2E8F0;
+  --blue: #0088CC; --cyan: #00D9FF; --purple: #7c3aed; --green: #059669;
+  --orange: #d97706; --pink: #db2777; --red: #dc2626;
+  --t1: #0F172A; --t2: #334155; --t3: #64748B;
+  --border: rgba(0, 217, 255, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;display:flex;font-size:1.15rem;}
+.sidebar{width:280px;min-width:280px;background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 0;}
+.sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+.book-title{font-size:0.75rem;font-weight:700;color:var(--pink);letter-spacing:0.1em;text-transform:uppercase;}
+.chapter-title-sb{font-size:0.9rem;color:var(--t2);margin-top:0.25rem;}
+.nav-section{padding:0 1rem;margin-bottom:0.5rem;}
+.nav-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 0.5rem;margin-bottom:0.5rem;}
+.nav-item{display:block;padding:0.45rem 0.75rem;border-radius:8px;text-decoration:none;color:var(--t2);font-size:0.82rem;transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover,.nav-item.active{background:rgba(236,72,153,0.1);color:var(--pink);}
+.nav-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--t3);margin-right:0.4rem;}
+.nav-back{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;color:var(--t3);text-decoration:none;font-size:0.8rem;border-bottom:1px solid var(--border);margin-bottom:1rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--pink);}
+.content{flex:1;min-width:0;padding:3rem 4rem;max-width:100%;margin:0 auto;}
+.chapter-header{margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border);}
+.ch-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(236,72,153,0.1);border:1px solid rgba(236,72,153,0.2);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;color:var(--pink);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:1.1rem;color:var(--t2);max-width:680px;line-height:1.8;}
+.chapter-meta-bar{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--t3);}
+.meta-item strong{color:var(--t2);}
+h2{font-size:1.6rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--t1);padding-top:1rem;}
+h2::before{content:attr(data-num)' ';color:var(--pink);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 0.75rem;color:var(--t1);}
+h4{font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem;color:var(--cyan);}
+p{margin-bottom:1.25rem;color:var(--t2);font-size:0.95rem;}
+ul,ol{padding-left:1.5rem;margin-bottom:1.25rem;color:var(--t2);}
+li{margin-bottom:0.5rem;font-size:0.95rem;}
+strong{color:var(--t1);}
+code{font-family:'JetBrains Mono',monospace;background:var(--bg4);border:1px solid var(--border);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.85rem;color:var(--cyan);}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;}
+pre code{background:none;border:none;padding:0;font-size:0.85rem;color:var(--t1);line-height:1.8;}
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;margin:2rem 0;}
+.tool-card{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:1.75rem;position:relative;overflow:hidden;transition:all 0.3s;}
+.tool-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--tc,linear-gradient(90deg,var(--blue),var(--cyan)));}
+.tool-card:hover{border-color:rgba(59,130,246,0.3);transform:translateY(-3px);}
+.tool-icon{font-size:2.5rem;margin-bottom:1rem;}
+.tool-card h3{font-size:1.1rem;font-weight:700;margin:0 0 0.25rem;}
+.tool-version{font-size:0.7rem;font-family:'JetBrains Mono',monospace;color:var(--t3);margin-bottom:0.75rem;}
+.tool-desc{font-size:0.875rem;color:var(--t2);margin-bottom:1rem;}
+.tool-tags{display:flex;flex-wrap:wrap;gap:0.35rem;}
+.tool-tag{font-size:0.7rem;background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:0.2rem 0.5rem;color:var(--t3);font-family:'JetBrains Mono',monospace;}
+.info-box{border-left:3px solid var(--blue);background:rgba(59,130,246,0.05);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1.5rem 0;}
+.info-box.success{border-color:var(--green);background:rgba(16,185,129,0.05);}
+.info-box.warning{border-color:var(--orange);background:rgba(245,158,11,0.05);}
+.info-box-title{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.info-box .info-box-title{color:var(--blue);}
+.info-box.success .info-box-title{color:var(--green);}
+.info-box.warning .info-box-title{color:var(--orange);}
+.table-wrap{overflow-x:auto;margin:1.5rem 0;}
+table{width:100%;border-collapse:collapse;font-size:0.875rem;}
+th{background:var(--bg4);color:var(--t1);font-weight:600;padding:0.75rem 1rem;text-align:left;border-bottom:2px solid var(--border);}
+td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--t2);}
+tr:hover td{background:var(--bg3);}
+td:first-child{font-weight:500;color:var(--t1);}
+.accordion{margin:1.5rem 0;}
+.accordion-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.accordion-header{padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:0.95rem;transition:background 0.2s;user-select:none;}
+.accordion-header:hover{background:var(--bg4);}
+.accordion-header .arrow{color:var(--pink);transition:transform 0.3s;}
+.accordion-item.open .accordion-header .arrow{transform:rotate(180deg);}
+.accordion-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease;}
+.accordion-body.open{max-height:5000px;padding:0 1.25rem 1.25rem;}
+.chapter-nav{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem;}
+.ch-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--t2);transition:all 0.2s;flex:1;max-width:260px;}
+.ch-nav-btn:hover{border-color:var(--pink);color:var(--t1);}
+.ch-nav-btn.next{margin-left:auto;text-align:right;flex-direction:row-reverse;}
+.ch-nav-btn .arrow{font-size:1.25rem;color:var(--pink);}
+.ch-nav-meta{font-size:0.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;}
+.ch-nav-title{font-size:0.875rem;font-weight:600;margin-top:0.1rem;}
+@media(max-width:900px){.sidebar{display:none;}.content{padding:2rem 1.5rem;}}
+</style>
+</head>
+<body>
+
+
+<main class="content">
+  <div class="chapter-header">
+    <div class="ch-badge">🛠️ Capítulo 7 · Nivel Básico-Intermedio</div>
+    <h1>Herramientas Fundamentales</h1>
+    <p class="lead">El stack tecnológico del Data Engineer moderno. Estas herramientas son las que aparecen en casi todas las ofertas laborales y que debes dominar para ser efectivo en cualquier empresa.</p>
+    <div class="chapter-meta-bar">
+      <div class="meta-item">⏱️ <strong>Lectura:</strong> ~65 min</div>
+      <div class="meta-item">🎯 <strong>Nivel:</strong> Básico → Intermedio</div>
+      <div class="meta-item">📌 <strong>Foco:</strong> Uso práctico</div>
+    </div>
+  </div>
+
+  <!-- 7.0 -->
+  <section id="s1">
+    <h2 data-num="7.0">El Stack Completo del Data Engineer 2026</h2>
+    
+    <div class="tool-grid">
+      <div class="tool-card" style="--tc:linear-gradient(90deg,#f05033,#f0a030)">
+        <div class="tool-icon">🔀</div>
+        <h3>Git</h3>
+        <div class="tool-version">git 2.43+</div>
+        <div class="tool-desc">Control de versiones. Sin Git no hay trabajo en equipo ni CI/CD. Esencial.</div>
+        <div class="tool-tags"><span class="tool-tag">version control</span><span class="tool-tag">collaboration</span></div>
+      </div>
+      <div class="tool-card" style="--tc:linear-gradient(90deg,#2496ed,#0db7ed)">
+        <div class="tool-icon">🐳</div>
+        <h3>Docker</h3>
+        <div class="tool-version">Docker 25+</div>
+        <div class="tool-desc">Containerización. Garantiza que tu pipeline funciona igual en dev, staging y producción.</div>
+        <div class="tool-tags"><span class="tool-tag">containers</span><span class="tool-tag">reproducibility</span></div>
+      </div>
+      <div class="tool-card" style="--tc:linear-gradient(90deg,#336791,#4169e1)">
+        <div class="tool-icon">🐘</div>
+        <h3>PostgreSQL</h3>
+        <div class="tool-version">PostgreSQL 16+</div>
+        <div class="tool-desc">La RDBMS más poderosa del mundo open source. Para datos operacionales y analíticos a escala mediana.</div>
+        <div class="tool-tags"><span class="tool-tag">RDBMS</span><span class="tool-tag">ACID</span><span class="tool-tag">SQL</span></div>
+      </div>
+      <div class="tool-card" style="--tc:linear-gradient(90deg,#10aa50,#008000)">
+        <div class="tool-icon">🍃</div>
+        <h3>MongoDB</h3>
+        <div class="tool-version">MongoDB 7+</div>
+        <div class="tool-desc">Document store NoSQL líder. Para datos semi-estructurados y esquemas variables.</div>
+        <div class="tool-tags"><span class="tool-tag">NoSQL</span><span class="tool-tag">documents</span><span class="tool-tag">JSON</span></div>
+      </div>
+      <div class="tool-card" style="--tc:linear-gradient(90deg,#ff694a,#ff9e64)">
+        <div class="tool-icon">⭕</div>
+        <h3>Apache Spark</h3>
+        <div class="tool-version">Spark 3.5+</div>
+        <div class="tool-desc">Motor de procesamiento distribuido. El estándar para Big Data processing a escala.</div>
+        <div class="tool-tags"><span class="tool-tag">distributed</span><span class="tool-tag">batch</span><span class="tool-tag">streaming</span></div>
+      </div>
+      <div class="tool-card" style="--tc:linear-gradient(90deg,#e34234,#ff6b6b)">
+        <div class="tool-icon">📡</div>
+        <h3>Apache Kafka</h3>
+        <div class="tool-version">Kafka 3.7+</div>
+        <div class="tool-desc">Plataforma de event streaming distribuida. El corazón de arquitecturas event-driven.</div>
+        <div class="tool-tags"><span class="tool-tag">streaming</span><span class="tool-tag">events</span><span class="tool-tag">queue</span></div>
+      </div>
+      <div class="tool-card" style="--tc:linear-gradient(90deg,#ff4785,#ff9e64)">
+        <div class="tool-icon">🌀</div>
+        <h3>Apache Airflow</h3>
+        <div class="tool-version">Airflow 2.9+</div>
+        <div class="tool-desc">Orquestador de workflows de datos. Programa, monitorea y gestiona pipelines con DAGs en Python.</div>
+        <div class="tool-tags"><span class="tool-tag">orchestration</span><span class="tool-tag">DAGs</span><span class="tool-tag">scheduling</span></div>
+      </div>
+      <div class="tool-card" style="--tc:linear-gradient(90deg,#ff4785,#8b5cf6)">
+        <div class="tool-icon">⚙️</div>
+        <h3>dbt</h3>
+        <div class="tool-version">dbt Core 1.8+</div>
+        <div class="tool-desc">Data Build Tool. Transforma datos en el DWH con SQL modular, versionado y testeable.</div>
+        <div class="tool-tags"><span class="tool-tag">transformations</span><span class="tool-tag">SQL</span><span class="tool-tag">testing</span></div>
+      </div>
+      <div class="tool-card" style="--tc:linear-gradient(90deg,#29b5e8,#56c7f5)">
+        <div class="tool-icon">❄️</div>
+        <h3>Snowflake</h3>
+        <div class="tool-version">Snowflake 2026</div>
+        <div class="tool-desc">Cloud Data Warehouse líder. Cómputo y storage separados, auto-escale, SQL analítico supremo.</div>
+        <div class="tool-tags"><span class="tool-tag">DWH</span><span class="tool-tag">cloud</span><span class="tool-tag">analytics</span></div>
+      </div>
+      <div class="tool-card" style="--tc:linear-gradient(90deg,#4285f4,#34a853)">
+        <div class="tool-icon">🔵</div>
+        <h3>BigQuery</h3>
+        <div class="tool-version">BigQuery 2026</div>
+        <div class="tool-desc">DWH serverless de Google. Paga por query, escala automático, excelente para analytics ad-hoc.</div>
+        <div class="tool-tags"><span class="tool-tag">serverless</span><span class="tool-tag">GCP</span><span class="tool-tag">petabytes</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7.1 -->
+  <section id="s2">
+    <h2 data-num="7.1">Git para Data Engineering</h2>
+    <p>Git es tan fundamental como el SQL. Un Data Engineer que no maneja Git avanzado no puede trabajar en equipo ni en CI/CD moderno.</p>
+
+    <div class="accordion" id="acc-git">
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>📚 Comandos Git Esenciales para DE</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <pre><code># ── SETUP INICIAL ─────────────────────────────────────────────────────────
+git config --global user.name "Tu Nombre"
+git config --global user.email "tu@email.com"
+git config --global core.editor "code --wait"      # VS Code como editor
+git config --global init.defaultBranch main
+
+# ── BRANCHING STRATEGY (GitFlow para Data Engineering) ────────────────────
+# Crear feature branch para nuevo pipeline
+git checkout -b feature/orders-etl-pipeline
+
+# Trabajo en el pipeline...
+git add .
+git commit -m "feat(orders): add incremental ETL pipeline with dedup"
+
+# Mantener sincronizado con main
+git fetch origin main
+git rebase origin/main  # Preferir rebase sobre merge para historia limpia
+
+# ── GITIGNORE para proyectos de DE ────────────────────────────────────────
+cat >> .gitignore << 'EOF'
+# Datos (nunca versionar datos reales)
+*.csv
+*.parquet
+*.json.gz
+data/
+raw/
+processed/
+
+# Credenciales (NUNCA versionar secrets)
+.env
+*.key
+*.pem
+secrets/
+credentials.json
+service_account.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+dist/
+*.egg-info/
+
+# Airflow
+logs/
+airflow.db
+airflow.cfg  # Contiene passwords
+
+# dbt
+target/
+dbt_packages/
+profiles.yml  # Tiene conexiones de BD
+EOF
+
+# ── GIT PARA DATOS: Large File Storage ────────────────────────────────────
+# Para archivos grandes (modelos ML, fixtures de test)
+git lfs install
+git lfs track "*.parquet"
+git lfs track "*.pkl"
+
+# ── COMMITS SEMÁNTICOS (Conventional Commits) ─────────────────────────────
+# Formato: type(scope): description
+git commit -m "feat(pipeline): add Kafka consumer for orders topic"
+git commit -m "fix(etl): handle null customer_id in transform stage"
+git commit -m "refactor(spark): optimize join with broadcast hint"
+git commit -m "test(quality): add data quality checks for fact_orders"
+git commit -m "docs(readme): update setup instructions for WSL2"
+
+# ── PRE-COMMIT HOOKS para calidad de código ────────────────────────────────
+# Instalar pre-commit
+pip install pre-commit
+cat > .pre-commit-config.yaml << 'EOF'
+repos:
+  - repo: https://github.com/psf/black
+    rev: 24.0.0
+    hooks:
+      - id: black  # Auto-format Python
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8  # Linting
+  - repo: https://github.com/sqlfluff/sqlfluff
+    rev: 3.0.0
+    hooks:
+      - id: sqlfluff-lint  # SQL linting
+        args: [--dialect, postgres]
+EOF
+pre-commit install</code></pre>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🔀 Branching Strategy para equipos de datos</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <pre><code># TRUNK-BASED DEVELOPMENT (recomendado para DE)
+# Rama principal: main (siempre deployable)
+# Feature branches: corta vida (1-3 días)
+# Sin ramas de larga vida (no develop, no release)
+
+main
+├── feature/add-customer-dim          (1-2 días)
+├── fix/null-handling-orders-etl      (horas)
+└── refactor/optimize-spark-job       (1 día)
+
+# GITFLOW (para releases formales, menos común en DE moderno)
+main          # Producción
+├── develop   # Integración
+├── feature/* # Nuevas funcionalidades
+├── release/* # Preparación de release
+└── hotfix/*  # Fixes de producción urgentes
+
+# Pull Request Template para proyectos de DE
+cat > .github/pull_request_template.md << 'EOF'
+## Descripción
+<!-- Qué hace este PR? Por qué es necesario? -->
+
+## Tipo de cambio
+- [ ] Nuevo pipeline
+- [ ] Modificación de pipeline existente  
+- [ ] Fix de bug en producción
+- [ ] Refactoring (sin cambio de funcionalidad)
+- [ ] Cambio de schema/modelo
+
+## Tests realizados
+- [ ] Unit tests pasan (pytest)
+- [ ] Data quality checks pasan
+- [ ] Probado en staging con datos reales
+- [ ] Performance benchmarked (si aplica)
+
+## Impacto en datos
+- Schema cambia: Sí / No
+- Datos históricos requeridos re-procesar: Sí / No
+- SLA afectado: Sí / No
+EOF</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7.2 -->
+  <section id="s3">
+    <h2 data-num="7.2">Docker para Data Engineering</h2>
+    <p>Docker garantiza que tus pipelines corren igual en tu laptop, en CI/CD y en producción. Es la herramienta más importante para la reproducibilidad.</p>
+
+    <pre><code># ── DOCKERFILE para un pipeline Python ────────────────────────────────────
+# Dockerfile
+FROM python:3.11-slim AS base
+
+# Sistema
+RUN apt-get update && apt-get install -y \
+    gcc g++ curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Dependencies primero (mejor cache de Docker)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Código de aplicación
+COPY src/ ./src/
+COPY config/ ./config/
+
+# No correr como root en producción
+RUN useradd -m -u 1000 dataengineer
+USER dataengineer
+
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+ENTRYPOINT ["python", "-m", "src.pipeline"]
+CMD ["--config", "config/production.yaml"]</code></pre>
+
+    <pre><code># ── DOCKER-COMPOSE: Stack completo local de desarrollo ────────────────────
+# docker-compose.yml
+version: '3.8'
+
+services:
+  # Base de datos operacional
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: dataengineering
+      POSTGRES_USER: de_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports: ["5432:5432"]
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U de_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Kafka + Zookeeper
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    depends_on: [zookeeper]
+    ports: ["9092:9092"]
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+
+  # Apache Airflow
+  airflow-webserver:
+    image: apache/airflow:2.9.0
+    command: webserver
+    ports: ["8080:8080"]
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://de_user:${POSTGRES_PASSWORD}@postgres/airflow
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./plugins:/opt/airflow/plugins
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  airflow-scheduler:
+    image: apache/airflow:2.9.0
+    command: scheduler
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://de_user:${POSTGRES_PASSWORD}@postgres/airflow
+    volumes:
+      - ./dags:/opt/airflow/dags
+    depends_on: [postgres]
+
+  # Redis para caché
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+
+volumes:
+  postgres_data:
+
+# Comandos útiles:
+# docker-compose up -d            → Levanta todos los servicios
+# docker-compose logs -f airflow  → Ver logs de Airflow
+# docker-compose exec postgres psql -U de_user -d dataengineering  → Shell de PG
+# docker-compose down -v          → Baja y elimina volúmenes</code></pre>
+  </section>
+
+  <!-- 7.3 -->
+  <section id="s4">
+    <h2 data-num="7.3">PostgreSQL Avanzado</h2>
+    <pre><code>-- ── CONFIGURACIONES CLAVE PARA DE ─────────────────────────────────────────
+-- postgresql.conf (ajustar para analytics workloads)
+-- shared_buffers = 256MB (25% de RAM total)
+-- effective_cache_size = 768MB (75% de RAM total)
+-- work_mem = 64MB (para sorts y hash joins)
+-- maintenance_work_mem = 512MB (para VACUUM, CREATE INDEX)
+-- max_parallel_workers_per_gather = 4 (paralelismo en queries)
+
+-- ── JSONB: PostgreSQL como document store ──────────────────────────────────
+CREATE TABLE events (
+    event_id    BIGSERIAL PRIMARY KEY,
+    event_type  TEXT NOT NULL,
+    occurred_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    data        JSONB NOT NULL,  -- Datos arbitrarios
+    tags        TEXT[]           -- Array de tags
+);
+
+-- Índice GIN para búsqueda eficiente en JSONB
+CREATE INDEX idx_events_data ON events USING GIN (data);
+
+-- Insertar evento con datos arbitrarios
+INSERT INTO events (event_type, data, tags) VALUES
+('order_placed', 
+ '{"order_id": 1001, "customer_id": 501, "items": [{"sku": "LAP-001", "qty": 1}], "total": 999.99}',
+ ARRAY['ecommerce', 'web']
+),
+('user_login', 
+ '{"user_id": 501, "ip": "192.168.1.1", "browser": "Chrome", "device": "desktop"}',
+ ARRAY['auth']
+);
+
+-- Queries sobre JSONB (usa el índice GIN)
+SELECT * FROM events WHERE data @> '{"order_id": 1001}';  -- Contiene
+SELECT data->>'customer_id' AS customer_id FROM events WHERE event_type = 'order_placed';
+SELECT jsonb_path_query(data, '$.items[*].sku') FROM events WHERE event_type = 'order_placed';
+
+-- ── FULL-TEXT SEARCH ─────────────────────────────────────────────────────
+-- Agregar columna de búsqueda
+ALTER TABLE products ADD COLUMN search_vector tsvector
+    GENERATED ALWAYS AS (
+        setweight(to_tsvector('spanish', coalesce(name, '')), 'A') ||
+        setweight(to_tsvector('spanish', coalesce(description, '')), 'B')
+    ) STORED;
+
+CREATE INDEX idx_products_search ON products USING GIN (search_vector);
+
+-- Búsqueda eficiente
+SELECT name, ts_rank(search_vector, query) AS rank
+FROM products, to_tsquery('spanish', 'laptop & gaming & portable') query
+WHERE search_vector @@ query
+ORDER BY rank DESC LIMIT 10;
+
+-- ── MATERIALIZED VIEWS para analytics ─────────────────────────────────────
+CREATE MATERIALIZED VIEW mv_sales_summary AS
+SELECT
+    DATE_TRUNC('day', order_date) AS sale_date,
+    product_category,
+    customer_segment,
+    COUNT(*)                 AS orders,
+    SUM(amount)              AS revenue,
+    AVG(amount)              AS avg_ticket
+FROM fact_orders
+GROUP BY 1, 2, 3;
+
+CREATE INDEX ON mv_sales_summary (sale_date, product_category);
+
+-- Refrescar periódicamente (cron job o Airflow)
+REFRESH MATERIALIZED VIEW CONCURRENTLY mv_sales_summary;
+-- CONCURRENTLY: actualiza sin lock (tabla sigue siendo consultable)</code></pre>
+  </section>
+
+  <!-- 7.5 -->
+  <section id="s6">
+    <h2 data-num="7.5">dbt: Data Build Tool</h2>
+    <p>dbt transforma SQL de scripts ad-hoc en código de ingeniería con versionado, testing, documentación y dependencias automáticas. Es posiblemente la herramienta que más impacto ha tenido en el Data Engineering moderno (2018-2026).</p>
+
+    <h3>Estructura de proyecto dbt</h3>
+    <pre><code># ── ESTRUCTURA DE PROYECTO DBT ─────────────────────────────────────────────
+my_dbt_project/
+├── dbt_project.yml          # Configuración del proyecto
+├── profiles.yml             # Conexiones a bases de datos (NO en git)
+├── models/
+│   ├── staging/             # Bronze → Silver: una fuente, 1-1
+│   │   ├── stg_orders.sql
+│   │   ├── stg_customers.sql
+│   │   └── schema.yml       # Tests y documentación
+│   ├── intermediate/        # Lógica de negocio compleja
+│   │   └── int_customer_orders.sql
+│   └── marts/               # Silver → Gold: tablas finales de negocio
+│       ├── finance/
+│       │   └── fct_revenue.sql
+│       └── marketing/
+│           └── dim_customers.sql
+├── tests/                   # Tests de datos custom
+│   └── assert_orders_positive.sql
+├── macros/                  # Reutilización de SQL
+│   └── generate_surrogate_key.sql
+└── snapshots/               # SCD Tipo 2 automático
+    └── snapshot_customers.sql</code></pre>
+
+    <pre><code>-- ── MODELO STAGING: Limpieza básica ────────────────────────────────────────
+-- models/staging/stg_orders.sql
+{{ config(materialized='view') }}  -- Las vistas son más eficientes en staging
+
+WITH source AS (
+    -- Referencia a la fuente de datos
+    SELECT * FROM {{ source('raw', 'orders') }}
+),
+
+renamed AS (
+    SELECT
+        -- Renombrar y tipar correctamente
+        order_id::INTEGER      AS order_id,
+        customer_id::INTEGER   AS customer_id,
+        order_date::TIMESTAMP  AS ordered_at,
+        total_amount::DECIMAL  AS order_amount_usd,
+        LOWER(TRIM(status))    AS status,
+        CURRENT_TIMESTAMP      AS _loaded_at
+    FROM source
+),
+
+cleaned AS (
+    SELECT *
+    FROM renamed
+    WHERE order_id IS NOT NULL
+      AND customer_id IS NOT NULL
+      AND order_amount_usd >= 0
+)
+
+SELECT * FROM cleaned
+
+-- ── MODELO MART: Tabla de hechos final ──────────────────────────────────────
+-- models/marts/finance/fct_orders.sql
+{{ config(
+    materialized='incremental',
+    unique_key='order_id',
+    incremental_strategy='merge'
+) }}
+
+WITH orders AS (
+    SELECT * FROM {{ ref('stg_orders') }}
+    {% if is_incremental() %}
+        -- Solo procesar registros nuevos en modo incremental
+        WHERE ordered_at >= (SELECT MAX(ordered_at) FROM {{ this }})
+    {% endif %}
+),
+
+customers AS (
+    SELECT * FROM {{ ref('dim_customers') }}
+),
+
+final AS (
+    SELECT
+        {{ dbt_utils.generate_surrogate_key(['order_id']) }} AS order_pk,
+        o.order_id,
+        o.ordered_at,
+        o.order_amount_usd,
+        o.status,
+        c.customer_segment,
+        c.country,
+        -- Métricas derivadas
+        CASE WHEN o.order_amount_usd >= 500 THEN 'large'
+             WHEN o.order_amount_usd >= 100 THEN 'medium'
+             ELSE 'small' END AS order_size
+    FROM orders o
+    LEFT JOIN customers c ON o.customer_id = c.customer_id
+)
+
+SELECT * FROM final
+
+-- ── SCHEMA.YML: Tests y Documentación ──────────────────────────────────────
+# models/marts/finance/schema.yml
+version: 2
+models:
+  - name: fct_orders
+    description: "Tabla de hechos con todas las órdenes entregadas"
+    columns:
+      - name: order_pk
+        description: "Surrogate key del pedido"
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: order_amount_usd
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 100000
+      - name: status
+        tests:
+          - accepted_values:
+              values: ['pending', 'processing', 'shipped', 'delivered', 'cancelled']
+
+# ── COMANDOS DBT ESENCIALES ────────────────────────────────────────────────
+# dbt debug               → Verificar conexión
+# dbt run                 → Ejecutar todos los modelos
+# dbt run -s stg_orders   → Solo un modelo
+# dbt run -s +fct_orders  → fct_orders y sus dependencias upstream
+# dbt test                → Ejecutar todos los tests
+# dbt test -s fct_orders  → Tests de un modelo específico
+# dbt docs generate && dbt docs serve  → Generar y ver documentación
+# dbt snapshot            → Ejecutar snapshots (SCD2)</code></pre>
+  </section>
+
+  <!-- 7.6 -->
+  <section id="s7">
+    <h2 data-num="7.6">Snowflake</h2>
+    <pre><code>-- ── ARQUITECTURA SNOWFLAKE: Cómputo y Storage separados ─────────────────
+-- Virtual Warehouses: unidades de cómputo independientes y escalables
+CREATE WAREHOUSE analytics_wh
+    WITH WAREHOUSE_SIZE = 'MEDIUM'     -- XS, S, M, L, XL, 2XL, ...
+    AUTO_SUSPEND = 300                  -- Se apaga si no hay queries (ahorra costos)
+    AUTO_RESUME = TRUE                  -- Se activa automáticamente
+    SCALING_POLICY = 'ECONOMY';        -- Solo escala si hay mucha carga
+
+-- Múltiples warehouses = sin contención entre equipos
+CREATE WAREHOUSE bi_wh WITH WAREHOUSE_SIZE = 'SMALL' AUTO_SUSPEND = 60;
+CREATE WAREHOUSE etl_wh WITH WAREHOUSE_SIZE = 'LARGE' AUTO_SUSPEND = 180;
+
+-- ── TIME TRAVEL: Consultar datos históricos ────────────────────────────────
+-- Ver tabla como era hace 2 días
+SELECT * FROM fact_orders AT (OFFSET => -172800);  -- -172800 segundos = 2 días
+
+-- Antes de un error específico
+SELECT * FROM fact_orders BEFORE (STATEMENT => '0196b9c8-0033-8c6b-0002-697c000ae17e');
+
+-- Clonar tabla a estado anterior (instantáneo, zero-copy)
+CREATE TABLE fact_orders_backup CLONE fact_orders AT (OFFSET => -3600);
+
+-- ── ZERO-COPY CLONING: Clonar sin duplicar storage ────────────────────────
+-- Clone de base de datos completa para ambiente de testing
+CREATE DATABASE prod_clone CLONE production;
+-- Inmediato y sin duplicar datos. Solo el delta ocupa storage adicional.
+
+-- ── STREAMS & TASKS: CDC automatizado ─────────────────────────────────────
+-- Stream: captura cambios (INSERT/UPDATE/DELETE) en una tabla
+CREATE STREAM orders_stream ON TABLE raw_orders
+    SHOW_INITIAL_ROWS = TRUE;
+
+-- Task: procesa el stream periódicamente
+CREATE TASK process_orders_task
+    WAREHOUSE = etl_wh
+    SCHEDULE = '5 MINUTE'
+    WHEN SYSTEM$STREAM_HAS_DATA('orders_stream')
+AS
+    MERGE INTO silver_orders AS target
+    USING (
+        SELECT order_id, customer_id, amount, status,
+               METADATA$ACTION, METADATA$ISUPDATE
+        FROM orders_stream
+    ) AS source
+    ON target.order_id = source.order_id
+    WHEN MATCHED AND source.METADATA$ACTION = 'DELETE' THEN DELETE
+    WHEN MATCHED AND source.METADATA$ACTION = 'INSERT' THEN UPDATE SET ...
+    WHEN NOT MATCHED AND source.METADATA$ACTION = 'INSERT' THEN INSERT ...;
+
+-- Activar la task
+ALTER TASK process_orders_task RESUME;</code></pre>
+  </section>
+
+  <!-- 7.7 -->
+  <section id="s8">
+    <h2 data-num="7.7">BigQuery</h2>
+    <pre><code>-- ── BIGQUERY: SQL analítico serverless a escala de petabytes ──────────────
+-- Particionamiento automático por fecha (reduce costos drasticamente)
+CREATE TABLE `project.dataset.orders`
+PARTITION BY DATE(created_at)
+CLUSTER BY customer_id, status  -- Clustering: como índice de columnas
+OPTIONS (
+    partition_expiration_days = 365,  -- Auto-expire particiones viejas
+    require_partition_filter = TRUE    -- Fuerza usar filtro de partición
+) AS
+SELECT * FROM `project.dataset.raw_orders`;
+
+-- Query eficiente (usa partition pruning + clustering)
+SELECT customer_id, SUM(amount) AS total
+FROM `project.dataset.orders`
+WHERE DATE(created_at) BETWEEN '2026-01-01' AND '2026-03-31'  -- Solo esas particiones
+  AND status = 'delivered'
+GROUP BY customer_id;
+
+-- ── BQML: Machine Learning directo en SQL ─────────────────────────────────
+CREATE OR REPLACE MODEL `project.models.customer_churn`
+OPTIONS (
+    model_type = 'logistic_reg',
+    input_label_cols = ['churned'],
+    auto_class_weights = TRUE
+) AS
+SELECT
+    recency_days, frequency, monetary_value,
+    avg_session_duration, product_categories_count,
+    churned
+FROM `project.dataset.customer_features`
+WHERE train_date < '2025-10-01';
+
+-- Predicciones
+SELECT customer_id, predicted_churned, predicted_churned_probs
+FROM ML.PREDICT(
+    MODEL `project.models.customer_churn`,
+    (SELECT * FROM `project.dataset.active_customers`)
+);
+
+-- ── BIGQUERY STORAGE API: Lectura masiva desde Python ─────────────────────
+from google.cloud import bigquery, bigquery_storage
+
+bq_client = bigquery.Client()
+bqs_client = bigquery_storage.BigQueryReadClient()
+
+# Leer tabla grande eficientemente con Arrow
+table = f"projects/{PROJECT}/datasets/{DATASET}/tables/{TABLE}"
+requested_session = bqs_client.create_read_session(
+    parent=f"projects/{PROJECT}",
+    read_session=bigquery_storage.ReadSession(
+        table=table,
+        data_format=bigquery_storage.DataFormat.ARROW,
+    ),
+    max_stream_count=10  # Paralelismo
+)
+
+# Leer en paralelo
+import pyarrow as pa
+frames = []
+for stream in requested_session.streams:
+    reader = bqs_client.read_rows(stream.name)
+    frames.append(reader.to_dataframe())
+df = pd.concat(frames)</code></pre>
+
+    <div class="chapter-nav">
+      <a href="chapter-06-arquitecturas.html" class="ch-nav-btn">
+        <span class="arrow">←</span>
+        <div><div class="ch-nav-meta">Capítulo 6</div><div class="ch-nav-title">Arquitecturas</div></div>
+      </a>
+      <a href="chapter-08-ecosistema-apache.html" class="ch-nav-btn next">
+        <span class="arrow">→</span>
+        <div><div class="ch-nav-meta">Capítulo 8</div><div class="ch-nav-title">Ecosistema Apache</div></div>
+      </a>
+    </div>
+  </section>
+</main>
+
+<script>
+  function toggleAccordion(h){
+    const item=h.parentElement,body=item.querySelector('.accordion-body'),isOpen=item.classList.contains('open');
+    h.closest('.accordion').querySelectorAll('.accordion-item').forEach(i=>{i.classList.remove('open');i.querySelector('.accordion-body').classList.remove('open');});
+    if(!isOpen){item.classList.add('open');body.classList.add('open');}
+  }
+</script>
+  <script src="nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('deCourseTheme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.classList.add('light');
+    })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 11: Apache Airflow | Master Book DE 2026</title>
+<meta name="description" content="Apache Airflow: DAGs, Operators, Sensors, Hooks, XComs, TaskGroups y orquestación de pipelines de producción.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0A0A0A; --bg2: #121212; --bg3: rgba(18, 18, 18, 0.6); --bg4: #1e1e1e;
+  --blue: #00D9FF; --cyan: #00D9FF; --purple: #8b5cf6; --green: #10b981;
+  --orange: #f59e0b; --pink: #ec4899; --red: #ef4444;
+  --t1: #ffffff; --t2: #E0E0E0; --t3: #A0A0A0;
+  --border: rgba(0, 217, 255, 0.2);
+  --sidebar-width: 280px;
+
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--bg3);
+  --bg-card-hover: var(--bg4);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-muted: var(--t3);
+  --accent-cyan: var(--cyan);
+  --accent-blue: var(--blue);
+  --accent-green: var(--green);
+  --accent-orange: var(--orange);
+  --accent-purple: var(--purple);
+  --gradient-hero: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  --gradient-1: linear-gradient(135deg, var(--blue), var(--cyan));
+}
+html.light {
+  --bg: #F8FAFC; --bg2: #FFFFFF; --bg3: rgba(255, 255, 255, 0.7); --bg4: #E2E8F0;
+  --blue: #0088CC; --cyan: #00D9FF; --purple: #7c3aed; --green: #059669;
+  --orange: #d97706; --pink: #db2777; --red: #dc2626;
+  --t1: #0F172A; --t2: #334155; --t3: #64748B;
+  --border: rgba(0, 217, 255, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;display:flex;font-size:1.15rem;}
+.sidebar{width:280px;min-width:280px;background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 0;}
+.sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+.book-title{font-size:0.75rem;font-weight:700;color:var(--air);letter-spacing:0.1em;text-transform:uppercase;}
+.chapter-title-sb{font-size:0.9rem;color:var(--t2);margin-top:0.25rem;}
+.nav-section{padding:0 1rem;margin-bottom:0.5rem;}
+.nav-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 0.5rem;margin-bottom:0.5rem;}
+.nav-item{display:block;padding:0.45rem 0.75rem;border-radius:8px;text-decoration:none;color:var(--t2);font-size:0.82rem;transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover,.nav-item.active{background:rgba(1,124,238,0.1);color:var(--air);}
+.nav-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--t3);margin-right:0.4rem;}
+.nav-back{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;color:var(--t3);text-decoration:none;font-size:0.8rem;border-bottom:1px solid var(--border);margin-bottom:1rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--air);}
+.content{flex:1;min-width:0;padding:3rem 4rem;max-width:920px;margin:0 auto;}
+.chapter-header{margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border);}
+.ch-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(1,124,238,0.1);border:1px solid rgba(1,124,238,0.25);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;color:var(--air);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:1.1rem;color:var(--t2);max-width:680px;line-height:1.8;}
+.chapter-meta-bar{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--t3);}
+.meta-item strong{color:var(--t2);}
+h2{font-size:1.6rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--t1);padding-top:1rem;}
+h2::before{content:attr(data-num)' ';color:var(--air);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 0.75rem;color:var(--t1);}
+h4{font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem;color:var(--cyan);}
+p{margin-bottom:1.25rem;color:var(--t2);font-size:0.95rem;}
+ul,ol{padding-left:1.5rem;margin-bottom:1.25rem;color:var(--t2);}
+li{margin-bottom:0.5rem;font-size:0.95rem;}
+strong{color:var(--t1);}
+code{font-family:'JetBrains Mono',monospace;background:var(--bg4);border:1px solid var(--border);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.85rem;color:var(--cyan);}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;}
+pre code{background:none;border:none;padding:0;font-size:0.85rem;color:var(--t1);line-height:1.8;}
+.info-box{border-left:3px solid var(--air);background:rgba(1,124,238,0.05);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1.5rem 0;}
+.info-box.success{border-color:var(--green);background:rgba(16,185,129,0.05);}
+.info-box.warning{border-color:var(--orange);background:rgba(245,158,11,0.05);}
+.info-box-title{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.info-box .info-box-title{color:var(--air);}
+.info-box.success .info-box-title{color:var(--green);}
+.info-box.warning .info-box-title{color:var(--orange);}
+.table-wrap{overflow-x:auto;margin:1.5rem 0;}
+table{width:100%;border-collapse:collapse;font-size:0.875rem;}
+th{background:var(--bg4);color:var(--t1);font-weight:600;padding:0.75rem 1rem;text-align:left;border-bottom:2px solid var(--border);}
+td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--t2);}
+tr:hover td{background:var(--bg3);}
+td:first-child{font-weight:500;color:var(--t1);}
+.chapter-nav{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem;}
+.ch-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--t2);transition:all 0.2s;flex:1;max-width:260px;}
+.ch-nav-btn:hover{border-color:var(--air);color:var(--t1);}
+.ch-nav-btn.next{margin-left:auto;text-align:right;flex-direction:row-reverse;}
+.ch-nav-btn .arrow{font-size:1.25rem;color:var(--air);}
+.ch-nav-meta{font-size:0.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;}
+.ch-nav-title{font-size:0.875rem;font-weight:600;margin-top:0.1rem;}
+@media(max-width:900px){.sidebar{display:none;}.content{padding:2rem 1.5rem;}}
+</style>
+</head>
+<body>
+
+
+<main class="content">
+  <div class="chapter-header">
+    <div class="ch-badge">🌀 Capítulo 11 · Nivel Intermedio-Avanzado</div>
+    <h1>Apache Airflow</h1>
+    <p class="lead">Apache Airflow es el orquestador de workflows de datos más usado del mundo. Permite programar, monitorear y gestionar pipelines complejos usando Python. Aprender Airflow bien es crucial para cualquier Data Engineer.</p>
+    <div class="chapter-meta-bar">
+      <div class="meta-item">⏱️ <strong>Lectura:</strong> ~60 min</div>
+      <div class="meta-item">🎯 <strong>Nivel:</strong> Intermedio → Avanzado</div>
+      <div class="meta-item">📌 <strong>Airflow:</strong> 2.9+ (Taskflow API)</div>
+    </div>
+  </div>
+
+  <!-- 11.0 -->
+  <section id="s1">
+    <h2 data-num="11.0">Conceptos Core de Airflow</h2>
+    <ul>
+      <li><strong>DAG (Directed Acyclic Graph):</strong> El pipeline. Un grafo donde los nodos son Tasks y las aristas son dependencias. "Acyclic" = no hay ciclos (no hay loops infinitos).</li>
+      <li><strong>Task:</strong> La unidad de trabajo. Puede ser un Operator, Sensor o TaskGroup.</li>
+      <li><strong>Operator:</strong> Define lo que hace una Task. BashOperator, PythonOperator, SparkSubmitOperator, etc.</li>
+      <li><strong>Sensor:</strong> Operator especial que espera una condición (archivo en S3, dato en DB, hora específica).</li>
+      <li><strong>DagRun:</strong> Una instancia de ejecución de un DAG para un momento específico (logical_date).</li>
+      <li><strong>TaskInstance:</strong> Una instancia de ejecución de una Task en un DagRun específico. Tiene estados: queued, running, success, failed, skipped.</li>
+      <li><strong>Scheduler:</strong> El componente que decide cuándo ejecutar los DAGs y las Tasks.</li>
+      <li><strong>Executor:</strong> Cómo se ejecutan las Tasks. LocalExecutor (mismo proceso), CeleryExecutor (workers distribuidos), KubernetesExecutor (pod por task).</li>
+    </ul>
+
+    <h3>Arquitectura de Airflow</h3>
+    <div class="info-box">
+      <div class="info-box-title">🏗️ Componentes de Airflow</div>
+      <ul style="margin:0;font-size:0.875rem;">
+        <li><strong>Web Server:</strong> UI para monitorear DAGs, TaskInstances, logs. Flask + Gunicorn.</li>
+        <li><strong>Scheduler:</strong> Lee DAGs del filesystem, evalúa cuándo correr, crea DagRuns y TaskInstances, los envía al Executor.</li>
+        <li><strong>Executor:</strong> Gestiona dónde y cómo corren las Tasks. En producción: CeleryExecutor o KubernetesExecutor.</li>
+        <li><strong>Workers:</strong> Procesos que ejecutan las Tasks reales. En CeleryExecutor, son workers de Celery.</li>
+        <li><strong>Metadata DB:</strong> PostgreSQL o MySQL. Almacena el estado de todos los DAGs, Tasks, variables y conexiones.</li>
+        <li><strong>DAGs Folder:</strong> Directorio donde el Scheduler escanea los archivos Python con las definiciones de DAGs.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 11.1 -->
+  <section id="s2">
+    <h2 data-num="11.1">DAGs con Taskflow API</h2>
+    <pre><code">"""
+Airflow 2.x TaskFlow API: DAGs más limpios y pythónicos
+La mejor manera de escribir DAGs en 2026
+"""
+from airflow.decorators import dag, task
+from airflow.operators.empty import EmptyOperator
+from datetime import datetime, timedelta
+from typing import Any
+import logging
+
+logger = logging.getLogger(__name__)
+
+# ── DAG COMPLETO: ETL Pipeline con TaskFlow API ────────────────────────────
+@dag(
+    dag_id='orders_etl_pipeline',
+    description='Ingesta y transforma órdenes diariamente',
+    schedule='0 3 * * *',  # Cron: 3am todos los días
+    # schedule=timedelta(hours=6),  # Alternativa: cada 6 horas
+    start_date=datetime(2026, 1, 1),
+    catchup=False,            # No ejecutar runs pasados al activar el DAG
+    max_active_runs=1,        # Solo 1 run a la vez (evita conflictos)
+    max_active_tasks=8,       # Max tasks paralelas por DAG
+    default_args={
+        'owner': 'data-team',
+        'depends_on_past': False,
+        'email_on_failure': True,
+        'email': ['data-alerts@company.com'],
+        'retries': 2,
+        'retry_delay': timedelta(minutes=5),
+        'retry_exponential_backoff': True,
+        'execution_timeout': timedelta(hours=2),
+    },
+    tags=['etl', 'orders', 'daily'],
+    doc_md="""
+    ## Orders ETL Pipeline
+    
+    Ingesta órdenes desde la API de operaciones, limpia y carga en el Data Warehouse.
+    
+    ### SLA: 5am UTC
+    ### Owner: Data Engineering Team
+    ### Runbook: https://wiki.company.com/runbooks/orders-etl
+    """
+)
+def orders_etl_pipeline():
+    
+    @task(task_id='extract_orders_api')
+    def extract_orders(logical_date=None, **context) -> list[dict]:
+        """Extrae órdenes de la API para el día de la ejecución."""
+        from api_client import OrdersAPIClient
+        
+        date_str = logical_date.strftime('%Y-%m-%d')
+        logger.info(f"Extracting orders for date: {date_str}")
+        
+        client = OrdersAPIClient(api_key="{{ var.value.orders_api_key }}")
+        orders = client.get_orders_for_date(date_str)
+        
+        logger.info(f"Extracted {len(orders)} orders")
+        return orders  # Se pasa automáticamente como XCom
+    
+    @task(task_id='validate_orders')
+    def validate_orders(orders: list[dict]) -> list[dict]:
+        """Valida la calidad de los datos."""
+        valid_orders = []
+        invalid_count = 0
+        
+        for order in orders:
+            # Reglas de validación
+            if not order.get('order_id'):
+                invalid_count += 1
+                continue
+            if order.get('amount', -1) < 0:
+                invalid_count += 1
+                continue
+            valid_orders.append(order)
+        
+        logger.info(f"Validation: {len(valid_orders)} valid, {invalid_count} invalid")
+        
+        # Alertar si más del 5% son inválidos
+        if len(orders) > 0 and invalid_count / len(orders) > 0.05:
+            raise ValueError(f"Too many invalid orders: {invalid_count}/{len(orders)}")
+        
+        return valid_orders
+    
+    @task(task_id='transform_orders')
+    def transform_orders(orders: list[dict]) -> list[dict]:
+        """Aplica transformaciones de negocio."""
+        import pandas as pd
+        
+        df = pd.DataFrame(orders)
+        df['amount'] = df['amount'].round(2)
+        df['order_date'] = pd.to_datetime(df['order_date']).dt.date
+        df['revenue_category'] = pd.cut(
+            df['amount'],
+            bins=[0, 100, 500, float('inf')],
+            labels=['small', 'medium', 'large']
+        )
+        return df.to_dict(orient='records')
+    
+    @task(task_id='load_to_warehouse')
+    def load_to_warehouse(orders: list[dict], **context) -> dict:
+        """Carga las órdenes en el Data Warehouse."""
+        from warehouse import DataWarehouse
+        
+        dw = DataWarehouse()
+        result = dw.upsert_orders(orders)
+        
+        logger.info(f"Loaded {result['inserted']} new, {result['updated']} updated orders")
+        return result
+    
+    @task(task_id='trigger_dbt_run', trigger_rule='all_success')
+    def trigger_dbt_run(**context) -> str:
+        """Dispara los modelos dbt después de la carga."""
+        import subprocess
+        
+        result = subprocess.run(
+            ["dbt", "run", "--models", "marts.finance", "--profiles-dir", "/opt/airflow/dbt"],
+            capture_output=True, text=True
+        )
+        
+        if result.returncode != 0:
+            raise Exception(f"dbt failed: {result.stderr}")
+        
+        return result.stdout
+    
+    @task(task_id='send_success_notification', trigger_rule='all_success')
+    def send_notification(load_result: dict, **context) -> None:
+        """Notifica el éxito del pipeline."""
+        from slack_sdk import WebClient
+        
+        client = WebClient(token="{{ var.value.slack_token }}")
+        client.chat_postMessage(
+            channel="#data-alerts",
+            text=f"✅ Orders ETL completed: {load_result['inserted']} new orders loaded"
+        )
+    
+    # ── DEFINIR EL FLUJO ──────────────────────────────────────────────────────
+    raw_orders = extract_orders()
+    valid_orders = validate_orders(raw_orders)
+    transformed_orders = transform_orders(valid_orders)
+    load_result = load_to_warehouse(transformed_orders)
+    
+    dbt_run = trigger_dbt_run()
+    notification = send_notification(load_result)
+    
+    # load_result → ambos en paralelo
+    load_result >> [dbt_run, notification]
+
+# Instanciar el DAG
+pipeline = orders_etl_pipeline()</code></pre>
+  </section>
+
+  <!-- 11.2 -->
+  <section id="s3">
+    <h2 data-num="11.2">Operators y Sensors</h2>
+    <pre><code">"""
+Los Operators más usados en Data Engineering
+"""
+from airflow.operators.python import PythonOperator, BranchPythonOperator
+from airflow.operators.bash import BashOperator
+from airflow.operators.empty import EmptyOperator
+from airflow.providers.amazon.aws.operators.glue import GlueJobOperator
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+from airflow.providers.databricks.operators.databricks import DatabricksRunNowOperator
+from airflow.providers.amazon.aws.sensors.s3 import S3KeySensor
+from airflow.providers.http.sensors.http import HttpSensor
+from airflow.sensors.time_sensor import TimeSensor
+from airflow.sensors.external_task import ExternalTaskSensor
+
+with DAG('operators_demo', schedule='@daily', start_date=datetime(2026,1,1), catchup=False) as dag:
+
+    # ── PYTHON OPERATOR ────────────────────────────────────────────────────
+    extract_task = PythonOperator(
+        task_id='extract_data',
+        python_callable=extract_orders_function,
+        op_kwargs={'date': '{{ ds }}', 'limit': 1000},  # Jinja templates
+    )
+    
+    # ── BASH OPERATOR ─────────────────────────────────────────────────────
+    run_dbt = BashOperator(
+        task_id='run_dbt_models',
+        bash_command="""
+            cd /opt/dbt/project &&
+            dbt run --models marts.finance --vars '{"run_date": "{{ ds }}"}'
+        """,
+        env={'DBT_PROFILES_DIR': '/opt/dbt/profiles'},
+    )
+    
+    # ── BRANCH: Decidir qué rama ejecutar ─────────────────────────────────
+    def choose_branch(**context):
+        logical_date = context['logical_date']
+        if logical_date.weekday() == 0:  # Lunes
+            return 'full_refresh_task'
+        return 'incremental_task'
+    
+    branching = BranchPythonOperator(
+        task_id='decide_refresh_strategy',
+        python_callable=choose_branch,
+    )
+    full_refresh = EmptyOperator(task_id='full_refresh_task')
+    incremental = EmptyOperator(task_id='incremental_task')
+    join = EmptyOperator(task_id='join_branches', trigger_rule='none_failed_min_one_success')
+    
+    branching >> [full_refresh, incremental] >> join
+    
+    # ── S3 SENSOR: Esperar que un archivo esté disponible ─────────────────
+    wait_for_file = S3KeySensor(
+        task_id='wait_for_upstream_file',
+        bucket_name='my-data-lake',
+        bucket_key='incoming/orders/{{ ds }}/data.parquet',
+        aws_conn_id='aws_default',
+        timeout=60 * 60 * 4,  # Timeout: 4 horas
+        poke_interval=60,      # Verificar cada 60 segundos
+        mode='reschedule',     # Libera el worker mientras espera (más eficiente)
+    )
+    
+    # ── EXTERNAL TASK SENSOR: Esperar otro DAG ────────────────────────────
+    wait_for_upstream_dag = ExternalTaskSensor(
+        task_id='wait_for_customers_dag',
+        external_dag_id='customers_etl_pipeline',
+        external_task_id='load_to_warehouse',  # Task específica
+        allowed_states=['success'],
+        execution_date_fn=lambda dt: dt,  # Same logical_date
+        timeout=3600,
+        poke_interval=60,
+        mode='reschedule',
+    )
+    
+    # ── DATABRICKS OPERATOR ────────────────────────────────────────────────
+    spark_job = DatabricksRunNowOperator(
+        task_id='run_spark_job',
+        databricks_conn_id='databricks_default',
+        job_id='{{ var.value.spark_orders_job_id }}',
+        notebook_params={'run_date': '{{ ds }}', 'mode': 'incremental'},
+    )
+    
+    # ── BIGQUERY OPERATOR ──────────────────────────────────────────────────
+    bq_query = BigQueryInsertJobOperator(
+        task_id='run_bq_aggregation',
+        configuration={
+            "query": {
+                "query": """
+                    SELECT customer_id, SUM(amount) as total
+                    FROM `project.dataset.orders`
+                    WHERE DATE(created_at) = '{{ ds }}'
+                    GROUP BY customer_id
+                """,
+                "useLegacySql": False,
+                "destinationTable": {
+                    "projectId": "my-project",
+                    "datasetId": "analytics",
+                    "tableId": "customer_daily_revenue",
+                },
+                "writeDisposition": "WRITE_TRUNCATE"
+            }
+        },
+        gcp_conn_id='google_cloud_default',
+    )
+    
+    # Dependencias entre tasks
+    wait_for_file >> wait_for_upstream_dag >> extract_task >> run_dbt >> spark_job >> bq_query</code></pre>
+  </section>
+
+  <!-- 11.3 -->
+  <section id="s4">
+    <h2 data-num="11.3">XComs y TaskGroups</h2>
+    <pre><code">"""
+XComs: comunicación entre Tasks
+TaskGroups: organizar Tasks en grupos visuales en la UI
+"""
+from airflow.utils.task_group import TaskGroup
+from airflow.models import XCom
+
+# ── XCOMS: Pasar datos entre Tasks ─────────────────────────────────────────
+# Método 1: TaskFlow API (automático, recomendado)
+@task
+def get_count() -> int:
+    return 42  # Se guarda automáticamente en XCom
+
+@task
+def process_data(count: int) -> None:
+    print(f"Processing {count} records")  # Recibe el XCom automáticamente
+
+count = get_count()
+process_data(count)
+
+# Método 2: xcom_push / xcom_pull (API clásica)
+def push_data(**context):
+    context['ti'].xcom_push(key='file_path', value='s3://bucket/file.parquet')
+
+def pull_data(**context):
+    file_path = context['ti'].xcom_pull(task_ids='push_task', key='file_path')
+    print(f"File: {file_path}")
+
+# ⚠️ CUIDADO con XComs grandes:
+# XComs se almacenan en la metadata DB (PostgreSQL) → solo para datos pequeños!
+# Para DataFrames grandes: guardar en S3/GCS y pasar solo la URL
+
+# ── TASKGROUPS: Organizar visualmente el DAG ───────────────────────────────
+with DAG('etl_with_task_groups', schedule='@daily', start_date=datetime(2026,1,1), catchup=False) as dag:
+    
+    start = EmptyOperator(task_id='start')
+    end = EmptyOperator(task_id='end', trigger_rule='all_success')
+    
+    with TaskGroup('extraction', tooltip='Extract from all sources') as extract_group:
+        extract_orders = PythonOperator(task_id='extract_orders', python_callable=get_orders)
+        extract_customers = PythonOperator(task_id='extract_customers', python_callable=get_customers)
+        extract_products = PythonOperator(task_id='extract_products', python_callable=get_products)
+        # Corren en paralelo dentro del grupo
+    
+    with TaskGroup('transformation', tooltip='Clean and transform data') as transform_group:
+        clean_orders = PythonOperator(task_id='clean_orders', python_callable=clean_orders_fn)
+        clean_customers = PythonOperator(task_id='clean_customers', python_callable=clean_customers_fn)
+        join_data = PythonOperator(task_id='join_all', python_callable=join_fn)
+        
+        [clean_orders, clean_customers] >> join_data
+    
+    with TaskGroup('loading', tooltip='Load to Data Warehouse') as load_group:
+        load_silver = PythonOperator(task_id='load_silver', python_callable=load_silver_fn)
+        load_gold = BashOperator(task_id='run_dbt', bash_command='dbt run --models marts')
+        
+        load_silver >> load_gold
+    
+    start >> extract_group >> transform_group >> load_group >> end</code></pre>
+  </section>
+
+  <!-- 11.4 -->
+  <section id="s5">
+    <h2 data-num="11.4">Mejores Prácticas de Airflow</h2>
+
+    <div class="info-box">
+      <div class="info-box-title">✅ Reglas de Oro para DAGs en Producción</div>
+      <ul style="margin:0;font-size:0.875rem;">
+        <li><strong>Idempotencia:</strong> Re-ejecutar una Task con los mismos parámetros debe dar el mismo resultado. Usa <code>OVERWRITE</code> en lugar de <code>APPEND</code> cuando sea posible.</li>
+        <li><strong>Tasks pequeñas y atómicas:</strong> Cada Task debe hacer UNA cosa. Facilita retries y debugging.</li>
+        <li><strong>No poner lógica en el nivel del DAG:</strong> Las importaciones pesadas y la lógica de negocio deben estar dentro de las funciones de las Tasks, no en el nivel del módulo (el Scheduler lee el DAG frecuentemente).</li>
+        <li><strong>Usar Connections y Variables:</strong> Nunca hardcodear credenciales o configuraciones en el DAG. Usar la metadata DB de Airflow para esto.</li>
+        <li><strong>catchup=False:</strong> Para DAGs nuevos, a menos que necesites realmente backfill.</li>
+        <li><strong>max_active_runs:</strong> Limitar a 1-3 para evitar condiciones de carrera en los datos.</li>
+        <li><strong>SLA Monitoring:</strong> Configurar SLAs con email/Slack alerts para DAGs críticos.</li>
+      </ul>
+    </div>
+
+    <pre><code"># ── VARIABLES Y CONNECTIONS (buenas prácticas) ────────────────────────────
+from airflow.models import Variable
+from airflow.hooks.base import BaseHook
+
+# Variables: configuración (accesible desde la UI)
+api_key = Variable.get('orders_api_key', default_var='dev-key')
+batch_size = int(Variable.get('etl_batch_size', default_var=1000))
+
+# Con deserialización JSON automática
+config = Variable.get('pipeline_config', deserialize_json=True)
+# En la UI: {"batch_size": 5000, "timeout": 3600, "retry": true}
+
+# Connections: credenciales de sistemas externos
+from airflow.providers.postgres.hooks.postgres import PostgresHook
+
+# En la UI configuras: host, port, user, password, schema
+# En el código:
+pg_hook = PostgresHook(postgres_conn_id='warehouse_production')
+df = pg_hook.get_pandas_df("SELECT * FROM orders WHERE date = %(date)s", parameters={'date': '2026-01-01'})
+
+# ── TEMPLATES Y MACROS ────────────────────────────────────────────────────
+# Airflow tiene Jinja templating para la mayoría de argumentos de Operators
+# Variables disponibles:
+# {{ ds }}              → YYYY-MM-DD de la ejecución lógica
+# {{ ds_nodash }}       → YYYYMMDD (sin guiones)
+# {{ ts }}              → ISO 8601 timestamp
+# {{ macros.ds_add(ds, 7) }} → ds + 7 días
+# {{ var.value.my_var }} → Variable de Airflow
+# {{ conn.my_conn.host }} → Atributo de una Connection
+# {{ logical_date }}    → datetime object
+
+bash_with_template = BashOperator(
+    task_id='copy_daily_file',
+    bash_command='aws s3 cp s3://source/{{ ds }}/data.csv s3://dest/{{ ds }}/data.csv',
+)</code></pre>
+  </section>
+
+  <!-- 11.5 -->
+  <section id="s6">
+    <h2 data-num="11.5">Alternativas Modernas a Airflow</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Herramienta</th><th>Enfoque</th><th>Pros</th><th>Contras</th><th>Cuándo Usar</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Apache Airflow</td>
+            <td>DAG-based, Python</td>
+            <td>Maduro, enorme ecosistema, UI potente</td>
+            <td>Complejo de operar, curva de aprendizaje</td>
+            <td>El estándar. Casi siempre.</td>
+          </tr>
+          <tr>
+            <td>Prefect</td>
+            <td>Python-first, flows</td>
+            <td>API más limpia, más pythónico, cloud managed</td>
+            <td>Menor ecosistema de providers</td>
+            <td>Startups, equipo Python-heavy</td>
+          </tr>
+          <tr>
+            <td>Dagster</td>
+            <td>Asset-based, software-defined assets</td>
+            <td>Lineage nativo, testing, observability</td>
+            <td>Curva de aprendizaje, diferente paradigma</td>
+            <td>Data Platform teams maduros</td>
+          </tr>
+          <tr>
+            <td>Mage</td>
+            <td>Pipelines interactivos</td>
+            <td>UI con notebooks, fácil de empezar</td>
+            <td>Menos maduro para producción</td>
+            <td>Prototipado rápido, equipos pequeños</td>
+          </tr>
+          <tr>
+            <td>dbt + Airflow</td>
+            <td>SQL transformations + scheduling</td>
+            <td>El stack más común en 2026</td>
+            <td>Dos herramientas que aprender</td>
+            <td>Analytics Engineering stack</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter-10-kafka.html" class="ch-nav-btn">
+        <span class="arrow">←</span>
+        <div><div class="ch-nav-meta">Capítulo 10</div><div class="ch-nav-title">Apache Kafka</div></div>
+      </a>
+      <a href="chapter-12-cloud.html" class="ch-nav-btn next">
+        <span class="arrow">→</span>
+        <div><div class="ch-nav-meta">Capítulo 12</div><div class="ch-nav-title">Cloud Platforms</div></div>
+      </a>
+    </div>
+  </section>
+</main>
+  <script src="nav.js"></script>
+</body>
+</html>

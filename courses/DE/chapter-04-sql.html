@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('deCourseTheme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.classList.add('light');
+    })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 4: SQL para Data Engineering | Master Book DE 2026</title>
+<meta name="description" content="SQL avanzado: CTEs, Window Functions, Índices, Particionamiento, Optimización de queries y todo lo que necesita un Data Engineer.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0A0A0A; --bg2: #121212; --bg3: rgba(18, 18, 18, 0.6); --bg4: #1e1e1e;
+  --blue: #00D9FF; --cyan: #00D9FF; --purple: #8b5cf6; --green: #10b981;
+  --orange: #f59e0b; --pink: #ec4899; --red: #ef4444;
+  --t1: #ffffff; --t2: #E0E0E0; --t3: #A0A0A0;
+  --border: rgba(0, 217, 255, 0.2);
+  --sidebar-width: 280px;
+
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--bg3);
+  --bg-card-hover: var(--bg4);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-muted: var(--t3);
+  --accent-cyan: var(--cyan);
+  --accent-blue: var(--blue);
+  --accent-green: var(--green);
+  --accent-orange: var(--orange);
+  --accent-purple: var(--purple);
+  --gradient-hero: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  --gradient-1: linear-gradient(135deg, var(--blue), var(--cyan));
+}
+html.light {
+  --bg: #F8FAFC; --bg2: #FFFFFF; --bg3: rgba(255, 255, 255, 0.7); --bg4: #E2E8F0;
+  --blue: #0088CC; --cyan: #00D9FF; --purple: #7c3aed; --green: #059669;
+  --orange: #d97706; --pink: #db2777; --red: #dc2626;
+  --t1: #0F172A; --t2: #334155; --t3: #64748B;
+  --border: rgba(0, 217, 255, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;display:flex;font-size:1.15rem;}
+.sidebar{width:280px;min-width:280px;background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 0;}
+.sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+.book-title{font-size:0.75rem;font-weight:700;color:var(--orange);letter-spacing:0.1em;text-transform:uppercase;}
+.chapter-title-sb{font-size:0.9rem;color:var(--t2);margin-top:0.25rem;}
+.nav-section{padding:0 1rem;margin-bottom:0.5rem;}
+.nav-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 0.5rem;margin-bottom:0.5rem;}
+.nav-item{display:block;padding:0.45rem 0.75rem;border-radius:8px;text-decoration:none;color:var(--t2);font-size:0.82rem;transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover,.nav-item.active{background:rgba(245,158,11,0.1);color:var(--orange);}
+.nav-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--t3);margin-right:0.4rem;}
+.nav-back{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;color:var(--t3);text-decoration:none;font-size:0.8rem;border-bottom:1px solid var(--border);margin-bottom:1rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--orange);}
+.content{flex:1;min-width:0;padding:3rem 4rem;max-width:920px;margin:0 auto;}
+.chapter-header{margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border);}
+.ch-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;color:var(--orange);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:1.1rem;color:var(--t2);max-width:680px;line-height:1.8;}
+.chapter-meta-bar{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--t3);}
+.meta-item strong{color:var(--t2);}
+h2{font-size:1.6rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--t1);padding-top:1rem;}
+h2::before{content:attr(data-num)' ';color:var(--orange);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 0.75rem;color:var(--t1);}
+h4{font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem;color:var(--cyan);}
+p{margin-bottom:1.25rem;color:var(--t2);font-size:0.95rem;}
+ul,ol{padding-left:1.5rem;margin-bottom:1.25rem;color:var(--t2);}
+li{margin-bottom:0.5rem;font-size:0.95rem;}
+strong{color:var(--t1);}
+code{font-family:'JetBrains Mono',monospace;background:var(--bg4);border:1px solid var(--border);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.85rem;color:var(--cyan);}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;position:relative;}
+pre code{background:none;border:none;padding:0;font-size:0.85rem;color:var(--t1);line-height:1.8;}
+.pre-label{position:absolute;top:0.75rem;right:1rem;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--t3);font-family:'JetBrains Mono',monospace;}
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0;}
+.info-box{border-left:3px solid var(--blue);background:rgba(59,130,246,0.05);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1.5rem 0;}
+.info-box.warning{border-color:var(--orange);background:rgba(245,158,11,0.05);}
+.info-box.success{border-color:var(--green);background:rgba(16,185,129,0.05);}
+.info-box.purple{border-color:var(--purple);background:rgba(139,92,246,0.05);}
+.info-box-title{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.info-box .info-box-title{color:var(--blue);}
+.info-box.warning .info-box-title{color:var(--orange);}
+.info-box.success .info-box-title{color:var(--green);}
+.info-box.purple .info-box-title{color:var(--purple);}
+.table-wrap{overflow-x:auto;margin:1.5rem 0;}
+table{width:100%;border-collapse:collapse;font-size:0.875rem;}
+th{background:var(--bg4);color:var(--t1);font-weight:600;padding:0.75rem 1rem;text-align:left;border-bottom:2px solid var(--border);}
+td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--t2);}
+tr:hover td{background:var(--bg3);}
+td:first-child{font-weight:500;color:var(--t1);}
+.accordion{margin:1.5rem 0;}
+.accordion-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.accordion-header{padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:0.95rem;transition:background 0.2s;user-select:none;}
+.accordion-header:hover{background:var(--bg4);}
+.accordion-header .arrow{color:var(--orange);transition:transform 0.3s;}
+.accordion-item.open .accordion-header .arrow{transform:rotate(180deg);}
+.accordion-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease;}
+.accordion-body.open{max-height:5000px;padding:0 1.25rem 1.25rem;}
+.tabs{margin:2rem 0;}
+.tab-list{display:flex;gap:0.5rem;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.tab-btn{padding:0.6rem 1.25rem;background:none;border:none;color:var(--t3);font-size:0.875rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;font-family:'Inter',sans-serif;}
+.tab-btn.active{color:var(--orange);border-bottom-color:var(--orange);}
+.tab-panel{display:none;padding:1.5rem;background:var(--bg3);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;}
+.tab-panel.active{display:block;}
+.wf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin:1.5rem 0;}
+.wf-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1.25rem;border-left:3px solid var(--orange);}
+.wf-card h4{color:var(--orange);margin:0 0 0.5rem;font-size:0.9rem;}
+.wf-card .syntax{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--cyan);background:rgba(6,182,212,0.06);padding:0.35rem 0.6rem;border-radius:4px;margin-bottom:0.5rem;display:block;}
+.wf-card p{font-size:0.8rem;color:var(--t3);margin:0;}
+.explain-box{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0;font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--t2);line-height:1.8;}
+.explain-box .node-type{color:var(--orange);}
+.explain-box .cost{color:var(--green);}
+.explain-box .rows{color:var(--cyan);}
+.chapter-nav{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem;}
+.ch-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--t2);transition:all 0.2s;flex:1;max-width:260px;}
+.ch-nav-btn:hover{border-color:var(--orange);color:var(--t1);}
+.ch-nav-btn.next{margin-left:auto;text-align:right;flex-direction:row-reverse;}
+.ch-nav-btn .arrow{font-size:1.25rem;color:var(--orange);}
+.ch-nav-meta{font-size:0.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;}
+.ch-nav-title{font-size:0.875rem;font-weight:600;margin-top:0.1rem;}
+@media(max-width:900px){.sidebar{display:none;}.content{padding:2rem 1.5rem;}}
+</style>
+</head>
+<body>
+
+
+<main class="content">
+  <div class="chapter-header">
+    <div class="ch-badge">📊 Capítulo 4 · Nivel Intermedio-Avanzado</div>
+    <h1>SQL para Data Engineering</h1>
+    <p class="lead">SQL es el lenguaje universal del Data Engineering. Desde joins básicos hasta window functions y optimización avanzada — este capítulo te llevará de competente a experto en SQL analítico.</p>
+    <div class="chapter-meta-bar">
+      <div class="meta-item">⏱️ <strong>Lectura:</strong> ~70 min</div>
+      <div class="meta-item">🎯 <strong>Nivel:</strong> Intermedio → Avanzado</div>
+      <div class="meta-item">📌 <strong>DB:</strong> PostgreSQL (sintaxis estándar)</div>
+    </div>
+  </div>
+
+  <!-- 4.0 -->
+  <section id="s1">
+    <h2 data-num="4.0">SELECT Avanzado y JOINs</h2>
+
+    <h3>Tipos de JOINs: La Guía Definitiva</h3>
+    <div class="tabs" id="tabs-joins">
+      <div class="tab-list">
+        <button class="tab-btn active" data-tab="inner">INNER</button>
+        <button class="tab-btn" data-tab="left">LEFT</button>
+        <button class="tab-btn" data-tab="full">FULL OUTER</button>
+        <button class="tab-btn" data-tab="cross">CROSS</button>
+        <button class="tab-btn" data-tab="self">SELF</button>
+        <button class="tab-btn" data-tab="anti">ANTI</button>
+      </div>
+      <div class="tab-panel active" data-tab="inner">
+        <h4>INNER JOIN — Intersección</h4>
+        <p>Retorna solo las filas que tienen coincidencia en <strong>ambas</strong> tablas.</p>
+        <pre><code>-- Pedidos con información del cliente (solo pedidos CON cliente registrado)
+SELECT
+    o.order_id,
+    o.order_date,
+    c.name AS customer_name,
+    c.email,
+    o.total_amount
+FROM orders o
+INNER JOIN customers c ON o.customer_id = c.customer_id
+WHERE o.status = 'delivered'
+  AND o.order_date >= '2026-01-01'
+ORDER BY o.total_amount DESC;</code></pre>
+        <p><strong>Caso de uso:</strong> Cuando solo te interesan los registros que tienen relación válida en ambos lados.</p>
+      </div>
+      <div class="tab-panel" data-tab="left">
+        <h4>LEFT JOIN — Tabla izquierda completa</h4>
+        <p>Retorna TODAS las filas de la tabla izquierda. Si no hay coincidencia en la derecha, los valores serán NULL.</p>
+        <pre><code>-- TODOS los clientes, con sus pedidos si los tienen
+-- Si el cliente no tiene pedidos, aparece con NULLs en las columnas de orders
+SELECT
+    c.customer_id,
+    c.name,
+    COUNT(o.order_id)    AS total_orders,
+    SUM(o.total_amount)  AS total_spent,
+    MAX(o.order_date)    AS last_order_date
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.name
+ORDER BY total_spent DESC NULLS LAST;
+
+-- Encontrar clientes SIN pedidos (usando LEFT JOIN + IS NULL)
+SELECT c.customer_id, c.name, c.email
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+WHERE o.order_id IS NULL;  -- Los que no tienen match en orders</code></pre>
+      </div>
+      <div class="tab-panel" data-tab="full">
+        <h4>FULL OUTER JOIN — Unión completa</h4>
+        <p>Retorna TODAS las filas de ambas tablas. NULLs donde no hay coincidencia.</p>
+        <pre><code>-- Reconciliación de datos: compara registros de dos sistemas
+-- Útil para data quality: ¿qué hay en sistema A pero no en B y viceversa?
+SELECT
+    a.customer_id AS id_system_a,
+    b.customer_id AS id_system_b,
+    a.name        AS name_a,
+    b.name        AS name_b,
+    CASE
+        WHEN a.customer_id IS NULL THEN '❌ Solo en sistema B'
+        WHEN b.customer_id IS NULL THEN '❌ Solo en sistema A'
+        ELSE '✅ En ambos sistemas'
+    END AS status
+FROM system_a_customers a
+FULL OUTER JOIN system_b_customers b 
+    ON a.customer_id = b.customer_id
+WHERE a.customer_id IS NULL OR b.customer_id IS NULL;  -- Solo los no reconciliados</code></pre>
+      </div>
+      <div class="tab-panel" data-tab="cross">
+        <h4>CROSS JOIN — Producto cartesiano</h4>
+        <p>Retorna todas las combinaciones posibles de filas de ambas tablas. N × M filas resultantes.</p>
+        <pre><code>-- Generar todas las combinaciones de producto × tienda para análisis de gaps
+SELECT
+    p.product_id,
+    p.name AS product_name,
+    s.store_id,
+    s.city AS store_city
+FROM products p
+CROSS JOIN stores s
+-- Resultado: si hay 100 productos y 50 tiendas → 5,000 filas
+
+-- Uso práctico: generar todas las fechas × segmentos de clientes
+-- para detectar qué combinaciones no tienen ventas (gaps en datos)
+SELECT d.full_date, seg.segment, COALESCE(s.revenue, 0) AS revenue
+FROM dim_date d
+CROSS JOIN (VALUES ('Premium'), ('Standard'), ('Basic')) AS seg(segment)
+LEFT JOIN fact_sales s ON s.date = d.full_date AND s.segment = seg.segment
+WHERE d.year = 2026;</code></pre>
+      </div>
+      <div class="tab-panel" data-tab="self">
+        <h4>SELF JOIN — Join de tabla consigo misma</h4>
+        <p>Una tabla se une consigo misma. Útil para estructuras jerárquicas y comparaciones entre filas.</p>
+        <pre><code>-- Jerarquía de empleados: cada empleado tiene un manager (que también es empleado)
+SELECT
+    e.employee_id,
+    e.name AS employee_name,
+    m.name AS manager_name,
+    e.department,
+    e.salary,
+    ROUND((e.salary / m.salary * 100), 1) AS salary_vs_manager_pct
+FROM employees e
+LEFT JOIN employees m ON e.manager_id = m.employee_id  -- Self JOIN
+ORDER BY m.name, e.name;
+
+-- Encontrar empleados con mismo salario
+SELECT
+    a.employee_id, a.name, a.salary,
+    b.employee_id AS peer_id, b.name AS peer_name
+FROM employees a
+JOIN employees b ON a.salary = b.salary AND a.employee_id < b.employee_id
+ORDER BY a.salary DESC;</code></pre>
+      </div>
+      <div class="tab-panel" data-tab="anti">
+        <h4>ANTI JOIN — Registros sin match</h4>
+        <p>No es un JOIN type oficial en SQL, pero se implementa con LEFT JOIN + IS NULL o con NOT EXISTS/NOT IN.</p>
+        <pre><code>-- Productos que NUNCA se han vendido (Anti Join)
+-- Método 1: LEFT JOIN + IS NULL (más eficiente)
+SELECT p.product_id, p.name, p.category
+FROM products p
+LEFT JOIN order_items oi ON p.product_id = oi.product_id
+WHERE oi.order_id IS NULL;
+
+-- Método 2: NOT EXISTS (más expresivo, similar performance)
+SELECT p.product_id, p.name
+FROM products p
+WHERE NOT EXISTS (
+    SELECT 1 FROM order_items oi WHERE oi.product_id = p.product_id
+);
+
+-- Método 3: NOT IN (cuidado con NULLs!)
+SELECT product_id, name
+FROM products
+WHERE product_id NOT IN (
+    SELECT DISTINCT product_id FROM order_items WHERE product_id IS NOT NULL
+);</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4.1 -->
+  <section id="s2">
+    <h2 data-num="4.1">GROUP BY y HAVING</h2>
+    <p>GROUP BY es la base del análisis agregado. HAVING filtra grupos (como WHERE, pero después de la agregación).</p>
+
+    <pre><code>-- GROUP BY básico con múltiples funciones de agregación
+SELECT
+    DATE_TRUNC('month', order_date) AS month,
+    status,
+    COUNT(*)                         AS order_count,
+    COUNT(DISTINCT customer_id)      AS unique_customers,
+    SUM(total_amount)                AS revenue,
+    AVG(total_amount)                AS avg_order_value,
+    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY total_amount) AS median_order,
+    MIN(total_amount)                AS min_order,
+    MAX(total_amount)                AS max_order
+FROM orders
+WHERE order_date >= '2026-01-01'
+GROUP BY DATE_TRUNC('month', order_date), status
+HAVING COUNT(*) >= 10                    -- Solo grupos con 10+ pedidos
+   AND SUM(total_amount) > 10000         -- Y con revenue > $10K
+ORDER BY month DESC, revenue DESC;
+
+-- GROUPING SETS: múltiples niveles de agregación en una sola query
+SELECT
+    category,
+    subcategory,
+    SUM(revenue) AS total_revenue
+FROM sales
+GROUP BY GROUPING SETS (
+    (category, subcategory),  -- Por categoría y subcategoría
+    (category),                -- Solo por categoría
+    ()                         -- Total general
+)
+ORDER BY category NULLS LAST, subcategory NULLS LAST;
+
+-- ROLLUP: jerarquía automática de agregaciones
+SELECT
+    year, quarter, month,
+    SUM(revenue)
+FROM sales
+GROUP BY ROLLUP(year, quarter, month);
+-- Genera: (year,quarter,month), (year,quarter), (year), ()</code></pre>
+  </section>
+
+  <!-- 4.2 -->
+  <section id="s3">
+    <h2 data-num="4.2">Subqueries: Inline, Escalares y Correlacionadas</h2>
+    <pre><code>-- 1. SUBQUERY ESCALAR: retorna un solo valor
+SELECT
+    order_id,
+    total_amount,
+    (SELECT AVG(total_amount) FROM orders) AS avg_all_orders,
+    total_amount - (SELECT AVG(total_amount) FROM orders) AS diff_from_avg
+FROM orders
+WHERE total_amount > (SELECT AVG(total_amount) FROM orders);
+
+-- 2. SUBQUERY EN FROM (Inline View / Derived Table)
+SELECT
+    customer_segment,
+    AVG(customer_revenue) AS avg_revenue_per_customer,
+    COUNT(*) AS customer_count
+FROM (
+    -- Subquery calcula el revenue por cliente
+    SELECT
+        c.customer_id,
+        c.segment AS customer_segment,
+        SUM(o.total_amount) AS customer_revenue
+    FROM customers c
+    LEFT JOIN orders o ON c.customer_id = o.customer_id
+    GROUP BY c.customer_id, c.segment
+) AS customer_stats
+GROUP BY customer_segment
+ORDER BY avg_revenue_per_customer DESC;
+
+-- 3. SUBQUERY CORRELACIONADA: referencia la query externa (costosa!)
+-- Para cada empleado, encontrar si tiene el mayor salario en su departamento
+SELECT
+    e.employee_id,
+    e.name,
+    e.department,
+    e.salary
+FROM employees e
+WHERE e.salary = (
+    SELECT MAX(inner_e.salary)
+    FROM employees inner_e
+    WHERE inner_e.department = e.department  -- Referencia la query externa
+);
+-- Nota: Esta query es O(n²) si no se optimiza. Preferir Window Functions.
+
+-- 4. SUBQUERY CON IN / EXISTS
+-- EXISTS es más eficiente que IN cuando el subquery retorna muchas filas
+SELECT c.customer_id, c.name
+FROM customers c
+WHERE EXISTS (
+    SELECT 1
+    FROM orders o
+    WHERE o.customer_id = c.customer_id
+      AND o.total_amount > 1000
+      AND o.order_date >= '2026-01-01'
+);</code></pre>
+  </section>
+
+  <!-- 4.3 -->
+  <section id="s4">
+    <h2 data-num="4.3">CTEs — Common Table Expressions</h2>
+    <p>Las CTEs hacen el código SQL más legible y mantenible. Son como "variables" SQL que puedes referenciar múltiples veces en la misma query.</p>
+
+    <pre><code>-- CTE BÁSICA: revenue mensual
+WITH monthly_revenue AS (
+    SELECT
+        DATE_TRUNC('month', order_date) AS month,
+        SUM(total_amount)               AS revenue
+    FROM orders
+    WHERE status NOT IN ('cancelled', 'returned')
+    GROUP BY DATE_TRUNC('month', order_date)
+)
+SELECT
+    month,
+    revenue,
+    LAG(revenue) OVER (ORDER BY month) AS prev_month_revenue,
+    ROUND(
+        (revenue - LAG(revenue) OVER (ORDER BY month)) /
+        LAG(revenue) OVER (ORDER BY month) * 100,
+    2) AS mom_growth_pct
+FROM monthly_revenue
+ORDER BY month;
+
+-- MÚLTIPLES CTEs ENCADENADAS (una referencia la anterior)
+WITH
+-- Paso 1: Revenue por cliente
+customer_revenue AS (
+    SELECT
+        customer_id,
+        SUM(total_amount)    AS total_revenue,
+        COUNT(*)             AS order_count,
+        MIN(order_date)      AS first_order,
+        MAX(order_date)      AS last_order
+    FROM orders
+    WHERE status = 'delivered'
+    GROUP BY customer_id
+),
+-- Paso 2: Segmentar clientes por revenue
+customer_segments AS (
+    SELECT
+        cr.*,
+        c.name,
+        c.email,
+        CASE
+            WHEN cr.total_revenue >= 10000 THEN 'VIP'
+            WHEN cr.total_revenue >= 1000  THEN 'High Value'
+            WHEN cr.total_revenue >= 100   THEN 'Regular'
+            ELSE 'Low Value'
+        END AS revenue_segment,
+        EXTRACT(DAYS FROM last_order - first_order) AS customer_lifespan_days
+    FROM customer_revenue cr
+    JOIN customers c ON cr.customer_id = c.customer_id
+),
+-- Paso 3: Estadísticas por segmento
+segment_stats AS (
+    SELECT
+        revenue_segment,
+        COUNT(*)             AS customer_count,
+        AVG(total_revenue)   AS avg_revenue,
+        SUM(total_revenue)   AS segment_total_revenue
+    FROM customer_segments
+    GROUP BY revenue_segment
+)
+-- Query final combina todo
+SELECT
+    cs.revenue_segment,
+    cs.name,
+    cs.total_revenue,
+    cs.order_count,
+    ss.avg_revenue AS segment_avg_revenue,
+    ROUND(cs.total_revenue / ss.segment_total_revenue * 100, 2) AS pct_of_segment_revenue
+FROM customer_segments cs
+JOIN segment_stats ss ON cs.revenue_segment = ss.revenue_segment
+ORDER BY cs.total_revenue DESC;
+
+-- CTE RECURSIVA: Jerarquía de empleados (org chart)
+WITH RECURSIVE employee_hierarchy AS (
+    -- Anchor: CEO (sin manager)
+    SELECT
+        employee_id, name, manager_id, title, 1 AS level,
+        ARRAY[name] AS path
+    FROM employees
+    WHERE manager_id IS NULL
+
+    UNION ALL
+
+    -- Recursive: empleados con manager
+    SELECT
+        e.employee_id, e.name, e.manager_id, e.title,
+        eh.level + 1,
+        eh.path || e.name
+    FROM employees e
+    JOIN employee_hierarchy eh ON e.manager_id = eh.employee_id
+    WHERE eh.level < 10  -- Safety: evitar ciclos infinitos
+)
+SELECT
+    REPEAT('  ', level - 1) || name AS org_chart,
+    title,
+    level,
+    array_to_string(path, ' > ') AS reporting_chain
+FROM employee_hierarchy
+ORDER BY path;</code></pre>
+
+    <div class="info-box success">
+      <div class="info-box-title">💡 CTE vs Subquery vs View</div>
+      <ul style="margin:0;font-size:0.875rem;">
+        <li><strong>CTE:</strong> Temporal, dentro de la query. Mejora legibilidad. Ideal para lógica compleja.</li>
+        <li><strong>Subquery:</strong> Inline, puede ser menos legible pero equivalent en performance.</li>
+        <li><strong>View:</strong> Persistente en la DB. Reutilizable entre múltiples queries y usuarios.</li>
+        <li><strong>Materialized View:</strong> View persistente con datos cacheados. Performance de tabla, frescura configurable.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4.4 -->
+  <section id="s5">
+    <h2 data-num="4.4">Window Functions</h2>
+    <p>Las Window Functions son las más poderosas herramientas del SQL analítico. Calculan valores sobre un "ventana" de filas sin colapsar el resultado como GROUP BY.</p>
+
+    <pre><code>-- SINTAXIS GENERAL
+function_name() OVER (
+    [PARTITION BY column1, column2]  -- Divide en grupos (como GROUP BY pero sin colapsar)
+    [ORDER BY column3 ASC/DESC]      -- Ordena dentro de cada partición
+    [ROWS|RANGE BETWEEN start AND end]  -- Define el frame
+)
+</code></pre>
+
+    <h3>Categorías de Window Functions</h3>
+    <div class="wf-grid">
+      <div class="wf-card">
+        <h4>🏆 Ranking</h4>
+        <span class="syntax">ROW_NUMBER(), RANK(), DENSE_RANK(), NTILE(n)</span>
+        <p>Asignan un número de rango a cada fila dentro de la partición.</p>
+      </div>
+      <div class="wf-card">
+        <h4>📊 Agregación</h4>
+        <span class="syntax">SUM(), AVG(), COUNT(), MIN(), MAX()</span>
+        <p>Las mismas funciones de agregación, pero sobre ventanas sin colapsar filas.</p>
+      </div>
+      <div class="wf-card">
+        <h4>↔️ Offset</h4>
+        <span class="syntax">LAG(), LEAD(), FIRST_VALUE(), LAST_VALUE(), NTH_VALUE()</span>
+        <p>Acceden a filas anteriores/posteriores o primera/última en la ventana.</p>
+      </div>
+      <div class="wf-card">
+        <h4>📐 Distribución</h4>
+        <span class="syntax">PERCENT_RANK(), CUME_DIST()</span>
+        <p>Calculan la posición relativa de una fila dentro de su partición.</p>
+      </div>
+    </div>
+
+    <h3>Ejemplos Avanzados de Window Functions</h3>
+
+    <div class="accordion" id="acc-wf">
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🏆 RANK() — Top N por categoría</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <pre><code>-- Top 3 productos más vendidos por categoría
+WITH product_sales AS (
+    SELECT
+        p.category,
+        p.name AS product_name,
+        SUM(oi.quantity * oi.unit_price) AS revenue
+    FROM order_items oi
+    JOIN products p ON oi.product_id = p.product_id
+    GROUP BY p.category, p.name
+),
+ranked_products AS (
+    SELECT
+        *,
+        RANK()       OVER (PARTITION BY category ORDER BY revenue DESC) AS rnk,
+        DENSE_RANK() OVER (PARTITION BY category ORDER BY revenue DESC) AS dense_rnk,
+        ROW_NUMBER() OVER (PARTITION BY category ORDER BY revenue DESC) AS row_num
+    FROM product_sales
+)
+SELECT category, product_name, revenue, rnk
+FROM ranked_products
+WHERE rnk <= 3   -- Top 3 por categoría
+ORDER BY category, rnk;
+
+-- Diferencia entre RANK, DENSE_RANK, ROW_NUMBER:
+-- Si hay empate en revenue:
+-- RANK:       1, 2, 2, 4 (salta el 3)
+-- DENSE_RANK: 1, 2, 2, 3 (no salta)
+-- ROW_NUMBER: 1, 2, 3, 4 (nunca empate, orden arbitrario en empates)</code></pre>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>📈 LAG/LEAD — Análisis de tendencias</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <pre><code>-- Análisis MoM (Month over Month) de revenue
+WITH monthly_stats AS (
+    SELECT
+        DATE_TRUNC('month', order_date) AS month,
+        SUM(total_amount) AS revenue,
+        COUNT(*)          AS orders
+    FROM orders
+    WHERE status = 'delivered'
+    GROUP BY DATE_TRUNC('month', order_date)
+)
+SELECT
+    TO_CHAR(month, 'YYYY-MM') AS period,
+    revenue,
+    orders,
+    LAG(revenue, 1) OVER (ORDER BY month)  AS prev_month_revenue,
+    LAG(revenue, 3) OVER (ORDER BY month)  AS revenue_3m_ago,
+    LAG(revenue, 12) OVER (ORDER BY month) AS revenue_yoy,
+    ROUND(
+        (revenue - LAG(revenue) OVER (ORDER BY month))
+        / LAG(revenue) OVER (ORDER BY month) * 100, 2
+    ) AS mom_growth_pct,
+    ROUND(
+        (revenue - LAG(revenue, 12) OVER (ORDER BY month))
+        / LAG(revenue, 12) OVER (ORDER BY month) * 100, 2
+    ) AS yoy_growth_pct,
+    LEAD(revenue) OVER (ORDER BY month) AS next_month_revenue
+FROM monthly_stats
+ORDER BY month;</code></pre>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🔄 SUM() OVER — Running totals y Moving Averages</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <pre><code>-- Running total (suma acumulada) y Moving Average
+SELECT
+    order_date,
+    total_amount,
+    -- Suma acumulada (running total)
+    SUM(total_amount) OVER (
+        ORDER BY order_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS cumulative_revenue,
+    -- Media móvil de 7 días
+    AVG(total_amount) OVER (
+        ORDER BY order_date
+        ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+    ) AS moving_avg_7d,
+    -- Media móvil de 30 días
+    AVG(total_amount) OVER (
+        ORDER BY order_date
+        ROWS BETWEEN 29 PRECEDING AND CURRENT ROW
+    ) AS moving_avg_30d,
+    -- % del total del período
+    ROUND(
+        total_amount / SUM(total_amount) OVER () * 100, 2
+    ) AS pct_of_period_total,
+    -- % acumulado del período
+    ROUND(
+        SUM(total_amount) OVER (ORDER BY order_date ROWS UNBOUNDED PRECEDING)
+        / SUM(total_amount) OVER () * 100, 2
+    ) AS cumulative_pct
+FROM daily_sales
+WHERE EXTRACT(YEAR FROM order_date) = 2026
+ORDER BY order_date;</code></pre>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🎯 NTILE() — Cuartiles y Percentiles</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <pre><code>-- Segmentar clientes en cuartiles por lifetime value
+WITH customer_ltv AS (
+    SELECT
+        customer_id,
+        SUM(total_amount) AS lifetime_value
+    FROM orders
+    GROUP BY customer_id
+)
+SELECT
+    customer_id,
+    lifetime_value,
+    -- División en cuartiles (Q1=bottom 25%, Q4=top 25%)
+    NTILE(4) OVER (ORDER BY lifetime_value) AS quartile,
+    -- División en deciles
+    NTILE(10) OVER (ORDER BY lifetime_value) AS decile,
+    -- Percentile rank (0-1)
+    ROUND(PERCENT_RANK() OVER (ORDER BY lifetime_value) * 100, 1) AS percentile_rank,
+    -- Distribución acumulada
+    ROUND(CUME_DIST() OVER (ORDER BY lifetime_value) * 100, 1) AS cumulative_dist
+FROM customer_ltv;
+
+-- Resultado para segmentación de marketing:
+-- quartile 4, decile 9-10 → VIP campaigns
+-- quartile 3 → Upsell campaigns
+-- quartile 1-2 → Activation campaigns</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4.5 -->
+  <section id="s6">
+    <h2 data-num="4.5">Índices: Teoría y Práctica</h2>
+    <p>Los índices son estructuras de datos adicionales que aceleran las búsquedas a costa de mayor storage y tiempo de escritura. Elegir los índices correctos es crucial para el performance.</p>
+
+    <div class="tabs" id="tabs-indexes">
+      <div class="tab-list">
+        <button class="tab-btn active" data-tab="btree">B-Tree</button>
+        <button class="tab-btn" data-tab="hash">Hash</button>
+        <button class="tab-btn" data-tab="gin">GIN</button>
+        <button class="tab-btn" data-tab="partial">Partial</button>
+        <button class="tab-btn" data-tab="composite">Composite</button>
+      </div>
+      <div class="tab-panel active" data-tab="btree">
+        <h4>B-Tree Index (el más común)</h4>
+        <p>Estructura de árbol balanceado. Ideal para comparaciones de igualdad y rango. Es el índice por defecto en PostgreSQL.</p>
+        <pre><code>-- Índice básico B-Tree
+CREATE INDEX idx_orders_customer_id ON orders(customer_id);
+CREATE INDEX idx_orders_date ON orders(order_date DESC);
+
+-- Índice en múltiples columnas (orden importa!)
+-- Útil para queries que filtran por status Y date
+CREATE INDEX idx_orders_status_date ON orders(status, order_date DESC);
+-- Esta query usa el índice eficientemente:
+-- WHERE status = 'delivered' AND order_date >= '2026-01-01'
+-- Esta NO (status no es el prefijo de la búsqueda de range):
+-- WHERE order_date >= '2026-01-01'  (sin filtro en status)</code></pre>
+      </div>
+      <div class="tab-panel" data-tab="hash">
+        <h4>Hash Index</h4>
+        <p>Optimizado exclusivamente para búsquedas de igualdad exacta. Más rápido que B-Tree para <code>=</code> pero no soporta <code>&lt;</code>, <code>&gt;</code>, <code>BETWEEN</code>.</p>
+        <pre><code>-- Hash index: solo para comparaciones de igualdad (=)
+CREATE INDEX idx_sessions_token ON user_sessions USING HASH (session_token);
+
+-- Eficiente para:
+SELECT * FROM user_sessions WHERE session_token = 'abc123xyz';
+
+-- No funciona para:
+-- WHERE session_token LIKE 'abc%'  (requiere B-Tree)
+-- WHERE session_token > 'abc'      (requiere B-Tree)</code></pre>
+      </div>
+      <div class="tab-panel" data-tab="gin">
+        <h4>GIN Index — Arrays, JSON y Full-Text Search</h4>
+        <p>Generalized Inverted Index. Excelente para buscar dentro de arrays, columnas JSONB y búsqueda de texto completo.</p>
+        <pre><code>-- GIN para búsqueda en columna JSONB
+CREATE INDEX idx_products_attributes ON products USING GIN (attributes);
+
+-- Query que usa el índice GIN
+SELECT * FROM products
+WHERE attributes @> '{"color": "red", "size": "L"}';  -- Contiene estas propiedades
+
+-- GIN para Full-Text Search
+CREATE INDEX idx_products_fts ON products 
+USING GIN (to_tsvector('spanish', name || ' ' || description));
+
+SELECT name, ts_rank(to_tsvector('spanish', name), query) AS rank
+FROM products, to_tsquery('spanish', 'laptop & gaming') AS query
+WHERE to_tsvector('spanish', name) @@ query
+ORDER BY rank DESC;
+
+-- GIN para arrays
+CREATE INDEX idx_tags ON posts USING GIN (tags);
+SELECT * FROM posts WHERE tags @> ARRAY['postgresql', 'performance'];</code></pre>
+      </div>
+      <div class="tab-panel" data-tab="partial">
+        <h4>Partial Index — Índice condicional</h4>
+        <p>Indexa solo un subconjunto de filas. Más pequeño, más rápido y cubre el caso de uso típico.</p>
+        <pre><code>-- Caso típico: el 95% de queries son sobre pedidos activos
+-- Crear índice solo sobre pedidos NO-cancelados
+CREATE INDEX idx_active_orders ON orders(customer_id, order_date)
+WHERE status NOT IN ('cancelled', 'returned');
+
+-- Es mucho más pequeño que un índice completo
+-- La query DEBE incluir la condición para usar el índice:
+SELECT * FROM orders
+WHERE customer_id = 1001
+  AND status NOT IN ('cancelled', 'returned')  -- ✅ Usa el partial index
+  AND order_date > '2026-01-01';
+
+-- Otro ejemplo: solo emails con confirmación pendiente
+CREATE INDEX idx_pending_emails ON notification_queue(created_at)
+WHERE sent = FALSE AND retry_count < 3;</code></pre>
+      </div>
+      <div class="tab-panel" data-tab="composite">
+        <h4>Covering Index — Incluir columnas extra</h4>
+        <p>Un índice que incluye todas las columnas necesarias para satisfacer una query sin acceder a la tabla principal (Index-Only Scan).</p>
+        <pre><code>-- Query frecuente:
+SELECT order_id, order_date, total_amount
+FROM orders
+WHERE customer_id = 1001 AND status = 'delivered'
+ORDER BY order_date DESC;
+
+-- Covering index: incluye todas las columnas del SELECT
+CREATE INDEX idx_orders_covering ON orders(customer_id, status, order_date DESC)
+INCLUDE (order_id, total_amount);
+-- PostgreSQL puede responder con Index-Only Scan: NO toca la tabla!
+
+-- Verificar con EXPLAIN:
+EXPLAIN (ANALYZE, BUFFERS) 
+SELECT order_id, order_date, total_amount
+FROM orders
+WHERE customer_id = 1001 AND status = 'delivered'
+ORDER BY order_date DESC;
+-- Busca: "Index Only Scan" en el plan</code></pre>
+      </div>
+    </div>
+
+    <div class="info-box warning">
+      <div class="info-box-title">⚠️ Reglas de Oro para Índices</div>
+      <ul style="margin:0;font-size:0.875rem;">
+        <li>No indexar todo: cada índice ralentiza INSERT/UPDATE/DELETE</li>
+        <li>Indexar columnas usadas en WHERE, JOIN ON, ORDER BY frecuentemente</li>
+        <li>El orden de columnas en índices compuestos importa (más selectiva primero)</li>
+        <li>Revisar pg_stat_user_indexes para detectar índices no utilizados</li>
+        <li>Usar EXPLAIN ANALYZE antes y después para medir impacto real</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4.6 -->
+  <section id="s7">
+    <h2 data-num="4.6">Particionamiento de Tablas</h2>
+    <p>El particionamiento divide físicamente una tabla grande en subtablas más pequeñas (particiones) basándose en un criterio. Mejora drásticamente el performance en tablas de millones/billones de filas.</p>
+
+    <pre><code>-- RANGE PARTITIONING: por rango de valores (más común para fechas)
+CREATE TABLE orders (
+    order_id     BIGSERIAL,
+    order_date   DATE NOT NULL,
+    customer_id  INTEGER,
+    total_amount DECIMAL(10,2),
+    status       VARCHAR(20)
+) PARTITION BY RANGE (order_date);
+
+-- Crear particiones anuales
+CREATE TABLE orders_2024 PARTITION OF orders
+    FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');
+
+CREATE TABLE orders_2025 PARTITION OF orders
+    FOR VALUES FROM ('2025-01-01') TO ('2026-01-01');
+
+CREATE TABLE orders_2026 PARTITION OF orders
+    FOR VALUES FROM ('2026-01-01') TO ('2027-01-01');
+
+-- DEFAULT partition (para datos fuera de rango)
+CREATE TABLE orders_default PARTITION OF orders DEFAULT;
+
+-- PostgreSQL automáticamente hace "Partition Pruning":
+-- Solo busca en particiones relevantes
+SELECT * FROM orders
+WHERE order_date BETWEEN '2026-01-01' AND '2026-03-31';
+-- Solo escanea orders_2026, ignora las demás!
+
+-- LIST PARTITIONING: por valores discretos
+CREATE TABLE sales_by_region (
+    sale_id INTEGER,
+    region  VARCHAR(20) NOT NULL,
+    amount  DECIMAL(10,2)
+) PARTITION BY LIST (region);
+
+CREATE TABLE sales_americas PARTITION OF sales_by_region
+    FOR VALUES IN ('US', 'CA', 'MX', 'BR', 'AR');
+
+CREATE TABLE sales_emea PARTITION OF sales_by_region
+    FOR VALUES IN ('DE', 'FR', 'UK', 'ES', 'IT');
+
+-- HASH PARTITIONING: distribución uniforme
+CREATE TABLE user_events (
+    event_id    BIGSERIAL,
+    user_id     INTEGER NOT NULL,
+    event_type  VARCHAR(50),
+    occurred_at TIMESTAMP
+) PARTITION BY HASH (user_id);
+
+-- 4 particiones con distribución hash
+CREATE TABLE user_events_0 PARTITION OF user_events
+    FOR VALUES WITH (MODULUS 4, REMAINDER 0);
+CREATE TABLE user_events_1 PARTITION OF user_events
+    FOR VALUES WITH (MODULUS 4, REMAINDER 1);
+CREATE TABLE user_events_2 PARTITION OF user_events
+    FOR VALUES WITH (MODULUS 4, REMAINDER 2);
+CREATE TABLE user_events_3 PARTITION OF user_events
+    FOR VALUES WITH (MODULUS 4, REMAINDER 3);</code></pre>
+  </section>
+
+  <!-- 4.7 -->
+  <section id="s8">
+    <h2 data-num="4.7">Optimización de Queries</h2>
+    <p>EXPLAIN ANALYZE es tu herramienta más poderosa para entender y optimizar queries. Muestra el plan de ejecución real con costos y tiempos.</p>
+
+    <pre><code>-- EXPLAIN ANALYZE: el arma secreta del DBA/DE
+EXPLAIN (ANALYZE, BUFFERS, VERBOSE, FORMAT JSON)
+SELECT
+    c.name,
+    SUM(o.total_amount) AS revenue
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+WHERE o.order_date >= '2026-01-01'
+GROUP BY c.name
+ORDER BY revenue DESC
+LIMIT 20;
+
+-- Leer el output de EXPLAIN:
+-- Seq Scan   → Escaneo secuencial (malo en tablas grandes)
+-- Index Scan → Usa índice (bueno)
+-- Index Only Scan → Mejor: no toca la tabla
+-- Hash Join  → JOIN eficiente para tablas grandes
+-- Nested Loop → JOIN bueno si una tabla es pequeña
+-- Sort       → Ordenamiento (caro en disco si no hay memoria)
+
+-- cost=0.00..1234.56 → 0.00 es startup cost, 1234.56 es total cost
+-- rows=1000           → Estimado de filas
+-- actual time=0.1..25.3 → Tiempo real en ms
+-- Buffers: hit=100, read=5 → 100 en cache, 5 leídos de disco</code></pre>
+
+    <h3>Checklist de Optimización</h3>
+    <div class="accordion" id="acc-opt">
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🔴 Problemas Comunes y Soluciones</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Problema</th><th>Síntoma en EXPLAIN</th><th>Solución</th></tr></thead>
+              <tbody>
+                <tr><td>Sin índice en columna de JOIN</td><td>Seq Scan en tabla grande</td><td>CREATE INDEX en las columnas del JOIN</td></tr>
+                <tr><td>Función en columna de WHERE</td><td>Seq Scan a pesar del índice</td><td>Índice funcional o reescribir condición</td></tr>
+                <tr><td>SELECT * innecesario</td><td>Alto I/O</td><td>Seleccionar solo columnas necesarias</td></tr>
+                <tr><td>OR en múltiples columnas</td><td>Seq Scan</td><td>Reescribir con UNION o índices separados</td></tr>
+                <tr><td>LIKE '%valor%' (wildcard inicial)</td><td>Seq Scan</td><td>Full-text search con GIN index</td></tr>
+                <tr><td>Subquery correlacionada</td><td>Nested Loop de N×M</td><td>Reescribir con JOIN o Window Function</td></tr>
+                <tr><td>Estadísticas desactualizadas</td><td>Estimaciones muy erróneas</td><td>ANALYZE table o auto_analyze</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>✅ Buenas Prácticas de SQL para DE</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <pre><code>-- ❌ MALO: Función en columna indexada
+WHERE YEAR(order_date) = 2026
+-- ✅ BUENO: Range query que usa el índice
+WHERE order_date BETWEEN '2026-01-01' AND '2026-12-31'
+
+-- ❌ MALO: NOT IN con subquery (lento con NULLs)
+WHERE customer_id NOT IN (SELECT customer_id FROM vip_customers)
+-- ✅ BUENO: NOT EXISTS (más eficiente)
+WHERE NOT EXISTS (SELECT 1 FROM vip_customers v WHERE v.customer_id = o.customer_id)
+
+-- ❌ MALO: COUNT(*) con condición
+SELECT COUNT(*) FROM orders WHERE status = 'cancelled'
+-- ✅ BUENO: COUNT con filtro (si ya tienes la tabla)
+SELECT COUNT(1) FILTER (WHERE status = 'cancelled') FROM orders  -- Una sola pasada
+
+-- ❌ MALO: DISTINCT innecesario (costoso)
+SELECT DISTINCT customer_id FROM orders
+-- ✅ BUENO: EXISTS cuando solo necesitas saber si existe
+SELECT customer_id FROM customers c
+WHERE EXISTS (SELECT 1 FROM orders WHERE customer_id = c.customer_id)
+
+-- ❌ MALO: ORDER BY + LIMIT sin índice
+SELECT * FROM events ORDER BY created_at DESC LIMIT 10
+-- ✅ BUENO: Asegurar índice en columna de ORDER BY
+CREATE INDEX idx_events_created_at ON events(created_at DESC);
+SELECT * FROM events ORDER BY created_at DESC LIMIT 10;  -- Index Scan</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter-03-modelado.html" class="ch-nav-btn">
+        <span class="arrow">←</span>
+        <div><div class="ch-nav-meta">Capítulo 3</div><div class="ch-nav-title">Modelado de Datos</div></div>
+      </a>
+      <a href="chapter-05-python.html" class="ch-nav-btn next">
+        <span class="arrow">→</span>
+        <div><div class="ch-nav-meta">Capítulo 5</div><div class="ch-nav-title">Python para DE</div></div>
+      </a>
+    </div>
+  </section>
+</main>
+
+<script>
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const c=btn.closest('.tabs'),t=btn.dataset.tab;
+      c.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      c.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      c.querySelector(`.tab-panel[data-tab="${t}"]`).classList.add('active');
+    });
+  });
+  function toggleAccordion(h){
+    const item=h.parentElement,body=item.querySelector('.accordion-body'),isOpen=item.classList.contains('open');
+    h.closest('.accordion').querySelectorAll('.accordion-item').forEach(i=>{i.classList.remove('open');i.querySelector('.accordion-body').classList.remove('open');});
+    if(!isOpen){item.classList.add('open');body.classList.add('open');}
+  }
+</script>
+  <script src="nav.js"></script>
+</body>
+</html>

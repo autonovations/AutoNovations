@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('deCourseTheme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.classList.add('light');
+    })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 10: Apache Kafka | Master Book DE 2026</title>
+<meta name="description" content="Apache Kafka en profundidad: arquitectura, topics, particiones, producers, consumers, Kafka Streams y Schema Registry.">
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0A0A0A; --bg2: #121212; --bg3: rgba(18, 18, 18, 0.6); --bg4: #1e1e1e;
+  --blue: #00D9FF; --cyan: #00D9FF; --purple: #8b5cf6; --green: #10b981;
+  --orange: #f59e0b; --pink: #ec4899; --red: #ef4444;
+  --t1: #ffffff; --t2: #E0E0E0; --t3: #A0A0A0;
+  --border: rgba(0, 217, 255, 0.2);
+  --sidebar-width: 280px;
+
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--bg3);
+  --bg-card-hover: var(--bg4);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-muted: var(--t3);
+  --accent-cyan: var(--cyan);
+  --accent-blue: var(--blue);
+  --accent-green: var(--green);
+  --accent-orange: var(--orange);
+  --accent-purple: var(--purple);
+  --gradient-hero: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  --gradient-1: linear-gradient(135deg, var(--blue), var(--cyan));
+}
+html.light {
+  --bg: #F8FAFC; --bg2: #FFFFFF; --bg3: rgba(255, 255, 255, 0.7); --bg4: #E2E8F0;
+  --blue: #0088CC; --cyan: #00D9FF; --purple: #7c3aed; --green: #059669;
+  --orange: #d97706; --pink: #db2777; --red: #dc2626;
+  --t1: #0F172A; --t2: #334155; --t3: #64748B;
+  --border: rgba(0, 217, 255, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;display:flex;font-size:1.15rem;}
+.sidebar{width:280px;min-width:280px;background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 0;}
+.sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+.book-title{font-size:0.75rem;font-weight:700;color:var(--kafka);letter-spacing:0.1em;text-transform:uppercase;}
+.chapter-title-sb{font-size:0.9rem;color:var(--t2);margin-top:0.25rem;}
+.nav-section{padding:0 1rem;margin-bottom:0.5rem;}
+.nav-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 0.5rem;margin-bottom:0.5rem;}
+.nav-item{display:block;padding:0.45rem 0.75rem;border-radius:8px;text-decoration:none;color:var(--t2);font-size:0.82rem;transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover,.nav-item.active{background:rgba(227,66,52,0.1);color:var(--kafka);}
+.nav-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--t3);margin-right:0.4rem;}
+.nav-back{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;color:var(--t3);text-decoration:none;font-size:0.8rem;border-bottom:1px solid var(--border);margin-bottom:1rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--kafka);}
+.content{flex:1;min-width:0;padding:3rem 4rem;max-width:920px;margin:0 auto;}
+.chapter-header{margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border);}
+.ch-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(227,66,52,0.1);border:1px solid rgba(227,66,52,0.2);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;color:var(--kafka);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:1.1rem;color:var(--t2);max-width:680px;line-height:1.8;}
+.chapter-meta-bar{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--t3);}
+.meta-item strong{color:var(--t2);}
+h2{font-size:1.6rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--t1);padding-top:1rem;}
+h2::before{content:attr(data-num)' ';color:var(--kafka);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 0.75rem;color:var(--t1);}
+h4{font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem;color:var(--cyan);}
+p{margin-bottom:1.25rem;color:var(--t2);font-size:0.95rem;}
+ul,ol{padding-left:1.5rem;margin-bottom:1.25rem;color:var(--t2);}
+li{margin-bottom:0.5rem;font-size:0.95rem;}
+strong{color:var(--t1);}
+code{font-family:'JetBrains Mono',monospace;background:var(--bg4);border:1px solid var(--border);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.85rem;color:var(--cyan);}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;}
+pre code{background:none;border:none;padding:0;font-size:0.85rem;color:var(--t1);line-height:1.8;}
+.info-box{border-left:3px solid var(--blue);background:rgba(59,130,246,0.05);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1.5rem 0;}
+.info-box.success{border-color:var(--green);background:rgba(16,185,129,0.05);}
+.info-box.warning{border-color:var(--orange);background:rgba(245,158,11,0.05);}
+.info-box.kafka{border-color:var(--kafka);background:rgba(227,66,52,0.05);}
+.info-box-title{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.info-box .info-box-title{color:var(--blue);}
+.info-box.success .info-box-title{color:var(--green);}
+.info-box.warning .info-box-title{color:var(--orange);}
+.info-box.kafka .info-box-title{color:var(--kafka);}
+.table-wrap{overflow-x:auto;margin:1.5rem 0;}
+table{width:100%;border-collapse:collapse;font-size:0.875rem;}
+th{background:var(--bg4);color:var(--t1);font-weight:600;padding:0.75rem 1rem;text-align:left;border-bottom:2px solid var(--border);}
+td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--t2);}
+tr:hover td{background:var(--bg3);}
+td:first-child{font-weight:500;color:var(--t1);}
+.mermaid-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:2rem;margin:2rem 0;overflow-x:auto;}
+.chapter-nav{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem;}
+.ch-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--t2);transition:all 0.2s;flex:1;max-width:260px;}
+.ch-nav-btn:hover{border-color:var(--kafka);color:var(--t1);}
+.ch-nav-btn.next{margin-left:auto;text-align:right;flex-direction:row-reverse;}
+.ch-nav-btn .arrow{font-size:1.25rem;color:var(--kafka);}
+.ch-nav-meta{font-size:0.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;}
+.ch-nav-title{font-size:0.875rem;font-weight:600;margin-top:0.1rem;}
+@media(max-width:900px){.sidebar{display:none;}.content{padding:2rem 1.5rem;}}
+</style>
+</head>
+<body>
+
+
+<main class="content">
+  <div class="chapter-header">
+    <div class="ch-badge">📡 Capítulo 10 · Nivel Avanzado</div>
+    <h1>Apache Kafka</h1>
+    <p class="lead">Apache Kafka es la plataforma de event streaming distribuida más usada del mundo. Es el corazón de las arquitecturas modernas event-driven y el elemento clave para datos en tiempo real.</p>
+    <div class="chapter-meta-bar">
+      <div class="meta-item">⏱️ <strong>Lectura:</strong> ~65 min</div>
+      <div class="meta-item">🎯 <strong>Nivel:</strong> Avanzado</div>
+      <div class="meta-item">📌 <strong>Kafka:</strong> 3.7+ (KRaft mode)</div>
+    </div>
+  </div>
+
+  <!-- 10.0 -->
+  <section id="s1">
+    <h2 data-num="10.0">Arquitectura de Kafka</h2>
+    <p>Kafka es un <strong>distributed commit log</strong>: una secuencia ordenada, inmutable y replicada de mensajes. Los productores escriben al final del log, los consumidores leen desde cualquier posición.</p>
+
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+graph TD
+    subgraph "Producers"
+        P1[🛒 Orders Service]
+        P2[👤 User Service]
+        P3[📊 Analytics App]
+    end
+
+    subgraph "Kafka Cluster (KRaft Mode - Kafka 3.3+)"
+        B1[🖥️ Broker 1<br/>Leader: orders-0, users-1]
+        B2[🖥️ Broker 2<br/>Leader: orders-1, users-0]
+        B3[🖥️ Broker 3<br/>Leader: orders-2, users-2]
+        B1 <--> B2
+        B2 <--> B3
+        B1 <--> B3
+    end
+
+    subgraph "Topics"
+        T1[📌 orders<br/>3 partitions, RF=3]
+        T2[📌 user-events<br/>6 partitions, RF=3]
+    end
+
+    subgraph "Consumer Groups"
+        CG1[⚙️ analytics-group<br/>Consumer 1, 2, 3]
+        CG2[⚙️ notifications-group<br/>Consumer A, B]
+        CG3[⚙️ data-lake-group<br/>Kafka Connect Sink]
+    end
+
+    P1 --> T1
+    P2 --> T2
+    P3 --> T1
+    T1 --> B1
+    T1 --> B2
+    T2 --> B2
+    T2 --> B3
+    B1 --> CG1
+    B2 --> CG2
+    B3 --> CG3
+
+    style B1 fill:#7c0d0d,stroke:#e34234,color:#fff
+    style B2 fill:#7c0d0d,stroke:#e34234,color:#fff
+    style B3 fill:#7c0d0d,stroke:#e34234,color:#fff
+      </div>
+    </div>
+
+    <h3>Conceptos Fundamentales</h3>
+    <ul>
+      <li><strong>Broker:</strong> Servidor Kafka. Almacena topics y sirve a producers/consumers. Un cluster tiene múltiples brokers para HA y escalabilidad.</li>
+      <li><strong>Topic:</strong> Canal lógico de mensajes. Como una tabla de base de datos pero para eventos. Immutable y ordenado por partición.</li>
+      <li><strong>Partition:</strong> Subdivisión física de un topic. El paralelismo de Kafka = número de particiones. Los mensajes dentro de una partición están ordenados.</li>
+      <li><strong>Offset:</strong> Posición de un mensaje dentro de una partición. Incremental, inmutable. Los consumers guardan su offset para saber dónde van.</li>
+      <li><strong>Replication Factor:</strong> Número de copias de cada partición. RF=3 significa que cada partición está en 3 brokers. Tolerancia a fallos de RF-1 brokers.</li>
+      <li><strong>Leader/Follower:</strong> Cada partición tiene un broker Leader (recibe escrituras) y N Followers (replican). Si el Leader falla, un Follower se convierte en Leader.</li>
+    </ul>
+
+    <div class="info-box kafka">
+      <div class="info-box-title">🆕 KRaft Mode (Kafka sin Zookeeper)</div>
+      <p style="margin:0;font-size:0.9rem;">Kafka 3.3+ introdujo el modo KRaft (Kafka Raft) que elimina la dependencia de Apache Zookeeper. En 2026, KRaft es el modo por defecto y recomendado. Simplifica el despliegue (un sistema menos que operar) y mejora la escalabilidad (hasta millones de particiones vs ~200K con Zookeeper).</p>
+    </div>
+  </section>
+
+  <!-- 10.1 -->
+  <section id="s2">
+    <h2 data-num="10.1">Topics y Particiones</h2>
+    <pre><code># ── GESTIÓN DE TOPICS ─────────────────────────────────────────────────────
+from confluent_kafka.admin import AdminClient, NewTopic, ConfigResource
+
+admin = AdminClient({'bootstrap.servers': 'kafka-1:9092,kafka-2:9092'})
+
+# Crear topic con configuraciones
+topics_to_create = [
+    NewTopic(
+        topic='orders',
+        num_partitions=12,        # Paralelismo = max 12 consumers simultáneos
+        replication_factor=3,     # 3 copias para HA
+        config={
+            'retention.ms': str(7 * 24 * 60 * 60 * 1000),  # 7 días
+            'retention.bytes': str(50 * 1024 * 1024 * 1024),  # 50GB por partición
+            'min.insync.replicas': '2',  # Al menos 2 réplicas deben confirmar el write
+            'compression.type': 'snappy',
+            'max.message.bytes': str(1 * 1024 * 1024),  # 1MB máximo por mensaje
+            'cleanup.policy': 'delete',  # o 'compact' para change-data-capture
+        }
+    ),
+    NewTopic(
+        topic='user-profiles',
+        num_partitions=6,
+        replication_factor=3,
+        config={
+            'cleanup.policy': 'compact',  # Log compaction: mantiene último valor por key
+            'min.cleanable.dirty.ratio': '0.1',  # Compactar cuando 10% está "sucio"
+        }
+    )
+]
+
+result = admin.create_topics(topics_to_create)
+for topic, future in result.items():
+    try:
+        future.result()
+        print(f"✅ Topic {topic} created")
+    except Exception as e:
+        print(f"❌ Failed to create {topic}: {e}")
+
+# ── DECISIÓN: ¿Cuántas particiones? ───────────────────────────────────────
+# Regla general:
+# - Max throughput esperado / throughput por partición (típico ~10-100 MB/s)
+# - Si esperas 100 consumers máximo → 100 particiones
+# - Para empezar: 12-24 particiones por topic de producción
+# - Puedes AUMENTAR particiones después, pero no REDUCIR
+# - Demasiadas particiones = mayor overhead de metadata en el broker
+
+# ── LOG COMPACTION: Mantener el último estado de cada key ─────────────────
+# Útil para change data capture y tablas de lookup
+# Topic con cleanup.policy=compact:
+# Después de compactación, solo queda el ÚLTIMO mensaje por key
+# [key=user1, action=create] → [key=user1, action=update] → compacted → [key=user1, action=update]
+# [key=user2, value=null]    → DELETE marker: elimina todos los mensajes de key=user2</code></pre>
+  </section>
+
+  <!-- 10.2 -->
+  <section id="s3">
+    <h2 data-num="10.2">Producers</h2>
+    <pre><code>"""
+Kafka Producer: enviar mensajes a Kafka
+confluent-kafka-python (librdkafka bajo el capó - la más eficiente)
+"""
+import json
+from confluent_kafka import Producer
+from confluent_kafka.schema_registry import SchemaRegistryClient
+from confluent_kafka.schema_registry.avro import AvroSerializer
+
+# ── PRODUCER BÁSICO ────────────────────────────────────────────────────────
+producer_conf = {
+    'bootstrap.servers': 'kafka-1:9092,kafka-2:9092,kafka-3:9092',
+    
+    # CONFIABILIDAD
+    'acks': 'all',              # Espera confirmación de TODOS los ISR (más seguro)
+    # 'acks': '1'              # Solo leader (más rápido, puede perder datos si leader falla)
+    # 'acks': '0'              # Fire-and-forget (más rápido, puede perder datos)
+    
+    'enable.idempotence': True,  # Garantiza exactly-once delivery
+    'retries': 5,                # Reintentos en caso de error transitorio
+    'retry.backoff.ms': 100,
+    
+    # PERFORMANCE
+    'linger.ms': 10,            # Esperar hasta 10ms para batch de mensajes
+    'batch.size': 65536,        # 64KB de batch máximo (aumenta throughput)
+    'compression.type': 'snappy',  # Compresión en el producer
+    'buffer.memory': 33554432,  # 32MB de buffer en memoria
+}
+
+producer = Producer(producer_conf)
+
+def delivery_report(err, msg):
+    """Callback llamado cuando el mensaje es entregado o falla."""
+    if err is not None:
+        print(f'❌ Message delivery failed: {err}')
+    else:
+        print(f'✅ Message delivered to {msg.topic()}[{msg.partition()}] @ offset {msg.offset()}')
+
+# ── ENVIAR MENSAJES ────────────────────────────────────────────────────────
+def send_order_event(order: dict) -> None:
+    try:
+        producer.produce(
+            topic='orders',
+            key=str(order['customer_id']),  # Key determina la partición
+            value=json.dumps(order).encode('utf-8'),
+            headers={
+                'event-type': b'order_placed',
+                'source-service': b'orders-api',
+                'schema-version': b'v2',
+            },
+            on_delivery=delivery_report
+        )
+        producer.poll(0)  # Servir callbacks sin bloquear
+    except BufferError:
+        # El buffer interno está lleno, esperar y reintentar
+        producer.flush(timeout=10)
+        producer.produce(topic='orders', key=str(order['customer_id']),
+                        value=json.dumps(order).encode('utf-8'))
+
+# Enviar batch de órdenes
+orders = [{"order_id": i, "customer_id": i % 100, "amount": i * 9.99} for i in range(1000)]
+for order in orders:
+    send_order_event(order)
+
+# IMPORTANTE: flush() antes de terminar para enviar mensajes pendientes en el buffer
+producer.flush(timeout=30)
+print(f"Enviados {len(orders)} eventos de orden")
+
+# ── PARTICIÓN KEY STRATEGY ─────────────────────────────────────────────────
+# Si KEY es None → Round-robin entre particiones (máximo throughput, sin orden)
+# Si KEY = customer_id → Todos los eventos del mismo cliente van a la misma partición
+#   → Orden garantizado por cliente (útil para state machines por usuario)
+# Si KEY = order_id → Distribución uniforme, orden por pedido</code></pre>
+  </section>
+
+  <!-- 10.3 -->
+  <section id="s4">
+    <h2 data-num="10.3">Consumers y Consumer Groups</h2>
+    <pre><code">"""
+Kafka Consumer y Consumer Groups
+El paralelismo = número de particiones activas = número de consumers activos
+"""
+from confluent_kafka import Consumer, KafkaException, TopicPartition
+import signal
+import sys
+
+consumer_conf = {
+    'bootstrap.servers': 'kafka-1:9092,kafka-2:9092',
+    'group.id': 'analytics-pipeline',  # Identificador del Consumer Group
+    
+    # AUTO OFFSET MANAGEMENT (simple pero menos control)
+    'auto.offset.reset': 'earliest',  # latest (solo nuevos) o earliest (desde inicio)
+    'enable.auto.commit': True,        # Hace commit automáticamente
+    'auto.commit.interval.ms': 5000,   # Cada 5 segundos
+    
+    # PERFORMANCE
+    'fetch.min.bytes': 1,              # Min bytes para iniciar un fetch
+    'fetch.max.wait.ms': 500,          # Max tiempo de espera para fetch.min.bytes
+    'max.poll.records': 500,           # Max mensajes por poll()
+}
+
+consumer = Consumer(consumer_conf)
+consumer.subscribe(['orders', 'returns'])  # Subscribirse a múltiples topics
+
+# ── CONSUMER LOOP ────────────────────────────────────────────────────────────
+running = True
+
+def signal_handler(sig, frame):
+    global running
+    running = False
+
+signal.signal(signal.SIGINT, signal_handler)
+
+messages_processed = 0
+batch = []
+
+try:
+    while running:
+        # poll(): recibe mensajes (bloqueante hasta timeout)
+        msg = consumer.poll(timeout=1.0)
+        
+        if msg is None:
+            # Timeout: no hay mensajes nuevos
+            if batch:
+                process_batch(batch)  # Procesar el batch acumulado
+                batch = []
+            continue
+        
+        if msg.error():
+            raise KafkaException(msg.error())
+        
+        # Deserializar mensaje
+        event = json.loads(msg.value().decode('utf-8'))
+        event['_kafka_topic'] = msg.topic()
+        event['_kafka_partition'] = msg.partition()
+        event['_kafka_offset'] = msg.offset()
+        
+        batch.append(event)
+        messages_processed += 1
+        
+        # Procesar en batches de 100
+        if len(batch) >= 100:
+            process_batch(batch)
+            batch = []
+
+except Exception as e:
+    print(f"Error: {e}")
+finally:
+    if batch:
+        process_batch(batch)
+    consumer.close()  # Deja que otro consumer tome sus particiones
+    print(f"Procesados: {messages_processed:,} mensajes")
+
+# ── COMMIT MANUAL: más control ────────────────────────────────────────────
+consumer_manual_conf = {**consumer_conf, 'enable.auto.commit': False}
+consumer_manual = Consumer(consumer_manual_conf)
+consumer_manual.subscribe(['orders'])
+
+while True:
+    msg = consumer_manual.poll(timeout=1.0)
+    if msg is None:
+        continue
+    
+    try:
+        event = json.loads(msg.value())
+        process_event(event)           # Procesar el mensaje
+        consumer_manual.commit(msg)    # Solo hacer commit si el proceso fue exitoso
+    except Exception as e:
+        # No hacer commit → el mensaje será re-procesado
+        print(f"Error procesando {msg.offset()}: {e}")
+
+# ── CONSUMER GROUP: Particiones se asignan automáticamente ─────────────────
+# Topic: orders (12 particiones)
+# Consumer Group: analytics-pipeline (3 consumers)
+# Resultado: 4 particiones por consumer
+#
+# Si se agrega consumer 4: rebalance → 3 particiones para algunos, 2 para otros
+# Si consumer 3 cae: rebalance → sus 4 particiones se redistribuyen entre los restantes
+#
+# Lag = (Latest Offset - Committed Offset)
+# Lag = 0  → Consumer está al día
+# Lag >> 0 → Consumer está atrasado (escalar consumers o optimizar procesamiento)</code></pre>
+  </section>
+
+  <!-- 10.4 -->
+  <section id="s5">
+    <h2 data-num="10.4">Kafka Streams</h2>
+    <pre><code">"""
+Kafka Streams con Python (Faust - el mejor wrapper Python para Kafka Streams)
+Para casos simples donde no quieres Flink completo
+"""
+import faust
+
+app = faust.App('order-processor', 
+                broker='kafka://kafka-1:9092',
+                value_serializer='json')
+
+# Definir los modelos de datos
+class Order(faust.Record, serializer='json'):
+    order_id: int
+    customer_id: int
+    amount: float
+    status: str
+
+class OrderStats(faust.Record, serializer='json'):
+    customer_id: int
+    total_orders: int
+    total_revenue: float
+    avg_order: float
+
+# Topics
+orders_topic = app.topic('orders', value_type=Order)
+order_stats_topic = app.topic('order-stats', value_type=OrderStats)
+
+# ── STREAM PROCESSING: Transformar y enriquecer eventos ────────────────────
+@app.agent(orders_topic)
+async def process_orders(stream):
+    async for order in stream:
+        # Filtrar órdenes no válidas
+        if order.amount <= 0:
+            continue
+        
+        # Enriquecer con datos externos (por ej, info del cliente desde cache)
+        enriched = {
+            'order_id': order.order_id,
+            'customer_id': order.customer_id,
+            'amount': order.amount,
+            'status': order.status,
+            'revenue_category': 'large' if order.amount >= 500 else 'small',
+        }
+        
+        # Re-publicar al topic enriquecido
+        await order_stats_topic.send(
+            key=str(order.customer_id),
+            value=enriched
+        )
+
+# ── TABLA (KTABLE): Agregación stateful ────────────────────────────────────
+customer_stats_table = app.Table('customer-stats', default=lambda: {'orders': 0, 'revenue': 0.0})
+
+@app.agent(orders_topic)
+async def aggregate_customer_stats(stream):
+    async for order in stream:
+        # Actualizar el estado en la tabla (backed por Kafka topic changelog)
+        stats = customer_stats_table[order.customer_id]
+        stats['orders'] += 1
+        stats['revenue'] += order.amount
+        customer_stats_table[order.customer_id] = stats
+        
+        # Publicar el estado actualizado
+        await order_stats_topic.send(
+            key=str(order.customer_id),
+            value=OrderStats(
+                customer_id=order.customer_id,
+                total_orders=stats['orders'],
+                total_revenue=stats['revenue'],
+                avg_order=stats['revenue'] / stats['orders']
+            )
+        )
+
+if __name__ == '__main__':
+    app.main()</code></pre>
+  </section>
+
+  <!-- 10.5 -->
+  <section id="s6">
+    <h2 data-num="10.5">Schema Registry</h2>
+    <p>El Schema Registry gestiona los schemas de los mensajes Kafka (Avro, JSON Schema, Protobuf), garantizando compatibilidad entre producers y consumers cuando el schema evoluciona.</p>
+
+    <pre><code">"""
+Confluent Schema Registry con Avro
+Garantiza que producers y consumers hablan el mismo "idioma"
+"""
+from confluent_kafka.schema_registry import SchemaRegistryClient
+from confluent_kafka.schema_registry.avro import AvroSerializer, AvroDeserializer
+from confluent_kafka.serialization import StringSerializer, SerializationContext, MessageField
+from confluent_kafka import Producer, Consumer
+
+# Schema del evento
+order_avro_schema = """
+{
+  "type": "record",
+  "name": "Order",
+  "namespace": "com.company.orders",
+  "doc": "Represents a customer order event",
+  "fields": [
+    {"name": "order_id",    "type": "long"},
+    {"name": "customer_id", "type": "int"},
+    {"name": "amount",      "type": "double"},
+    {"name": "status",      "type": "string"},
+    {"name": "created_at",  "type": {"type": "long", "logicalType": "timestamp-millis"}},
+    {"name": "currency",    "type": "string", "default": "USD"},
+    {"name": "notes",       "type": ["null", "string"], "default": null}
+  ]
+}
+"""
+
+schema_registry_conf = {'url': 'http://schema-registry:8081'}
+schema_registry_client = SchemaRegistryClient(schema_registry_conf)
+
+# ── PRODUCER CON AVRO ────────────────────────────────────────────────────────
+avro_serializer = AvroSerializer(schema_registry_client, order_avro_schema)
+key_serializer = StringSerializer('utf_8')
+
+producer = Producer({'bootstrap.servers': 'kafka:9092'})
+
+order_data = {
+    'order_id': 1001,
+    'customer_id': 501,
+    'amount': 299.99,
+    'status': 'pending',
+    'created_at': int(datetime.now().timestamp() * 1000),
+    'currency': 'USD',
+    'notes': None
+}
+
+producer.produce(
+    topic='orders',
+    key=key_serializer(str(order_data['customer_id']), SerializationContext('orders', MessageField.KEY)),
+    value=avro_serializer(order_data, SerializationContext('orders', MessageField.VALUE)),
+    on_delivery=delivery_report
+)
+
+# ── COMPATIBILIDAD DE SCHEMAS ────────────────────────────────────────────────
+# BACKWARD: nuevos consumers leen mensajes de producers antiguos (default)
+# FORWARD: consumers antiguos leen mensajes de nuevos producers
+# FULL: ambas direcciones (más restrictivo)
+
+# Ver y cambiar la compatibilidad
+schema_registry_client.set_compatibility(subject_name='orders-value', level='BACKWARD')
+
+# Ver los schemas registrados
+schemas = schema_registry_client.get_versions('orders-value')
+print(f"Versions: {schemas}")
+
+# Evolución de schema compatible (BACKWARD):
+# ✅ Agregar campo con default
+# ✅ Cambiar default de un campo
+# ❌ Eliminar campo sin default
+# ❌ Cambiar tipo de campo (int → string)</code></pre>
+  </section>
+
+  <!-- 10.6 -->
+  <section id="s7">
+    <h2 data-num="10.6">Kafka Connect</h2>
+    <p>Kafka Connect es el framework para integrar Kafka con sistemas externos (bases de datos, storage, APIs) sin escribir código de producer/consumer.</p>
+
+    <pre><code"># ── KAFKA CONNECT: CDC desde PostgreSQL → Kafka ────────────────────────────
+# Debezium: el conector CDC más popular
+# Captura cambios de PostgreSQL (INSERT, UPDATE, DELETE) como eventos Kafka
+
+# 1. Activar replication en PostgreSQL
+# postgresql.conf: wal_level = logical
+# pg_hba.conf: host replication debezium 0.0.0.0/0 md5
+
+# 2. Configurar el conector Debezium via REST API
+import requests
+
+debezium_config = {
+    "name": "postgres-orders-cdc",
+    "config": {
+        "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+        "database.hostname": "postgres",
+        "database.port": "5432",
+        "database.user": "debezium",
+        "database.password": "debezium",
+        "database.dbname": "production",
+        "database.server.name": "production",
+        "table.include.list": "public.orders,public.order_items",
+        
+        # Snapshot inicial de la tabla completa
+        "snapshot.mode": "initial",
+        
+        # Formato de salida
+        "key.converter": "io.confluent.connect.avro.AvroConverter",
+        "value.converter": "io.confluent.connect.avro.AvroConverter",
+        "key.converter.schema.registry.url": "http://schema-registry:8081",
+        "value.converter.schema.registry.url": "http://schema-registry:8081",
+        
+        # Topics de output: production.public.orders, production.public.order_items
+        "topic.prefix": "production",
+    }
+}
+
+response = requests.post(
+    "http://kafka-connect:8083/connectors",
+    json=debezium_config
+)
+print(f"Connector created: {response.status_code}")
+
+# 3. Verificar el conector
+response = requests.get("http://kafka-connect:8083/connectors/postgres-orders-cdc/status")
+print(response.json())
+
+# Cada cambio en la tabla 'orders' genera un evento en el topic 'production.public.orders':
+# {
+#   "before": null,  # null para INSERT
+#   "after": {"order_id": 1001, "amount": 299.99, "status": "pending"},
+#   "source": {"db": "production", "table": "orders", "ts_ms": 1718000000000},
+#   "op": "c",  # c=create, u=update, d=delete, r=read (snapshot)
+# }
+
+# ── SINK CONNECTOR: Kafka → S3 (para el Data Lake) ─────────────────────────
+s3_sink_config = {
+    "name": "s3-data-lake-sink",
+    "config": {
+        "connector.class": "io.confluent.connect.s3.S3SinkConnector",
+        "tasks.max": "4",
+        "topics": "production.public.orders",
+        "s3.region": "us-east-1",
+        "s3.bucket.name": "my-data-lake",
+        "s3.part.size": "67108864",  # 64MB parts
+        "flush.size": "1000",        # Flush cada 1000 mensajes
+        "storage.class": "io.confluent.connect.s3.storage.S3Storage",
+        "format.class": "io.confluent.connect.s3.format.parquet.ParquetFormat",
+        "parquet.codec": "snappy",
+        "locale": "en_US",
+        "timezone": "UTC",
+        "timestamp.extractor": "RecordField",
+        "timestamp.field": "created_at",
+        "partitioner.class": "io.confluent.connect.storage.partitioner.TimeBasedPartitioner",
+        "path.format": "'year'=YYYY/'month'=MM/'day'=dd/'hour'=HH",
+        "partition.duration.ms": "3600000",  # 1 hora por partición
+    }
+}
+
+requests.post("http://kafka-connect:8083/connectors", json=s3_sink_config)</code></pre>
+
+    <div class="chapter-nav">
+      <a href="chapter-09-spark.html" class="ch-nav-btn">
+        <span class="arrow">←</span>
+        <div><div class="ch-nav-meta">Capítulo 9</div><div class="ch-nav-title">Apache Spark</div></div>
+      </a>
+      <a href="chapter-11-airflow.html" class="ch-nav-btn next">
+        <span class="arrow">→</span>
+        <div><div class="ch-nav-meta">Capítulo 11</div><div class="ch-nav-title">Apache Airflow</div></div>
+      </a>
+    </div>
+  </section>
+</main>
+
+<script>
+  const isLightMode = document.documentElement.classList.contains('light');
+  mermaid.initialize({startOnLoad:true,theme: isLightMode ? 'default' : 'dark',themeVariables: isLightMode ? { primaryColor: '#0088CC' } : {background:'#131c35',primaryColor:'#7c0d0d',edgeLabelBackground:'#0f1629'}});
+</script>
+  <script src="nav.js"></script>
+</body>
+</html>

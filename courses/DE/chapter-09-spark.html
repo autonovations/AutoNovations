@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('deCourseTheme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.classList.add('light');
+    })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 9: Apache Spark | Master Book DE 2026</title>
+<meta name="description" content="Apache Spark en profundidad: arquitectura, Driver, Executors, RDDs, DataFrames, Spark SQL, Structured Streaming y optimización avanzada.">
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0A0A0A; --bg2: #121212; --bg3: rgba(18, 18, 18, 0.6); --bg4: #1e1e1e;
+  --blue: #00D9FF; --cyan: #00D9FF; --purple: #8b5cf6; --green: #10b981;
+  --orange: #f59e0b; --pink: #ec4899; --red: #ef4444;
+  --t1: #ffffff; --t2: #E0E0E0; --t3: #A0A0A0;
+  --border: rgba(0, 217, 255, 0.2);
+  --sidebar-width: 280px;
+
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--bg3);
+  --bg-card-hover: var(--bg4);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-muted: var(--t3);
+  --accent-cyan: var(--cyan);
+  --accent-blue: var(--blue);
+  --accent-green: var(--green);
+  --accent-orange: var(--orange);
+  --accent-purple: var(--purple);
+  --gradient-hero: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  --gradient-1: linear-gradient(135deg, var(--blue), var(--cyan));
+}
+html.light {
+  --bg: #F8FAFC; --bg2: #FFFFFF; --bg3: rgba(255, 255, 255, 0.7); --bg4: #E2E8F0;
+  --blue: #0088CC; --cyan: #00D9FF; --purple: #7c3aed; --green: #059669;
+  --orange: #d97706; --pink: #db2777; --red: #dc2626;
+  --t1: #0F172A; --t2: #334155; --t3: #64748B;
+  --border: rgba(0, 217, 255, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;display:flex;font-size:1.15rem;}
+.sidebar{width:280px;min-width:280px;background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 0;}
+.sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+.book-title{font-size:0.75rem;font-weight:700;color:var(--spark);letter-spacing:0.1em;text-transform:uppercase;}
+.chapter-title-sb{font-size:0.9rem;color:var(--t2);margin-top:0.25rem;}
+.nav-section{padding:0 1rem;margin-bottom:0.5rem;}
+.nav-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 0.5rem;margin-bottom:0.5rem;}
+.nav-item{display:block;padding:0.45rem 0.75rem;border-radius:8px;text-decoration:none;color:var(--t2);font-size:0.82rem;transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover,.nav-item.active{background:rgba(226,93,34,0.1);color:var(--spark);}
+.nav-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--t3);margin-right:0.4rem;}
+.nav-back{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;color:var(--t3);text-decoration:none;font-size:0.8rem;border-bottom:1px solid var(--border);margin-bottom:1rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--spark);}
+.content{flex:1;min-width:0;padding:3rem 4rem;max-width:920px;margin:0 auto;}
+.chapter-header{margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border);}
+.ch-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(226,93,34,0.1);border:1px solid rgba(226,93,34,0.2);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;color:var(--spark);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:1.1rem;color:var(--t2);max-width:680px;line-height:1.8;}
+.chapter-meta-bar{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--t3);}
+.meta-item strong{color:var(--t2);}
+h2{font-size:1.6rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--t1);padding-top:1rem;}
+h2::before{content:attr(data-num)' ';color:var(--spark);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 0.75rem;color:var(--t1);}
+h4{font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem;color:var(--cyan);}
+p{margin-bottom:1.25rem;color:var(--t2);font-size:0.95rem;}
+ul,ol{padding-left:1.5rem;margin-bottom:1.25rem;color:var(--t2);}
+li{margin-bottom:0.5rem;font-size:0.95rem;}
+strong{color:var(--t1);}
+code{font-family:'JetBrains Mono',monospace;background:var(--bg4);border:1px solid var(--border);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.85rem;color:var(--cyan);}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;}
+pre code{background:none;border:none;padding:0;font-size:0.85rem;color:var(--t1);line-height:1.8;}
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0;}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin:1.5rem 0;}
+.card-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1.25rem;transition:all 0.2s;}
+.card-item:hover{border-color:var(--spark);}
+.card-item .icon{font-size:1.75rem;margin-bottom:0.75rem;}
+.card-item h4{margin:0 0 0.5rem;color:var(--t1);}
+.card-item p{font-size:0.82rem;color:var(--t3);margin:0;}
+.info-box{border-left:3px solid var(--blue);background:rgba(59,130,246,0.05);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1.5rem 0;}
+.info-box.success{border-color:var(--green);background:rgba(16,185,129,0.05);}
+.info-box.warning{border-color:var(--orange);background:rgba(245,158,11,0.05);}
+.info-box.spark{border-color:var(--spark);background:rgba(226,93,34,0.05);}
+.info-box-title{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.info-box .info-box-title{color:var(--blue);}
+.info-box.success .info-box-title{color:var(--green);}
+.info-box.warning .info-box-title{color:var(--orange);}
+.info-box.spark .info-box-title{color:var(--spark);}
+.table-wrap{overflow-x:auto;margin:1.5rem 0;}
+table{width:100%;border-collapse:collapse;font-size:0.875rem;}
+th{background:var(--bg4);color:var(--t1);font-weight:600;padding:0.75rem 1rem;text-align:left;border-bottom:2px solid var(--border);}
+td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--t2);}
+tr:hover td{background:var(--bg3);}
+td:first-child{font-weight:500;color:var(--t1);}
+.mermaid-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:2rem;margin:2rem 0;overflow-x:auto;}
+.tabs{margin:2rem 0;}
+.tab-list{display:flex;gap:0.5rem;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.tab-btn{padding:0.6rem 1.25rem;background:none;border:none;color:var(--t3);font-size:0.875rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;font-family:'Inter',sans-serif;}
+.tab-btn.active{color:var(--spark);border-bottom-color:var(--spark);}
+.tab-panel{display:none;padding:1.5rem;background:var(--bg3);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;}
+.tab-panel.active{display:block;}
+.accordion{margin:1.5rem 0;}
+.accordion-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.accordion-header{padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:0.95rem;transition:background 0.2s;user-select:none;}
+.accordion-header:hover{background:var(--bg4);}
+.accordion-header .arrow{color:var(--spark);transition:transform 0.3s;}
+.accordion-item.open .accordion-header .arrow{transform:rotate(180deg);}
+.accordion-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease;}
+.accordion-body.open{max-height:5000px;padding:0 1.25rem 1.25rem;}
+.chapter-nav{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem;}
+.ch-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--t2);transition:all 0.2s;flex:1;max-width:260px;}
+.ch-nav-btn:hover{border-color:var(--spark);color:var(--t1);}
+.ch-nav-btn.next{margin-left:auto;text-align:right;flex-direction:row-reverse;}
+.ch-nav-btn .arrow{font-size:1.25rem;color:var(--spark);}
+.ch-nav-meta{font-size:0.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;}
+.ch-nav-title{font-size:0.875rem;font-weight:600;margin-top:0.1rem;}
+@media(max-width:900px){.sidebar{display:none;}.content{padding:2rem 1.5rem;}}
+</style>
+</head>
+<body>
+
+
+<main class="content">
+  <div class="chapter-header">
+    <div class="ch-badge">⚡ Capítulo 9 · Nivel Avanzado</div>
+    <h1>Apache Spark</h1>
+    <p class="lead">Apache Spark es el motor de procesamiento distribuido más usado del mundo. Entender su arquitectura interna, el query plan y las técnicas de optimización es lo que diferencia a un Data Engineer senior de uno mid.</p>
+    <div class="chapter-meta-bar">
+      <div class="meta-item">⏱️ <strong>Lectura:</strong> ~75 min</div>
+      <div class="meta-item">🎯 <strong>Nivel:</strong> Avanzado</div>
+      <div class="meta-item">🔥 <strong>Spark:</strong> 3.5+ / PySpark</div>
+    </div>
+  </div>
+
+  <!-- 9.0 -->
+  <section id="s1">
+    <h2 data-num="9.0">Arquitectura Interna de Spark</h2>
+    <p>Para optimizar Spark, primero debes entender cómo funciona por dentro. La arquitectura tiene componentes bien definidos con roles específicos.</p>
+
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+graph TD
+    subgraph "Driver Node"
+        D[🎯 Spark Driver<br/>SparkContext / SparkSession<br/>Query Planning<br/>DAG Scheduler]
+    end
+
+    subgraph "Cluster Manager"
+        CM[⚙️ Cluster Manager<br/>YARN / Kubernetes / Mesos<br/>Standalone]
+    end
+
+    subgraph "Worker Node 1"
+        E1[📦 Executor 1<br/>JVM Process]
+        T1A[🔧 Task A]
+        T1B[🔧 Task B]
+        CACHE1[(Cache / Memory)]
+        E1 --> T1A
+        E1 --> T1B
+        E1 --- CACHE1
+    end
+
+    subgraph "Worker Node 2"
+        E2[📦 Executor 2<br/>JVM Process]
+        T2A[🔧 Task C]
+        T2B[🔧 Task D]
+        CACHE2[(Cache / Memory)]
+        E2 --> T2A
+        E2 --> T2B
+        E2 --- CACHE2
+    end
+
+    D <--> CM
+    CM --> E1
+    CM --> E2
+    D <--> E1
+    D <--> E2
+
+    subgraph "Storage"
+        S[(HDFS / S3 / GCS<br/>Data Sources)]
+    end
+
+    E1 --> S
+    E2 --> S
+
+    style D fill:#7c2d12,stroke:#f97316,color:#fff
+    style CM fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    style E1 fill:#065f46,stroke:#10b981,color:#fff
+    style E2 fill:#065f46,stroke:#10b981,color:#fff
+      </div>
+    </div>
+
+    <h3>Componentes Clave</h3>
+    <div class="card-grid">
+      <div class="card-item">
+        <div class="icon">🎯</div>
+        <h4>Driver</h4>
+        <p>El "cerebro". Corre el código del usuario, crea el plan de ejecución (DAG), coordina los executors. Un solo proceso por aplicación.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">📦</div>
+        <h4>Executor</h4>
+        <p>Proceso JVM en cada Worker Node. Ejecuta las Tasks reales. Mantiene datos en memoria (cache). Múltiples por nodo posibles.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔧</div>
+        <h4>Task</h4>
+        <p>Unidad mínima de trabajo. Procesa una partición de datos. El paralelismo = número de particiones = número de tasks simultáneas.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">📋</div>
+        <h4>Stage</h4>
+        <p>Grupo de tasks que no requieren shuffle. Un "barrier" de shuffle separa stages. Cada Stage tiene su propio set de tasks.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">📊</div>
+        <h4>Job</h4>
+        <p>Triggered por una Action (collect, write, count). Puede tener múltiples Stages conectados por shuffles.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔀</div>
+        <h4>Shuffle</h4>
+        <p>Redistribución de datos entre particiones/executors. La operación más costosa. Ocurre en groupBy, join, repartition.</p>
+      </div>
+    </div>
+
+    <h3>SparkSession: El punto de entrada</h3>
+    <pre><code>"""
+Configuración de SparkSession para Data Engineering
+"""
+from pyspark.sql import SparkSession
+from pyspark.sql import functions as F
+from pyspark.sql.types import *
+
+# Crear SparkSession con configuraciones optimizadas
+spark = (SparkSession.builder
+    .appName("DataEngineeringPipeline")
+    .master("yarn")  # local[*] para dev, yarn para cluster
+    
+    # ── MEMORIA ────────────────────────────────────────────────────────────
+    .config("spark.executor.memory", "8g")        # RAM por executor
+    .config("spark.executor.memoryFraction", "0.8")
+    .config("spark.driver.memory", "4g")
+    .config("spark.memory.offHeap.enabled", "true")
+    .config("spark.memory.offHeap.size", "2g")
+    
+    # ── PARALELISMO ────────────────────────────────────────────────────────
+    .config("spark.executor.cores", "4")          # Cores por executor
+    .config("spark.sql.shuffle.partitions", "200")  # Particiones después de shuffle
+    .config("spark.default.parallelism", "200")
+    
+    # ── ADAPTIVE QUERY EXECUTION (AQE) - Spark 3.0+ ────────────────────────
+    .config("spark.sql.adaptive.enabled", "true")          # AUTO optimiza en runtime
+    .config("spark.sql.adaptive.coalescePartitions.enabled", "true")  # Reduce particiones pequeñas
+    .config("spark.sql.adaptive.skewJoin.enabled", "true")  # Maneja data skew automáticamente
+    
+    # ── SERIALIZACIÓN ─────────────────────────────────────────────────────
+    .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+    
+    # ── DELTA LAKE ─────────────────────────────────────────────────────────
+    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
+    .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
+    
+    .getOrCreate()
+)
+
+spark.sparkContext.setLogLevel("WARN")  # Reducir verbosidad de logs</code></pre>
+  </section>
+
+  <!-- 9.1 -->
+  <section id="s2">
+    <h2 data-num="9.1">RDDs: La Abstracción Fundamental</h2>
+    <p>Los Resilient Distributed Datasets (RDDs) son la abstracción de bajo nivel de Spark. Aunque los DataFrames son preferidos en el código moderno, entender RDDs es fundamental para comprender cómo Spark funciona internamente.</p>
+
+    <pre><code>"""
+RDDs: cuando los necesitas en la práctica (2026)
+La mayoría de operaciones se hacen con DataFrames,
+pero hay casos donde RDDs son necesarios:
+"""
+sc = spark.sparkContext  # SparkContext
+
+# ── CREAR RDDs ──────────────────────────────────────────────────────────────
+# Desde Python collection
+rdd_from_list = sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], numSlices=4)
+
+# Desde archivo
+rdd_from_file = sc.textFile("s3://bucket/raw/data.txt", minPartitions=8)
+
+# ── TRANSFORMACIONES (LAZY): no se ejecutan hasta una Action ────────────────
+# map: 1-a-1
+squared_rdd = rdd_from_list.map(lambda x: x ** 2)
+
+# filter: elimina elementos
+even_rdd = rdd_from_list.filter(lambda x: x % 2 == 0)
+
+# flatMap: 1-a-N (útil para tokenización)
+words_rdd = rdd_from_file.flatMap(lambda line: line.split(" "))
+
+# reduceByKey: agregar por clave (más eficiente que groupByKey)
+word_counts = (words_rdd
+    .map(lambda word: (word.lower(), 1))
+    .reduceByKey(lambda a, b: a + b)
+    .sortBy(lambda x: x[1], ascending=False)
+)
+
+# ── ACTIONS: Triggerean la ejecución ────────────────────────────────────────
+result = word_counts.take(10)          # Top 10 palabras
+total = rdd_from_list.count()          # Contar elementos
+total_sum = rdd_from_list.reduce(lambda a, b: a + b)  # Reducción
+all_data = rdd_from_list.collect()     # ⚠️ Cargar TODO en memoria del driver
+
+# ── PARTICIONAMIENTO ────────────────────────────────────────────────────────
+print(f"Particiones actuales: {rdd_from_list.getNumPartitions()}")
+rdd_repartitioned = rdd_from_list.repartition(8)    # Aumentar (con shuffle)
+rdd_coalesced = rdd_from_list.coalesce(2)            # Reducir (sin shuffle si posible)
+
+# ── PERSISTENCIA / CACHING ──────────────────────────────────────────────────
+from pyspark import StorageLevel
+
+# Cuando usas un RDD múltiples veces, cachearlo evita recompute
+expensive_rdd = (rdd_from_file
+    .filter(lambda x: len(x) > 10)
+    .map(lambda x: x.upper())
+)
+expensive_rdd.persist(StorageLevel.MEMORY_AND_DISK)  # Cache en mem, spill a disco si necesario
+# expensive_rdd.cache()  # Equivalente a MEMORY_ONLY
+
+# Usar múltiples veces sin recompute
+count = expensive_rdd.count()
+sample = expensive_rdd.take(5)
+expensive_rdd.unpersist()  # Liberar memoria cuando ya no es necesario
+
+# ── LINEAGE: Spark guarda cómo reconstruir el RDD ─────────────────────────
+print(expensive_rdd.toDebugString().decode())  # Muestra el DAG</code></pre>
+
+    <div class="info-box spark">
+      <div class="info-box-title">⚡ RDD vs DataFrame: ¿Cuándo usar cada uno?</div>
+      <ul style="margin:0;font-size:0.875rem;">
+        <li><strong>DataFrame/Dataset (95% del tiempo):</strong> Usa el Catalyst Optimizer de Spark. Mucho más rápido. Tipos seguros. SQL compatible.</li>
+        <li><strong>RDD (5% del tiempo):</strong> Cuando necesitas control de bajo nivel, procesamiento de datos no estructurados (binarios, custom), o cuando la lógica es imposible expresar con la API de DataFrame.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 9.2 -->
+  <section id="s3">
+    <h2 data-num="9.2">DataFrames y Spark SQL</h2>
+    <pre><code>"""
+DataFrames: la API moderna de Spark
+Equivalente a un DataFrame de Pandas pero distribuido
+"""
+from pyspark.sql import functions as F
+from pyspark.sql.types import *
+from pyspark.sql.window import Window
+
+# ── LECTURA DE DATOS ────────────────────────────────────────────────────────
+# Parquet (columnar, comprimido, particionado)
+orders_df = spark.read \
+    .option("mergeSchema", "true") \
+    .parquet("s3://bucket/silver/orders/")
+
+# CSV con schema explícito (mejor performance, sin inferencia)
+schema = StructType([
+    StructField("order_id",    LongType(),    nullable=False),
+    StructField("customer_id", IntegerType(), nullable=False),
+    StructField("amount",      DoubleType(),  nullable=True),
+    StructField("order_date",  TimestampType(), nullable=False),
+    StructField("status",      StringType(),  nullable=True),
+])
+df = spark.read.schema(schema).option("header", "true").csv("s3://bucket/raw/orders.csv")
+
+# Delta Lake
+delta_df = spark.read.format("delta").load("s3://bucket/delta/orders/")
+
+# ── TRANSFORMACIONES BÁSICAS ────────────────────────────────────────────────
+clean_df = (orders_df
+    # Filtrar
+    .filter(F.col("status").isin("delivered", "shipped"))
+    .filter(F.col("amount") > 0)
+    
+    # Transformar columnas
+    .withColumn("order_year",  F.year(F.col("order_date")))
+    .withColumn("order_month", F.month(F.col("order_date")))
+    .withColumn("amount_usd",  F.round(F.col("amount"), 2))
+    .withColumn("is_large",    F.when(F.col("amount") > 500, True).otherwise(False))
+    
+    # Renombrar
+    .withColumnRenamed("order_id", "id")
+    
+    # Eliminar duplicados
+    .dropDuplicates(["order_id"])
+    
+    # Seleccionar columnas
+    .select("id", "customer_id", "amount_usd", "order_date", "order_year", "order_month", "is_large")
+    
+    # Repartition para escritura eficiente
+    .repartition(F.col("order_year"), F.col("order_month"))
+)
+
+# ── AGREGACIONES ────────────────────────────────────────────────────────────
+agg_df = (orders_df
+    .filter(F.col("order_date") >= "2026-01-01")
+    .groupBy(F.date_trunc("month", F.col("order_date")).alias("month"), F.col("status"))
+    .agg(
+        F.count("*").alias("order_count"),
+        F.countDistinct("customer_id").alias("unique_customers"),
+        F.sum("amount").alias("total_revenue"),
+        F.avg("amount").alias("avg_amount"),
+        F.percentile_approx("amount", 0.5).alias("median_amount"),
+        F.max("amount").alias("max_amount"),
+    )
+    .orderBy("month", "status")
+)
+
+# ── JOINS ────────────────────────────────────────────────────────────────────
+customers_df = spark.read.parquet("s3://bucket/silver/customers/")
+
+# Inner Join
+result_df = orders_df.join(customers_df, on="customer_id", how="inner")
+
+# Broadcast Join: cuando una tabla es pequeña (< 10MB default)
+# Evita shuffle completamente
+small_categories = spark.read.parquet("s3://bucket/dim/categories/")
+result_broadcast = orders_df.join(
+    F.broadcast(small_categories),  # Copia a todos los executors
+    on="category_id",
+    how="left"
+)
+
+# ── SPARK SQL: SQL directo ──────────────────────────────────────────────────
+orders_df.createOrReplaceTempView("orders")
+customers_df.createOrReplaceTempView("customers")
+
+# Puedes mezclar SQL y DataFrame API libremente
+result_sql = spark.sql("""
+    SELECT 
+        DATE_TRUNC('month', o.order_date)   AS month,
+        c.customer_segment,
+        COUNT(*)                             AS orders,
+        SUM(o.amount)                        AS revenue,
+        AVG(o.amount)                        AS avg_ticket
+    FROM orders o
+    JOIN customers c ON o.customer_id = c.customer_id
+    WHERE o.status = 'delivered'
+      AND o.order_date >= '2026-01-01'
+    GROUP BY 1, 2
+    ORDER BY 1, revenue DESC
+""")
+
+# El resultado de spark.sql() es un DataFrame normal
+result_sql.show(20)  # Mostrar en consola
+result_sql.explain(True)  # Ver el query plan físico</code></pre>
+  </section>
+
+  <!-- 9.3 -->
+  <section id="s4">
+    <h2 data-num="9.3">Transformaciones Avanzadas</h2>
+    <pre><code>"""
+Operaciones avanzadas de PySpark para Data Engineering
+"""
+from pyspark.sql.window import Window
+
+# ── WINDOW FUNCTIONS en Spark ──────────────────────────────────────────────
+# Definir la ventana
+window_by_customer = Window.partitionBy("customer_id").orderBy("order_date")
+window_monthly = Window.partitionBy(F.date_trunc("month", F.col("order_date")))
+
+df_with_windows = orders_df.withColumn(
+    # Número de orden por cliente (running count)
+    "order_number", F.row_number().over(window_by_customer)
+).withColumn(
+    # Revenue acumulado por cliente
+    "cumulative_revenue", F.sum("amount").over(
+        window_by_customer.rowsBetween(Window.unboundedPreceding, Window.currentRow)
+    )
+).withColumn(
+    # Valor del pedido anterior
+    "prev_order_amount", F.lag("amount", 1).over(window_by_customer)
+).withColumn(
+    # % del total del mes
+    "pct_monthly_revenue", 
+    F.col("amount") / F.sum("amount").over(window_monthly) * 100
+).withColumn(
+    # Rank dentro del mes
+    "monthly_rank", F.dense_rank().over(
+        Window.partitionBy(F.date_trunc("month", F.col("order_date"))).orderBy(F.desc("amount"))
+    )
+)
+
+# ── UDFs: Custom transformaciones ──────────────────────────────────────────
+# ⚠️ Los UDFs Python son lentos (rompen el optimizador de Spark)
+# Úsalos solo cuando no haya función nativa equivalente
+from pyspark.sql.types import StringType
+
+@F.udf(returnType=StringType())
+def categorize_order(amount: float) -> str:
+    if amount is None:
+        return "unknown"
+    elif amount >= 1000:
+        return "enterprise"
+    elif amount >= 500:
+        return "large"
+    elif amount >= 100:
+        return "medium"
+    return "small"
+
+# Aplicar UDF
+df.withColumn("order_category", categorize_order(F.col("amount")))
+
+# ✅ MEJOR: Usar Pandas UDF (Vectorized - mucho más rápido)
+import pandas as pd
+from pyspark.sql.functions import pandas_udf
+
+@pandas_udf(StringType())
+def categorize_order_vectorized(amounts: pd.Series) -> pd.Series:
+    """Pandas UDF: opera sobre Series completas, no elemento a elemento."""
+    return pd.cut(
+        amounts,
+        bins=[-float('inf'), 100, 500, 1000, float('inf')],
+        labels=['small', 'medium', 'large', 'enterprise']
+    ).astype(str)
+
+df.withColumn("order_category", categorize_order_vectorized(F.col("amount")))
+
+# ── PROCESAMIENTO DE JSON COMPLEJO ─────────────────────────────────────────
+from pyspark.sql.types import *
+
+# Schema del JSON anidado
+event_schema = StructType([
+    StructField("event_id", LongType()),
+    StructField("type", StringType()),
+    StructField("data", StructType([
+        StructField("user_id", IntegerType()),
+        StructField("items", ArrayType(StructType([
+            StructField("sku", StringType()),
+            StructField("qty", IntegerType()),
+            StructField("price", DoubleType())
+        ])))
+    ]))
+])
+
+events_df = spark.read.schema(event_schema).json("s3://bucket/raw/events/")
+
+# Explotar array de items (1 fila por item)
+items_df = events_df.withColumn("item", F.explode("data.items")) \
+    .select(
+        "event_id",
+        "data.user_id",
+        "item.sku",
+        "item.qty",
+        "item.price",
+        (F.col("item.qty") * F.col("item.price")).alias("line_total")
+    )</code></pre>
+  </section>
+
+  <!-- 9.4 -->
+  <section id="s5">
+    <h2 data-num="9.4">Structured Streaming</h2>
+    <pre><code>"""
+Spark Structured Streaming: procesar streams como DataFrames
+Paradigma: stream = tabla unbounded que crece infinitamente
+"""
+from pyspark.sql.streaming import *
+
+# ── LEER DESDE KAFKA ────────────────────────────────────────────────────────
+kafka_df = (spark.readStream
+    .format("kafka")
+    .option("kafka.bootstrap.servers", "kafka-1:9092,kafka-2:9092")
+    .option("subscribe", "orders,returns")           # Múltiples topics
+    .option("startingOffsets", "latest")             # Solo mensajes nuevos
+    # .option("startingOffsets", "earliest")         # Replay desde inicio
+    .option("maxOffsetsPerTrigger", 10000)           # Control de throughput
+    .load()
+)
+
+# Kafka produce: key y value como binary
+# Parsear el schema del message
+from pyspark.sql.functions import from_json, col
+
+order_schema = StructType([
+    StructField("order_id", LongType()),
+    StructField("customer_id", IntegerType()),
+    StructField("amount", DoubleType()),
+    StructField("timestamp", TimestampType()),
+])
+
+orders_stream = (kafka_df
+    .selectExpr("CAST(value AS STRING) as json_value", "timestamp as kafka_timestamp", "topic")
+    .withColumn("order", from_json(col("json_value"), order_schema))
+    .select("order.*", "kafka_timestamp", "topic")
+    .withWatermark("timestamp", "10 minutes")  # Latencia máxima tolerada
+)
+
+# ── TRANSFORMACIONES EN STREAMING ──────────────────────────────────────────
+# Windowed aggregation: métricas cada 5 minutos, slides cada 1 minuto
+windowed_metrics = (orders_stream
+    .groupBy(
+        F.window("timestamp", "5 minutes", "1 minute"),  # Tumbling/Sliding window
+        F.col("topic")
+    )
+    .agg(
+        F.count("order_id").alias("order_count"),
+        F.sum("amount").alias("window_revenue"),
+        F.avg("amount").alias("avg_amount")
+    )
+)
+
+# ── ESCRIBIR RESULTADOS ────────────────────────────────────────────────────
+# Opción 1: A Delta Lake (Lakehouse pattern)
+query_delta = (windowed_metrics.writeStream
+    .format("delta")
+    .outputMode("append")
+    .option("checkpointLocation", "s3://bucket/checkpoints/streaming-metrics/")
+    .partitionBy("topic")
+    .trigger(processingTime="1 minute")  # Micro-batch cada 1 min
+    .start("s3://bucket/silver/streaming-metrics/")
+)
+
+# Opción 2: A Kafka (enrich and re-publish)
+query_kafka = (orders_stream
+    .select(
+        F.to_json(F.struct("*")).alias("value"),
+        F.col("order_id").cast("string").alias("key")
+    )
+    .writeStream
+    .format("kafka")
+    .option("kafka.bootstrap.servers", "kafka:9092")
+    .option("topic", "orders-enriched")
+    .option("checkpointLocation", "s3://bucket/checkpoints/orders-enriched/")
+    .start()
+)
+
+# Esperar a que todos los streams terminen
+spark.streams.awaitAnyTermination()</code></pre>
+  </section>
+
+  <!-- 9.5 -->
+  <section id="s6">
+    <h2 data-num="9.5">Optimización de Spark</h2>
+
+    <div class="accordion" id="acc-opt">
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🎯 Data Skew: El Problema más Común</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <p>Data Skew ocurre cuando algunas particiones tienen significativamente más datos que otras. El job dura lo que dura la partición más pesada.</p>
+          <pre><code># Detectar skew: algunas tasks duran 10x más que otras
+# Spark UI > Stage > Task Distribution
+
+# SOLUCIÓN 1: Salting (artificialmente aumentar cardinalidad)
+import random
+
+# Antes del JOIN, agregar salt al key grande
+orders_salted = orders_df.withColumn(
+    "salted_customer_id",
+    F.concat(F.col("customer_id"), F.lit("_"), (F.rand() * 10).cast("int"))
+)
+
+customers_replicated = customers_df.withColumn(
+    "salt", F.explode(F.array([F.lit(i) for i in range(10)]))
+).withColumn(
+    "salted_customer_id",
+    F.concat(F.col("customer_id"), F.lit("_"), F.col("salt"))
+)
+
+# JOIN con salted key
+result = orders_salted.join(customers_replicated, "salted_customer_id", "inner")
+
+# SOLUCIÓN 2: AQE Skew Join (Spark 3.0+, automático)
+spark.conf.set("spark.sql.adaptive.skewJoin.enabled", "true")
+spark.conf.set("spark.sql.adaptive.skewJoin.skewedPartitionThresholdInBytes", "256MB")
+# Spark automáticamente divide particiones sesgadas en el join</code></pre>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>📦 Small Files Problem y Compactación</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <pre><code># El problema: miles de archivos pequeños = overhead masivo de metadata
+# (Common en streaming donde cada micro-batch escribe archivos)
+
+# Detectar: ¿cuántos archivos y cuál es su tamaño promedio?
+import subprocess
+result = subprocess.run(
+    ["aws", "s3", "ls", "--recursive", "s3://bucket/silver/orders/"],
+    capture_output=True, text=True
+)
+
+# SOLUCIÓN 1: Repartition antes de escribir
+# Regla: ~128-256MB por archivo en Parquet
+target_file_size_mb = 128
+estimated_size_gb = 10  # Tamaño estimado del dataset
+num_partitions = max(1, int(estimated_size_gb * 1024 / target_file_size_mb))
+
+df.repartition(num_partitions).write.parquet("s3://bucket/output/")
+
+# SOLUCIÓN 2: Coalesce (sin shuffle, para reducir)
+df.coalesce(50).write.parquet("s3://bucket/output/")
+
+# SOLUCIÓN 3: OPTIMIZE en Delta Lake
+spark.sql("OPTIMIZE delta.`s3://bucket/silver/orders/` WHERE order_year = 2026")
+# Compacta automáticamente los archivos pequeños</code></pre>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🧠 Gestión de Memoria y Caching</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <pre><code>from pyspark import StorageLevel
+
+# ── REGLAS DE CACHE ─────────────────────────────────────────────────────────
+# CACHEAR cuando:
+# - Usas el mismo DataFrame más de una vez en el job
+# - La recomputación es costosa (reads de S3, joins complejos)
+# - Tienes suficiente memoria
+
+# NO CACHEAR cuando:
+# - Solo usas el DF una vez
+# - El DF es muy grande (llenaría la memoria)
+# - La recomputación es barata (simple transformación)
+
+# Niveles de storage:
+customer_stats.cache()                                   # MEMORY_ONLY
+customer_stats.persist(StorageLevel.MEMORY_AND_DISK)    # Spill a disco si no cabe
+customer_stats.persist(StorageLevel.DISK_ONLY)          # Solo disco (para DFs enormes)
+customer_stats.persist(StorageLevel.MEMORY_ONLY_SER)   # Serializado en memoria (menos GC)
+
+# SIEMPRE unpersist cuando ya no necesitas el cache
+customer_stats.unpersist()
+
+# ── BROADCAST VARIABLES: compartir datos read-only eficientemente ──────────
+# Para lookup tables pequeñas que se usan en UDFs
+country_map = {"US": "United States", "MX": "Mexico", "BR": "Brazil"}
+broadcast_country_map = spark.sparkContext.broadcast(country_map)
+
+@pandas_udf(StringType())
+def expand_country_code(codes: pd.Series) -> pd.Series:
+    mapping = broadcast_country_map.value  # Acceso local a la copia del executor
+    return codes.map(lambda c: mapping.get(c, c))
+
+# ── TUNING DE JVM ────────────────────────────────────────────────────────────
+# Reducir GC overhead: usar G1GC en lugar de ParallelGC
+# spark.executor.extraJavaOptions=-XX:+UseG1GC -XX:G1HeapRegionSize=16M</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <h3>Guía Rápida de Optimización</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Síntoma</th><th>Causa Probable</th><th>Solución</th></tr></thead>
+        <tbody>
+          <tr><td>Job tarda mucho, algunas tasks 10x más lentas</td><td>Data Skew</td><td>Salting, AQE Skew Join</td></tr>
+          <tr><td>OutOfMemoryError en executor</td><td>Partición muy grande</td><td>Aumentar spark.executor.memory o repartition</td></tr>
+          <tr><td>Muchas stages con Shuffle Read/Write altos</td><td>Demasiados shuffles</td><td>Reducir groupBy/joins, usar broadcast</td></tr>
+          <tr><td>Job lento pero CPU al 10%</td><td>Small files, I/O bound</td><td>Compactar archivos, aumentar batch size</td></tr>
+          <tr><td>spark.sql.shuffle.partitions default (200) inadecuado</td><td>200 siempre</td><td>Ajustar a datos reales o usar AQE</td></tr>
+          <tr><td>Mismo DF calculado N veces</td><td>Sin cache</td><td>df.cache() o df.persist()</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter-08-ecosistema-apache.html" class="ch-nav-btn">
+        <span class="arrow">←</span>
+        <div><div class="ch-nav-meta">Capítulo 8</div><div class="ch-nav-title">Ecosistema Apache</div></div>
+      </a>
+      <a href="chapter-10-kafka.html" class="ch-nav-btn next">
+        <span class="arrow">→</span>
+        <div><div class="ch-nav-meta">Capítulo 10</div><div class="ch-nav-title">Apache Kafka</div></div>
+      </a>
+    </div>
+  </section>
+</main>
+
+<script>
+  const isLightMode = document.documentElement.classList.contains('light');
+  mermaid.initialize({startOnLoad:true,theme: isLightMode ? 'default' : 'dark',themeVariables: isLightMode ? { primaryColor: '#0088CC' } : {background:'#131c35',primaryColor:'#7c2d12',edgeLabelBackground:'#0f1629'}});
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const c=btn.closest('.tabs'),t=btn.dataset.tab;
+      c.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      c.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      c.querySelector(`.tab-panel[data-tab="${t}"]`).classList.add('active');
+    });
+  });
+  function toggleAccordion(h){
+    const item=h.parentElement,body=item.querySelector('.accordion-body'),isOpen=item.classList.contains('open');
+    h.closest('.accordion').querySelectorAll('.accordion-item').forEach(i=>{i.classList.remove('open');i.querySelector('.accordion-body').classList.remove('open');});
+    if(!isOpen){item.classList.add('open');body.classList.add('open');}
+  }
+</script>
+  <script src="nav.js"></script>
+</body>
+</html>

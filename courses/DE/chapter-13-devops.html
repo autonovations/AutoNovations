@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('deCourseTheme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.classList.add('light');
+    })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 13: DevOps para Data Engineering | Master Book DE 2026</title>
+<meta name="description" content="DevOps y DataOps: Git avanzado, Docker, Kubernetes, Terraform, CI/CD y automatización de infraestructura de datos.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0A0A0A; --bg2: #121212; --bg3: rgba(18, 18, 18, 0.6); --bg4: #1e1e1e;
+  --blue: #00D9FF; --cyan: #00D9FF; --purple: #8b5cf6; --green: #10b981;
+  --orange: #f59e0b; --pink: #ec4899; --red: #ef4444;
+  --t1: #ffffff; --t2: #E0E0E0; --t3: #A0A0A0;
+  --border: rgba(0, 217, 255, 0.2);
+  --sidebar-width: 280px;
+
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--bg3);
+  --bg-card-hover: var(--bg4);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-muted: var(--t3);
+  --accent-cyan: var(--cyan);
+  --accent-blue: var(--blue);
+  --accent-green: var(--green);
+  --accent-orange: var(--orange);
+  --accent-purple: var(--purple);
+  --gradient-hero: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  --gradient-1: linear-gradient(135deg, var(--blue), var(--cyan));
+}
+html.light {
+  --bg: #F8FAFC; --bg2: #FFFFFF; --bg3: rgba(255, 255, 255, 0.7); --bg4: #E2E8F0;
+  --blue: #0088CC; --cyan: #00D9FF; --purple: #7c3aed; --green: #059669;
+  --orange: #d97706; --pink: #db2777; --red: #dc2626;
+  --t1: #0F172A; --t2: #334155; --t3: #64748B;
+  --border: rgba(0, 217, 255, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;display:flex;font-size:1.15rem;}
+.sidebar{width:280px;min-width:280px;background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 0;}
+.sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+.book-title{font-size:0.75rem;font-weight:700;color:var(--devops);letter-spacing:0.1em;text-transform:uppercase;}
+.chapter-title-sb{font-size:0.9rem;color:var(--t2);margin-top:0.25rem;}
+.nav-section{padding:0 1rem;margin-bottom:0.5rem;}
+.nav-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 0.5rem;margin-bottom:0.5rem;}
+.nav-item{display:block;padding:0.45rem 0.75rem;border-radius:8px;text-decoration:none;color:var(--t2);font-size:0.82rem;transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover,.nav-item.active{background:rgba(6,182,212,0.1);color:var(--devops);}
+.nav-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--t3);margin-right:0.4rem;}
+.nav-back{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;color:var(--t3);text-decoration:none;font-size:0.8rem;border-bottom:1px solid var(--border);margin-bottom:1rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--devops);}
+.content{flex:1;min-width:0;padding:3rem 4rem;max-width:920px;margin:0 auto;}
+.chapter-header{margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border);}
+.ch-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;color:var(--devops);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:1.1rem;color:var(--t2);max-width:680px;line-height:1.8;}
+.chapter-meta-bar{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--t3);}
+.meta-item strong{color:var(--t2);}
+h2{font-size:1.6rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--t1);padding-top:1rem;}
+h2::before{content:attr(data-num)' ';color:var(--devops);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 0.75rem;color:var(--t1);}
+h4{font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem;color:var(--cyan);}
+p{margin-bottom:1.25rem;color:var(--t2);font-size:0.95rem;}
+ul,ol{padding-left:1.5rem;margin-bottom:1.25rem;color:var(--t2);}
+li{margin-bottom:0.5rem;font-size:0.95rem;}
+strong{color:var(--t1);}
+code{font-family:'JetBrains Mono',monospace;background:var(--bg4);border:1px solid var(--border);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.85rem;color:var(--cyan);}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;}
+pre code{background:none;border:none;padding:0;font-size:0.85rem;color:var(--t1);line-height:1.8;}
+.info-box{border-left:3px solid var(--devops);background:rgba(6,182,212,0.05);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1.5rem 0;}
+.info-box.success{border-color:var(--green);background:rgba(16,185,129,0.05);}
+.info-box.warning{border-color:var(--orange);background:rgba(245,158,11,0.05);}
+.info-box-title{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.info-box .info-box-title{color:var(--devops);}
+.info-box.success .info-box-title{color:var(--green);}
+.info-box.warning .info-box-title{color:var(--orange);}
+.table-wrap{overflow-x:auto;margin:1.5rem 0;}
+table{width:100%;border-collapse:collapse;font-size:0.875rem;}
+th{background:var(--bg4);color:var(--t1);font-weight:600;padding:0.75rem 1rem;text-align:left;border-bottom:2px solid var(--border);}
+td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--t2);}
+tr:hover td{background:var(--bg3);}
+td:first-child{font-weight:500;color:var(--t1);}
+.chapter-nav{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem;}
+.ch-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--t2);transition:all 0.2s;flex:1;max-width:260px;}
+.ch-nav-btn:hover{border-color:var(--devops);color:var(--t1);}
+.ch-nav-btn.next{margin-left:auto;text-align:right;flex-direction:row-reverse;}
+.ch-nav-btn .arrow{font-size:1.25rem;color:var(--devops);}
+.ch-nav-meta{font-size:0.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;}
+.ch-nav-title{font-size:0.875rem;font-weight:600;margin-top:0.1rem;}
+@media(max-width:900px){.sidebar{display:none;}.content{padding:2rem 1.5rem;}}
+</style>
+</head>
+<body>
+
+
+<main class="content">
+  <div class="chapter-header">
+    <div class="ch-badge">🔧 Capítulo 13 · Nivel Avanzado</div>
+    <h1>DevOps para Data Engineering</h1>
+    <p class="lead">Las prácticas de desarrollo de software modernas aplicadas a los datos. Cómo versionar, paquetizar, desplegar y mantener la infraestructura y el código de manera predecible, segura y automática.</p>
+    <div class="chapter-meta-bar">
+      <div class="meta-item">⏱️ <strong>Lectura:</strong> ~60 min</div>
+      <div class="meta-item">🎯 <strong>Nivel:</strong> Avanzado</div>
+      <div class="meta-item">📌 <strong>Herramientas:</strong> Git, Docker, K8s, Terraform, GitHub Actions</div>
+    </div>
+  </div>
+
+  <!-- 13.0 -->
+  <section id="s1">
+    <h2 data-num="13.0">DataOps vs DevOps</h2>
+    <p>El término <strong>DataOps</strong> (Data Operations) es la aplicación de los principios ágiles y de DevOps a la analítica de datos. Mientras DevOps se enfoca en entregar software, DataOps se enfoca en entregar <em>datos de calidad a alta velocidad</em>.</p>
+    <ul>
+      <li><strong>DevOps:</strong> CI/CD, Infrastructure as Code, monitoreo de aplicaciones.</li>
+      <li><strong>DataOps:</strong> Orchestration as Code, Data Quality tests continuos, monitoreo de frescura y completitud de datos (Data Observability).</li>
+    </ul>
+  </section>
+
+  <!-- 13.1 -->
+  <section id="s2">
+    <h2 data-num="13.1">Git Avanzado y Branching Strategies</h2>
+    <p>En equipos de datos modernos, todo es código: los pipelines de Airflow, los modelos dbt, y la infraestructura. Git es obligatorio.</p>
+    <div class="info-box">
+      <div class="info-box-title">🌿 GitFlow para Data Teams</div>
+      <ul style="margin:0;font-size:0.875rem;">
+        <li><code>main</code>: Código en producción (siempre desplegable).</li>
+        <li><code>develop</code>: Código en integración/staging.</li>
+        <li><code>feature/*</code>: Nuevos pipelines o modelos (e.g. <code>feature/add-stripe-ingestion</code>).</li>
+        <li><code>hotfix/*</code>: Parches rápidos en producción.</li>
+      </ul>
+    </div>
+    <pre><code"># Flujo típico de un Data Engineer
+git checkout -b feature/new-dbt-model
+# (Escribir el código y tests locales)
+git add models/staging/stg_stripe__payments.sql
+git commit -m "feat: add stripe payments staging model"
+git push origin feature/new-dbt-model
+# (Crear un Pull Request en GitHub/GitLab)</code></pre>
+  </section>
+
+  <!-- 13.2 -->
+  <section id="s3">
+    <h2 data-num="13.2">Docker y Kubernetes para Datos</h2>
+    <p>Empaquetar aplicaciones en contenedores elimina el problema de "en mi máquina sí funciona". En Data Engineering, Docker es vital para Airflow, Spark jobs, y microservicios de ingesta.</p>
+    
+    <h3>Dockerfile Ejemplo para un Job de Python</h3>
+    <pre><code"># Usar una imagen base ligera
+FROM python:3.10-slim
+
+# Establecer directorio de trabajo
+WORKDIR /app
+
+# Instalar dependencias
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar el código del job
+COPY src/ .
+
+# Comando por defecto (sobreescribible)
+CMD ["python", "ingest_api_data.py"]</code></pre>
+
+    <h3>Kubernetes (K8s)</h3>
+    <p>Kubernetes orquesta los contenedores. Para DE, Kubernetes es donde corren nuestros <em>Executors</em> de Airflow (ej. KubernetesPodOperator) o clusters de Spark on K8s.</p>
+    <ul>
+      <li><strong>Pod:</strong> Unidad mínima. Un job de Spark driver podría ser un pod.</li>
+      <li><strong>Deployment:</strong> Asegura que servicios (como la web UI de Airflow) estén siempre corriendo.</li>
+      <li><strong>CronJob:</strong> Alternativa nativa de K8s a Airflow para tareas simples periódicas.</li>
+    </ul>
+  </section>
+
+  <!-- 13.3 -->
+  <section id="s4">
+    <h2 data-num="13.3">Infrastructure as Code (IaC) con Terraform</h2>
+    <p>Crear recursos en AWS/GCP a mano usando la consola web es un anti-patrón. Terraform permite definir recursos cloud usando código (HCL).</p>
+    
+    <pre><code"># Ejemplo: Crear un bucket de S3 para el Data Lake con Terraform
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_s3_bucket" "data_lake_raw" {
+  bucket = "company-datalake-raw-2026"
+  
+  tags = {
+    Environment = "Production"
+    Team        = "Data Engineering"
+  }
+}
+
+# Configurar versionamiento en el bucket
+resource "aws_s3_bucket_versioning" "raw_versioning" {
+  bucket = aws_s3_bucket.data_lake_raw.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}</code></pre>
+  </section>
+
+  <!-- 13.4 -->
+  <section id="s5">
+    <h2 data-num="13.4">CI/CD Pipelines (GitHub Actions)</h2>
+    <p>La Integración Continua y Despliegue Continuo validan el código y lo mueven a producción automáticamente.</p>
+    
+    <h3>Pipeline CI/CD para dbt</h3>
+    <pre><code">name: dbt CI/CD Pipeline
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  test_dbt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Install dependencies
+        run: pip install dbt-snowflake
+        
+      - name: dbt deps
+        run: dbt deps
+        
+      - name: dbt build (test in staging)
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+        run: dbt build --target ci
+
+  deploy_production:
+    needs: test_dbt
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Airflow Production
+        # Aquí iría un paso para actualizar el repositorio de Airflow o hacer trigger de un DAG
+        run: echo "Desplegando modelos aprobados a Producción"</code></pre>
+  </section>
+
+  <div class="chapter-nav">
+    <a href="chapter-12-cloud.html" class="ch-nav-btn">
+      <span class="arrow">←</span>
+      <div><div class="ch-nav-meta">Capítulo 12</div><div class="ch-nav-title">Cloud Platforms</div></div>
+    </a>
+    <a href="chapter-14-observabilidad.html" class="ch-nav-btn next">
+      <span class="arrow">→</span>
+      <div><div class="ch-nav-meta">Capítulo 14</div><div class="ch-nav-title">Observabilidad de Datos</div></div>
+    </a>
+  </div>
+</main>
+  <script src="nav.js"></script>
+</body>
+</html>

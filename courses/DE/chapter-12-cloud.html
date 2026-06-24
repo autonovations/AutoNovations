@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('deCourseTheme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.classList.add('light');
+    })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 12: Cloud Platforms | Master Book DE 2026</title>
+<meta name="description" content="AWS, Google Cloud y Azure para Data Engineering. S3, Redshift, Glue, GCS, Dataflow, BigQuery, ADLS y Azure Synapse.">
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0A0A0A; --bg2: #121212; --bg3: rgba(18, 18, 18, 0.6); --bg4: #1e1e1e;
+  --blue: #00D9FF; --cyan: #00D9FF; --purple: #8b5cf6; --green: #10b981;
+  --orange: #f59e0b; --pink: #ec4899; --red: #ef4444;
+  --t1: #ffffff; --t2: #E0E0E0; --t3: #A0A0A0;
+  --border: rgba(0, 217, 255, 0.2);
+  --sidebar-width: 280px;
+
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--bg3);
+  --bg-card-hover: var(--bg4);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-muted: var(--t3);
+  --accent-cyan: var(--cyan);
+  --accent-blue: var(--blue);
+  --accent-green: var(--green);
+  --accent-orange: var(--orange);
+  --accent-purple: var(--purple);
+  --gradient-hero: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  --gradient-1: linear-gradient(135deg, var(--blue), var(--cyan));
+}
+html.light {
+  --bg: #F8FAFC; --bg2: #FFFFFF; --bg3: rgba(255, 255, 255, 0.7); --bg4: #E2E8F0;
+  --blue: #0088CC; --cyan: #00D9FF; --purple: #7c3aed; --green: #059669;
+  --orange: #d97706; --pink: #db2777; --red: #dc2626;
+  --t1: #0F172A; --t2: #334155; --t3: #64748B;
+  --border: rgba(0, 217, 255, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;display:flex;font-size:1.15rem;}
+.sidebar{width:280px;min-width:280px;background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 0;}
+.sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+.book-title{font-size:0.75rem;font-weight:700;color:var(--orange);letter-spacing:0.1em;text-transform:uppercase;}
+.chapter-title-sb{font-size:0.9rem;color:var(--t2);margin-top:0.25rem;}
+.nav-section{padding:0 1rem;margin-bottom:0.5rem;}
+.nav-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 0.5rem;margin-bottom:0.5rem;}
+.nav-item{display:block;padding:0.45rem 0.75rem;border-radius:8px;text-decoration:none;color:var(--t2);font-size:0.82rem;transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover,.nav-item.active{background:rgba(255,153,0,0.1);color:var(--aws);}
+.nav-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--t3);margin-right:0.4rem;}
+.nav-back{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;color:var(--t3);text-decoration:none;font-size:0.8rem;border-bottom:1px solid var(--border);margin-bottom:1rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--aws);}
+.content{flex:1;min-width:0;padding:3rem 4rem;max-width:920px;margin:0 auto;}
+.chapter-header{margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border);}
+.ch-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(255,153,0,0.1);border:1px solid rgba(255,153,0,0.2);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;color:var(--aws);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:1.1rem;color:var(--t2);max-width:680px;line-height:1.8;}
+.chapter-meta-bar{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--t3);}
+.meta-item strong{color:var(--t2);}
+h2{font-size:1.6rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--t1);padding-top:1rem;}
+h2::before{content:attr(data-num)' ';color:var(--orange);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 0.75rem;color:var(--t1);}
+h4{font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem;color:var(--cyan);}
+p{margin-bottom:1.25rem;color:var(--t2);font-size:0.95rem;}
+ul,ol{padding-left:1.5rem;margin-bottom:1.25rem;color:var(--t2);}
+li{margin-bottom:0.5rem;font-size:0.95rem;}
+strong{color:var(--t1);}
+code{font-family:'JetBrains Mono',monospace;background:var(--bg4);border:1px solid var(--border);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.85rem;color:var(--cyan);}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;}
+pre code{background:none;border:none;padding:0;font-size:0.85rem;color:var(--t1);line-height:1.8;}
+.cloud-section{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:2rem;margin:2rem 0;position:relative;overflow:hidden;}
+.cloud-section::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--cs,var(--aws));}
+.cloud-section h3{margin-top:0;}
+.cloud-tag{display:inline-flex;align-items:center;gap:0.35rem;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:0.2rem 0.6rem;border-radius:4px;background:rgba(255,153,0,0.12);color:var(--aws);margin-bottom:1rem;}
+.aws-tag{background:rgba(255,153,0,0.12);color:var(--aws);}
+.gcp-tag{background:rgba(66,133,244,0.12);color:var(--gcp);}
+.azure-tag{background:rgba(0,120,212,0.12);color:var(--azure);}
+.service-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;margin:1.5rem 0;}
+.service-card{background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:1rem;}
+.service-card h4{font-size:0.875rem;margin:0 0 0.25rem;color:var(--t1);}
+.service-card p{font-size:0.75rem;color:var(--t3);margin:0;}
+.info-box{border-left:3px solid var(--blue);background:rgba(59,130,246,0.05);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1.5rem 0;}
+.info-box.success{border-color:var(--green);background:rgba(16,185,129,0.05);}
+.info-box.warning{border-color:var(--orange);background:rgba(245,158,11,0.05);}
+.info-box-title{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.info-box .info-box-title{color:var(--blue);}
+.info-box.success .info-box-title{color:var(--green);}
+.info-box.warning .info-box-title{color:var(--orange);}
+.table-wrap{overflow-x:auto;margin:1.5rem 0;}
+table{width:100%;border-collapse:collapse;font-size:0.875rem;}
+th{background:var(--bg4);color:var(--t1);font-weight:600;padding:0.75rem 1rem;text-align:left;border-bottom:2px solid var(--border);}
+td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--t2);}
+tr:hover td{background:var(--bg3);}
+td:first-child{font-weight:500;color:var(--t1);}
+.chapter-nav{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem;}
+.ch-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--t2);transition:all 0.2s;flex:1;max-width:260px;}
+.ch-nav-btn:hover{border-color:var(--orange);color:var(--t1);}
+.ch-nav-btn.next{margin-left:auto;text-align:right;flex-direction:row-reverse;}
+.ch-nav-btn .arrow{font-size:1.25rem;color:var(--orange);}
+.ch-nav-meta{font-size:0.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;}
+.ch-nav-title{font-size:0.875rem;font-weight:600;margin-top:0.1rem;}
+@media(max-width:900px){.sidebar{display:none;}.content{padding:2rem 1.5rem;}}
+</style>
+</head>
+<body>
+
+
+<main class="content">
+  <div class="chapter-header">
+    <div class="ch-badge">☁️ Capítulo 12 · Nivel Avanzado</div>
+    <h1>Cloud Platforms para Data Engineering</h1>
+    <p class="lead">AWS, Google Cloud y Azure son los tres grandes proveedores cloud. Cada uno tiene su ecosistema de servicios de datos. Conocer los equivalentes entre plataformas y las mejores prácticas de cada una es fundamental para el mercado laboral de 2026.</p>
+    <div class="chapter-meta-bar">
+      <div class="meta-item">⏱️ <strong>Lectura:</strong> ~60 min</div>
+      <div class="meta-item">🎯 <strong>Nivel:</strong> Avanzado</div>
+      <div class="meta-item">📌 <strong>Foco:</strong> Práctico y comparativo</div>
+    </div>
+  </div>
+
+  <!-- 12.0 AWS -->
+  <section id="s1">
+    <h2 data-num="12.0">AWS: El Ecosistema de Datos</h2>
+    <p>Amazon Web Services es el cloud líder con la mayor cuota de mercado. Su ecosistema de datos es el más maduro y extenso.</p>
+
+    <div class="cloud-section" style="--cs:var(--aws)">
+      <div class="cloud-tag aws-tag">☁️ Amazon Web Services</div>
+      <h3>Stack de Datos AWS 2026</h3>
+      
+      <div class="service-grid">
+        <div class="service-card">
+          <h4>S3</h4>
+          <p>Object storage. El Data Lake base. Duradero 11 nines, infinitamente escalable.</p>
+        </div>
+        <div class="service-card">
+          <h4>Redshift</h4>
+          <p>Data Warehouse columnar. Redshift Serverless para pago por uso.</p>
+        </div>
+        <div class="service-card">
+          <h4>Glue</h4>
+          <p>ETL serverless + Data Catalog. PySpark/Python sin gestionar clusters.</p>
+        </div>
+        <div class="service-card">
+          <h4>Athena</h4>
+          <p>Query SQL sobre S3 sin infraestructura. Pago por query (5$/TB).</p>
+        </div>
+        <div class="service-card">
+          <h4>EMR</h4>
+          <p>Hadoop/Spark managed. EMR Serverless para escalar automáticamente.</p>
+        </div>
+        <div class="service-card">
+          <h4>Kinesis</h4>
+          <p>Streaming equivalente a Kafka. Kinesis Data Streams + Firehose.</p>
+        </div>
+        <div class="service-card">
+          <h4>MSK</h4>
+          <p>Apache Kafka managed. Para equipos que prefieren Kafka sobre Kinesis.</p>
+        </div>
+        <div class="service-card">
+          <h4>Lambda</h4>
+          <p>Funciones serverless. Para transformaciones ligeras event-driven.</p>
+        </div>
+        <div class="service-card">
+          <h4>Step Functions</h4>
+          <p>Orquestación serverless de workflows. Alternativa a Airflow para AWS-native.</p>
+        </div>
+        <div class="service-card">
+          <h4>Lake Formation</h4>
+          <p>Data Lake governance y permisos fine-grained sobre S3 + Glue Catalog.</p>
+        </div>
+      </div>
+
+      <h4>AWS S3: Mejores Prácticas</h4>
+      <pre><code>"""
+Trabajar con S3 eficientemente desde Python
+boto3 + s3fs + pandas
+"""
+import boto3
+import s3fs
+import pandas as pd
+from pathlib import Path
+
+# ── BOTO3: AWS SDK ──────────────────────────────────────────────────────────
+s3 = boto3.client('s3',
+    region_name='us-east-1',
+    # Usar IAM roles en producción, nunca credenciales hardcoded
+)
+
+# Subir archivo
+s3.upload_file('local_file.parquet', 'my-data-lake', 'raw/orders/2026/01/01/data.parquet')
+
+# Listar objetos con paginación
+paginator = s3.get_paginator('list_objects_v2')
+pages = paginator.paginate(Bucket='my-data-lake', Prefix='raw/orders/2026/')
+
+all_keys = []
+for page in pages:
+    if 'Contents' in page:
+        all_keys.extend([obj['Key'] for obj in page['Contents']])
+
+# Leer Parquet directamente desde S3 (sin descargar)
+fs = s3fs.S3FileSystem()
+df = pd.read_parquet('s3://my-data-lake/silver/orders/year=2026/month=1/', 
+                      filesystem=fs,
+                      columns=['order_id', 'customer_id', 'amount'])
+
+# ── BEST PRACTICES para S3 Data Lake ─────────────────────────────────────
+# 1. Particionamiento Hive-style: year=YYYY/month=MM/day=DD/
+# 2. Usar prefixes para distribución de carga (key prefix sharding)
+# 3. Tamaño ideal de archivos: 128MB - 1GB
+# 4. Habilitar S3 Versioning para tablas críticas
+# 5. S3 Lifecycle policies para archivar datos antiguos a Glacier
+# 6. Encryption at rest: S3-SSE o KMS para datos sensibles
+# 7. VPC Endpoints: acceso a S3 sin internet (seguridad)
+
+# ── AWS GLUE: ETL Serverless ───────────────────────────────────────────────
+# Glue Job en PySpark - se ejecuta en un cluster managed por AWS
+import sys
+from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
+
+args = getResolvedOptions(sys.argv, ['JOB_NAME', 'run_date'])
+sc = SparkContext()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+job.init(args['JOB_NAME'], args)
+
+# Leer desde Glue Data Catalog
+orders_dyf = glueContext.create_dynamic_frame.from_catalog(
+    database='raw_data',
+    table_name='orders',
+    push_down_predicate=f"run_date = '{args['run_date']}'",
+)
+
+# Convertir a DataFrame Spark para transformaciones complejas
+orders_df = orders_dyf.toDF()
+# ... transformaciones ...
+
+# Escribir de vuelta al Data Lake con Glue
+output_dyf = DynamicFrame.fromDF(orders_df, glueContext, "output")
+glueContext.write_dynamic_frame.from_options(
+    frame=output_dyf,
+    connection_type='s3',
+    connection_options={
+        'path': 's3://my-data-lake/silver/orders/',
+        'partitionKeys': ['year', 'month'],
+    },
+    format='glueparquet',
+)
+
+job.commit()
+
+# ── AMAZON ATHENA: SQL sobre S3 ────────────────────────────────────────────
+import boto3
+import time
+import pandas as pd
+
+athena = boto3.client('athena', region_name='us-east-1')
+
+def run_athena_query(sql: str, database: str, output_bucket: str) -> pd.DataFrame:
+    """Ejecuta una query en Athena y retorna un DataFrame."""
+    response = athena.start_query_execution(
+        QueryString=sql,
+        QueryExecutionContext={'Database': database},
+        ResultConfiguration={
+            'OutputLocation': f's3://{output_bucket}/athena-results/',
+            'EncryptionConfiguration': {'EncryptionOption': 'SSE_S3'}
+        },
+        WorkGroup='primary'
+    )
+    
+    execution_id = response['QueryExecutionId']
+    
+    # Esperar a que termine
+    while True:
+        result = athena.get_query_execution(QueryExecutionId=execution_id)
+        state = result['QueryExecution']['Status']['State']
+        
+        if state == 'SUCCEEDED':
+            break
+        elif state in ['FAILED', 'CANCELLED']:
+            raise Exception(f"Query failed: {result['QueryExecution']['Status']}")
+        
+        time.sleep(2)
+    
+    # Leer resultados desde S3
+    output_path = result['QueryExecution']['ResultConfiguration']['OutputLocation']
+    return pd.read_csv(output_path)
+
+# Uso
+df = run_athena_query(
+    "SELECT customer_id, SUM(amount) FROM silver.orders WHERE year='2026' GROUP BY 1",
+    database='silver',
+    output_bucket='my-query-results'
+)</code></pre>
+    </div>
+  </section>
+
+  <!-- 12.1 GCP -->
+  <section id="s2">
+    <h2 data-num="12.1">Google Cloud: El Ecosistema de Datos</h2>
+
+    <div class="cloud-section" style="--cs:var(--gcp)">
+      <div class="cloud-tag gcp-tag">☁️ Google Cloud Platform</div>
+      <h3>Stack de Datos GCP 2026</h3>
+      
+      <div class="service-grid">
+        <div class="service-card">
+          <h4>Cloud Storage (GCS)</h4>
+          <p>Equivalente a S3. Object storage para Data Lakes.</p>
+        </div>
+        <div class="service-card">
+          <h4>BigQuery</h4>
+          <p>DWH serverless líder. Analítica a escala de petabytes con SQL.</p>
+        </div>
+        <div class="service-card">
+          <h4>Dataflow</h4>
+          <p>Apache Beam managed. Batch + Stream en una sola API.</p>
+        </div>
+        <div class="service-card">
+          <h4>Pub/Sub</h4>
+          <p>Messaging serverless. Equivalente a Kinesis para streaming.</p>
+        </div>
+        <div class="service-card">
+          <h4>Dataproc</h4>
+          <p>Hadoop/Spark managed. Equivalente a EMR de AWS.</p>
+        </div>
+        <div class="service-card">
+          <h4>Cloud Composer</h4>
+          <p>Apache Airflow managed. Orquestación de workflows.</p>
+        </div>
+        <div class="service-card">
+          <h4>Vertex AI</h4>
+          <p>ML Platform. AutoML, Workbench, Feature Store, MLOps.</p>
+        </div>
+        <div class="service-card">
+          <h4>Dataplex</h4>
+          <p>Data Mesh y governance. Cataloga y gestiona activos de datos.</p>
+        </div>
+      </div>
+
+      <pre><code># ── GOOGLE CLOUD STORAGE ─────────────────────────────────────────────────
+from google.cloud import storage
+
+storage_client = storage.Client()
+bucket = storage_client.bucket('my-data-lake-gcs')
+
+# Upload
+blob = bucket.blob('raw/orders/2026/01/01/data.parquet')
+blob.upload_from_filename('local_data.parquet')
+
+# Con metadata y content type
+blob.content_type = 'application/octet-stream'
+blob.metadata = {'source': 'orders-api', 'version': '2'}
+blob.patch()
+
+# Leer Parquet directamente con GCSFileSystem
+import gcsfs
+fs = gcsfs.GCSFileSystem()
+df = pd.read_parquet('gcs://my-data-lake-gcs/silver/orders/', filesystem=fs)
+
+# ── BIGQUERY: Analytics Serverless ────────────────────────────────────────
+from google.cloud import bigquery
+
+bq = bigquery.Client()
+
+# Insertar desde DataFrame
+job_config = bigquery.LoadJobConfig(
+    schema=[
+        bigquery.SchemaField("order_id", "INTEGER"),
+        bigquery.SchemaField("amount", "FLOAT"),
+        bigquery.SchemaField("created_at", "TIMESTAMP"),
+    ],
+    write_disposition="WRITE_APPEND",
+    time_partitioning=bigquery.TimePartitioning(
+        type_=bigquery.TimePartitioningType.DAY,
+        field="created_at"
+    ),
+    clustering_fields=["customer_id", "status"]
+)
+
+job = bq.load_table_from_dataframe(df, "project.dataset.orders", job_config=job_config)
+job.result()  # Esperar que termine
+
+# Ejecutar query y obtener resultado
+query = """
+    SELECT customer_id, SUM(amount) AS total
+    FROM `project.dataset.orders`
+    WHERE DATE(created_at) = @run_date
+    GROUP BY customer_id
+"""
+job_config_q = bigquery.QueryJobConfig(
+    query_parameters=[bigquery.ScalarQueryParameter("run_date", "DATE", "2026-01-15")]
+)
+df_result = bq.query(query, job_config=job_config_q).to_dataframe()
+
+# ── APACHE BEAM con Dataflow ───────────────────────────────────────────────
+import apache_beam as beam
+from apache_beam.options.pipeline_options import PipelineOptions, GoogleCloudOptions
+
+options = PipelineOptions()
+google_cloud_options = options.view_as(GoogleCloudOptions)
+google_cloud_options.project = 'my-project'
+google_cloud_options.region = 'us-central1'
+google_cloud_options.staging_location = 'gs://my-bucket/staging'
+google_cloud_options.temp_location = 'gs://my-bucket/temp'
+options.view_as(beam.options.pipeline_options.StandardOptions).runner = 'DataflowRunner'
+
+with beam.Pipeline(options=options) as p:
+    orders = (
+        p
+        | 'ReadFromPubSub' >> beam.io.ReadFromPubSub(topic='projects/myproject/topics/orders')
+        | 'ParseJSON' >> beam.Map(json.loads)
+        | 'FilterValid' >> beam.Filter(lambda x: x.get('amount', 0) > 0)
+        | 'TransformOrders' >> beam.Map(lambda x: {**x, 'revenue_cat': 'large' if x['amount'] > 500 else 'small'})
+        | 'WriteToBigQuery' >> beam.io.WriteToBigQuery(
+            'my-project:analytics.orders_stream',
+            schema='order_id:INTEGER,amount:FLOAT,revenue_cat:STRING',
+            write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+        )
+    )</code></pre>
+    </div>
+  </section>
+
+  <!-- 12.2 Azure -->
+  <section id="s3">
+    <h2 data-num="12.2">Azure: El Ecosistema de Datos</h2>
+
+    <div class="cloud-section" style="--cs:var(--azure)">
+      <div class="cloud-tag azure-tag">☁️ Microsoft Azure</div>
+      <h3>Stack de Datos Azure 2026</h3>
+      
+      <div class="service-grid">
+        <div class="service-card">
+          <h4>ADLS Gen2</h4>
+          <p>Azure Data Lake Storage. Object storage con filesystem semantics.</p>
+        </div>
+        <div class="service-card">
+          <h4>Azure Synapse</h4>
+          <p>Analytics unificado: DWH + Spark + Pipelines en una plataforma.</p>
+        </div>
+        <div class="service-card">
+          <h4>Azure Data Factory</h4>
+          <p>ETL/ELT managed. 90+ conectores. Orquestación visual.</p>
+        </div>
+        <div class="service-card">
+          <h4>Event Hubs</h4>
+          <p>Kafka-compatible streaming. Ingestión de millones de eventos/seg.</p>
+        </div>
+        <div class="service-card">
+          <h4>Databricks on Azure</h4>
+          <p>Spark + Delta Lake. Muy común en el stack Azure-Databricks.</p>
+        </div>
+        <div class="service-card">
+          <h4>Power BI</h4>
+          <p>BI y visualización. Integración nativa con todo el stack Azure.</p>
+        </div>
+        <div class="service-card">
+          <h4>Azure Purview</h4>
+          <p>Data Catalog y Data Governance para todo el stack Azure.</p>
+        </div>
+        <div class="service-card">
+          <h4>Azure ML</h4>
+          <p>MLOps y Feature Store. Comparable a Vertex AI de GCP.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12.3 Comparativa -->
+  <section id="s4">
+    <h2 data-num="12.3">Comparativa Multi-Cloud e IaC con Terraform</h2>
+
+    <h3>Equivalencias entre Clouds</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Categoría</th><th>AWS</th><th>Google Cloud</th><th>Azure</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Object Storage</td><td>S3</td><td>Cloud Storage (GCS)</td><td>ADLS Gen2 / Blob Storage</td></tr>
+          <tr><td>Data Warehouse</td><td>Redshift</td><td>BigQuery</td><td>Synapse Analytics</td></tr>
+          <tr><td>Spark Managed</td><td>EMR</td><td>Dataproc</td><td>Databricks / HDInsight</td></tr>
+          <tr><td>Serverless ETL</td><td>AWS Glue</td><td>Dataflow (Beam)</td><td>Azure Data Factory</td></tr>
+          <tr><td>SQL on Lake</td><td>Athena</td><td>BigQuery</td><td>Synapse Serverless SQL</td></tr>
+          <tr><td>Event Streaming</td><td>Kinesis / MSK</td><td>Pub/Sub</td><td>Event Hubs</td></tr>
+          <tr><td>Workflow Orchestration</td><td>MWAA (Airflow)</td><td>Cloud Composer</td><td>Managed Airflow</td></tr>
+          <tr><td>Data Catalog</td><td>Glue Catalog / Lake Formation</td><td>Dataplex</td><td>Microsoft Purview</td></tr>
+          <tr><td>ML Platform</td><td>SageMaker</td><td>Vertex AI</td><td>Azure ML</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Infrastructure as Code con Terraform</h3>
+    <pre><code"># ── TERRAFORM: Infraestructura como código para Data Engineering ──────────
+# Nunca crear infraestructura manualmente en producción. Siempre IaC.
+
+# main.tf - Stack de datos AWS con Terraform
+terraform {
+  required_providers {
+    aws = { source = "hashicorp/aws", version = "~> 5.0" }
+  }
+  backend "s3" {
+    bucket = "my-terraform-state"
+    key    = "data-platform/terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+
+# ── S3 Data Lake ────────────────────────────────────────────────────────────
+resource "aws_s3_bucket" "data_lake" {
+  bucket = "${var.environment}-data-lake-${var.account_id}"
+}
+
+resource "aws_s3_bucket_versioning" "data_lake" {
+  bucket = aws_s3_bucket.data_lake.id
+  versioning_configuration { status = "Enabled" }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "data_lake" {
+  bucket = aws_s3_bucket.data_lake.id
+
+  rule {
+    id     = "raw-to-glacier"
+    status = "Enabled"
+    filter { prefix = "raw/" }
+    transition { days = 90; storage_class = "GLACIER" }
+    expiration { days = 365 }
+  }
+}
+
+# ── Redshift Serverless ────────────────────────────────────────────────────
+resource "aws_redshiftserverless_namespace" "main" {
+  namespace_name = "${var.environment}-data-warehouse"
+  admin_username = "admin"
+  admin_user_password = var.redshift_password  # Usar Secrets Manager en producción
+  db_name        = "analytics"
+}
+
+resource "aws_redshiftserverless_workgroup" "main" {
+  namespace_name = aws_redshiftserverless_namespace.main.namespace_name
+  workgroup_name = "${var.environment}-workgroup"
+  base_capacity  = 8  # RPUs
+  
+  config_parameter {
+    parameter_key   = "max_query_execution_time"
+    parameter_value = "3600"
+  }
+}
+
+# ── MSK (Managed Kafka) ───────────────────────────────────────────────────
+resource "aws_msk_cluster" "main" {
+  cluster_name           = "${var.environment}-kafka"
+  kafka_version          = "3.6.0"
+  number_of_broker_nodes = 3
+
+  broker_node_group_info {
+    instance_type   = "kafka.m5.large"
+    client_subnets  = var.private_subnet_ids
+    storage_info {
+      ebs_storage_info { volume_size = 100 }
+    }
+  }
+
+  encryption_info {
+    encryption_in_transit {
+      client_broker = "TLS"
+      in_cluster    = true
+    }
+  }
+}
+
+# ── AWS Glue Catalog ──────────────────────────────────────────────────────
+resource "aws_glue_catalog_database" "raw" {
+  name = "${var.environment}_raw"
+}
+
+resource "aws_glue_crawler" "orders" {
+  name          = "${var.environment}-orders-crawler"
+  role          = aws_iam_role.glue_role.arn
+  database_name = aws_glue_catalog_database.raw.name
+
+  s3_target {
+    path = "s3://${aws_s3_bucket.data_lake.bucket}/raw/orders/"
+  }
+
+  schedule = "cron(0 */6 * * ? *)"  # Cada 6 horas
+}
+
+# Aplicar: terraform init, terraform plan, terraform apply</code></pre>
+
+    <div class="info-box success">
+      <div class="info-box-title">💡 Recomendación de Cloud 2026</div>
+      <p style="margin:0;font-size:0.9rem;"><strong>Si empiezas de cero:</strong> AWS si necesitas el ecosistema más maduro y grande, GCP si tu caso de uso central es analytics/ML (BigQuery es el mejor DWH cloud), Azure si tu empresa ya tiene Microsoft Stack (Office 365, Windows Azure AD). <strong>Para entrevistas:</strong> Conocer los conceptos de uno en profundidad es más valioso que conocer los tres superficialmente.</p>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter-11-airflow.html" class="ch-nav-btn">
+        <span class="arrow">←</span>
+        <div><div class="ch-nav-meta">Capítulo 11</div><div class="ch-nav-title">Apache Airflow</div></div>
+      </a>
+      <a href="chapter-13-data-quality.html" class="ch-nav-btn next">
+        <span class="arrow">→</span>
+        <div><div class="ch-nav-meta">Capítulo 13</div><div class="ch-nav-title">Data Quality</div></div>
+      </a>
+    </div>
+  </section>
+</main>
+
+<script>
+  const isLightMode = document.documentElement.classList.contains('light');
+  mermaid.initialize({startOnLoad:true,theme: isLightMode ? 'default' : 'dark',themeVariables: isLightMode ? { primaryColor: '#0088CC' } : {background:'#131c35'}});
+</script>
+  <script src="nav.js"></script>
+</body>
+</html>

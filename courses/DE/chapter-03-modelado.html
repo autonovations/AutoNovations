@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('deCourseTheme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.classList.add('light');
+    })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 3: Modelado de Datos | Master Book DE 2026</title>
+<meta name="description" content="ER Modeling, Star Schema, Snowflake Schema, Slowly Changing Dimensions, Data Vault y todas las técnicas de modelado de datos.">
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0A0A0A; --bg2: #121212; --bg3: rgba(18, 18, 18, 0.6); --bg4: #1e1e1e;
+  --blue: #00D9FF; --cyan: #00D9FF; --purple: #8b5cf6; --green: #10b981;
+  --orange: #f59e0b; --pink: #ec4899; --red: #ef4444;
+  --t1: #ffffff; --t2: #E0E0E0; --t3: #A0A0A0;
+  --border: rgba(0, 217, 255, 0.2);
+  --sidebar-width: 280px;
+
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--bg3);
+  --bg-card-hover: var(--bg4);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-muted: var(--t3);
+  --accent-cyan: var(--cyan);
+  --accent-blue: var(--blue);
+  --accent-green: var(--green);
+  --accent-orange: var(--orange);
+  --accent-purple: var(--purple);
+  --gradient-hero: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  --gradient-1: linear-gradient(135deg, var(--blue), var(--cyan));
+}
+html.light {
+  --bg: #F8FAFC; --bg2: #FFFFFF; --bg3: rgba(255, 255, 255, 0.7); --bg4: #E2E8F0;
+  --blue: #0088CC; --cyan: #00D9FF; --purple: #7c3aed; --green: #059669;
+  --orange: #d97706; --pink: #db2777; --red: #dc2626;
+  --t1: #0F172A; --t2: #334155; --t3: #64748B;
+  --border: rgba(0, 217, 255, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;display:flex;font-size:1.15rem;}
+.sidebar{width:280px;min-width:280px;background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 0;}
+.sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+.book-title{font-size:0.75rem;font-weight:700;color:var(--purple);letter-spacing:0.1em;text-transform:uppercase;}
+.chapter-title-sidebar{font-size:0.9rem;color:var(--t2);margin-top:0.25rem;}
+.nav-section{padding:0 1rem;margin-bottom:0.5rem;}
+.nav-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 0.5rem;margin-bottom:0.5rem;}
+.nav-item{display:block;padding:0.45rem 0.75rem;border-radius:8px;text-decoration:none;color:var(--t2);font-size:0.82rem;transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover,.nav-item.active{background:rgba(139,92,246,0.1);color:var(--purple);}
+.nav-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--t3);margin-right:0.4rem;}
+.nav-back{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;color:var(--t3);text-decoration:none;font-size:0.8rem;border-bottom:1px solid var(--border);margin-bottom:1rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--purple);}
+.content{flex:1;min-width:0;padding:3rem 4rem;max-width:100%;margin:0 auto;}
+.chapter-header{margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border);}
+.ch-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;color:var(--purple);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:1.1rem;color:var(--t2);max-width:680px;line-height:1.8;}
+.chapter-meta-bar{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--t3);}
+.meta-item strong{color:var(--t2);}
+h2{font-size:1.6rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--t1);padding-top:1rem;}
+h2::before{content:attr(data-num)' ';color:var(--purple);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 0.75rem;color:var(--t1);}
+h4{font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem;color:var(--cyan);}
+p{margin-bottom:1.25rem;color:var(--t2);font-size:0.95rem;}
+ul,ol{padding-left:1.5rem;margin-bottom:1.25rem;color:var(--t2);}
+li{margin-bottom:0.5rem;font-size:0.95rem;}
+strong{color:var(--t1);}
+code{font-family:'JetBrains Mono',monospace;background:var(--bg4);border:1px solid var(--border);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.85rem;color:var(--cyan);}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;}
+pre code{background:none;border:none;padding:0;font-size:0.85rem;color:var(--t1);line-height:1.6;}
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0;}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin:1.5rem 0;}
+.card-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1.25rem;transition:all 0.2s;}
+.card-item:hover{border-color:var(--purple);background:var(--bg4);}
+.card-item .icon{font-size:1.75rem;margin-bottom:0.75rem;}
+.card-item h4{margin:0 0 0.5rem;color:var(--t1);}
+.card-item p{font-size:0.82rem;color:var(--t3);margin:0;}
+.info-box{border-left:3px solid var(--blue);background:rgba(59,130,246,0.05);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1.5rem 0;}
+.info-box.warning{border-color:var(--orange);background:rgba(245,158,11,0.05);}
+.info-box.success{border-color:var(--green);background:rgba(16,185,129,0.05);}
+.info-box.purple{border-color:var(--purple);background:rgba(139,92,246,0.05);}
+.info-box-title{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.info-box .info-box-title{color:var(--blue);}
+.info-box.warning .info-box-title{color:var(--orange);}
+.info-box.success .info-box-title{color:var(--green);}
+.info-box.purple .info-box-title{color:var(--purple);}
+.table-wrap{overflow-x:auto;margin:1.5rem 0;}
+table{width:100%;border-collapse:collapse;font-size:0.875rem;}
+th{background:var(--bg4);color:var(--t1);font-weight:600;padding:0.75rem 1rem;text-align:left;border-bottom:2px solid var(--border);}
+td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--t2);}
+tr:hover td{background:var(--bg3);}
+td:first-child{font-weight:500;color:var(--t1);}
+.accordion{margin:1.5rem 0;}
+.accordion-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.accordion-header{padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:0.95rem;transition:background 0.2s;user-select:none;}
+.accordion-header:hover{background:var(--bg4);}
+.accordion-header .arrow{color:var(--purple);transition:transform 0.3s;}
+.accordion-item.open .accordion-header .arrow{transform:rotate(180deg);}
+.accordion-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease;}
+.accordion-body.open{max-height:3000px;padding:0 1.25rem 1.25rem;}
+.tabs{margin:2rem 0;}
+.tab-list{display:flex;gap:0.5rem;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.tab-btn{padding:0.6rem 1.25rem;background:none;border:none;color:var(--t3);font-size:0.875rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;font-family:'Inter',sans-serif;}
+.tab-btn.active{color:var(--purple);border-bottom-color:var(--purple);}
+.tab-panel{display:none;padding:1.5rem;background:var(--bg3);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;}
+.tab-panel.active{display:block;}
+.mermaid-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:2rem;margin:2rem 0;overflow-x:auto;}
+.schema-diagram{font-family:'JetBrains Mono',monospace;font-size:0.8rem;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0;color:var(--t2);overflow-x:auto;white-space:pre;}
+.schema-diagram .table-name{color:var(--purple);font-weight:700;}
+.schema-diagram .pk{color:var(--orange);}
+.schema-diagram .fk{color:var(--cyan);}
+.schema-diagram .col{color:var(--t1);}
+.scd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;margin:2rem 0;}
+.scd-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;position:relative;overflow:hidden;}
+.scd-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--sg,linear-gradient(90deg,var(--purple),var(--pink)));}
+.scd-card h4{margin-bottom:0.75rem;margin-top:0;}
+.scd-card .type-badge{display:inline-block;background:rgba(139,92,246,0.15);color:var(--purple);border-radius:4px;padding:0.15rem 0.5rem;font-size:0.7rem;font-weight:700;margin-bottom:0.75rem;}
+.chapter-nav{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem;}
+.ch-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--t2);transition:all 0.2s;flex:1;max-width:260px;}
+.ch-nav-btn:hover{border-color:var(--purple);color:var(--t1);}
+.ch-nav-btn.next{margin-left:auto;text-align:right;flex-direction:row-reverse;}
+.ch-nav-btn .arrow{font-size:1.25rem;color:var(--purple);}
+.ch-nav-meta{font-size:0.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;}
+.ch-nav-title{font-size:0.875rem;font-weight:600;margin-top:0.1rem;}
+@media(max-width:900px){.sidebar{display:none;}.content{padding:2rem 1.5rem;}}
+</style>
+</head>
+<body>
+
+
+<main class="content">
+  <div class="chapter-header">
+    <div class="ch-badge">📐 Capítulo 3 · Nivel Intermedio</div>
+    <h1>Modelado de Datos</h1>
+    <p class="lead">El arte y la ciencia de estructurar datos para análisis eficiente. Desde entidad-relación hasta Data Vault, este capítulo cubre todas las técnicas de modelado que debe conocer un Data Engineer profesional.</p>
+    <div class="chapter-meta-bar">
+      <div class="meta-item">⏱️ <strong>Lectura:</strong> ~55 min</div>
+      <div class="meta-item">🎯 <strong>Nivel:</strong> Intermedio</div>
+      <div class="meta-item">📌 <strong>Prerrequisito:</strong> Cap. 01, 02</div>
+    </div>
+  </div>
+
+  <!-- 3.0 -->
+  <section id="s1">
+    <h2 data-num="3.0">Entity-Relationship (ER) Modeling</h2>
+    <p>El modelado Entidad-Relación es la técnica fundamental para diseñar bases de datos relacionales. Define las <strong>entidades</strong> (cosas del mundo real), sus <strong>atributos</strong> y las <strong>relaciones</strong> entre ellas.</p>
+
+    <h3>Conceptos Clave</h3>
+    <div class="card-grid">
+      <div class="card-item">
+        <div class="icon">🔷</div>
+        <h4>Entidad</h4>
+        <p>Un objeto o concepto del mundo real que tiene existencia independiente. Ej: Cliente, Producto, Pedido.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">📝</div>
+        <h4>Atributo</h4>
+        <p>Propiedad o característica de una entidad. Ej: Cliente tiene nombre, email, fecha_nacimiento.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔗</div>
+        <h4>Relación</h4>
+        <p>Asociación entre entidades. Tipos: 1:1, 1:N (uno a muchos), N:M (muchos a muchos).</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔑</div>
+        <h4>Clave Primaria (PK)</h4>
+        <p>Atributo(s) que identifican unívocamente cada instancia de la entidad.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔗</div>
+        <h4>Clave Foránea (FK)</h4>
+        <p>Atributo que referencia la PK de otra entidad, estableciendo la relación entre tablas.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔄</div>
+        <h4>Cardinalidad</h4>
+        <p>Define cuántas instancias de una entidad pueden relacionarse con cuántas de otra.</p>
+      </div>
+    </div>
+
+    <h3>Diagrama ER: Sistema de E-Commerce</h3>
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+erDiagram
+    CUSTOMER {
+        int customer_id PK
+        string name
+        string email
+        string phone
+        date created_at
+    }
+    ORDER {
+        int order_id PK
+        int customer_id FK
+        int address_id FK
+        timestamp order_date
+        decimal total_amount
+        string status
+    }
+    ORDER_ITEM {
+        int order_item_id PK
+        int order_id FK
+        int product_id FK
+        int quantity
+        decimal unit_price
+        decimal discount
+    }
+    PRODUCT {
+        int product_id PK
+        int category_id FK
+        string name
+        string sku
+        decimal price
+        int stock
+    }
+    CATEGORY {
+        int category_id PK
+        string name
+        int parent_category_id FK
+    }
+    ADDRESS {
+        int address_id PK
+        int customer_id FK
+        string street
+        string city
+        string country
+        string zip_code
+    }
+
+    CUSTOMER ||--o{ ORDER : "places"
+    CUSTOMER ||--o{ ADDRESS : "has"
+    ORDER ||--o{ ORDER_ITEM : "contains"
+    ORDER }o--|| ADDRESS : "ships_to"
+    ORDER_ITEM }o--|| PRODUCT : "includes"
+    PRODUCT }o--|| CATEGORY : "belongs_to"
+    CATEGORY ||--o{ CATEGORY : "has_subcategory"
+      </div>
+    </div>
+
+    <h3>Implementación SQL del ER</h3>
+    <pre><code>-- Implementación del diagrama ER en PostgreSQL
+CREATE TABLE customers (
+    customer_id  SERIAL PRIMARY KEY,
+    name         VARCHAR(100) NOT NULL,
+    email        VARCHAR(200) UNIQUE NOT NULL,
+    phone        VARCHAR(20),
+    created_at   TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE categories (
+    category_id        SERIAL PRIMARY KEY,
+    name               VARCHAR(100) NOT NULL,
+    parent_category_id INTEGER REFERENCES categories(category_id)  -- Self-reference
+);
+
+CREATE TABLE products (
+    product_id  SERIAL PRIMARY KEY,
+    category_id INTEGER NOT NULL REFERENCES categories(category_id),
+    name        VARCHAR(200) NOT NULL,
+    sku         VARCHAR(50) UNIQUE NOT NULL,
+    price       DECIMAL(10,2) NOT NULL CHECK (price >= 0),
+    stock       INTEGER DEFAULT 0 CHECK (stock >= 0)
+);
+
+CREATE TABLE addresses (
+    address_id  SERIAL PRIMARY KEY,
+    customer_id INTEGER NOT NULL REFERENCES customers(customer_id),
+    street      VARCHAR(200) NOT NULL,
+    city        VARCHAR(100) NOT NULL,
+    country     VARCHAR(100) NOT NULL,
+    zip_code    VARCHAR(20)
+);
+
+CREATE TABLE orders (
+    order_id     SERIAL PRIMARY KEY,
+    customer_id  INTEGER NOT NULL REFERENCES customers(customer_id),
+    address_id   INTEGER NOT NULL REFERENCES addresses(address_id),
+    order_date   TIMESTAMP DEFAULT NOW(),
+    total_amount DECIMAL(10,2) NOT NULL CHECK (total_amount >= 0),
+    status       VARCHAR(20) DEFAULT 'pending'
+                 CHECK (status IN ('pending','processing','shipped','delivered','cancelled'))
+);
+
+CREATE TABLE order_items (
+    order_item_id SERIAL PRIMARY KEY,
+    order_id      INTEGER NOT NULL REFERENCES orders(order_id) ON DELETE CASCADE,
+    product_id    INTEGER NOT NULL REFERENCES products(product_id),
+    quantity      INTEGER NOT NULL CHECK (quantity > 0),
+    unit_price    DECIMAL(10,2) NOT NULL,  -- Precio al momento de la compra
+    discount      DECIMAL(5,2) DEFAULT 0 CHECK (discount BETWEEN 0 AND 100)
+);</code></pre>
+  </section>
+
+  <!-- 3.1 -->
+  <section id="s2">
+    <h2 data-num="3.1">Normalización y Desnormalización</h2>
+    <p>La normalización es el proceso de organizar los datos en una base de datos para <strong>reducir redundancia y mejorar la integridad</strong>. En Data Engineering, entender cuándo normalizar y cuándo desnormalizar es crítico.</p>
+
+    <div class="tabs" id="tabs-normal">
+      <div class="tab-list">
+        <button class="tab-btn active" data-tab="1nf">1NF</button>
+        <button class="tab-btn" data-tab="2nf">2NF</button>
+        <button class="tab-btn" data-tab="3nf">3NF</button>
+        <button class="tab-btn" data-tab="bcnf">BCNF</button>
+        <button class="tab-btn" data-tab="denorm">Desnorm.</button>
+      </div>
+      <div class="tab-panel active" data-tab="1nf">
+        <h4>Primera Forma Normal (1NF)</h4>
+        <p><strong>Regla:</strong> Cada columna contiene un único valor atómico (indivisible). No hay grupos repetidos ni arrays en columnas.</p>
+        <p><strong>Violación:</strong></p>
+        <pre><code>-- ❌ Viola 1NF: múltiples teléfonos en una columna
+customer_id | name  | phones
+1           | Ana   | "555-1234, 555-5678"  -- No atómico!
+
+-- ✅ Cumple 1NF
+customer_id | name | phone_number | phone_type
+1           | Ana  | 555-1234     | mobile
+1           | Ana  | 555-5678     | home</code></pre>
+      </div>
+      <div class="tab-panel" data-tab="2nf">
+        <h4>Segunda Forma Normal (2NF)</h4>
+        <p><strong>Regla:</strong> Cumple 1NF + todos los atributos no-clave dependen de la <strong>clave primaria completa</strong> (elimina dependencias parciales en PKs compuestas).</p>
+        <pre><code>-- ❌ Viola 2NF: product_name depende solo de product_id, no de la PK completa
+-- PK: (order_id, product_id)
+order_id | product_id | product_name | quantity
+1        | 101        | Laptop       | 2       -- product_name dep. solo de product_id
+
+-- ✅ Cumple 2NF: separar en dos tablas
+-- Tabla order_items (PK: order_id, product_id)
+order_id | product_id | quantity
+1        | 101        | 2
+
+-- Tabla products (PK: product_id)
+product_id | product_name
+101        | Laptop</code></pre>
+      </div>
+      <div class="tab-panel" data-tab="3nf">
+        <h4>Tercera Forma Normal (3NF)</h4>
+        <p><strong>Regla:</strong> Cumple 2NF + ningún atributo no-clave depende de otro atributo no-clave (elimina dependencias transitivas).</p>
+        <pre><code>-- ❌ Viola 3NF: zip_code → city (dependencia transitiva)
+customer_id | name | zip_code | city      -- city depende de zip_code, no de customer_id
+1           | Ana  | 28001    | Madrid
+
+-- ✅ Cumple 3NF
+-- Tabla customers
+customer_id | name | zip_code
+1           | Ana  | 28001
+
+-- Tabla zip_codes
+zip_code | city
+28001    | Madrid</code></pre>
+        <p>La <strong>3NF es el estándar gold</strong> para bases de datos OLTP operacionales.</p>
+      </div>
+      <div class="tab-panel" data-tab="bcnf">
+        <h4>Boyce-Codd Normal Form (BCNF)</h4>
+        <p><strong>Regla:</strong> Versión más estricta de 3NF. Para cada dependencia funcional X → Y, X debe ser una superclave (capaz de identificar todas las filas).</p>
+        <p>BCNF resuelve anomalías raras en 3NF cuando hay múltiples claves candidatas superpuestas. En la práctica, la mayoría de tablas en 3NF ya cumplen BCNF.</p>
+        <div class="info-box">
+          <div class="info-box-title">💡 Cuándo aplicar cada forma normal</div>
+          <ul style="margin:0;font-size:0.875rem;">
+            <li><strong>OLTP (operacional):</strong> Apuntar a 3NF / BCNF para garantizar integridad</li>
+            <li><strong>OLAP (analítico):</strong> Desnormalizar intencionalmente para mejorar performance de queries</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tab-panel" data-tab="denorm">
+        <h4>Desnormalización Intencional</h4>
+        <p>En Data Warehouses, se desnormaliza <strong>intencionalmente</strong> para mejorar la velocidad de las queries analíticas. Los JOINs son costosos en tablas de millones de filas.</p>
+        <pre><code>-- Tabla normalizada (OLTP) - requiere 3 JOINs para análisis
+SELECT o.order_id, c.name, p.name, oi.quantity
+FROM order_items oi
+JOIN orders o ON oi.order_id = o.order_id
+JOIN customers c ON o.customer_id = c.customer_id
+JOIN products p ON oi.product_id = p.product_id;
+
+-- Tabla desnormalizada (DWH) - todo en una tabla wide
+SELECT order_id, customer_name, product_name, quantity
+FROM fact_order_items;  -- No JOINs necesarios!
+
+-- fact_order_items incluye columns de todas las tablas:
+-- order_id, order_date, customer_id, customer_name, customer_email,
+-- product_id, product_name, category_name, quantity, unit_price, etc.</code></pre>
+        <p><strong>Trade-offs de desnormalizar:</strong></p>
+        <ul>
+          <li>✅ Queries más rápidas (no JOINs)</li>
+          <li>✅ Más simple para analistas que usan SQL</li>
+          <li>❌ Redundancia de datos (mayor storage)</li>
+          <li>❌ Riesgo de inconsistencias si no se gestiona bien</li>
+          <li>❌ Updates más costosos</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3.2 -->
+  <section id="s3">
+    <h2 data-num="3.2">Star Schema</h2>
+    <p>El Star Schema (esquema en estrella) es el modelo dimensional más utilizado en Data Warehouses. Fue popularizado por Ralph Kimball y es el estándar para OLAP y BI.</p>
+
+    <p>La estructura es simple: una <strong>tabla de hechos central</strong> conectada a múltiples <strong>tablas de dimensión</strong> desnormalizadas. La forma resultante del diagrama asemeja una estrella.</p>
+
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+erDiagram
+    FACT_SALES {
+        int sale_id PK
+        int date_key FK
+        int customer_key FK
+        int product_key FK
+        int store_key FK
+        int promotion_key FK
+        decimal quantity_sold
+        decimal sale_amount
+        decimal discount_amount
+        decimal net_amount
+        decimal cost_amount
+        decimal profit_amount
+    }
+    DIM_DATE {
+        int date_key PK
+        date full_date
+        int year
+        int quarter
+        int month
+        string month_name
+        int week
+        int day_of_week
+        string day_name
+        boolean is_weekend
+        boolean is_holiday
+    }
+    DIM_CUSTOMER {
+        int customer_key PK
+        string customer_id
+        string name
+        string email
+        string segment
+        string country
+        string city
+        string zip_code
+        date first_purchase_date
+    }
+    DIM_PRODUCT {
+        int product_key PK
+        string product_id
+        string name
+        string sku
+        string category
+        string subcategory
+        string brand
+        decimal list_price
+        string color
+        string size
+    }
+    DIM_STORE {
+        int store_key PK
+        string store_id
+        string name
+        string city
+        string country
+        string region
+        string store_type
+        int manager_id
+    }
+
+    FACT_SALES }o--|| DIM_DATE : "sold_on"
+    FACT_SALES }o--|| DIM_CUSTOMER : "bought_by"
+    FACT_SALES }o--|| DIM_PRODUCT : "of_product"
+    FACT_SALES }o--|| DIM_STORE : "at_store"
+      </div>
+    </div>
+
+    <h3>Ventajas del Star Schema</h3>
+    <ul>
+      <li><strong>Simplicidad:</strong> Fácil de entender para analistas de negocio. Una tabla central y dimensiones claras.</li>
+      <li><strong>Performance:</strong> Pocos JOINs necesarios. El optimizador de queries puede trabajar eficientemente.</li>
+      <li><strong>Compatibilidad BI:</strong> Herramientas como Power BI, Tableau y Looker están optimizadas para Star Schema.</li>
+      <li><strong>Mantenimiento:</strong> Agregar nuevas métricas (columnas en fact) o nuevas dimensiones es relativamente simple.</li>
+    </ul>
+
+    <h3>Implementación SQL: Star Schema de Ventas</h3>
+    <pre><code>-- TABLA DE HECHOS (Fact Table)
+CREATE TABLE fact_sales (
+    sale_id         BIGSERIAL PRIMARY KEY,
+    -- Foreign Keys a dimensiones (surrogate keys)
+    date_key        INTEGER NOT NULL,
+    customer_key    INTEGER NOT NULL,
+    product_key     INTEGER NOT NULL,
+    store_key       INTEGER NOT NULL,
+    promotion_key   INTEGER,
+    -- Métricas (medidas)
+    quantity_sold   DECIMAL(10,2) NOT NULL DEFAULT 0,
+    sale_amount     DECIMAL(12,2) NOT NULL DEFAULT 0,
+    discount_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+    net_amount      DECIMAL(12,2) GENERATED ALWAYS AS (sale_amount - discount_amount) STORED,
+    cost_amount     DECIMAL(12,2) NOT NULL DEFAULT 0,
+    profit_amount   DECIMAL(12,2) GENERATED ALWAYS AS (net_amount - cost_amount) STORED
+) PARTITION BY RANGE (date_key);  -- Particionamiento por fecha
+
+-- Dimensión Fecha (la más importante)
+CREATE TABLE dim_date (
+    date_key        INTEGER PRIMARY KEY,  -- YYYYMMDD como integer
+    full_date       DATE NOT NULL,
+    year            SMALLINT NOT NULL,
+    quarter         SMALLINT NOT NULL CHECK (quarter BETWEEN 1 AND 4),
+    month           SMALLINT NOT NULL CHECK (month BETWEEN 1 AND 12),
+    month_name      VARCHAR(10) NOT NULL,
+    week            SMALLINT NOT NULL,
+    day_of_week     SMALLINT NOT NULL CHECK (day_of_week BETWEEN 1 AND 7),
+    day_name        VARCHAR(10) NOT NULL,
+    is_weekend      BOOLEAN NOT NULL DEFAULT FALSE,
+    is_holiday      BOOLEAN NOT NULL DEFAULT FALSE,
+    fiscal_year     SMALLINT,
+    fiscal_quarter  SMALLINT
+);
+
+-- Poblar dim_date con un rango de fechas
+INSERT INTO dim_date
+SELECT
+    TO_CHAR(d, 'YYYYMMDD')::INTEGER AS date_key,
+    d AS full_date,
+    EXTRACT(YEAR FROM d)::SMALLINT AS year,
+    EXTRACT(QUARTER FROM d)::SMALLINT AS quarter,
+    EXTRACT(MONTH FROM d)::SMALLINT AS month,
+    TO_CHAR(d, 'Month') AS month_name,
+    EXTRACT(WEEK FROM d)::SMALLINT AS week,
+    EXTRACT(ISODOW FROM d)::SMALLINT AS day_of_week,
+    TO_CHAR(d, 'Day') AS day_name,
+    EXTRACT(ISODOW FROM d) IN (6, 7) AS is_weekend,
+    FALSE AS is_holiday
+FROM GENERATE_SERIES('2020-01-01'::DATE, '2030-12-31'::DATE, '1 day'::INTERVAL) d;
+
+-- Query analítica típica en Star Schema
+SELECT
+    d.year,
+    d.month_name,
+    p.category,
+    s.country,
+    SUM(f.sale_amount)   AS total_sales,
+    SUM(f.profit_amount) AS total_profit,
+    COUNT(*)             AS transaction_count,
+    AVG(f.sale_amount)   AS avg_ticket
+FROM fact_sales f
+JOIN dim_date     d ON f.date_key     = d.date_key
+JOIN dim_product  p ON f.product_key  = p.product_key
+JOIN dim_store    s ON f.store_key    = s.store_key
+WHERE d.year = 2025
+GROUP BY d.year, d.month_name, d.month, p.category, s.country
+ORDER BY d.year, d.month, total_sales DESC;</code></pre>
+  </section>
+
+  <!-- 3.3 -->
+  <section id="s4">
+    <h2 data-num="3.3">Snowflake Schema</h2>
+    <p>El Snowflake Schema es una variación del Star Schema donde las <strong>dimensiones están normalizadas</strong> en sub-dimensiones, creando una estructura que asemeja un copo de nieve.</p>
+
+    <div class="comparison-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:1.5rem 0;">
+      <div class="card">
+        <h4>⭐ Star Schema</h4>
+        <ul>
+          <li>Dimensiones desnormalizadas</li>
+          <li>Menos JOINs, más rápido</li>
+          <li>Más storage (redundancia)</li>
+          <li>Más simple para analistas</li>
+          <li>Recomendado para BI</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>❄️ Snowflake Schema</h4>
+        <ul>
+          <li>Dimensiones normalizadas</li>
+          <li>Más JOINs, potencialmente más lento</li>
+          <li>Menos storage (sin redundancia)</li>
+          <li>Más complejo para analistas</li>
+          <li>Útil para dimensiones muy grandes</li>
+        </ul>
+      </div>
+    </div>
+
+    <pre><code>-- SNOWFLAKE: dim_product se divide en tablas normalizadas
+-- En lugar de tener category y brand directamente en dim_product...
+
+-- Tabla de categorías separada (normalizada)
+CREATE TABLE dim_category (
+    category_key    INTEGER PRIMARY KEY,
+    category_id     VARCHAR(20),
+    category_name   VARCHAR(100),
+    parent_cat_key  INTEGER REFERENCES dim_category(category_key)  -- jerarquía
+);
+
+-- Tabla de marcas separada
+CREATE TABLE dim_brand (
+    brand_key   INTEGER PRIMARY KEY,
+    brand_id    VARCHAR(20),
+    brand_name  VARCHAR(100),
+    country     VARCHAR(100)
+);
+
+-- dim_product referencia las sub-dimensiones
+CREATE TABLE dim_product_snowflake (
+    product_key  INTEGER PRIMARY KEY,
+    product_id   VARCHAR(20),
+    name         VARCHAR(200),
+    sku          VARCHAR(50),
+    category_key INTEGER REFERENCES dim_category(category_key),  -- FK a sub-dim
+    brand_key    INTEGER REFERENCES dim_brand(brand_key),        -- FK a sub-dim
+    list_price   DECIMAL(10,2)
+);
+
+-- Ahora una query necesita más JOINs:
+SELECT p.name, c.category_name, b.brand_name
+FROM dim_product_snowflake p
+JOIN dim_category c ON p.category_key = c.category_key
+JOIN dim_brand b ON p.brand_key = b.brand_key;</code></pre>
+
+    <div class="info-box warning">
+      <div class="info-box-title">⚠️ ¿Cuándo usar Snowflake Schema?</div>
+      <p style="margin:0;font-size:0.9rem;">El Snowflake Schema tiene sentido cuando: (1) las dimensiones son muy grandes y la redundancia es costosa, (2) hay jerarquías profundas que cambiarán frecuentemente, (3) el storage es una restricción crítica. En la mayoría de casos modernos con cloud DWH (Snowflake, BigQuery), el costo de storage es bajo y se prefiere Star Schema por su simplicidad.</p>
+    </div>
+  </section>
+
+  <!-- 3.4 -->
+  <section id="s5">
+    <h2 data-num="3.4">Fact Tables y Dimension Tables en Profundidad</h2>
+
+    <h3>Tipos de Fact Tables</h3>
+    <div class="accordion" id="acc-facts">
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>📊 Transaction Fact Table (la más común)</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <p>Registra eventos de negocios individuales. Cada fila = una transacción. La granularidad más baja.</p>
+          <pre><code>-- Cada fila es un ítem de una venta
+-- Granularidad: 1 fila por order_item
+fact_sales:
+sale_id | date_key | customer_key | product_key | quantity | amount
+1       | 20260101 | 1001         | 5001        | 2        | 299.98
+2       | 20260101 | 1002         | 5002        | 1        | 89.99
+3       | 20260101 | 1001         | 5003        | 3        | 150.00</code></pre>
+          <p><strong>Características:</strong> Alta cardinalidad (millones a billones de filas), inmutable una vez escrita, ideal para análisis a nivel transaccional.</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>📅 Periodic Snapshot Fact Table</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <p>Captura el estado de un proceso en intervalos regulares (diario, semanal, mensual). Ideal para métricas que no tienen eventos discretos.</p>
+          <pre><code>-- Snapshot diario del inventario
+-- Granularidad: 1 fila por producto por día
+fact_inventory_snapshot:
+snapshot_date_key | product_key | warehouse_key | qty_on_hand | qty_reserved | reorder_point
+20260101          | 5001        | W01           | 150         | 30           | 50
+20260101          | 5002        | W01           | 45          | 10           | 20
+20260102          | 5001        | W01           | 148         | 28           | 50
+
+-- Snapshots del saldo bancario diario
+fact_account_daily:
+date_key | account_key | customer_key | balance | available_credit</code></pre>
+          <p><strong>Casos de uso:</strong> Inventario, saldos bancarios, estados de proyectos, métricas de KPI.</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🎯 Accumulating Snapshot Fact Table</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <p>Rastrea el ciclo de vida completo de un proceso de negocio. Cada fila se actualiza a medida que el proceso avanza por sus etapas.</p>
+          <pre><code>-- Proceso de un pedido (se ACTUALIZA con cada etapa)
+fact_order_lifecycle:
+order_key | date_ordered_key | date_picked_key | date_shipped_key | date_delivered_key | days_to_deliver
+1001      | 20260101         | 20260102        | 20260103         | 20260106           | 5
+1002      | 20260101         | NULL            | NULL             | NULL               | NULL  -- aún en proceso
+
+-- Ventajas: análisis de duración de etapas, identificar cuellos de botella
+-- Cuánto tiempo entre pedido y envío?
+SELECT AVG(date_shipped_key - date_ordered_key) as avg_days_to_ship
+FROM fact_order_lifecycle
+WHERE date_shipped_key IS NOT NULL;</code></pre>
+          <p><strong>Casos de uso:</strong> Pipeline de ventas, proceso de contratación, fulfillment de órdenes, ciclo de vida de siniestros.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Tipos de Dimensiones</h3>
+    <div class="card-grid">
+      <div class="card-item">
+        <div class="icon">📅</div>
+        <h4>Conformed Dimension</h4>
+        <p>Misma dimensión compartida entre múltiples fact tables. Ej: dim_date se usa en fact_sales Y fact_inventory. Permite drill-across entre hechos.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🌉</div>
+        <h4>Bridge Table</h4>
+        <p>Resuelve relaciones M:N entre hechos y dimensiones. Ej: un pedido puede tener múltiples promotions. La bridge table maneja esta complejidad.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🎭</div>
+        <h4>Role-Playing Dimension</h4>
+        <p>La misma dimensión física usada con distintos roles. Ej: dim_date como "order_date", "ship_date" y "delivery_date" en la misma fact table.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🗑️</div>
+        <h4>Junk Dimension</h4>
+        <p>Agrupa flags y códigos de baja cardinalidad que no merecen su propia dimensión. Ej: is_promotional, order_type, payment_method.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔢</div>
+        <h4>Degenerate Dimension</h4>
+        <p>Atributo dimensional que vive en la fact table sin tabla propia. Ej: order_number en fact_sales. Tiene valor analítico pero no merece dimensión separada.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🌐</div>
+        <h4>Outrigger Dimension</h4>
+        <p>Sub-dimensión referenciada por una dimensión principal, no por la fact table. Uncommon en Star Schema puro.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3.5 -->
+  <section id="s6">
+    <h2 data-num="3.5">Slowly Changing Dimensions (SCD)</h2>
+    <p>Las SCDs resuelven uno de los problemas más comunes del DWH: <strong>¿qué pasa cuando cambia un atributo de una dimensión?</strong> Por ejemplo, un cliente cambia de ciudad, o un producto cambia de categoría. ¿Cómo manejas el historial?</p>
+
+    <div class="scd-grid">
+      <div class="scd-card" style="--sg:linear-gradient(90deg,#3b82f6,#06b6d4)">
+        <h4>SCD Tipo 0 — Retain Original</h4>
+        <div class="type-badge">Tipo 0</div>
+        <p style="font-size:0.875rem;color:var(--t2);">El atributo nunca cambia una vez creado. Se usa para datos que son verdad histórica inmutable: fecha de nacimiento, número de seguro social, fecha de primera compra.</p>
+        <pre style="font-size:0.75rem;margin:0.75rem 0 0;"><code>-- El campo birth_date nunca se actualiza
+UPDATE dim_customer SET birth_date = '...'  -- ¡PROHIBIDO!</code></pre>
+      </div>
+      <div class="scd-card" style="--sg:linear-gradient(90deg,#f59e0b,#ef4444)">
+        <h4>SCD Tipo 1 — Overwrite</h4>
+        <div class="type-badge">Tipo 1</div>
+        <p style="font-size:0.875rem;color:var(--t2);">Sobrescribir el valor actual. No hay historial. Se usa cuando el valor anterior no importa (ej: corrección de typos, actualizar email).</p>
+        <pre style="font-size:0.75rem;margin:0.75rem 0 0;"><code>-- Simple UPDATE - pierde historial
+UPDATE dim_customer
+SET email = 'new@email.com'
+WHERE customer_key = 1001;</code></pre>
+      </div>
+      <div class="scd-card" style="--sg:linear-gradient(90deg,#10b981,#3b82f6)">
+        <h4>SCD Tipo 2 — Add New Row ⭐</h4>
+        <div class="type-badge">Tipo 2 — El más usado</div>
+        <p style="font-size:0.875rem;color:var(--t2);">Inserta una nueva fila con el valor actualizado, conservando la fila anterior. Permite análisis histórico completo. Es el tipo más importante en Data Engineering.</p>
+        <pre style="font-size:0.75rem;margin:0.75rem 0 0;"><code>-- Dimensión con soporte SCD2
+customer_key | customer_id | name | city     | is_current | valid_from | valid_to
+1001         | C001        | Ana  | Madrid   | FALSE      | 2020-01-01 | 2024-06-15
+1550         | C001        | Ana  | Barcelona| TRUE       | 2024-06-15 | 9999-12-31
+
+-- El customer_id (natural key) identifica al cliente real
+-- customer_key (surrogate key) identifica la versión histórica</code></pre>
+      </div>
+      <div class="scd-card" style="--sg:linear-gradient(90deg,#8b5cf6,#ec4899)">
+        <h4>SCD Tipo 3 — Add New Column</h4>
+        <div class="type-badge">Tipo 3</div>
+        <p style="font-size:0.875rem;color:var(--t2);">Agrega columnas "previous_value" y "current_value". Solo guarda el cambio más reciente. Limitado pero simple para casos específicos.</p>
+        <pre style="font-size:0.75rem;margin:0.75rem 0 0;"><code>-- Solo guarda el valor actual y el anterior
+customer_key | name | current_city | previous_city | changed_at
+1001         | Ana  | Barcelona    | Madrid        | 2024-06-15</code></pre>
+      </div>
+      <div class="scd-card" style="--sg:linear-gradient(90deg,#06b6d4,#10b981)">
+        <h4>SCD Tipo 4 — History Table</h4>
+        <div class="type-badge">Tipo 4</div>
+        <p style="font-size:0.875rem;color:var(--t2);">Tabla de historial separada. La dimensión principal tiene solo el valor actual, y una tabla de historial guarda todos los cambios.</p>
+        <pre style="font-size:0.75rem;margin:0.75rem 0 0;"><code>-- dim_customer: solo valor actual
+-- dim_customer_history: todo el historial
+customer_hist_id | customer_key | city   | changed_at
+1                | 1001         | Madrid | 2020-01-01
+2                | 1001         | BCN    | 2024-06-15</code></pre>
+      </div>
+      <div class="scd-card" style="--sg:linear-gradient(90deg,#ec4899,#f59e0b)">
+        <h4>SCD Tipo 6 — Hybrid (1+2+3)</h4>
+        <div class="type-badge">Tipo 6</div>
+        <p style="font-size:0.875rem;color:var(--t2);">Combina tipos 1, 2 y 3. Nueva fila por cambio (tipo 2) + columna previous (tipo 3) + columna current que siempre refleja el valor actual (tipo 1).</p>
+        <pre style="font-size:0.75rem;margin:0.75rem 0 0;"><code>customer_key | city      | current_city | is_current | valid_from | valid_to
+1001         | Madrid    | Barcelona    | FALSE      | 2020-01-01 | 2024-06-15
+1550         | Barcelona | Barcelona    | TRUE       | 2024-06-15 | 9999-12-31</code></pre>
+      </div>
+    </div>
+
+    <h3>Implementación SCD Tipo 2 con dbt</h3>
+    <pre><code>-- dbt: snapshot para SCD Tipo 2 automático
+-- Archivo: snapshots/dim_customer_snapshot.sql
+{% snapshot dim_customer_snapshot %}
+  {{
+    config(
+      target_database='dw',
+      target_schema='snapshots',
+      unique_key='customer_id',
+      strategy='timestamp',
+      updated_at='updated_at',
+    )
+  }}
+
+  SELECT
+    customer_id,
+    name,
+    email,
+    city,
+    country,
+    customer_segment,
+    updated_at
+  FROM {{ source('operational', 'customers') }}
+
+{% endsnapshot %}
+
+-- dbt genera automáticamente las columnas:
+-- dbt_scd_id, dbt_updated_at, dbt_valid_from, dbt_valid_to, dbt_is_current</code></pre>
+  </section>
+
+  <!-- 3.6 -->
+  <section id="s7">
+    <h2 data-num="3.6">Data Vault</h2>
+    <p>Data Vault es una metodología de modelado de datos para DWH enterprise, desarrollada por Dan Linstedt. Está optimizada para <strong>auditabilidad, flexibilidad a cambios y carga paralela</strong>. Es especialmente popular en industrias reguladas (banking, insurance).</p>
+
+    <div class="info-box purple">
+      <div class="info-box-title">🏦 Por qué Data Vault</div>
+      <p style="margin:0;font-size:0.9rem;">Mientras que el Star Schema es excelente para BI, Data Vault brilla cuando: los requisitos de negocio cambian constantemente, se necesita auditoría completa de todos los cambios, múltiples fuentes alimentan los mismos datos y el compliance es crítico. Es el DWH "raw" sobre el que luego se construyen Data Marts en Star Schema.</p>
+    </div>
+
+    <h3>Los 3 Componentes de Data Vault</h3>
+    <div class="card-grid">
+      <div class="card-item">
+        <div class="icon">🔑</div>
+        <h4>Hub</h4>
+        <p>Contiene las business keys (claves de negocio naturales). Ej: hub_customer tiene customer_id. Sin atributos descriptivos. Inmutable.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔗</div>
+        <h4>Link</h4>
+        <p>Representa relaciones entre Hubs (muchos a muchos por defecto). Ej: link_order_customer conecta order_hub con customer_hub. Inmutable.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">📋</div>
+        <h4>Satellite</h4>
+        <p>Contiene los atributos descriptivos y cambios históricos (como SCD2 automático). Ej: sat_customer_details tiene nombre, email. Versionado.</p>
+      </div>
+    </div>
+
+    <pre><code>-- DATA VAULT: Hub, Link y Satellite
+
+-- HUB CUSTOMER: solo business key + metadata
+CREATE TABLE hub_customer (
+    customer_hash_key  BYTEA PRIMARY KEY,  -- Hash de la business key
+    customer_id        VARCHAR(50) NOT NULL,  -- Business key natural
+    load_timestamp     TIMESTAMP NOT NULL DEFAULT NOW(),
+    record_source      VARCHAR(100) NOT NULL  -- De dónde vino el dato
+);
+
+-- HUB ORDER
+CREATE TABLE hub_order (
+    order_hash_key  BYTEA PRIMARY KEY,
+    order_id        VARCHAR(50) NOT NULL,
+    load_timestamp  TIMESTAMP NOT NULL DEFAULT NOW(),
+    record_source   VARCHAR(100) NOT NULL
+);
+
+-- LINK: relación Order → Customer (muchos a muchos)
+CREATE TABLE link_order_customer (
+    link_hash_key      BYTEA PRIMARY KEY,
+    order_hash_key     BYTEA NOT NULL REFERENCES hub_order(order_hash_key),
+    customer_hash_key  BYTEA NOT NULL REFERENCES hub_customer(customer_hash_key),
+    load_timestamp     TIMESTAMP NOT NULL DEFAULT NOW(),
+    record_source      VARCHAR(100) NOT NULL
+);
+
+-- SATELLITE: atributos del customer (con historial automático)
+CREATE TABLE sat_customer_details (
+    customer_hash_key  BYTEA NOT NULL REFERENCES hub_customer(customer_hash_key),
+    load_timestamp     TIMESTAMP NOT NULL,
+    load_end_timestamp TIMESTAMP,          -- NULL = registro activo
+    hash_diff          BYTEA NOT NULL,     -- Hash de todos los atributos (para detección de cambios)
+    name               VARCHAR(100),
+    email              VARCHAR(200),
+    city               VARCHAR(100),
+    country            VARCHAR(100),
+    record_source      VARCHAR(100) NOT NULL,
+    PRIMARY KEY (customer_hash_key, load_timestamp)
+);</code></pre>
+
+    <h3>Data Vault vs Star Schema: ¿Cuándo usar cada uno?</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Criterio</th><th>Data Vault</th><th>Star Schema (Kimball)</th></tr></thead>
+        <tbody>
+          <tr><td>Auditabilidad completa</td><td>✅ Excelente (nativo)</td><td>⚠️ Requiere trabajo extra</td></tr>
+          <tr><td>Flexibilidad a cambios</td><td>✅ Alta (add satellites)</td><td>❌ Requiere rediseño</td></tr>
+          <tr><td>Carga paralela</td><td>✅ Diseñado para eso</td><td>⚠️ Dependencias de FK</td></tr>
+          <tr><td>Simplicidad de queries</td><td>❌ Complejo (muchos JOINs)</td><td>✅ Simple e intuitivo</td></tr>
+          <tr><td>Performance BI</td><td>❌ Mal (necesita Data Marts)</td><td>✅ Excelente</td></tr>
+          <tr><td>Compliance/Regulación</td><td>✅ Ideal</td><td>⚠️ Requiere extensiones</td></tr>
+          <tr><td>Tamaño del equipo</td><td>Equipos grandes</td><td>Equipos pequeños y medianos</td></tr>
+          <tr><td>Industria típica</td><td>Banking, Insurance, Gov.</td><td>Retail, SaaS, E-commerce</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter-02-fundamentos.html" class="ch-nav-btn">
+        <span class="arrow">←</span>
+        <div><div class="ch-nav-meta">Capítulo 2</div><div class="ch-nav-title">Fundamentos de Datos</div></div>
+      </a>
+      <a href="chapter-04-sql.html" class="ch-nav-btn next">
+        <span class="arrow">→</span>
+        <div><div class="ch-nav-meta">Capítulo 4</div><div class="ch-nav-title">SQL para Data Engineering</div></div>
+      </a>
+    </div>
+  </section>
+</main>
+
+<script>
+  const isLightMode = document.documentElement.classList.contains('light');
+  mermaid.initialize({startOnLoad:true,theme: isLightMode ? 'default' : 'dark',themeVariables: isLightMode ? { primaryColor: '#0088CC' } : {background:'#131c35',primaryColor:'#1e40af'}});
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const c=btn.closest('.tabs'),t=btn.dataset.tab;
+      c.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      c.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      c.querySelector(`.tab-panel[data-tab="${t}"]`).classList.add('active');
+    });
+  });
+  function toggleAccordion(h){
+    const item=h.parentElement,body=item.querySelector('.accordion-body'),isOpen=item.classList.contains('open');
+    h.closest('.accordion').querySelectorAll('.accordion-item').forEach(i=>{i.classList.remove('open');i.querySelector('.accordion-body').classList.remove('open');});
+    if(!isOpen){item.classList.add('open');body.classList.add('open');}
+  }
+</script>
+  <script src="nav.js"></script>
+</body>
+</html>

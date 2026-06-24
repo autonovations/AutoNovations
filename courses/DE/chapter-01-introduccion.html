@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('deCourseTheme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.classList.add('light');
+    })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 1: Introducción al Data Engineering | Master Book DE 2026</title>
+<meta name="description" content="Qué es Data Engineering, historia, evolución e importancia de los datos. Todos los roles del ecosistema moderno de datos.">
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0A0A0A; --bg2: #121212; --bg3: rgba(18, 18, 18, 0.6); --bg4: #1e1e1e;
+  --blue: #00D9FF; --cyan: #00D9FF; --purple: #8b5cf6; --green: #10b981;
+  --orange: #f59e0b; --pink: #ec4899; --red: #ef4444;
+  --t1: #ffffff; --t2: #E0E0E0; --t3: #A0A0A0;
+  --border: rgba(0, 217, 255, 0.2);
+  --sidebar-width: 280px;
+
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--bg3);
+  --bg-card-hover: var(--bg4);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-muted: var(--t3);
+  --accent-cyan: var(--cyan);
+  --accent-blue: var(--blue);
+  --accent-green: var(--green);
+  --accent-orange: var(--orange);
+  --accent-purple: var(--purple);
+  --gradient-hero: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  --gradient-1: linear-gradient(135deg, var(--blue), var(--cyan));
+}
+html.light {
+  --bg: #F8FAFC; --bg2: #FFFFFF; --bg3: rgba(255, 255, 255, 0.7); --bg4: #E2E8F0;
+  --blue: #0088CC; --cyan: #00D9FF; --purple: #7c3aed; --green: #059669;
+  --orange: #d97706; --pink: #db2777; --red: #dc2626;
+  --t1: #0F172A; --t2: #334155; --t3: #64748B;
+  --border: rgba(0, 217, 255, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;display:flex;font-size:1.15rem;}
+
+/* SIDEBAR */
+.sidebar{
+  width:var(--sidebar-width);min-width:var(--sidebar-width);
+  background:var(--bg2);border-right:1px solid var(--border);
+  height:100vh;position:sticky;top:0;overflow-y:auto;
+  padding:1.5rem 0;
+}
+.sidebar-logo{
+  padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);
+  margin-bottom:1rem;
+}
+.sidebar-logo a{text-decoration:none;}
+.sidebar-logo .book-title{font-size:0.75rem;font-weight:700;color:var(--blue);letter-spacing:0.1em;text-transform:uppercase;}
+.sidebar-logo .chapter-title{font-size:0.9rem;color:var(--t2);margin-top:0.25rem;}
+.nav-section{padding:0 1rem;margin-bottom:0.5rem;}
+.nav-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 0.5rem;margin-bottom:0.5rem;}
+.nav-item{
+  display:block;padding:0.45rem 0.75rem;border-radius:8px;
+  text-decoration:none;color:var(--t2);font-size:0.82rem;
+  transition:all 0.2s;margin-bottom:2px;
+}
+.nav-item:hover,.nav-item.active{background:rgba(59,130,246,0.1);color:var(--blue);}
+.nav-item .nav-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--t3);margin-right:0.4rem;}
+.nav-back{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;color:var(--t3);text-decoration:none;font-size:0.8rem;border-bottom:1px solid var(--border);margin-bottom:1rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--blue);}
+
+/* MAIN CONTENT */
+.content{flex:1;min-width:0;padding:3rem 4rem;max-width:100%;margin:0 auto;}
+.chapter-header{margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border);}
+.ch-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;color:var(--cyan);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+.chapter-header h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.chapter-header .lead{font-size:1.1rem;color:var(--t2);max-width:680px;line-height:1.8;}
+.chapter-meta-bar{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--t3);}
+.meta-item strong{color:var(--t2);}
+
+/* SECTIONS */
+h2{font-size:1.6rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--t1);padding-top:1rem;}
+h2::before{content:attr(data-num)' ';color:var(--blue);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 0.75rem;color:var(--t1);}
+h4{font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem;color:var(--cyan);}
+p{margin-bottom:1.25rem;color:var(--t2);font-size:0.95rem;}
+ul,ol{padding-left:1.5rem;margin-bottom:1.25rem;color:var(--t2);}
+li{margin-bottom:0.5rem;font-size:0.95rem;}
+strong{color:var(--t1);}
+code{font-family:'JetBrains Mono',monospace;background:var(--bg4);border:1px solid var(--border);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.85rem;color:var(--cyan);}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;}
+pre code{background:none;border:none;padding:0;font-size:0.85rem;color:var(--t1);}
+
+/* CARDS */
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0;}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin:1.5rem 0;}
+.card-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1.25rem;transition:all 0.2s;}
+.card-item:hover{border-color:var(--blue);background:var(--bg4);}
+.card-item .icon{font-size:1.75rem;margin-bottom:0.75rem;}
+.card-item h4{margin:0 0 0.5rem;color:var(--t1);}
+.card-item p{font-size:0.82rem;color:var(--t3);margin:0;}
+
+/* INFO BOXES */
+.info-box{border-left:3px solid var(--blue);background:rgba(59,130,246,0.05);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1.5rem 0;}
+.info-box.warning{border-color:var(--orange);background:rgba(245,158,11,0.05);}
+.info-box.success{border-color:var(--green);background:rgba(16,185,129,0.05);}
+.info-box.purple{border-color:var(--purple);background:rgba(139,92,246,0.05);}
+.info-box-title{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.info-box .info-box-title{color:var(--blue);}
+.info-box.warning .info-box-title{color:var(--orange);}
+.info-box.success .info-box-title{color:var(--green);}
+.info-box.purple .info-box-title{color:var(--purple);}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;margin:1.5rem 0;}
+table{width:100%;border-collapse:collapse;font-size:0.875rem;}
+th{background:var(--bg4);color:var(--t1);font-weight:600;padding:0.75rem 1rem;text-align:left;border-bottom:2px solid var(--border);}
+td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--t2);}
+tr:hover td{background:var(--bg3);}
+td:first-child{font-weight:500;color:var(--t1);}
+
+/* ACCORDION */
+.accordion{margin:1.5rem 0;}
+.accordion-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.accordion-header{padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:0.95rem;transition:background 0.2s;user-select:none;}
+.accordion-header:hover{background:var(--bg4);}
+.accordion-header .arrow{color:var(--blue);transition:transform 0.3s;font-size:1.2rem;}
+.accordion-item.open .accordion-header .arrow{transform:rotate(180deg);}
+.accordion-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s;}
+.accordion-body.open{max-height:1000px;padding:0 1.25rem 1.25rem;}
+
+/* TABS */
+.tabs{margin:2rem 0;}
+.tab-list{display:flex;gap:0.5rem;border-bottom:1px solid var(--border);margin-bottom:0;flex-wrap:wrap;}
+.tab-btn{padding:0.6rem 1.25rem;background:none;border:none;color:var(--t3);font-size:0.875rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;font-family:'Inter',sans-serif;}
+.tab-btn:hover{color:var(--t2);}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
+.tab-panel{display:none;padding:1.5rem;background:var(--bg3);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;}
+.tab-panel.active{display:block;}
+
+/* DIAGRAM */
+.mermaid-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:2rem;margin:2rem 0;overflow-x:auto;}
+.mermaid{font-family:'Inter',sans-serif !important;}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:2rem;margin:2rem 0;}
+.timeline::before{content:'';position:absolute;left:0.45rem;top:0;bottom:0;width:2px;background:var(--border);}
+.timeline-item{position:relative;margin-bottom:2rem;}
+.timeline-item::before{content:'';position:absolute;left:-1.65rem;top:0.3rem;width:10px;height:10px;border-radius:50%;background:var(--blue);border:2px solid var(--bg);}
+.timeline-date{font-size:0.75rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;}
+.timeline-title{font-size:1rem;font-weight:700;color:var(--t1);margin-bottom:0.25rem;}
+.timeline-desc{font-size:0.875rem;color:var(--t2);}
+
+/* ROLE CARD */
+.role-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;margin:2rem 0;}
+.role-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;position:relative;overflow:hidden;transition:all 0.3s;}
+.role-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--rc-gradient,linear-gradient(90deg,var(--blue),var(--cyan)));}
+.role-card:hover{border-color:rgba(59,130,246,0.3);transform:translateY(-3px);}
+.role-icon{font-size:2rem;margin-bottom:1rem;}
+.role-card h3{font-size:1rem;font-weight:700;margin-bottom:0.5rem;margin-top:0;}
+.role-card p{font-size:0.825rem;color:var(--t3);margin:0 0 1rem;}
+.role-skills{display:flex;flex-wrap:wrap;gap:0.35rem;}
+.role-skill{font-size:0.7rem;background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:0.2rem 0.5rem;color:var(--t3);font-family:'JetBrains Mono',monospace;}
+
+/* SALARY */
+.salary-bar{margin-bottom:1rem;}
+.salary-label{display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:0.35rem;}
+.salary-label span:first-child{color:var(--t2);}
+.salary-label span:last-child{color:var(--green);font-weight:600;}
+.salary-track{background:var(--border);border-radius:50px;height:6px;overflow:hidden;}
+.salary-fill{height:100%;border-radius:50px;background:linear-gradient(90deg,var(--green),var(--cyan));}
+
+/* CHAPTER NAV */
+.chapter-nav{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem;}
+.ch-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--t2);transition:all 0.2s;flex:1;max-width:260px;}
+.ch-nav-btn:hover{border-color:var(--blue);color:var(--t1);}
+.ch-nav-btn.next{margin-left:auto;text-align:right;flex-direction:row-reverse;}
+.ch-nav-btn .arrow{font-size:1.25rem;color:var(--blue);}
+.ch-nav-meta{font-size:0.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;}
+.ch-nav-title{font-size:0.875rem;font-weight:600;margin-top:0.1rem;}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .content{padding:2rem 1.5rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+  <div class="chapter-header">
+    <div class="ch-badge">📖 Capítulo 1 · Nivel Básico</div>
+    <h1>Introducción al<br>Data Engineering</h1>
+    <p class="lead">Una inmersión profunda en el mundo del Data Engineering: qué es, cómo evolucionó, por qué importa y quiénes son los actores clave en el ecosistema moderno de datos.</p>
+    <div class="chapter-meta-bar">
+      <div class="meta-item">⏱️ <strong>Tiempo de lectura:</strong> ~45 min</div>
+      <div class="meta-item">🎯 <strong>Nivel:</strong> Principiante</div>
+      <div class="meta-item">📌 <strong>Prerrequisitos:</strong> Ninguno</div>
+    </div>
+  </div>
+
+  <!-- 1.0 -->
+  <section id="s1">
+    <h2 data-num="1.0">¿Qué es Data Engineering?</h2>
+    <p>El <strong>Data Engineering</strong> es la disciplina de ingeniería de software dedicada al diseño, construcción y mantenimiento de los sistemas e infraestructura que permiten la <strong>adquisición, almacenamiento, procesamiento y distribución de datos</strong> a escala. Es, en esencia, el conjunto de prácticas que hace que los datos sean útiles, accesibles y confiables para toda la organización.</p>
+    <p>Mientras que un Data Scientist analiza datos para extraer insights, y un Data Analyst crea reportes y visualizaciones, el <strong>Data Engineer</strong> construye los "tuberías" (pipelines) y la infraestructura que hacen posible todo ese trabajo. Sin Data Engineering sólido, no hay Data Science confiable.</p>
+
+    <div class="info-box success">
+      <div class="info-box-title">💡 Analogía clave</div>
+      <p style="margin:0;font-size:0.9rem;">Si los datos son el petróleo, el Data Engineer es quien construye las refinerías, oleoductos y plantas de distribución. No extrae el petróleo (eso lo hacen las fuentes de datos), ni lo consume (eso lo hacen analistas y científicos). Construye y mantiene toda la infraestructura entre ambos extremos.</p>
+    </div>
+
+    <h3>Responsabilidades Principales</h3>
+    <div class="card-grid">
+      <div class="card-item">
+        <div class="icon">🔄</div>
+        <h4>Pipelines de Datos</h4>
+        <p>Diseñar y construir ETL/ELT pipelines que muevan datos de fuentes hacia destinos de forma confiable y escalable.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🗄️</div>
+        <h4>Almacenamiento</h4>
+        <p>Seleccionar y gestionar Data Warehouses, Data Lakes y sistemas de bases de datos apropiados para cada caso.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">⚡</div>
+        <h4>Procesamiento</h4>
+        <p>Implementar sistemas de procesamiento batch y streaming para transformar datos crudos en información útil.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔍</div>
+        <h4>Calidad de Datos</h4>
+        <p>Garantizar que los datos sean precisos, completos, consistentes y oportunos mediante pruebas y validaciones.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔐</div>
+        <h4>Seguridad y Governance</h4>
+        <p>Asegurar que los datos se manejen conforme a políticas de privacidad, compliance y acceso.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">📊</div>
+        <h4>Infraestructura</h4>
+        <p>Gestionar y optimizar la infraestructura cloud y on-premise que soporta todos los sistemas de datos.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1.1 -->
+  <section id="s2">
+    <h2 data-num="1.1">Historia y Evolución del Data Engineering</h2>
+    <p>El Data Engineering no nació de un día para otro. Es el resultado de décadas de evolución tecnológica, desde los primeros sistemas de bases de datos hasta las arquitecturas distribuidas modernas de exabytes.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-date">1960s - 1970s</div>
+        <div class="timeline-title">Era de los Mainframes</div>
+        <div class="timeline-desc">Las empresas comienzan a digitalizar datos en mainframes. Aparecen los primeros sistemas de gestión de bases de datos (DBMS). IBM desarrolla IMS (Information Management System) y el modelo relacional emerge con Edgar Codd en 1970.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">1980s</div>
+        <div class="timeline-title">Era Relacional y el SQL</div>
+        <div class="timeline-desc">Oracle, IBM DB2, SQL Server emergen. SQL se estandariza (SQL-86). Los primeros Data Warehouses aparecen en grandes corporaciones. Bill Inmon publica conceptos fundacionales del DWH.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">1990s</div>
+        <div class="timeline-title">Business Intelligence y ETL</div>
+        <div class="timeline-desc">Proliferan las herramientas ETL (Informatica, DataStage). Ralph Kimball populariza el Dimensional Modeling y el Star Schema. Nace el concepto de OLAP y los cubos de datos. SAP BW y otras suites de BI dominan el mercado.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">2000s</div>
+        <div class="timeline-title">Big Data y Open Source</div>
+        <div class="timeline-desc">Google publica el paper de MapReduce (2004) y GFS (2003). Doug Cutting crea Hadoop en 2006. Nace el concepto de "Big Data" con las 3V (Volumen, Velocidad, Variedad). Amazon lanza AWS y democratiza el cloud computing.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">2010s</div>
+        <div class="timeline-title">Era del Data Engineering Moderno</div>
+        <div class="timeline-desc">Spark (2010) reemplaza MapReduce. Kafka (2011) revoluciona el streaming. Airflow (2014) moderniza la orquestación. El término "Data Engineer" se populariza. Surge el rol diferenciado de Data Scientist (Harvard Business Review lo llama "sexiest job of the 21st century" en 2012).</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">2020s</div>
+        <div class="timeline-title">Era Cloud-Native y Lakehouse</div>
+        <div class="timeline-desc">Snowflake, Databricks y BigQuery dominan. Surge el concepto de Lakehouse (Delta Lake). dbt revoluciona las transformaciones. Data Mesh propone la descentralización. Aparecen los primeros impactos de LLMs en Data Engineering (2024-2025).</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">2026</div>
+        <div class="timeline-title">AI-Augmented Data Engineering</div>
+        <div class="timeline-desc">Los LLMs asisten en la generación de pipelines y queries. La infraestructura se vuelve completamente serverless y auto-gestionada. El Data Engineer evoluciona hacia roles más estratégicos y de diseño de sistemas.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1.2 -->
+  <section id="s3">
+    <h2 data-num="1.2">La Importancia de los Datos en 2026</h2>
+    <p>Vivimos en la <strong>economía de los datos</strong>. Cada decisión de negocio relevante —desde qué producto desarrollar hasta cómo optimizar una cadena de suministro— está respaldada por datos. Pero los datos sin infraestructura son solo ruido.</p>
+
+    <div class="tabs" id="tabs-importance">
+      <div class="tab-list">
+        <button class="tab-btn active" data-tab="business">🏢 Negocio</button>
+        <button class="tab-btn" data-tab="tech">⚙️ Tecnología</button>
+        <button class="tab-btn" data-tab="ai">🤖 IA y ML</button>
+        <button class="tab-btn" data-tab="numbers">📊 Números</button>
+      </div>
+      <div class="tab-panel active" data-tab="business">
+        <h4>Por qué los datos son críticos para el negocio</h4>
+        <ul>
+          <li><strong>Decisiones basadas en evidencia:</strong> Las empresas data-driven toman decisiones 5x más rápido que las que operan por intuición.</li>
+          <li><strong>Personalización a escala:</strong> Netflix ahorra ~$1B/año en retención gracias a su motor de recomendación basado en datos.</li>
+          <li><strong>Eficiencia operacional:</strong> Amazon optimiza su supply chain en tiempo real con datos de millones de transacciones diarias.</li>
+          <li><strong>Ventaja competitiva:</strong> Las empresas que adoptan data analytics avanzado tienen 2.6x más probabilidades de superar a sus competidores en rentabilidad.</li>
+          <li><strong>Detección de fraude:</strong> Los bancos previenen miles de millones en fraude anual con modelos de ML alimentados por data pipelines de tiempo real.</li>
+        </ul>
+      </div>
+      <div class="tab-panel" data-tab="tech">
+        <h4>El rol técnico de la infraestructura de datos</h4>
+        <ul>
+          <li><strong>Escalabilidad:</strong> Los sistemas modernos deben manejar petabytes de datos sin degradación de performance.</li>
+          <li><strong>Latencia:</strong> Muchos casos de uso requieren procesamiento en milisegundos (detección de fraude, recomendaciones en tiempo real).</li>
+          <li><strong>Confiabilidad:</strong> La infraestructura debe mantener disponibilidad 99.99% con recuperación automática ante fallos.</li>
+          <li><strong>Costo:</strong> El cloud computing permite escalar horizontalmente, pero requiere optimización activa para no disparar costos.</li>
+          <li><strong>Complejidad:</strong> Los ecosistemas modernos tienen decenas de sistemas interconectados que deben funcionar de forma coordinada.</li>
+        </ul>
+      </div>
+      <div class="tab-panel" data-tab="ai">
+        <h4>Data Engineering como base de la IA</h4>
+        <p style="font-size:0.9rem;color:var(--t2);">Sin datos de calidad, la IA no funciona. El Data Engineering es la piedra angular de cualquier proyecto de Machine Learning o AI:</p>
+        <ul>
+          <li><strong>Feature Engineering:</strong> Los features de ML deben ser construidos y servidos por pipelines de datos en tiempo real.</li>
+          <li><strong>Training Data:</strong> Los modelos de ML requieren enormes volúmenes de datos limpios y etiquetados.</li>
+          <li><strong>Model Serving:</strong> Las predicciones en producción dependen de pipelines de datos de baja latencia.</li>
+          <li><strong>LLMs (2024-2026):</strong> Los grandes modelos de lenguaje requieren infraestructura masiva de datos para pre-entrenamiento y fine-tuning.</li>
+          <li><strong>RAG Systems:</strong> Los sistemas de Retrieval-Augmented Generation necesitan data pipelines para mantener bases de conocimiento actualizadas.</li>
+        </ul>
+      </div>
+      <div class="tab-panel" data-tab="numbers">
+        <h4>El mercado de los datos en números (2026)</h4>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Métrica</th><th>Valor</th></tr>
+            <tr><td>Datos generados por día en el mundo</td><td><strong>~2.5 Exabytes</strong></td></tr>
+            <tr><td>Mercado global de Big Data</td><td><strong>$274B USD</strong></td></tr>
+            <tr><td>Demanda de Data Engineers (YoY)</td><td><strong>+35%</strong></td></tr>
+            <tr><td>Salario promedio Senior DE (USA)</td><td><strong>$160-220K USD</strong></td></tr>
+            <tr><td>Empresas Fortune 500 con Chief Data Officer</td><td><strong>92%</strong></td></tr>
+            <tr><td>Proyectos de ML que fallan por datos</td><td><strong>~87%</strong></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1.3 -->
+  <section id="s4">
+    <h2 data-num="1.3">El Ecosistema de Roles en Datos</h2>
+    <p>El mundo de los datos tiene múltiples roles especializados. Es crucial entender las diferencias y colaboraciones entre ellos para navegar efectivamente tu carrera y colaborar con otros equipos.</p>
+
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+graph TB
+    subgraph "Fuentes de Datos"
+        A[🗄️ Bases de Datos<br>Transaccionales]
+        B[📱 Apps & APIs]
+        C[🌐 Web Scraping]
+        D[📡 IoT & Sensores]
+    end
+
+    subgraph "Data Engineering"
+        E[⚙️ Data Engineer<br>Pipelines & Infra]
+        F[🔄 ETL/ELT Pipelines]
+        G[🏗️ Data Lake / Warehouse]
+    end
+
+    subgraph "Transformación & Modelado"
+        H[📐 Analytics Engineer<br>dbt Models]
+        I[📊 Data Modeler]
+    end
+
+    subgraph "Consumo & Análisis"
+        J[📈 Data Analyst<br>Reports & Dashboards]
+        K[🔬 Data Scientist<br>ML Models]
+        L[🤖 ML Engineer<br>Production ML]
+        M[🧠 AI Engineer<br>LLMs & RAG]
+    end
+
+    A --> E
+    B --> E
+    C --> E
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    H --> I
+    I --> J
+    I --> K
+    K --> L
+    L --> M
+
+    style E fill:#1e40af,stroke:#3b82f6,color:#fff
+    style H fill:#5b21b6,stroke:#8b5cf6,color:#fff
+    style J fill:#065f46,stroke:#10b981,color:#fff
+    style K fill:#92400e,stroke:#f59e0b,color:#fff
+      </div>
+    </div>
+
+    <div class="role-grid">
+      <div class="role-card" style="--rc-gradient:linear-gradient(90deg,#3b82f6,#06b6d4)">
+        <div class="role-icon">⚙️</div>
+        <h3>Data Engineer</h3>
+        <p>Construye y mantiene la infraestructura de datos. Diseña pipelines, gestiona el stack de datos y garantiza que los datos fluyan de forma confiable.</p>
+        <div class="role-skills">
+          <span class="role-skill">Python</span><span class="role-skill">Spark</span><span class="role-skill">Kafka</span>
+          <span class="role-skill">Airflow</span><span class="role-skill">SQL</span><span class="role-skill">Cloud</span>
+        </div>
+      </div>
+      <div class="role-card" style="--rc-gradient:linear-gradient(90deg,#8b5cf6,#ec4899)">
+        <div class="role-icon">📐</div>
+        <h3>Analytics Engineer</h3>
+        <p>Puente entre DE y DA. Transforma datos crudos en modelos analíticos usando dbt. Combina habilidades de ingeniería con mentalidad analítica.</p>
+        <div class="role-skills">
+          <span class="role-skill">dbt</span><span class="role-skill">SQL</span><span class="role-skill">Data Modeling</span>
+          <span class="role-skill">BI Tools</span><span class="role-skill">Git</span>
+        </div>
+      </div>
+      <div class="role-card" style="--rc-gradient:linear-gradient(90deg,#10b981,#3b82f6)">
+        <div class="role-icon">📈</div>
+        <h3>Data Analyst</h3>
+        <p>Analiza datos para responder preguntas de negocio. Crea dashboards, reportes y análisis que guían la toma de decisiones.</p>
+        <div class="role-skills">
+          <span class="role-skill">SQL</span><span class="role-skill">Power BI</span><span class="role-skill">Tableau</span>
+          <span class="role-skill">Excel</span><span class="role-skill">Python</span>
+        </div>
+      </div>
+      <div class="role-card" style="--rc-gradient:linear-gradient(90deg,#f59e0b,#ef4444)">
+        <div class="role-icon">🔬</div>
+        <h3>Data Scientist</h3>
+        <p>Aplica estadística, matemática y ML para extraer insights complejos y construir modelos predictivos que generan valor de negocio.</p>
+        <div class="role-skills">
+          <span class="role-skill">Python</span><span class="role-skill">R</span><span class="role-skill">ML/DL</span>
+          <span class="role-skill">Statistics</span><span class="role-skill">Spark</span>
+        </div>
+      </div>
+      <div class="role-card" style="--rc-gradient:linear-gradient(90deg,#ef4444,#8b5cf6)">
+        <div class="role-icon">🤖</div>
+        <h3>ML Engineer</h3>
+        <p>Lleva los modelos de ML a producción. Diseña sistemas de ML escalables, feature stores y monitoring de modelos en producción.</p>
+        <div class="role-skills">
+          <span class="role-skill">MLflow</span><span class="role-skill">Docker</span><span class="role-skill">Kubernetes</span>
+          <span class="role-skill">Feature Store</span><span class="role-skill">CI/CD</span>
+        </div>
+      </div>
+      <div class="role-card" style="--rc-gradient:linear-gradient(90deg,#06b6d4,#8b5cf6)">
+        <div class="role-icon">🧠</div>
+        <h3>AI Engineer (2024+)</h3>
+        <p>Especialista en sistemas basados en LLMs. Construye aplicaciones de RAG, fine-tuning, agentes y sistemas AI-native a escala.</p>
+        <div class="role-skills">
+          <span class="role-skill">LangChain</span><span class="role-skill">RAG</span><span class="role-skill">Vector DBs</span>
+          <span class="role-skill">LLM APIs</span><span class="role-skill">Python</span>
+        </div>
+      </div>
+      <div class="role-card" style="--rc-gradient:linear-gradient(90deg,#10b981,#f59e0b)">
+        <div class="role-icon">👨‍💻</div>
+        <h3>Software Engineer</h3>
+        <p>Colabora con Data Engineers en la instrumentación de aplicaciones, creación de SDKs de datos y sistemas de ingesta desde el backend.</p>
+        <div class="role-skills">
+          <span class="role-skill">APIs</span><span class="role-skill">Microservices</span><span class="role-skill">Kafka</span>
+          <span class="role-skill">Event Driven</span>
+        </div>
+      </div>
+      <div class="role-card" style="--rc-gradient:linear-gradient(90deg,#3b82f6,#10b981)">
+        <div class="role-icon">🏗️</div>
+        <h3>Data Architect</h3>
+        <p>Diseña la estrategia y arquitectura global del ecosistema de datos. Define estándares, patrones y la visión técnica de largo plazo.</p>
+        <div class="role-skills">
+          <span class="role-skill">Architecture</span><span class="role-skill">Strategy</span><span class="role-skill">Governance</span>
+          <span class="role-skill">All Stack</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1.4 -->
+  <section id="s5">
+    <h2 data-num="1.4">El Data Engineer en Detalle</h2>
+
+    <div class="info-box purple">
+      <div class="info-box-title">🎯 Definición Precisa</div>
+      <p style="margin:0;font-size:0.9rem;">Un Data Engineer es un ingeniero de software especializado en el <strong>diseño, construcción, mantenimiento y optimización de sistemas de datos a escala</strong>. A diferencia de otros roles de datos, el DE tiene una fuerte base en ingeniería de software, sistemas distribuidos y arquitectura cloud.</p>
+    </div>
+
+    <h3>Diferencias Clave: DE vs Otros Roles</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Aspecto</th><th>Data Engineer</th><th>Data Scientist</th><th>Data Analyst</th><th>Analytics Eng.</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Foco principal</td><td>Infraestructura & pipelines</td><td>Modelos & estadística</td><td>Insights & reportes</td><td>Modelos analíticos</td></tr>
+          <tr><td>Lenguaje primario</td><td>Python, Scala, SQL</td><td>Python, R</td><td>SQL, Python</td><td>SQL, dbt, Python</td></tr>
+          <tr><td>Habilidades core</td><td>Sistemas distribuidos</td><td>ML/Statistics</td><td>Visualización</td><td>Data modeling</td></tr>
+          <tr><td>Output</td><td>Pipelines, infra</td><td>Modelos ML</td><td>Dashboards</td><td>dbt models</td></tr>
+          <tr><td>Orientación</td><td>Técnica/Ingeniería</td><td>Investigación</td><td>Negocio</td><td>Híbrida</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Niveles de Carrera en Data Engineering</h3>
+    <div class="accordion" id="acc-levels">
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🌱 Junior Data Engineer (0-2 años)</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Responsabilidades:</strong> Mantener y extender pipelines existentes, escribir queries SQL, aprender las herramientas del stack, resolver bugs en producción bajo supervisión.</p>
+          <p><strong>Stack esperado:</strong> Python básico-intermedio, SQL sólido, Git, conceptos de ETL, Docker básico, familiaridad con al menos un cloud provider.</p>
+          <p><strong>Salario típico (USA):</strong> $80,000 - $120,000 USD/año</p>
+          <p><strong>Habilidades críticas:</strong> Escribir código limpio y testeable, entender fundamentos de bases de datos, comunicar problemas técnicos con claridad.</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>⚡ Mid-level Data Engineer (2-5 años)</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Responsabilidades:</strong> Diseñar nuevos pipelines end-to-end, optimizar queries y procesos existentes, mentorear juniors, tomar decisiones técnicas en su área.</p>
+          <p><strong>Stack esperado:</strong> Python avanzado, Spark, Kafka o similar, Airflow/Prefect, SQL avanzado, Cloud (GCP/AWS), dbt, Docker + Kubernetes básico.</p>
+          <p><strong>Salario típico (USA):</strong> $120,000 - $160,000 USD/año</p>
+          <p><strong>Habilidades críticas:</strong> Diseño de sistemas de datos, optimización de performance, conocimiento de data modeling, capacidad de resolver problemas complejos de forma autónoma.</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🚀 Senior Data Engineer (5-8 años)</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Responsabilidades:</strong> Arquitectura de sistemas de datos complejos, definir estándares y mejores prácticas del equipo, liderar proyectos de alto impacto, colaborar con C-level en estrategia de datos.</p>
+          <p><strong>Stack esperado:</strong> Dominio del stack completo, experiencia en sistemas distribuidos a escala, cloud architecture, data governance, seguridad, IaC (Terraform).</p>
+          <p><strong>Salario típico (USA):</strong> $160,000 - $220,000 USD/año</p>
+          <p><strong>Habilidades críticas:</strong> Pensamiento sistémico, liderazgo técnico, comprensión profunda de trade-offs, comunicación con stakeholders, mentoring de equipo completo.</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🌟 Staff / Principal Data Engineer (8+ años)</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Responsabilidades:</strong> Definir la visión técnica de toda la organización de datos, trabajar con múltiples equipos, evaluar y adoptar nuevas tecnologías, crear marcos de trabajo y mejores prácticas a nivel empresa.</p>
+          <p><strong>Stack esperado:</strong> Experiencia multi-cloud, conocimiento profundo de sistemas de datos en escala FAANG, capacidad de diseñar arquitecturas para petabytes.</p>
+          <p><strong>Salario típico (USA):</strong> $220,000 - $350,000+ USD/año</p>
+          <p><strong>Habilidades críticas:</strong> Visión estratégica, influencia sin autoridad directa, comunicación ejecutiva, track record de proyectos de alto impacto.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1.5 -->
+  <section id="s6">
+    <h2 data-num="1.5">Stack Tecnológico del Data Engineer 2026</h2>
+    <p>El ecosistema de herramientas de un Data Engineer moderno es amplio. No es necesario dominarlas todas, pero sí entender sus propósitos y cuándo usar cada una.</p>
+
+    <div class="tabs" id="tabs-stack">
+      <div class="tab-list">
+        <button class="tab-btn active" data-tab="core">🎯 Core</button>
+        <button class="tab-btn" data-tab="processing">⚡ Procesamiento</button>
+        <button class="tab-btn" data-tab="storage">🗄️ Storage</button>
+        <button class="tab-btn" data-tab="orchestration">🔄 Orquestación</button>
+        <button class="tab-btn" data-tab="cloud2">☁️ Cloud</button>
+      </div>
+      <div class="tab-panel active" data-tab="core">
+        <h4>Habilidades Core (Obligatorias)</h4>
+        <ul>
+          <li><strong>Python:</strong> El lenguaje principal para pipelines, scripting y automatización. Pandas, Polars, SQLAlchemy son librerías fundamentales.</li>
+          <li><strong>SQL:</strong> Indispensable. Window functions, CTEs, optimización de queries, particionamiento. Un DE que no domina SQL avanzado no puede progresar.</li>
+          <li><strong>Git:</strong> Control de versiones, branching strategies, pull requests. El trabajo en equipo requiere Git avanzado.</li>
+          <li><strong>Linux/Bash:</strong> La mayoría de infraestructura corre en Linux. Comandos básicos a avanzados, scripting, cron jobs.</li>
+          <li><strong>Docker:</strong> Containerización de aplicaciones. Dockerfile, docker-compose, networks, volumes.</li>
+        </ul>
+      </div>
+      <div class="tab-panel" data-tab="processing">
+        <h4>Herramientas de Procesamiento</h4>
+        <ul>
+          <li><strong>Apache Spark:</strong> El estándar de facto para procesamiento distribuido de grandes volúmenes de datos. PySpark, Spark SQL, Structured Streaming.</li>
+          <li><strong>Apache Kafka:</strong> Plataforma de event streaming para datos en tiempo real. Alta throughput, tolerancia a fallos, persistencia.</li>
+          <li><strong>Flink:</strong> Alternativa a Spark para streaming con menor latencia. Popular en Uber, Alibaba.</li>
+          <li><strong>dbt:</strong> Data Build Tool para transformaciones SQL modernas. Maneja dependencias, testing y documentación de modelos.</li>
+          <li><strong>Pandas / Polars:</strong> Para procesamiento de datos a escala "mediana" en Python. Polars es la alternativa moderna y más rápida.</li>
+        </ul>
+      </div>
+      <div class="tab-panel" data-tab="storage">
+        <h4>Sistemas de Almacenamiento</h4>
+        <ul>
+          <li><strong>PostgreSQL:</strong> La base de datos relacional open source más robusta. Ideal para datos operacionales y analíticos a escala mediana.</li>
+          <li><strong>Snowflake:</strong> Cloud Data Warehouse completamente gestionado. El estándar actual para analytics a escala empresa.</li>
+          <li><strong>BigQuery:</strong> El DWH serverless de Google. Excelente costo-performance para queries analíticas ad-hoc.</li>
+          <li><strong>Delta Lake / Apache Iceberg / Apache Hudi:</strong> Formatos de tabla transaccionales sobre object storage. Permiten ACID sobre Data Lakes.</li>
+          <li><strong>MongoDB / Cassandra:</strong> Bases de datos NoSQL para casos de uso específicos (documentos, wide-column).</li>
+        </ul>
+      </div>
+      <div class="tab-panel" data-tab="orchestration">
+        <h4>Orquestación de Pipelines</h4>
+        <ul>
+          <li><strong>Apache Airflow:</strong> El orquestador más popular. DAGs en Python, interfaz web, extensible con operadores.</li>
+          <li><strong>Prefect:</strong> Alternativa moderna a Airflow. API más Pythónica, mejor experiencia de desarrollo local.</li>
+          <li><strong>Dagster:</strong> Orquestador con fuerte foco en assets y linaje de datos. Popular en equipos que adoptan data mesh.</li>
+          <li><strong>dbt Core / Cloud:</strong> Para orquestar transformaciones SQL dentro del warehouse.</li>
+          <li><strong>Luigi / Argo Workflows:</strong> Alternativas más especializadas (Argo para Kubernetes-native).</li>
+        </ul>
+      </div>
+      <div class="tab-panel" data-tab="cloud2">
+        <h4>Plataformas Cloud</h4>
+        <ul>
+          <li><strong>Google Cloud Platform (GCP):</strong> BigQuery, Dataflow (Beam), Pub/Sub, Cloud Storage, Composer (Airflow), Vertex AI.</li>
+          <li><strong>Amazon Web Services (AWS):</strong> Redshift, EMR (Spark), Kinesis, S3, Glue, Step Functions, MWAA.</li>
+          <li><strong>Microsoft Azure:</strong> Synapse Analytics, Azure Databricks, Event Hubs, ADLS, Data Factory.</li>
+          <li><strong>Databricks:</strong> Plataforma unificada basada en Spark. Disponible en los 3 clouds principales.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1.6 -->
+  <section id="s7">
+    <h2 data-num="1.6">Salarios y Mercado 2026</h2>
+    <p>El Data Engineering es una de las profesiones tecnológicas mejor pagadas en 2026, con alta demanda global y escasez de talento especializado.</p>
+
+    <h3>Salarios en USA (USD/año)</h3>
+    <div class="card" style="padding:2rem;">
+      <div class="salary-bar">
+        <div class="salary-label"><span>Junior DE (0-2 años)</span><span>$80K - $120K</span></div>
+        <div class="salary-track"><div class="salary-fill" style="width:35%"></div></div>
+      </div>
+      <div class="salary-bar">
+        <div class="salary-label"><span>Mid DE (2-5 años)</span><span>$120K - $160K</span></div>
+        <div class="salary-track"><div class="salary-fill" style="width:55%"></div></div>
+      </div>
+      <div class="salary-bar">
+        <div class="salary-label"><span>Senior DE (5-8 años)</span><span>$160K - $220K</span></div>
+        <div class="salary-track"><div class="salary-fill" style="width:75%"></div></div>
+      </div>
+      <div class="salary-bar">
+        <div class="salary-label"><span>Staff / Principal DE (8+ años)</span><span>$220K - $350K+</span></div>
+        <div class="salary-track"><div class="salary-fill" style="width:95%"></div></div>
+      </div>
+    </div>
+
+    <h3>Salarios Globales (USD/año referencial)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>País / Región</th><th>Junior</th><th>Mid</th><th>Senior</th></tr></thead>
+        <tbody>
+          <tr><td>🇺🇸 USA (Big Tech)</td><td>$100-130K</td><td>$150-180K</td><td>$200-350K+</td></tr>
+          <tr><td>🇺🇸 USA (Startups/General)</td><td>$80-100K</td><td>$120-150K</td><td>$160-200K</td></tr>
+          <tr><td>🇬🇧 Reino Unido</td><td>£45-60K</td><td>£70-95K</td><td>£100-150K</td></tr>
+          <tr><td>🇩🇪 Alemania</td><td>€50-65K</td><td>€75-95K</td><td>€100-130K</td></tr>
+          <tr><td>🇲🇽 México</td><td>$400-700K MXN</td><td>$700K-1.2M MXN</td><td>$1.2-2M MXN</td></tr>
+          <tr><td>🇨🇴 Colombia</td><td>$60-100M COP</td><td>$120-180M COP</td><td>$180-300M COP</td></tr>
+          <tr><td>🇦🇷 Argentina</td><td>$3-6K USD</td><td>$6-12K USD</td><td>$12-25K USD</td></tr>
+          <tr><td>🌐 Remoto (LATAM → USA)</td><td>$40-70K USD</td><td>$70-120K USD</td><td>$100-180K USD</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-box warning">
+      <div class="info-box-title">⚠️ Importante sobre salarios remotos</div>
+      <p style="margin:0;font-size:0.9rem;">Los salarios remotos para empresas americanas desde LATAM han aumentado significativamente. Empresas como Stripe, Airbnb, Shopify contratan ingenieros de datos en LATAM a $60-120K USD/año remotos. Plataformas como Toptal, Andela, Gun.io facilitan estas oportunidades.</p>
+    </div>
+
+    <h3>Certificaciones más valoradas (2026)</h3>
+    <div class="accordion" id="acc-certs">
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>☁️ Google Cloud Professional Data Engineer</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <p>Una de las certificaciones más valoradas del mercado. Cubre BigQuery, Dataflow, Pub/Sub, Composer, Vertex AI y el ecosistema GCP completo. Costo: ~$200 USD. Tiempo de preparación: 2-3 meses para alguien con experiencia.</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>❄️ Snowflake SnowPro Core / Advanced</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <p>Muy valorada en empresas que usan Snowflake como DWH principal. La certificación Advanced Data Engineer demuestra dominio del optimizador de queries y data engineering avanzado en Snowflake. Costo: ~$175-375 USD.</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🔴 Databricks Certified Associate/Professional</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <p>Para quienes trabajan con Spark y el ecosistema Databricks. La certificación Professional Data Engineer es especialmente valorada en enterprise. Costo: ~$200 USD. Requiere experiencia práctica con PySpark.</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🌊 dbt Certification</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <p>Certifica conocimiento de dbt, el estándar de transformaciones SQL modernas. Muy valorada para roles de Analytics Engineering. La comunidad dbt es enorme y activa.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chapter Navigation -->
+  <div class="chapter-nav">
+    <a href="index.html" class="ch-nav-btn">
+      <span class="arrow">←</span>
+      <div>
+        <div class="ch-nav-meta">Volver a</div>
+        <div class="ch-nav-title">Índice General</div>
+      </div>
+    </a>
+    <a href="chapter-02-fundamentos.html" class="ch-nav-btn next">
+      <span class="arrow">→</span>
+      <div>
+        <div class="ch-nav-meta">Capítulo 2</div>
+        <div class="ch-nav-title">Fundamentos de Datos</div>
+      </div>
+    </a>
+  </div>
+
+</main>
+
+<script>
+  // Mermaid init
+  const isLightMode = document.documentElement.classList.contains('light');
+  mermaid.initialize({ 
+    startOnLoad: true, 
+    theme: isLightMode ? 'default' : 'dark',
+    themeVariables: isLightMode ? { primaryColor: '#0088CC' } : { background: '#131c35', primaryColor: '#1e40af', edgeLabelBackground: '#0f1629' }
+  });
+
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabsContainer = btn.closest('.tabs');
+      const target = btn.dataset.tab;
+      tabsContainer.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      tabsContainer.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      tabsContainer.querySelector(`.tab-panel[data-tab="${target}"]`).classList.add('active');
+    });
+  });
+
+  // Accordion
+  function toggleAccordion(header) {
+    const item = header.parentElement;
+    const body = item.querySelector('.accordion-body');
+    const isOpen = item.classList.contains('open');
+    // Close all in same accordion
+    header.closest('.accordion').querySelectorAll('.accordion-item').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.accordion-body').classList.remove('open');
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      body.classList.add('open');
+    }
+  }
+
+  // Active nav on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navItems = document.querySelectorAll('.nav-item[href^="#"]');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+    navItems.forEach(item => {
+      item.classList.toggle('active', item.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+  <script src="nav.js"></script>
+</body>
+</html>

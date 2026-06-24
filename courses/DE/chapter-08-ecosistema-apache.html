@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('deCourseTheme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.classList.add('light');
+    })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 8: Ecosistema Apache | Master Book DE 2026</title>
+<meta name="description" content="Hadoop, HDFS, Hive, Parquet, Avro, ORC, Delta Lake y el ecosistema completo de Apache Big Data.">
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0A0A0A; --bg2: #121212; --bg3: rgba(18, 18, 18, 0.6); --bg4: #1e1e1e;
+  --blue: #00D9FF; --cyan: #00D9FF; --purple: #8b5cf6; --green: #10b981;
+  --orange: #f59e0b; --pink: #ec4899; --red: #ef4444;
+  --t1: #ffffff; --t2: #E0E0E0; --t3: #A0A0A0;
+  --border: rgba(0, 217, 255, 0.2);
+  --sidebar-width: 280px;
+
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--bg3);
+  --bg-card-hover: var(--bg4);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-muted: var(--t3);
+  --accent-cyan: var(--cyan);
+  --accent-blue: var(--blue);
+  --accent-green: var(--green);
+  --accent-orange: var(--orange);
+  --accent-purple: var(--purple);
+  --gradient-hero: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  --gradient-1: linear-gradient(135deg, var(--blue), var(--cyan));
+}
+html.light {
+  --bg: #F8FAFC; --bg2: #FFFFFF; --bg3: rgba(255, 255, 255, 0.7); --bg4: #E2E8F0;
+  --blue: #0088CC; --cyan: #00D9FF; --purple: #7c3aed; --green: #059669;
+  --orange: #d97706; --pink: #db2777; --red: #dc2626;
+  --t1: #0F172A; --t2: #334155; --t3: #64748B;
+  --border: rgba(0, 217, 255, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;display:flex;font-size:1.15rem;}
+.sidebar{width:280px;min-width:280px;background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 0;}
+.sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+.book-title{font-size:0.75rem;font-weight:700;color:var(--red);letter-spacing:0.1em;text-transform:uppercase;}
+.chapter-title-sb{font-size:0.9rem;color:var(--t2);margin-top:0.25rem;}
+.nav-section{padding:0 1rem;margin-bottom:0.5rem;}
+.nav-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 0.5rem;margin-bottom:0.5rem;}
+.nav-item{display:block;padding:0.45rem 0.75rem;border-radius:8px;text-decoration:none;color:var(--t2);font-size:0.82rem;transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover,.nav-item.active{background:rgba(239,68,68,0.1);color:var(--red);}
+.nav-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--t3);margin-right:0.4rem;}
+.nav-back{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;color:var(--t3);text-decoration:none;font-size:0.8rem;border-bottom:1px solid var(--border);margin-bottom:1rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--red);}
+.content{flex:1;min-width:0;padding:3rem 4rem;max-width:100%;margin:0 auto;}
+.chapter-header{margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid var(--border);}
+.ch-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;color:var(--red);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:1.1rem;color:var(--t2);max-width:680px;line-height:1.8;}
+.chapter-meta-bar{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--t3);}
+.meta-item strong{color:var(--t2);}
+h2{font-size:1.6rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--t1);padding-top:1rem;}
+h2::before{content:attr(data-num)' ';color:var(--red);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 0.75rem;color:var(--t1);}
+h4{font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem;color:var(--cyan);}
+p{margin-bottom:1.25rem;color:var(--t2);font-size:0.95rem;}
+ul,ol{padding-left:1.5rem;margin-bottom:1.25rem;color:var(--t2);}
+li{margin-bottom:0.5rem;font-size:0.95rem;}
+strong{color:var(--t1);}
+code{font-family:'JetBrains Mono',monospace;background:var(--bg4);border:1px solid var(--border);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.85rem;color:var(--cyan);}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;}
+pre code{background:none;border:none;padding:0;font-size:0.85rem;color:var(--t1);line-height:1.8;}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;margin:1.5rem 0;}
+.card-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1.25rem;transition:all 0.2s;}
+.card-item:hover{border-color:var(--red);}
+.card-item .icon{font-size:1.75rem;margin-bottom:0.75rem;}
+.card-item h4{margin:0 0 0.5rem;color:var(--t1);}
+.card-item p{font-size:0.82rem;color:var(--t3);margin:0;}
+.info-box{border-left:3px solid var(--blue);background:rgba(59,130,246,0.05);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1.5rem 0;}
+.info-box.success{border-color:var(--green);background:rgba(16,185,129,0.05);}
+.info-box.warning{border-color:var(--orange);background:rgba(245,158,11,0.05);}
+.info-box-title{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.info-box .info-box-title{color:var(--blue);}
+.info-box.success .info-box-title{color:var(--green);}
+.info-box.warning .info-box-title{color:var(--orange);}
+.table-wrap{overflow-x:auto;margin:1.5rem 0;}
+table{width:100%;border-collapse:collapse;font-size:0.875rem;}
+th{background:var(--bg4);color:var(--t1);font-weight:600;padding:0.75rem 1rem;text-align:left;border-bottom:2px solid var(--border);}
+td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--t2);}
+tr:hover td{background:var(--bg3);}
+td:first-child{font-weight:500;color:var(--t1);}
+.mermaid-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:2rem;margin:2rem 0;overflow-x:auto;}
+.format-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1rem;border-left:4px solid var(--fc,var(--blue));}
+.format-card h4{color:var(--t1);margin:0 0 0.5rem;}
+.format-badge{display:inline-block;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:0.15rem 0.5rem;border-radius:4px;margin-left:0.5rem;background:rgba(59,130,246,0.15);color:var(--blue);}
+.chapter-nav{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem;}
+.ch-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--t2);transition:all 0.2s;flex:1;max-width:260px;}
+.ch-nav-btn:hover{border-color:var(--red);color:var(--t1);}
+.ch-nav-btn.next{margin-left:auto;text-align:right;flex-direction:row-reverse;}
+.ch-nav-btn .arrow{font-size:1.25rem;color:var(--red);}
+.ch-nav-meta{font-size:0.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;}
+.ch-nav-title{font-size:0.875rem;font-weight:600;margin-top:0.1rem;}
+@media(max-width:900px){.sidebar{display:none;}.content{padding:2rem 1.5rem;}}
+</style>
+</head>
+<body>
+
+
+<main class="content">
+  <div class="chapter-header">
+    <div class="ch-badge">🦅 Capítulo 8 · Nivel Avanzado</div>
+    <h1>Ecosistema Apache</h1>
+    <p class="lead">El ecosistema de Apache Software Foundation es el fundamento histórico del Big Data. Entender Hadoop, HDFS, Hive y los formatos de archivo modernos es esencial para cualquier Data Engineer senior.</p>
+    <div class="chapter-meta-bar">
+      <div class="meta-item">⏱️ <strong>Lectura:</strong> ~55 min</div>
+      <div class="meta-item">🎯 <strong>Nivel:</strong> Avanzado</div>
+      <div class="meta-item">📌 <strong>Foco:</strong> Fundamentos + Modernidad</div>
+    </div>
+  </div>
+
+  <!-- 8.0 -->
+  <section id="s1">
+    <h2 data-num="8.0">Hadoop y HDFS</h2>
+    <p>Apache Hadoop fue el sistema que democratizó el Big Data entre 2006 y 2018. Aunque hoy está siendo reemplazado por soluciones cloud, entender su arquitectura es fundamental para comprender cómo evolucionó la industria.</p>
+
+    <h3>La Arquitectura de Hadoop</h3>
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+graph TD
+    subgraph "HDFS - Almacenamiento Distribuido"
+        NN[🎯 NameNode<br/>Metadata & Namespace<br/>Maestro único]
+        DN1[💾 DataNode 1<br/>Bloques de datos]
+        DN2[💾 DataNode 2<br/>Bloques de datos]
+        DN3[💾 DataNode 3<br/>Bloques de datos]
+        NN --> DN1
+        NN --> DN2
+        NN --> DN3
+    end
+
+    subgraph "YARN - Gestión de Recursos"
+        RM[⚙️ Resource Manager<br/>Maestro de recursos]
+        NM1[📦 Node Manager 1]
+        NM2[📦 Node Manager 2]
+        NM3[📦 Node Manager 3]
+        RM --> NM1
+        RM --> NM2
+        RM --> NM3
+    end
+
+    subgraph "Aplicaciones"
+        APP[MapReduce / Spark / Hive]
+    end
+
+    APP --> RM
+    NM1 --- DN1
+    NM2 --- DN2
+    NM3 --- DN3
+
+    style NN fill:#7c2d12,stroke:#f97316,color:#fff
+    style RM fill:#1e3a5f,stroke:#3b82f6,color:#fff
+      </div>
+    </div>
+
+    <h3>HDFS: Conceptos Clave</h3>
+    <ul>
+      <li><strong>Bloques de 128MB (default):</strong> HDFS divide los archivos en bloques grandes. Un archivo de 1GB se divide en ~8 bloques distribuidos por el cluster.</li>
+      <li><strong>Replicación (default 3x):</strong> Cada bloque se replica en 3 DataNodes diferentes para tolerancia a fallos. Si un nodo falla, los datos siguen disponibles.</li>
+      <li><strong>Write-once, read-many:</strong> HDFS está optimizado para lecturas grandes. No soporta modificaciones parciales de archivos.</li>
+      <li><strong>NameNode - Single Point of Failure:</strong> El NameNode guarda todos los metadatos del filesystem. Su falla detiene el cluster. Hadoop 2.x introdujo NameNode HA para resolver esto.</li>
+      <li><strong>Data Locality:</strong> YARN intenta ejecutar el procesamiento en el mismo nodo donde están los datos (o en un nodo cercano), minimizando transferencia de red.</li>
+    </ul>
+
+    <pre><code># ── COMANDOS HDFS ESENCIALES ───────────────────────────────────────────────
+# HDFS usa una API similar a Linux filesystem
+
+# Listar archivos
+hdfs dfs -ls /user/de/data/
+hdfs dfs -ls -R /warehouse/  # Recursivo
+
+# Subir/bajar archivos
+hdfs dfs -put local_file.csv /user/de/data/
+hdfs dfs -get /user/de/data/output.parquet ./local_output.parquet
+
+# Ver contenido
+hdfs dfs -cat /user/de/data/file.csv | head -20
+hdfs dfs -tail /user/de/logs/app.log
+
+# Crear directorios y gestión
+hdfs dfs -mkdir -p /warehouse/database/table/
+hdfs dfs -cp /source/path /destination/path
+hdfs dfs -mv /old/path /new/path
+hdfs dfs -rm -r /path/to/delete/
+
+# Información sobre archivos y bloques
+hdfs dfs -du -h /warehouse/  # Disk usage human-readable
+hdfs fsck /warehouse/orders/ -files -blocks  # Verificar integridad
+hdfs dfsadmin -report  # Estado del cluster
+
+# Configuración de replicación
+hdfs dfs -setrep -w 2 /user/de/large-table/  # Reducir a 2 réplicas</code></pre>
+
+    <div class="info-box warning">
+      <div class="info-box-title">⚠️ Estado de Hadoop en 2026</div>
+      <p style="margin:0;font-size:0.9rem;">Hadoop on-premise está en declive. La mayoría de empresas ha migrado a cloud storage (S3, GCS, ADLS) que son más económicos, no requieren operación de clusters y tienen mejor disponibilidad. Sin embargo, muchas empresas enterprise todavía tienen Hadoop en producción, y los conceptos (bloques, replicación, data locality) son útiles para entender cómo funcionan los sistemas distribuidos modernos.</p>
+    </div>
+  </section>
+
+  <!-- 8.1 -->
+  <section id="s2">
+    <h2 data-num="8.1">Apache Hive</h2>
+    <p>Hive convirtió HDFS en un Data Warehouse al agregar una capa SQL sobre MapReduce/Spark. Fue la primera solución que permitió a analistas consultar petabytes de datos con SQL estándar.</p>
+
+    <pre><code>-- ── HIVE SQL: Crear tablas sobre archivos HDFS ─────────────────────────────
+-- Tabla externa: Hive solo define el esquema, los datos quedan en HDFS
+CREATE EXTERNAL TABLE IF NOT EXISTS sales (
+    sale_id     BIGINT,
+    customer_id INT,
+    amount      DOUBLE,
+    sale_date   STRING
+)
+ROW FORMAT DELIMITED
+    FIELDS TERMINATED BY ','
+    LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+LOCATION '/warehouse/raw/sales/'
+TBLPROPERTIES ("skip.header.line.count"="1");
+
+-- Tabla particionada y en formato columnar (mucho más eficiente)
+CREATE EXTERNAL TABLE IF NOT EXISTS sales_parquet (
+    sale_id     BIGINT,
+    customer_id INT,
+    amount      DOUBLE
+)
+PARTITIONED BY (year INT, month INT)  -- Partition columns
+STORED AS PARQUET
+LOCATION '/warehouse/sales_parquet/'
+TBLPROPERTIES ("parquet.compression"="SNAPPY");
+
+-- Agregar partición manualmente o usar MSCK REPAIR
+ALTER TABLE sales_parquet ADD PARTITION (year=2026, month=1)
+    LOCATION '/warehouse/sales_parquet/year=2026/month=1/';
+
+-- MSCK REPAIR: descubrir particiones automáticamente
+MSCK REPAIR TABLE sales_parquet;
+
+-- ── QUERIES HIVE OPTIMIZADAS ──────────────────────────────────────────────
+-- Siempre filtrar por partición para aprovechar partition pruning
+SELECT customer_id, SUM(amount) AS total
+FROM sales_parquet
+WHERE year = 2026 AND month BETWEEN 1 AND 3  -- ✅ Usa partición
+GROUP BY customer_id;
+
+-- ORC vs Parquet en Hive
+-- ORC (Optimized Row Columnar): mejor para Hive, soporta ACID, mejor compresión
+-- Parquet: mejor interoperabilidad con Spark, Python, Arrow</code></pre>
+  </section>
+
+  <!-- 8.2 -->
+  <section id="s3">
+    <h2 data-num="8.2">Formatos de Archivo en Big Data</h2>
+    <p>La elección del formato de archivo impacta directamente el costo, la velocidad y la flexibilidad de tu plataforma de datos. Este es un conocimiento fundamental que diferencia a los seniors.</p>
+
+    <div class="format-card" style="--fc:var(--orange)">
+      <h4>📄 CSV / TSV <span class="format-badge">Row-based</span></h4>
+      <p style="font-size:0.875rem;color:var(--t2);">El formato más simple. Legible por humanos y cualquier herramienta. Pero extremadamente ineficiente para analytics: no compresión nativa, sin tipos de datos, debe leerse completo para cualquier query.</p>
+      <p style="font-size:0.8rem;color:var(--t3);margin:0;"><strong>Usa cuando:</strong> Intercambio de datos entre sistemas, archivos pequeños, debugging. <strong>Evita:</strong> Para storage de producción, analytics a escala.</p>
+    </div>
+
+    <div class="format-card" style="--fc:var(--blue)">
+      <h4>🔵 Apache Parquet <span class="format-badge">Columnar</span></h4>
+      <p style="font-size:0.875rem;color:var(--t2);">El estándar moderno para Data Lakes. Formato columnar que solo lee las columnas necesarias. Compresión excelente (SNAPPY, ZSTD). Compatible con Spark, Pandas, Arrow, BigQuery, Snowflake y casi todo.</p>
+      <pre style="margin:0.75rem 0 0;font-size:0.8rem;"><code># Escribir Parquet con Python
+import pandas as pd
+df.to_parquet('output.parquet', engine='pyarrow', compression='snappy')
+
+# Leer solo columnas necesarias (columnar advantage)
+df = pd.read_parquet('output.parquet', columns=['customer_id', 'amount'])</code></pre>
+      <p style="font-size:0.8rem;color:var(--t3);margin:0.75rem 0 0;"><strong>Usa cuando:</strong> Casi siempre en Data Lakes y DWH. Es el default para Spark y dbt.</p>
+    </div>
+
+    <div class="format-card" style="--fc:var(--green)">
+      <h4>🟢 Apache Avro <span class="format-badge">Row-based + Schema Evolution</span></h4>
+      <p style="font-size:0.875rem;color:var(--t2);">Formato binario row-based con schema evolution robusta. Ideal para event streaming (Kafka) donde el schema puede cambiar. Separa el schema del dato. Integración nativa con Confluent Schema Registry.</p>
+      <pre style="margin:0.75rem 0 0;font-size:0.8rem;"><code>// Schema Avro (JSON)
+{
+  "type": "record",
+  "name": "Order",
+  "fields": [
+    {"name": "order_id", "type": "long"},
+    {"name": "amount",   "type": "double"},
+    {"name": "status",   "type": "string", "default": "pending"},
+    // Nuevo campo con default: schema-compatible!
+    {"name": "discount", "type": ["null", "double"], "default": null}
+  ]
+}</code></pre>
+      <p style="font-size:0.8rem;color:var(--t3);margin:0.75rem 0 0;"><strong>Usa cuando:</strong> Mensajes en Kafka, cuando el schema evoluciona frecuentemente, interoperabilidad Java.</p>
+    </div>
+
+    <div class="format-card" style="--fc:var(--purple)">
+      <h4>🟣 Apache ORC <span class="format-badge">Columnar + ACID</span></h4>
+      <p style="font-size:0.875rem;color:var(--t2);">Optimized Row Columnar. Similar a Parquet pero con mejor soporte ACID en el ecosistema Hive. Mejor compresión en algunos casos. El formato preferido para Apache Hive y Hadoop tradicional.</p>
+      <p style="font-size:0.8rem;color:var(--t3);margin:0;"><strong>Usa cuando:</strong> Ecosistema Hive, necesitas ACID nativo sin Delta Lake.</p>
+    </div>
+
+    <h3>Comparativa de Formatos</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Formato</th><th>Orientación</th><th>Compresión</th><th>Schema Evolution</th><th>Performance Analytics</th><th>Performance Streaming</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>CSV</td><td>Row</td><td>❌ No nativo</td><td>❌ Ninguna</td><td>🔴 Muy mala</td><td>🟡 Simple</td></tr>
+          <tr><td>JSON</td><td>Row</td><td>❌ No nativo</td><td>✅ Flexible</td><td>🔴 Muy mala</td><td>🟡 Flexible</td></tr>
+          <tr><td>Avro</td><td>Row</td><td>🟡 Buena</td><td>✅ Excelente</td><td>🟡 Media</td><td>🟢 Excelente</td></tr>
+          <tr><td>Parquet</td><td>Columnar</td><td>🟢 Excelente</td><td>🟡 Limitada</td><td>🟢 Excelente</td><td>🟡 No ideal</td></tr>
+          <tr><td>ORC</td><td>Columnar</td><td>🟢 Excelente</td><td>🟡 Limitada</td><td>🟢 Excelente (Hive)</td><td>🔴 No ideal</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 8.3 -->
+  <section id="s4">
+    <h2 data-num="8.3">Delta Lake</h2>
+    <p>Delta Lake es una capa de storage open source que agrega <strong>confiabilidad ACID sobre Parquet</strong> en object storage (S3, GCS, ADLS). Es el componente central del patrón Lakehouse.</p>
+
+    <h3>Funcionalidades Clave de Delta Lake</h3>
+    <div class="card-grid">
+      <div class="card-item">
+        <div class="icon">⚛️</div>
+        <h4>ACID Transactions</h4>
+        <p>Garantías ACID completas sobre object storage. Múltiples writers simultáneos sin corrupción.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">⏰</div>
+        <h4>Time Travel</h4>
+        <p>Consultar cualquier versión histórica de la tabla. Auditoría completa, rollback a versión anterior.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔄</div>
+        <h4>Schema Evolution</h4>
+        <p>Agregar columnas sin reescribir toda la tabla. Schema enforcement para calidad de datos.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔀</div>
+        <h4>MERGE (Upsert)</h4>
+        <p>INSERT + UPDATE + DELETE en una sola operación atómica. Fundamental para SCDs y CDC.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">⚡</div>
+        <h4>Data Skipping</h4>
+        <p>Statistics por archivo (min, max, null count) que permiten saltar archivos irrelevantes.</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔁</div>
+        <h4>Unified Batch+Stream</h4>
+        <p>El mismo formato para batch y streaming. Elimina la complejidad de Lambda Architecture.</p>
+      </div>
+    </div>
+
+    <pre><code>"""
+Delta Lake con PySpark
+"""
+from pyspark.sql import SparkSession
+from delta.tables import DeltaTable
+from pyspark.sql.functions import *
+
+spark = (SparkSession.builder
+    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
+    .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
+    .getOrCreate()
+)
+
+# ── CREAR DELTA TABLE ──────────────────────────────────────────────────────
+df = spark.read.parquet("s3://bucket/raw/orders/")
+(df.write.format("delta")
+    .mode("overwrite")
+    .partitionBy("year", "month")
+    .option("overwriteSchema", "true")
+    .save("s3://bucket/silver/orders/")
+)
+
+# ── TIME TRAVEL ────────────────────────────────────────────────────────────
+# Ver historial de la tabla
+spark.sql("DESCRIBE HISTORY delta.`s3://bucket/silver/orders/`").show()
+
+# Consultar versión específica
+df_v3 = spark.read.format("delta").option("versionAsOf", 3).load("s3://bucket/silver/orders/")
+
+# Consultar por timestamp
+df_yesterday = spark.read.format("delta") \
+    .option("timestampAsOf", "2026-01-14") \
+    .load("s3://bucket/silver/orders/")
+
+# ── MERGE (CDC Pattern) ────────────────────────────────────────────────────
+delta_table = DeltaTable.forPath(spark, "s3://bucket/silver/orders/")
+
+# CDC: aplicar cambios incrementales
+cdc_df = spark.read.parquet("s3://bucket/cdc/orders/latest/")
+
+(delta_table.alias("target")
+    .merge(cdc_df.alias("source"), "target.order_id = source.order_id")
+    .whenMatchedUpdate(
+        condition="source.op = 'UPDATE'",
+        set={"status": "source.status", "updated_at": "source.updated_at"}
+    )
+    .whenMatchedDelete(condition="source.op = 'DELETE'")
+    .whenNotMatchedInsert(
+        condition="source.op = 'INSERT'",
+        values={"order_id": "source.order_id", "amount": "source.amount", "status": "source.status"}
+    )
+    .execute()
+)
+
+# ── OPTIMIZE & VACUUM ──────────────────────────────────────────────────────
+# Compactar archivos pequeños (el "small files problem")
+spark.sql("OPTIMIZE delta.`s3://bucket/silver/orders/` ZORDER BY (customer_id)")
+# ZORDER: co-localiza datos relacionados → data skipping más efectivo
+
+# Limpiar versiones históricas antiguas (>7 días default)
+spark.sql("VACUUM delta.`s3://bucket/silver/orders/` RETAIN 168 HOURS")</code></pre>
+  </section>
+
+  <!-- 8.4 -->
+  <section id="s5">
+    <h2 data-num="8.4">Apache Iceberg</h2>
+    <p>Apache Iceberg es el principal competidor de Delta Lake. Iniciado por Netflix, ofrece ACID sobre object storage con un enfoque más abierto y con mejor soporte multi-engine.</p>
+
+    <h3>Delta Lake vs Apache Iceberg vs Apache Hudi</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Feature</th><th>Delta Lake</th><th>Apache Iceberg</th><th>Apache Hudi</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Origen</td><td>Databricks</td><td>Netflix / Apache</td><td>Uber / Apache</td></tr>
+          <tr><td>ACID</td><td>✅ Completo</td><td>✅ Completo</td><td>✅ Completo</td></tr>
+          <tr><td>Time Travel</td><td>✅ Versiones</td><td>✅ Snapshots</td><td>✅ Timeline</td></tr>
+          <tr><td>Multi-engine</td><td>🟡 Spark-first</td><td>✅ Excelente</td><td>🟡 Spark-first</td></tr>
+          <tr><td>Merge-on-Read</td><td>🟡 Limitado</td><td>✅ Native</td><td>✅ Nativo</td></tr>
+          <tr><td>Streaming</td><td>✅ Nativo</td><td>🟡 Limitado</td><td>✅ Nativo</td></tr>
+          <tr><td>Cloud DWH</td><td>Databricks, Azure</td><td>Snowflake, Athena</td><td>AWS EMR</td></tr>
+          <tr><td>Governance</td><td>Unity Catalog</td><td>Apache Polaris</td><td>Básico</td></tr>
+          <tr><td>Adopción 2026</td><td>🥇 Líder</td><td>🥈 Creciendo rápido</td><td>🥉 AWS-centric</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-box success">
+      <div class="info-box-title">💡 ¿Cuál elegir en 2026?</div>
+      <p style="margin:0;font-size:0.9rem;"><strong>Delta Lake:</strong> Si usas Databricks o Azure Synapse. <strong>Apache Iceberg:</strong> Si necesitas multi-engine (Spark + Flink + Trino + Snowflake) y máxima neutralidad de vendor. Snowflake e AWS Athena tienen soporte nativo de Iceberg. La industria tiende a converger en Iceberg para long-term open table format.</p>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="chapter-07-herramientas.html" class="ch-nav-btn">
+        <span class="arrow">←</span>
+        <div><div class="ch-nav-meta">Capítulo 7</div><div class="ch-nav-title">Herramientas</div></div>
+      </a>
+      <a href="chapter-09-spark.html" class="ch-nav-btn next">
+        <span class="arrow">→</span>
+        <div><div class="ch-nav-meta">Capítulo 9</div><div class="ch-nav-title">Apache Spark</div></div>
+      </a>
+    </div>
+  </section>
+</main>
+
+<script>
+  const isLightMode = document.documentElement.classList.contains('light');
+  mermaid.initialize({startOnLoad:true,theme: isLightMode ? 'default' : 'dark',themeVariables: isLightMode ? { primaryColor: '#0088CC' } : {background:'#131c35',primaryColor:'#1e40af'}});
+</script>
+  <script src="nav.js"></script>
+</body>
+</html>
