@@ -39,7 +39,7 @@
     <script src="assets/js/index.js" defer></script>
     <script src="assets/js/cursor.js" defer></script>
     <script>
-        (function() {
+        (function () {
             const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
             if (savedTheme === 'light') {
                 document.documentElement.classList.add('light');
@@ -60,7 +60,8 @@
         id="navbar">
         <div class="max-w-7xl mx-auto px-6 py-3 md:py-4 flex justify-between items-center">
             <a href="#home" class="flex items-center gap-3 cursor-pointer">
-                <img src="assets/images/AN-logo.png" alt="Autonovations Logo" class="h-8 md:h-10 w-8 md:w-10 object-contain"
+                <img src="assets/images/AN-logo.png" alt="Autonovations Logo"
+                    class="h-8 md:h-10 w-8 md:w-10 object-contain"
                     onerror="this.src='https://placehold.co/100x100/00D9FF/FFFFFF?text=AN'">
                 <span
                     class="font-tech font-bold text-2xl tracking-wider text-white hidden sm:block">AUTONOVATIONS</span>
@@ -199,8 +200,12 @@
                     </div>
 
                     <!-- Live Telemetry Banner -->
-                    <div id="liveTelemetry" class="mt-8 flex flex-wrap justify-center lg:justify-start gap-4 sm:gap-6 font-mono text-xs text-neon bg-neon/5 border border-neon/20 px-4 py-2.5 rounded-full backdrop-blur-sm animate-fade-in w-fit mx-auto lg:mx-0 shadow-[0_0_15px_rgba(0,217,255,0.1)]" style="animation-delay: 1.1s;">
-                        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-neon animate-ping"></span> <span data-i18n="telemetry_mesh">MESH ONLINE</span></span>
+                    <div id="liveTelemetry"
+                        class="mt-8 flex flex-wrap justify-center lg:justify-start gap-4 sm:gap-6 font-mono text-xs text-neon bg-neon/5 border border-neon/20 px-4 py-2.5 rounded-full backdrop-blur-sm animate-fade-in w-fit mx-auto lg:mx-0 shadow-[0_0_15px_rgba(0,217,255,0.1)]"
+                        style="animation-delay: 1.1s;">
+                        <span class="flex items-center gap-1.5"><span
+                                class="w-1.5 h-1.5 rounded-full bg-neon animate-ping"></span> <span
+                                data-i18n="telemetry_mesh">MESH ONLINE</span></span>
                         <span class="text-white/20">|</span>
                         <span id="telemetryNodes">NODES: 1,420,892</span>
                         <span class="text-white/20">|</span>
@@ -212,7 +217,7 @@
 
                 <!-- Interactive Terminal -->
                 <div class="hidden lg:block animate-fade-in" style="animation-delay: 1s;">
-                    <div class="terminal-window glass-panel mx-auto lg:mx-0">
+                    <div class="terminal-window glass-panel mx-auto lg:mx-0 border border-neon/90">
                         <div class="terminal-header">
                             <div class="terminal-dot bg-red-500/50"></div>
                             <div class="terminal-dot bg-yellow-500/50"></div>
@@ -275,7 +280,7 @@
                 <div class="relative reveal delay-200">
                     <div class="absolute inset-0 bg-neon/20 blur-[100px] rounded-full -z-10"></div>
                     <img src="assets/images/about_vision.png" alt="Autonovations Vision"
-                        class="w-full rounded-2xl border border-white/10 shadow-2xl glass-panel object-cover"
+                        class="w-full rounded-2xl border border-neon/90 shadow-2xl glass-panel object-cover"
                         onerror="this.src='https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80'">
                 </div>
             </div>
@@ -295,7 +300,8 @@
 
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Feature 1 -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal relative overflow-hidden group cursor-pointer tech-card" data-tech-id="1">
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal relative overflow-hidden group cursor-pointer tech-card border border-neon/90"
+                    data-tech-id="1">
                     <div
                         class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                     </div>
@@ -304,11 +310,13 @@
                         <i data-lucide="brain-circuit" class="w-8 h-8"></i>
                     </div>
                     <h4 class="text-xl font-bold text-white mb-3 font-tech" data-i18n="tech_card1_title">AI Systems</h4>
-                    <p class="text-gray-400 text-sm leading-relaxed" data-i18n="tech_card1_desc">Advanced neural networks built for edge intelligence, predictive analytics, and autonomous decision making.</p>
+                    <p class="text-gray-400 text-sm leading-relaxed" data-i18n="tech_card1_desc">Advanced neural
+                        networks built for edge intelligence, predictive analytics, and autonomous decision making.</p>
                 </div>
 
                 <!-- Feature 2 -->
-                <div class="glass-panel p-8 rounded-2xl reveal delay-100 relative overflow-hidden group cursor-pointer tech-card" data-tech-id="2">
+                <div class="glass-panel p-8 rounded-2xl reveal delay-100 relative overflow-hidden group cursor-pointer tech-card border border-neon/90"
+                    data-tech-id="2">
                     <div
                         class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                     </div>
@@ -316,12 +324,15 @@
                         class="w-14 h-14 rounded-lg bg-neon/10 flex items-center justify-center mb-6 text-neon group-hover:scale-110 transition-transform">
                         <i data-lucide="plane" class="w-8 h-8"></i>
                     </div>
-                    <h4 class="text-xl font-bold text-white mb-3 font-tech" data-i18n="tech_card2_title">Autonomous Drones</h4>
-                    <p class="text-gray-400 text-sm leading-relaxed" data-i18n="tech_card2_desc">Intelligent UAVs with swarm capabilities, real-time mapping, and precision collision avoidance.</p>
+                    <h4 class="text-xl font-bold text-white mb-3 font-tech" data-i18n="tech_card2_title">Autonomous
+                        Drones</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed" data-i18n="tech_card2_desc">Intelligent UAVs with
+                        swarm capabilities, real-time mapping, and precision collision avoidance.</p>
                 </div>
 
                 <!-- Feature 3 -->
-                <div class="glass-panel p-8 rounded-2xl reveal delay-200 relative overflow-hidden group cursor-pointer tech-card" data-tech-id="3">
+                <div class="glass-panel p-8 rounded-2xl reveal delay-200 relative overflow-hidden group cursor-pointer tech-card border border-neon/90"
+                    data-tech-id="3">
                     <div
                         class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                     </div>
@@ -329,12 +340,15 @@
                         class="w-14 h-14 rounded-lg bg-neon/10 flex items-center justify-center mb-6 text-neon group-hover:scale-110 transition-transform">
                         <i data-lucide="bot" class="w-8 h-8"></i>
                     </div>
-                    <h4 class="text-xl font-bold text-white mb-3 font-tech" data-i18n="tech_card3_title">Robotics Integration</h4>
-                    <p class="text-gray-400 text-sm leading-relaxed" data-i18n="tech_card3_desc">Mechanical systems fused with cognitive intelligence, interactive robotics, and dynamic systems.</p>
+                    <h4 class="text-xl font-bold text-white mb-3 font-tech" data-i18n="tech_card3_title">Robotics
+                        Integration</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed" data-i18n="tech_card3_desc">Mechanical systems
+                        fused with cognitive intelligence, interactive robotics, and dynamic systems.</p>
                 </div>
 
                 <!-- Feature 4 -->
-                <div class="glass-panel p-8 rounded-2xl reveal delay-300 relative overflow-hidden group cursor-pointer tech-card" data-tech-id="4">
+                <div class="glass-panel p-8 rounded-2xl reveal delay-300 relative overflow-hidden group cursor-pointer tech-card border border-neon/90"
+                    data-tech-id="4">
                     <div
                         class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                     </div>
@@ -342,8 +356,10 @@
                         class="w-14 h-14 rounded-lg bg-neon/10 flex items-center justify-center mb-6 text-neon group-hover:scale-110 transition-transform">
                         <i data-lucide="network" class="w-8 h-8"></i>
                     </div>
-                    <h4 class="text-xl font-bold text-white mb-3 font-tech" data-i18n="tech_card4_title">Real-time Data Systems</h4>
-                    <p class="text-gray-400 text-sm leading-relaxed" data-i18n="tech_card4_desc">High-performance streams connecting global IoT sensors and processing telemetry with massive scalability.</p>
+                    <h4 class="text-xl font-bold text-white mb-3 font-tech" data-i18n="tech_card4_title">Real-time Data
+                        Systems</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed" data-i18n="tech_card4_desc">High-performance
+                        streams connecting global IoT sensors and processing telemetry with massive scalability.</p>
                 </div>
             </div>
         </div>
@@ -364,20 +380,29 @@
 
             <!-- Project Filter Buttons -->
             <div class="flex flex-wrap gap-3 mb-12 justify-start reveal" id="projectFilters">
-                <button class="filter-btn active px-4 py-1.5 rounded-full border border-neon text-xs font-tech uppercase tracking-wider text-neon bg-neon/10 transition-all duration-300 hover:scale-105" data-filter="all" data-i18n="cat_all_filter">All Projects</button>
-                <button class="filter-btn px-4 py-1.5 rounded-full border border-white/10 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/50 transition-all duration-300 hover:scale-105" data-filter="ai-systems" data-i18n="cat_ai_filter">AI Systems</button>
-                <button class="filter-btn px-4 py-1.5 rounded-full border border-white/10 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/50 transition-all duration-300 hover:scale-105" data-filter="robotics" data-i18n="cat_robotics_filter">Robotics</button>
-                <button class="filter-btn px-4 py-1.5 rounded-full border border-white/10 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/50 transition-all duration-300 hover:scale-105" data-filter="data-systems" data-i18n="cat_data_filter">Data & Simulators</button>
+                <button
+                    class="filter-btn active px-4 py-1.5 rounded-full border border-neon text-xs font-tech uppercase tracking-wider text-neon bg-neon/10 transition-all duration-300 hover:scale-105"
+                    data-filter="all" data-i18n="cat_all_filter">All Projects</button>
+                <button
+                    class="filter-btn px-4 py-1.5 rounded-full border border-white/10 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/50 transition-all duration-300 hover:scale-105"
+                    data-filter="ai-systems" data-i18n="cat_ai_filter">AI Systems</button>
+                <button
+                    class="filter-btn px-4 py-1.5 rounded-full border border-white/10 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/50 transition-all duration-300 hover:scale-105"
+                    data-filter="robotics" data-i18n="cat_robotics_filter">Robotics</button>
+                <button
+                    class="filter-btn px-4 py-1.5 rounded-full border border-white/10 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/50 transition-all duration-300 hover:scale-105"
+                    data-filter="data-systems" data-i18n="cat_data_filter">Data & Simulators</button>
             </div>
 
             <div class="space-y-8">
                 <!-- Project 1 (Railytics) -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden project-card" data-category="ai-systems data-systems">
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden project-card border border-neon/90"
+                    data-category="ai-systems data-systems">
                     <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                         <div
                             class="w-full md:w-2/5 h-48 sm:h-56 md:h-64 bg-gray-800 rounded-xl overflow-hidden relative glitch-hover">
                             <img src="assets/images/projects/project_railytics.png" alt="Railytics"
-                                class="w-full h-full object-cover transition-transform duration-700">
+                                class="w-full h-full object-cover border border-neon/90 transition-transform duration-700">
                             <div
                                 class="absolute inset-0 bg-neon/10 group-hover:bg-transparent transition-colors duration-500">
                             </div>
@@ -393,22 +418,28 @@
                             </div>
                             <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech"
                                 data-i18n="project_railytics_title">Railytics</h4>
-                            <p class="text-gray-400 mb-6 text-base md:text-lg" data-i18n="project_railytics_desc">High-precision railway detection and tracking system utilizing computer vision and edge IoT sensors. It provides real-time traffic monitoring, anomaly detection, and predictive maintenance metrics to guarantee structural safety and operational efficiency across high-density rail networks.</p>
-                            <a href="projects/Railytics/railytics.html" target="_blank" class="text-white flex items-center gap-2 text-sm font-tech uppercase tracking-wider hover:text-neon transition-colors">
-                                <span data-i18n="project_railytics_btn">View Analytics</span> <i data-lucide="arrow-right"
-                                    class="w-4 h-4 text-neon"></i>
+                            <p class="text-gray-400 mb-6 text-base md:text-lg" data-i18n="project_railytics_desc">
+                                High-precision railway detection and tracking system utilizing computer vision and edge
+                                IoT sensors. It provides real-time traffic monitoring, anomaly detection, and predictive
+                                maintenance metrics to guarantee structural safety and operational efficiency across
+                                high-density rail networks.</p>
+                            <a href="projects/Railytics/railytics.html" target="_blank"
+                                class="text-white flex items-center gap-2 text-sm font-tech uppercase tracking-wider hover:text-neon transition-colors">
+                                <span data-i18n="project_railytics_btn">View Analytics</span> <i
+                                    data-lucide="arrow-right" class="w-4 h-4 text-neon"></i>
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Project 2 (Cognitive Companions) -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-100 group cursor-pointer overflow-hidden project-card" data-category="robotics ai-systems">
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-100 group cursor-pointer overflow-hidden project-card border border-neon/90"
+                    data-category="robotics ai-systems">
                     <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                         <div
                             class="w-full md:w-2/5 h-48 sm:h-56 md:h-64 bg-gray-800 rounded-xl overflow-hidden relative md:order-2 glitch-hover">
                             <img src="assets/images/projects/project_companions.png" alt="Robotics"
-                                class="w-full h-full object-cover transition-transform duration-700">
+                                class="w-full h-full object-cover border border-neon/90 transition-transform duration-700">
                             <div
                                 class="absolute inset-0 bg-neon/10 group-hover:bg-transparent transition-colors duration-500">
                             </div>
@@ -428,7 +459,8 @@
                                 interactive
                                 entities. By combining emotive mechatronics with large language models, we're building
                                 deeply responsive interfaces that bridge the digital and physical divide seamlessly.</p>
-                            <a href="projects/Cognitive_Companions/companions.html" target="_blank" class="text-white flex items-center gap-2 text-sm font-tech uppercase tracking-wider hover:text-neon transition-colors">
+                            <a href="projects/Cognitive_Companions/companions.html" target="_blank"
+                                class="text-white flex items-center gap-2 text-sm font-tech uppercase tracking-wider hover:text-neon transition-colors">
                                 <span data-i18n="project1_btn">Launch Cognitive Demo</span> <i data-lucide="arrow-right"
                                     class="w-4 h-4 text-neon"></i>
                             </a>
@@ -437,12 +469,13 @@
                 </div>
 
                 <!-- Project 3 (AI Trading Core) -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-200 group cursor-pointer overflow-hidden project-card" data-category="ai-systems data-systems">
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-200 group cursor-pointer overflow-hidden project-card border border-neon/90"
+                    data-category="ai-systems data-systems">
                     <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                         <div
                             class="w-full md:w-2/5 h-48 sm:h-56 md:h-64 bg-gray-800 rounded-xl overflow-hidden relative glitch-hover">
                             <img src="assets/images/projects/project_trading.png" alt="Trading AI"
-                                class="w-full h-full object-cover transition-transform duration-700">
+                                class="w-full h-full object-cover border border-neon/90 transition-transform duration-700">
                             <div
                                 class="absolute inset-0 bg-neon/10 group-hover:bg-transparent transition-colors duration-500">
                             </div>
@@ -462,7 +495,8 @@
                                 unsupervised
                                 machine learning to detect patterns in global data sets. Our intelligent systems act
                                 autonomously, optimizing yield with sub-millisecond precision analysis.</p>
-                            <a href="projects/Trading_Core/trading_core.html" target="_blank" class="text-white flex items-center gap-2 text-sm font-tech uppercase tracking-wider hover:text-neon transition-colors">
+                            <a href="projects/Trading_Core/trading_core.html" target="_blank"
+                                class="text-white flex items-center gap-2 text-sm font-tech uppercase tracking-wider hover:text-neon transition-colors">
                                 <span data-i18n="project2_btn">View Architecture</span> <i data-lucide="arrow-right"
                                     class="w-4 h-4 text-neon"></i>
                             </a>
@@ -471,12 +505,13 @@
                 </div>
 
                 <!-- Project 4 (AeroExplorer) -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-300 group cursor-pointer overflow-hidden project-card" data-category="robotics data-systems">
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-300 group cursor-pointer overflow-hidden project-card border border-neon/90"
+                    data-category="robotics data-systems">
                     <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                         <div
                             class="w-full md:w-2/5 h-48 sm:h-56 md:h-64 bg-gray-800 rounded-xl overflow-hidden relative md:order-2 glitch-hover">
                             <img src="assets/images/projects/drone_an.png" alt="AeroExplorer"
-                                class="w-full h-full object-cover transition-transform duration-700">
+                                class="w-full h-full object-cover border border-neon/90 transition-transform duration-700">
                             <div
                                 class="absolute inset-0 bg-neon/10 group-hover:bg-transparent transition-colors duration-500">
                             </div>
@@ -492,22 +527,27 @@
                             </div>
                             <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech"
                                 data-i18n="project3_title">AeroExplorer</h4>
-                            <p class="text-gray-400 mb-6 text-base md:text-lg" data-i18n="project3_desc">A high-fidelity drone mission control simulator. Take command of an autonomous UAV drone equipped with real-time telemetry, battery logistics, flight altitude diagnostics, and live wind sensors, navigating between critical industrial points of interest across Colombia.</p>
-                            <a href="projects/Drone_Explorer/index.html" target="_blank" class="text-white flex items-center gap-2 text-sm font-tech uppercase tracking-wider hover:text-neon transition-colors">
-                                <span data-i18n="project3_btn">Launch Mission Control</span> <i data-lucide="arrow-right"
-                                    class="w-4 h-4 text-neon"></i>
+                            <p class="text-gray-400 mb-6 text-base md:text-lg" data-i18n="project3_desc">A high-fidelity
+                                drone mission control simulator. Take command of an autonomous UAV drone equipped with
+                                real-time telemetry, battery logistics, flight altitude diagnostics, and live wind
+                                sensors, navigating between critical industrial points of interest across Colombia.</p>
+                            <a href="projects/Drone_Explorer/index.html" target="_blank"
+                                class="text-white flex items-center gap-2 text-sm font-tech uppercase tracking-wider hover:text-neon transition-colors">
+                                <span data-i18n="project3_btn">Launch Mission Control</span> <i
+                                    data-lucide="arrow-right" class="w-4 h-4 text-neon"></i>
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Project 5 (VSOC) -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-300 group cursor-pointer overflow-hidden project-card" data-category="ai-systems data-systems">
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-300 group cursor-pointer overflow-hidden project-card border border-neon/90"
+                    data-category="ai-systems data-systems">
                     <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                         <div
                             class="w-full md:w-2/5 h-48 sm:h-56 md:h-64 bg-gray-800 rounded-xl overflow-hidden relative glitch-hover">
                             <img src="assets/images/projects/project_vsoc.png" alt="VSOC"
-                                class="w-full h-full object-cover transition-transform duration-700">
+                                class="w-full h-full object-cover border border-neon/90 transition-transform duration-700">
                             <div
                                 class="absolute inset-0 bg-neon/10 group-hover:bg-transparent transition-colors duration-500">
                             </div>
@@ -523,8 +563,11 @@
                             </div>
                             <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech"
                                 data-i18n="project4_title">Virtual Security Operations Center</h4>
-                            <p class="text-gray-400 mb-6 text-base md:text-lg" data-i18n="project4_desc">Real-time AI-driven cybersecurity dashboard simulating global threat defense, network telemetry monitoring, and interactive intruder countermeasures.</p>
-                            <a href="projects/VSOC/vsoc.html" target="_blank" class="text-white flex items-center gap-2 text-sm font-tech uppercase tracking-wider hover:text-neon transition-colors">
+                            <p class="text-gray-400 mb-6 text-base md:text-lg" data-i18n="project4_desc">Real-time
+                                AI-driven cybersecurity dashboard simulating global threat defense, network telemetry
+                                monitoring, and interactive intruder countermeasures.</p>
+                            <a href="projects/VSOC/vsoc.html" target="_blank"
+                                class="text-white flex items-center gap-2 text-sm font-tech uppercase tracking-wider hover:text-neon transition-colors">
                                 <span data-i18n="project4_btn">Access VSOC Terminal</span> <i data-lucide="arrow-right"
                                     class="w-4 h-4 text-neon"></i>
                             </a>
@@ -540,7 +583,8 @@
     <section id="courses" class="py-32 bg-panel/30 border-y border-white/5 relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 relative z-10">
             <div class="text-center mb-8 reveal">
-                <h2 class="text-neon font-tech tracking-widest uppercase text-sm mb-4" data-i18n="courses_subtitle">Academy</h2>
+                <h2 class="text-neon font-tech tracking-widest uppercase text-sm mb-4" data-i18n="courses_subtitle">
+                    Academy</h2>
                 <h3 class="text-3xl md:text-4xl lg:text-5xl font-tech font-bold text-white" data-i18n="courses_title">
                     AutoNovations University
                 </h3>
@@ -548,186 +592,281 @@
 
             <!-- Course Level Filters -->
             <div class="flex flex-wrap gap-3 mb-12 justify-center reveal" id="courseFilters">
-                <button class="course-filter-btn active px-4 py-1.5 rounded-full border border-neon text-xs font-tech uppercase tracking-wider text-neon bg-neon/10 transition-all duration-300 hover:scale-105" data-filter="all" data-i18n="course_level_all">All Levels</button>
-                <button class="course-filter-btn px-4 py-1.5 rounded-full border border-white/10 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/50 transition-all duration-300 hover:scale-105" data-filter="level-beginner" data-i18n="course_level_beginner_filter">Beginner</button>
-                <button class="course-filter-btn px-4 py-1.5 rounded-full border border-white/10 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/50 transition-all duration-300 hover:scale-105" data-filter="level-advanced" data-i18n="course_level_advanced_filter">Advanced</button>
-                <button class="course-filter-btn px-4 py-1.5 rounded-full border border-white/10 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/50 transition-all duration-300 hover:scale-105" data-filter="level-master" data-i18n="course_level_master_filter">Master</button>
+                <button
+                    class="course-filter-btn active px-4 py-1.5 rounded-full border border-neon/90 text-xs font-tech uppercase tracking-wider text-neon bg-neon/10 transition-all duration-300 hover:scale-105"
+                    data-filter="all" data-i18n="course_level_all">All Levels</button>
+                <button
+                    class="course-filter-btn px-4 py-1.5 rounded-full border border-neon/90 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/90 transition-all duration-300 hover:scale-105"
+                    data-filter="level-beginner" data-i18n="course_level_beginner_filter">Beginner</button>
+                <button
+                    class="course-filter-btn px-4 py-1.5 rounded-full border border-neon/90 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/90 transition-all duration-300 hover:scale-105"
+                    data-filter="level-advanced" data-i18n="course_level_advanced_filter">Advanced</button>
+                <button
+                    class="course-filter-btn px-4 py-1.5 rounded-full border border-neon/90 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/90 transition-all duration-300 hover:scale-105"
+                    data-filter="level-master" data-i18n="course_level_master_filter">Master</button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Course 1 -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-white/10 hover:border-neon/50 transition-all duration-500 shadow-lg relative course-card" data-category="level-beginner">
-                    <div class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-neon/90 transition-all duration-500 shadow-lg relative course-card"
+                    data-category="level-beginner">
+                    <div
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/90 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
                         1
                     </div>
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
-                        <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
-                        <img src="assets/images/projects/project_trading.png" alt="Basic Trading Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div
+                            class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
+                        </div>
+                        <img src="assets/images/projects/project_trading.png" alt="Basic Trading Course"
+                            class="w-full h-full object-cover border border-neon/90 group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
                             <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="px-3 py-1 bg-green-500/10 text-green-400 text-xs rounded-full border border-green-500/20 font-tech uppercase" data-i18n="course_level_beginner">Level 1: Beginner</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Trading</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Technical Analysis</span>
+                                <span
+                                    class="px-3 py-1 bg-green-500/10 text-green-400 text-xs rounded-full border border-green-500/20 font-tech uppercase"
+                                    data-i18n="course_level_beginner">Level 1: Beginner</span>
+                                <span
+                                    class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Trading</span>
+                                <span
+                                    class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Technical
+                                    Analysis</span>
                             </div>
-                            <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech"><span data-i18n="course4_title">Basic Trading</span></h4>
-                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span data-i18n="course4_desc">Learn trading from scratch to an intermediate-advanced level. Master chart types, indicators, chart patterns, and build your execution discipline.</span></p>
+                            <h4
+                                class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech">
+                                <span data-i18n="course4_title">Basic Trading</span>
+                            </h4>
+                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span
+                                    data-i18n="course4_desc">Learn trading from scratch to an intermediate-advanced
+                                    level. Master chart types, indicators, chart patterns, and build your execution
+                                    discipline.</span></p>
                         </div>
-                        <a href="courses/basic_trading.html" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-tech uppercase tracking-wider hover:text-white transition-colors mt-auto w-fit group/btn">
-                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="arrow-right" class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
+                        <a href="courses/basic_trading.html" target="_blank"
+                            class="inline-flex items-center gap-2 text-sm text-neon font-tech uppercase tracking-wider hover:text-white transition-colors mt-auto w-fit group/btn">
+                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="arrow-right"
+                                class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
                 </div>
 
                 <!-- Course 2 -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-white/10 hover:border-neon/50 transition-all duration-500 shadow-lg relative course-card" data-category="level-master">
-                    <div class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-neon/90 transition-all duration-500 shadow-lg relative course-card"
+                    data-category="level-master">
+                    <div
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/90 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
                         2
                     </div>
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
-                        <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
-                        <img src="assets/images/courses/algo_trading_cover.png" alt="Algorithmic Trading Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div
+                            class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
+                        </div>
+                        <img src="assets/images/courses/algo_trading_cover.png" alt="Algorithmic Trading Course"
+                            class="w-full h-full object-cover border border-neon/90 group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
                             <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="px-3 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-full border border-purple-500/20 font-tech uppercase" data-i18n="course_level_master">Level 3: Master</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Algorithmic Trading</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Data Science</span>
+                                <span
+                                    class="px-3 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-full border border-purple-500/20 font-tech uppercase"
+                                    data-i18n="course_level_master">Level 3: Master</span>
+                                <span
+                                    class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Algorithmic
+                                    Trading</span>
+                                <span
+                                    class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Data
+                                    Science</span>
                             </div>
-                            <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech"><span data-i18n="course3_title">Algorithmic Trading</span></h4>
-                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span data-i18n="course3_desc">Master the creation of automated trading systems. Learn to leverage machine learning, real-time data streaming, and quantitative analysis to build autonomous financial engines.</span></p>
+                            <h4
+                                class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech">
+                                <span data-i18n="course3_title">Algorithmic Trading</span>
+                            </h4>
+                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span
+                                    data-i18n="course3_desc">Master the creation of automated trading systems. Learn to
+                                    leverage machine learning, real-time data streaming, and quantitative analysis to
+                                    build autonomous financial engines.</span></p>
                         </div>
-                        <a href="courses/algorithmic_trading.html" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-tech uppercase tracking-wider hover:text-white transition-colors mt-auto w-fit group/btn">
-                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="arrow-right" class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
+                        <a href="courses/algorithmic_trading.html" target="_blank"
+                            class="inline-flex items-center gap-2 text-sm text-neon font-tech uppercase tracking-wider hover:text-white transition-colors mt-auto w-fit group/btn">
+                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="arrow-right"
+                                class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
                 </div>
 
                 <!-- Course 3 -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-white/10 hover:border-neon/50 transition-all duration-500 shadow-lg relative course-card" data-category="level-beginner">
-                    <div class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-neon/90 transition-all duration-500 shadow-lg relative course-card"
+                    data-category="level-beginner">
+                    <div
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/90 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
                         3
                     </div>
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
-                        <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
-                        <img src="assets/images/courses/electronic_course_cover.png" alt="Electronics Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div
+                            class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
+                        </div>
+                        <img src="assets/images/courses/electronic_course_cover.png" alt="Electronics Course"
+                            class="w-full h-full object-cover border border-neon/90 group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
                             <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="px-3 py-1 bg-green-500/10 text-green-400 text-xs rounded-full border border-green-500/20 font-tech uppercase" data-i18n="course_level_beginner">Level 1: Beginner</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Electronics</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Circuit Design</span>
+                                <span
+                                    class="px-3 py-1 bg-green-500/10 text-green-400 text-xs rounded-full border border-green-500/20 font-tech uppercase"
+                                    data-i18n="course_level_beginner">Level 1: Beginner</span>
+                                <span
+                                    class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Electronics</span>
+                                <span
+                                    class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Circuit
+                                    Design</span>
                             </div>
-                            <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech"><span data-i18n="course2_title">Basic Electronics</span></h4>
-                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span data-i18n="course2_desc">Bridge the gap between hardware and software. Master circuit design, microcontrollers, basic electronic components, and physical computing.</span></p>
+                            <h4
+                                class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech">
+                                <span data-i18n="course2_title">Basic Electronics</span>
+                            </h4>
+                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span
+                                    data-i18n="course2_desc">Bridge the gap between hardware and software. Master
+                                    circuit design, microcontrollers, basic electronic components, and physical
+                                    computing.</span></p>
                         </div>
-                        <a href="courses/electronic_course.html" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-tech uppercase tracking-wider hover:text-white transition-colors mt-auto w-fit group/btn">
-                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="arrow-right" class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
+                        <a href="courses/electronic_course.html" target="_blank"
+                            class="inline-flex items-center gap-2 text-sm text-neon font-tech uppercase tracking-wider hover:text-white transition-colors mt-auto w-fit group/btn">
+                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="arrow-right"
+                                class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
                 </div>
 
                 <!-- Course 4 -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-100 group cursor-pointer overflow-hidden flex flex-col h-full border border-white/10 hover:border-neon/50 transition-all duration-500 shadow-lg relative course-card" data-category="level-advanced">
-                    <div class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-100 group cursor-pointer overflow-hidden flex flex-col h-full border border-neon/90 transition-all duration-500 shadow-lg relative course-card"
+                    data-category="level-advanced">
+                    <div
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/90 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
                         4
                     </div>
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
-                        <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
-                        <img src="assets/images/courses/uav_course_cover.png" alt="UAV Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div
+                            class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
+                        </div>
+                        <img src="assets/images/courses/uav_course_cover.png" alt="UAV Course"
+                            class="w-full h-full object-cover border border-neon/90 group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
                             <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="px-3 py-1 bg-orange-500/10 text-orange-400 text-xs rounded-full border border-orange-500/20 font-tech uppercase" data-i18n="course_level_advanced">Level 2: Advanced</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Robotics</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">UAV</span>
+                                <span
+                                    class="px-3 py-1 bg-orange-500/10 text-orange-400 text-xs rounded-full border border-orange-500/20 font-tech uppercase"
+                                    data-i18n="course_level_advanced">Level 2: Advanced</span>
+                                <span
+                                    class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Robotics</span>
+                                <span
+                                    class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">UAV</span>
                             </div>
-                            <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech"><span data-i18n="course1_title">UAV Electronic Engineering</span></h4>
-                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span data-i18n="course1_desc">Learn to design, build, and program autonomous aerial drones (UAVs). Master the integration of sensors, flight controllers, ESCs, and communication systems.</span></p>
+                            <h4
+                                class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech">
+                                <span data-i18n="course1_title">UAV Electronic Engineering</span>
+                            </h4>
+                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span
+                                    data-i18n="course1_desc">Learn to design, build, and program autonomous aerial
+                                    drones (UAVs). Master the integration of sensors, flight controllers, ESCs, and
+                                    communication systems.</span></p>
                         </div>
-                        <a href="courses/auv_course.html" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-tech uppercase tracking-wider hover:text-white transition-colors mt-auto w-fit group/btn">
-                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="arrow-right" class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
+                        <a href="courses/auv_course.html" target="_blank"
+                            class="inline-flex items-center gap-2 text-sm text-neon font-tech uppercase tracking-wider hover:text-white transition-colors mt-auto w-fit group/btn">
+                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="arrow-right"
+                                class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
                 </div>
 
                 <!-- Course 5 -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-white/10 hover:border-neon/50 transition-all duration-500 shadow-lg relative course-card" data-category="level-beginner">
-                    <div class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-neon/90 transition-all duration-500 shadow-lg relative course-card"
+                    data-category="level-beginner">
+                    <div
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/90 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
                         5
                     </div>
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
-                        <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
-                        <img src="assets/images/courses/ml_course_cover.png" alt="Machine Learning Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div
+                            class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
+                        </div>
+                        <img src="assets/images/courses/ml_course_cover.png" alt="Machine Learning Course"
+                            class="w-full h-full object-cover border border-neon/90 group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
                             <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="px-3 py-1 bg-green-500/10 text-green-400 text-xs rounded-full border border-green-500/20 font-tech uppercase" data-i18n="course_level_beginner">Level 1: Beginner</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Machine Learning</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Data Science</span>
+                                <span
+                                    class="px-3 py-1 bg-green-500/10 text-green-400 text-xs rounded-full border border-green-500/20 font-tech uppercase"
+                                    data-i18n="course_level_beginner">Level 1: Beginner</span>
+                                <span
+                                    class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Machine
+                                    Learning</span>
+                                <span
+                                    class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Data
+                                    Science</span>
                             </div>
-                            <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech"><span data-i18n="course5_title">Machine Learning from Scratch</span></h4>
-                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span data-i18n="course5_desc">Learn machine learning basics interactively. Master linear and logistic regression, decision trees, perceptrons, and clustering algorithms with hands-on visual tools.</span></p>
+                            <h4
+                                class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech">
+                                <span data-i18n="course5_title">Machine Learning from Scratch</span>
+                            </h4>
+                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span
+                                    data-i18n="course5_desc">Learn machine learning basics interactively. Master linear
+                                    and logistic regression, decision trees, perceptrons, and clustering algorithms with
+                                    hands-on visual tools.</span></p>
                         </div>
-                        <a href="courses/ml_course.html" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-tech uppercase tracking-wider hover:text-white transition-colors mt-auto w-fit group/btn">
-                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="arrow-right" class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
+                        <a href="courses/ml_course.html" target="_blank"
+                            class="inline-flex items-center gap-2 text-sm text-neon font-tech uppercase tracking-wider hover:text-white transition-colors mt-auto w-fit group/btn">
+                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="arrow-right"
+                                class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
                 </div>
 
                 <!-- Course 6 (Industrial IoT & Edge AI) -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-white/10 hover:border-neon/50 transition-all duration-500 shadow-lg relative course-card" data-category="level-advanced">
-                    <div class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-neon/90 transition-all duration-500 shadow-lg relative course-card"
+                    data-category="level-advanced">
+                    <div
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/90 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
                         6
                     </div>
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
-                        <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
-                        <img src="assets/images/courses/electronic_course_cover.png" alt="Industrial IoT & Edge AI Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div
+                            class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
+                        </div>
+                        <img src="assets/images/courses/electronic_course_cover.png"
+                            alt="Industrial IoT & Edge AI Course"
+                            class="w-full h-full object-cover border border-neon/90 group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
                             <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="px-3 py-1 bg-orange-500/10 text-orange-400 text-xs rounded-full border border-orange-500/20 font-tech uppercase" data-i18n="course_level_advanced">Level 2: Advanced</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">IIoT</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Edge AI</span>
+                                <span
+                                    class="px-3 py-1 bg-orange-500/10 text-orange-400 text-xs rounded-full border border-orange-500/20 font-tech uppercase"
+                                    data-i18n="course_level_advanced">Level 2: Advanced</span>
+                                <span
+                                    class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">IIoT</span>
+                                <span
+                                    class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Edge
+                                    AI</span>
                             </div>
-                            <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech"><span data-i18n="course6_title">Industrial IoT & Edge AI</span></h4>
-                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span data-i18n="course6_desc">Learn to connect physical sensors in real-time and run lightweight machine learning models directly on edge devices (Edge Computing).</span></p>
+                            <h4
+                                class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech">
+                                <span data-i18n="course6_title">Industrial IoT & Edge AI</span>
+                            </h4>
+                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span
+                                    data-i18n="course6_desc">Learn to connect physical sensors in real-time and run
+                                    lightweight machine learning models directly on edge devices (Edge
+                                    Computing).</span></p>
                         </div>
-                        <a href="courses/iiot_edge_ai.html" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-tech uppercase tracking-wider hover:text-white transition-colors mt-auto w-fit group/btn">
-                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="arrow-right" class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
+                        <a href="courses/iiot_edge_ai.html" target="_blank"
+                            class="inline-flex items-center gap-2 text-sm text-neon font-tech uppercase tracking-wider hover:text-white transition-colors mt-auto w-fit group/btn">
+                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="arrow-right"
+                                class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
                 </div>
 
-                <!-- Course 7 (ROS2 Robotics Fundamentals) -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-white/10 hover:border-neon/50 transition-all duration-500 shadow-lg relative course-card" data-category="level-master">
-                    <div class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
-                        7
-                    </div>
-                    <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
-                        <div class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
-                        <img src="assets/images/courses/uav_course_cover.png" alt="ROS2 Robotics Fundamentals Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                    </div>
-                    <div class="flex-1 flex flex-col justify-between">
-                        <div>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="px-3 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-full border border-purple-500/20 font-tech uppercase" data-i18n="course_level_master">Level 3: Master</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">Robotics</span>
-                                <span class="px-3 py-1 bg-neon/10 text-neon text-xs rounded-full border border-neon/20 font-tech uppercase">ROS2</span>
-                            </div>
-                            <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-neon transition-colors font-tech"><span data-i18n="course7_title">ROS2 Robotics Fundamentals</span></h4>
-                            <p class="text-gray-400 mb-6 text-sm md:text-base leading-relaxed"><span data-i18n="course7_desc">Master the industry standard software framework for autonomous robots. Learn topics, nodes, simulation, and path planning fundamentals.</span></p>
-                        </div>
-                        <a href="courses/ros2_robotics.html" target="_blank" class="inline-flex items-center gap-2 text-sm text-neon font-tech uppercase tracking-wider hover:text-white transition-colors mt-auto w-fit group/btn">
-                            <span data-i18n="course_view_syllabus">View Syllabus</span> <i data-lucide="arrow-right" class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
-                        </a>
-                    </div>
-                </div>
+
 
             </div>
         </div>
@@ -781,7 +920,8 @@
                     </p>
                     <div class="flex flex-wrap gap-4">
                         <!-- LinkedIn -->
-                        <a href="https://www.linkedin.com/company/autonovations/" target="_blank" rel="noopener noreferrer"
+                        <a href="https://www.linkedin.com/company/autonovations/" target="_blank"
+                            rel="noopener noreferrer"
                             class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon hover:border-neon/50 hover:bg-neon/5 transition-all group"
                             title="LinkedIn">
                             <svg viewBox="0 0 24 24"
@@ -792,7 +932,8 @@
                             </svg>
                         </a>
                         <!-- TikTok -->
-                        <a href="https://www.tiktok.com/@autonovations?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer"
+                        <a href="https://www.tiktok.com/@autonovations?is_from_webapp=1&sender_device=pc"
+                            target="_blank" rel="noopener noreferrer"
                             class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon hover:border-neon/50 hover:bg-neon/5 transition-all group"
                             title="TikTok">
                             <svg viewBox="0 0 24 24" class="w-5 h-5 group-hover:scale-110 transition-transform"
@@ -809,7 +950,8 @@
                             </svg>
                         </a>
                         <!-- YouTube -->
-                        <a href="https://www.youtube.com/channel/UC7INwUx-anQYEL_FTGXFdEg" target="_blank" rel="noopener noreferrer"
+                        <a href="https://www.youtube.com/channel/UC7INwUx-anQYEL_FTGXFdEg" target="_blank"
+                            rel="noopener noreferrer"
                             class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon hover:border-neon/50 hover:bg-neon/5 transition-all group"
                             title="YouTube">
                             <svg viewBox="0 0 24 24"
@@ -940,3 +1082,4 @@
 </body>
 
 </html>
+
