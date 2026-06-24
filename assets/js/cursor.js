@@ -7,7 +7,7 @@
     // 2. Compute correct relative path to the drone image
     // Find if the current page is in a subdirectory (courses or overview)
     const isSubdir = window.location.pathname.includes('/courses/') || window.location.pathname.includes('/overview/');
-    const imagePath = isSubdir ? '../assets_index/images/cursor-drone.png' : 'assets_index/images/cursor-drone.png';
+    const imagePath = isSubdir ? '../assets/images/cursor-drone.png' : 'assets/images/cursor-drone.png';
 
     // 3. Inject CSS Styles programmatically
     const styles = `

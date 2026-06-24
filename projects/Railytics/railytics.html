@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Railytics Simulator</title>
-  <link rel="icon" type="image/jpeg" href="./favicon.jpg" />
+  <link rel="icon" type="image/jpeg" href="./images/favicon.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
@@ -2216,16 +2216,16 @@
   <header class="header">
     <button class="hamburger" onclick="toggleDrawer()"><span class="material-icons"
         style="font-size:2.5rem">menu</span></button>
-    <img src="./up_logo.jpg" alt="UP" class="logo up-logo" />
+    <img src="./images/up_logo.jpg" alt="UP" class="logo up-logo" />
     <div style="flex:1"></div>
-    <img src="./AN-logo.png" alt="AN" class="logo" />
+    <img src="../../assets/images/AN-logo.png" alt="AN" class="logo" />
   </header>
   <div class="header-spacer"></div>
 
   <!-- ═══════════════ DRAWER ═══════════════ -->
   <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
   <nav class="drawer" id="drawer">
-    <img src="./usa_flag.jpg" alt="USA" class="flag" />
+    <img src="./images/usa_flag.jpg" alt="USA" class="flag" />
     <button class="menu-item active" onclick="switchTab(0)"><span class="material-icons">video_call</span>STREAM
       SELECTION</button>
     <button class="menu-item" onclick="switchTab(1)"><span class="material-icons">analytics</span>REAL-TIME
@@ -2662,7 +2662,7 @@
         d.setMinutes(d.getMinutes() - i * 3);
         const hasTrain = Math.random() > 0.3;
         simFrames.push({
-          filename: './train_frame' + frameImageIndices[i] + '.png',
+          filename: './images/train_frame' + frameImageIndices[i] + '.png',
           timestamp: d.toISOString(),
           size: Math.floor(Math.random() * 500000) + 50000,
           has_trains: hasTrain,
@@ -3015,7 +3015,7 @@
       // Asignar imagen cíclicamente basándose en el ID del evento o nombre para consistencia
       const hash = eventId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
       const imgIdx = (hash % 23) + 1;
-      imgEl.src = './train_frame' + imgIdx + '.png';
+      imgEl.src = './images/train_frame' + imgIdx + '.png';
 
       const fmt = ts => { try { return new Date(ts).toLocaleString(); } catch (_) { return '—'; } };
       const fmtDur = s => { if (s == null) return 'Active'; const m = Math.floor(s / 60), sec = s % 60; return m + 'm ' + sec + 's'; };
@@ -3637,7 +3637,7 @@
         const videoClickHtml = stream ? 'onclick="openViewer(\'' + stream.url + '\',\'' + stream.name.replace(/'/g, "\\'") + '\')"' : 'disabled';
         const hash = e.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
         const imgIdx = (hash % 23) + 1;
-        const imgPath = './train_frame' + imgIdx + '.png';
+        const imgPath = './images/train_frame' + imgIdx + '.png';
         return '<tr style="transition:.2s">' +
           '<td data-label="Start"><div class="td-content">' + fmt(e.start_time) + '</div></td>' +
           '<td data-label="End"><div class="td-content">' + (e.end_time ? fmt(e.end_time) : '— (active)') + '</div></td>' +

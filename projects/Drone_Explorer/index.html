@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>AutoNovations AeroExplorer - Drone Mission Control</title>
-    <link rel="icon" href="../../assets_index/images/favicon.png" type="image/x-icon">
+    <link rel="icon" href="../../assets/images/favicon.png" type="image/x-icon">
     
     <!-- Local Leaflet dependencies copied from lia-explorer -->
-    <link rel="stylesheet" href="leaflet.css" />
-    <script src="leaflet.js"></script>
+    <link rel="stylesheet" href="assets/leaflet.css" />
+    <script src="assets/leaflet.js"></script>
 
     <!-- Google Fonts for High-Tech Aesthetic -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -997,7 +997,7 @@
     <!-- HUD Header Badge (Top Center) -->
     <div class="hud-header">
         <div class="logo-container">
-            <img src="../../assets_index/images/logo_an_monogram.png" alt="AutoNovations" onerror="this.src='https://placehold.co/100x100/00D9FF/FFFFFF?text=AN'">
+            <img src="../../assets/images/logo_an_monogram.png" alt="AutoNovations" onerror="this.src='https://placehold.co/100x100/00D9FF/FFFFFF?text=AN'">
         </div>
         <div class="brand-info">
             <div class="title">AEROEXPLORER</div>
@@ -1220,7 +1220,7 @@
         const droneIcon = L.divIcon({
             html: `
                 <div class="drone-avatar-wrapper" id="droneWrapper">
-                    <img src="../../assets_index/images/cursor-drone.png" alt="Drone" id="droneImg" />
+                    <img src="../../assets/images/cursor-drone.png" alt="Drone" id="droneImg" />
                 </div>
             `,
             className: 'drone-marker',
@@ -1236,7 +1236,7 @@
         // Popup standard metadata
         droneMarker.bindPopup(`
             <div class="custom-popup-content">
-                <img src="../../assets_index/images/cursor-drone.png" alt="Drone" />
+                <img src="../../assets/images/cursor-drone.png" alt="Drone" />
                 <div class="custom-popup-title">AN-QUADCOPTER v2.0</div>
                 <div class="custom-popup-desc">Dron de Exploración y Telemetría Industrial AutoNovations.</div>
             </div>
