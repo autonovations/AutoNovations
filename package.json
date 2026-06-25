@@ -1,0 +1,18 @@
+{
+  "name": "autonovations",
+  "version": "1.0.0",
+  "description": "Deep-tech engineering lab website",
+  "main": "index.html",
+  "scripts": {
+    "build:main": "tailwindcss -i assets/css/tailwind-input.css -o assets/css/tailwind.css -c tailwind.config.js --minify",
+    "build:vsoc": "tailwindcss -i projects/VSOC/tailwind-input.css -o projects/VSOC/tailwind.css -c projects/VSOC/tailwind.config.js --minify",
+    "build": "npm run build:main && npm run build:vsoc",
+    "watch:main": "tailwindcss -i assets/css/tailwind-input.css -o assets/css/tailwind.css -c tailwind.config.js --watch",
+    "watch:vsoc": "tailwindcss -i projects/VSOC/tailwind-input.css -o projects/VSOC/tailwind.css -c projects/VSOC/tailwind.config.js --watch",
+    "dev": "concurrently \"npm run watch:main\" \"npm run watch:vsoc\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "tailwindcss": "^3.4.1"
+  }
+}
