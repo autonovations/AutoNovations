@@ -323,7 +323,7 @@ print(f"Enviados {len(orders)} eventos de orden")
   <!-- 10.3 -->
   <section id="s4">
     <h2 data-num="10.3">Consumers y Consumer Groups</h2>
-    <pre><code">"""
+    <pre><code>"""
 Kafka Consumer y Consumer Groups
 El paralelismo = número de particiones activas = número de consumers activos
 """
@@ -432,7 +432,7 @@ while True:
   <!-- 10.4 -->
   <section id="s5">
     <h2 data-num="10.4">Kafka Streams</h2>
-    <pre><code">"""
+    <pre><code>"""
 Kafka Streams con Python (Faust - el mejor wrapper Python para Kafka Streams)
 Para casos simples donde no quieres Flink completo
 """
@@ -514,7 +514,7 @@ if __name__ == '__main__':
     <h2 data-num="10.5">Schema Registry</h2>
     <p>El Schema Registry gestiona los schemas de los mensajes Kafka (Avro, JSON Schema, Protobuf), garantizando compatibilidad entre producers y consumers cuando el schema evoluciona.</p>
 
-    <pre><code">"""
+    <pre><code>"""
 Confluent Schema Registry con Avro
 Garantiza que producers y consumers hablan el mismo "idioma"
 """
@@ -592,7 +592,7 @@ print(f"Versions: {schemas}")
     <h2 data-num="10.6">Kafka Connect</h2>
     <p>Kafka Connect es el framework para integrar Kafka con sistemas externos (bases de datos, storage, APIs) sin escribir código de producer/consumer.</p>
 
-    <pre><code"># ── KAFKA CONNECT: CDC desde PostgreSQL → Kafka ────────────────────────────
+    <pre><code># ── KAFKA CONNECT: CDC desde PostgreSQL → Kafka ────────────────────────────
 # Debezium: el conector CDC más popular
 # Captura cambios de PostgreSQL (INSERT, UPDATE, DELETE) como eventos Kafka
 

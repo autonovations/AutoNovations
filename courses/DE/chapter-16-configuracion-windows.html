@@ -124,11 +124,11 @@ td:first-child{font-weight:500;color:var(--t1);}
   <section id="s2">
     <h2 data-num="16.1">1. Instalar WSL2 y Ubuntu</h2>
     <p>Abre PowerShell como Administrador y ejecuta:</p>
-    <pre><code">wsl --install</code></pre>
+    <pre><code>wsl --install</code></pre>
     <p>Reinicia tu PC. Al volver, Ubuntu se terminará de instalar. Te pedirá crear un usuario y contraseña de Linux (no tiene que ser el de Windows, pero anótala porque es tu clave <code>sudo</code>).</p>
     
     <h3>Configuración inicial de Ubuntu</h3>
-    <pre><code">sudo apt update && sudo apt upgrade -y
+    <pre><code>sudo apt update && sudo apt upgrade -y
 sudo apt install build-essential curl wget git unzip -y</code></pre>
   </section>
 
@@ -164,7 +164,7 @@ sudo apt install build-essential curl wget git unzip -y</code></pre>
     <h2 data-num="16.4">4. Configurar Python y Entornos Virtuales</h2>
     <p>En el mundo de los datos, manejar versiones de Python es un dolor de cabeza. Recomendamos usar <code>pyenv</code> o <code>uv</code>.</p>
     
-    <pre><code"># Instalar uv (gestor ultrarápido de Python escrito en Rust)
+    <pre><code># Instalar uv (gestor ultrarápido de Python escrito en Rust)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Crear un entorno virtual para un proyecto

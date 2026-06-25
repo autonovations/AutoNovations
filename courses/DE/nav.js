@@ -22,7 +22,10 @@ document.addEventListener("DOMContentLoaded", () => {
         { file: "chapter-19-proyecto-final.html", num: "19", title: "Proyecto Final" },
         { file: "chapter-20-entrevistas.html", num: "20", title: "Entrevistas" },
         { file: "chapter-21-mercado-laboral.html", num: "21", title: "Mercado Laboral" },
-        { file: "chapter-22-buenas-practicas.html", num: "22", title: "Buenas Prácticas" }
+        { file: "chapter-22-buenas-practicas.html", num: "22", title: "Buenas Prácticas" },
+        { file: "chapter-23-data-contracts.html", num: "23", title: "Data Contracts" },
+        { file: "chapter-24-apache-iceberg.html", num: "24", title: "Apache Iceberg" },
+        { file: "chapter-25-ai-data-engineering.html", num: "25", title: "AI Data Eng." }
     ];
 
     // Obtener nombre del archivo actual

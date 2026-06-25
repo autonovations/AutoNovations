@@ -136,7 +136,7 @@ td:first-child{font-weight:500;color:var(--t1);}
         <li><code>hotfix/*</code>: Parches rápidos en producción.</li>
       </ul>
     </div>
-    <pre><code"># Flujo típico de un Data Engineer
+    <pre><code># Flujo típico de un Data Engineer
 git checkout -b feature/new-dbt-model
 # (Escribir el código y tests locales)
 git add models/staging/stg_stripe__payments.sql
@@ -151,7 +151,7 @@ git push origin feature/new-dbt-model
     <p>Empaquetar aplicaciones en contenedores elimina el problema de "en mi máquina sí funciona". En Data Engineering, Docker es vital para Airflow, Spark jobs, y microservicios de ingesta.</p>
     
     <h3>Dockerfile Ejemplo para un Job de Python</h3>
-    <pre><code"># Usar una imagen base ligera
+    <pre><code># Usar una imagen base ligera
 FROM python:3.10-slim
 
 # Establecer directorio de trabajo
@@ -181,7 +181,7 @@ CMD ["python", "ingest_api_data.py"]</code></pre>
     <h2 data-num="13.3">Infrastructure as Code (IaC) con Terraform</h2>
     <p>Crear recursos en AWS/GCP a mano usando la consola web es un anti-patrón. Terraform permite definir recursos cloud usando código (HCL).</p>
     
-    <pre><code"># Ejemplo: Crear un bucket de S3 para el Data Lake con Terraform
+    <pre><code># Ejemplo: Crear un bucket de S3 para el Data Lake con Terraform
 provider "aws" {
   region = "us-east-1"
 }
@@ -210,7 +210,7 @@ resource "aws_s3_bucket_versioning" "raw_versioning" {
     <p>La Integración Continua y Despliegue Continuo validan el código y lo mueven a producción automáticamente.</p>
     
     <h3>Pipeline CI/CD para dbt</h3>
-    <pre><code">name: dbt CI/CD Pipeline
+    <pre><code>name: dbt CI/CD Pipeline
 
 on:
   pull_request:

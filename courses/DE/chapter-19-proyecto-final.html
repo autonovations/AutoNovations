@@ -166,7 +166,7 @@ td:first-child{font-weight:500;color:var(--t1);}
       <li><strong>Spark Streaming:</strong> Un script en PySpark lee el topic, agrupa los viajes por zona cada 30 segundos, y si detecta un pico (>100 viajes/minuto en una zona), escribe la alerta en Redis.</li>
     </ul>
 
-    <pre><code"># PySpark Streaming pseudocódigo
+    <pre><code># PySpark Streaming pseudocódigo
 df = spark.readStream.format("kafka").option("subscribe", "rides.events").load()
 parsed_df = parse_json_from_kafka(df)
 

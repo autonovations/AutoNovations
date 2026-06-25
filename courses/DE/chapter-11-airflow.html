@@ -144,7 +144,7 @@ td:first-child{font-weight:500;color:var(--t1);}
   <!-- 11.1 -->
   <section id="s2">
     <h2 data-num="11.1">DAGs con Taskflow API</h2>
-    <pre><code">"""
+    <pre><code>"""
 Airflow 2.x TaskFlow API: DAGs más limpios y pythónicos
 La mejor manera de escribir DAGs en 2026
 """
@@ -298,7 +298,7 @@ pipeline = orders_etl_pipeline()</code></pre>
   <!-- 11.2 -->
   <section id="s3">
     <h2 data-num="11.2">Operators y Sensors</h2>
-    <pre><code">"""
+    <pre><code>"""
 Los Operators más usados en Data Engineering
 """
 from airflow.operators.python import PythonOperator, BranchPythonOperator
@@ -409,7 +409,7 @@ with DAG('operators_demo', schedule='@daily', start_date=datetime(2026,1,1), cat
   <!-- 11.3 -->
   <section id="s4">
     <h2 data-num="11.3">XComs y TaskGroups</h2>
-    <pre><code">"""
+    <pre><code>"""
 XComs: comunicación entre Tasks
 TaskGroups: organizar Tasks en grupos visuales en la UI
 """
@@ -486,7 +486,7 @@ with DAG('etl_with_task_groups', schedule='@daily', start_date=datetime(2026,1,1
       </ul>
     </div>
 
-    <pre><code"># ── VARIABLES Y CONNECTIONS (buenas prácticas) ────────────────────────────
+    <pre><code># ── VARIABLES Y CONNECTIONS (buenas prácticas) ────────────────────────────
 from airflow.models import Variable
 from airflow.hooks.base import BaseHook
 

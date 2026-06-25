@@ -117,7 +117,7 @@ td:first-child{font-weight:500;color:var(--t1);}
 
   <!-- 13.0 -->
   <section id="s1">
-    <h2 data-num="13.0">Las 6 Dimensiones de Calidad de Datos</h2>
+    <h2 data-num="14.0">Las 6 Dimensiones de Calidad de Datos</h2>
     
     <div class="dimension-grid">
       <div class="dimension-card" style="--dc:var(--green)">
@@ -149,10 +149,10 @@ td:first-child{font-weight:500;color:var(--t1);}
 
   <!-- 13.1 -->
   <section id="s2">
-    <h2 data-num="13.1">Great Expectations</h2>
+    <h2 data-num="14.1">Great Expectations</h2>
     <p>Great Expectations (GX) es el framework Python más completo para validar, documentar y perfilar datos. Genera documentación HTML interactiva con los resultados de las validaciones.</p>
 
-    <pre><code">"""
+    <pre><code>"""
 Great Expectations 0.18+ (GX Core)
 """
 import great_expectations as gx
@@ -238,10 +238,10 @@ if not result.success:
 
   <!-- 13.2 -->
   <section id="s3">
-    <h2 data-num="13.2">Soda Core</h2>
+    <h2 data-num="14.2">Soda Core</h2>
     <p>Soda ofrece una sintaxis YAML más declarativa para data quality checks. Integra directamente con el Data Warehouse sin necesitar extraer datos.</p>
 
-    <pre><code"># ── SODA CHECKS en YAML (checks.yml) ──────────────────────────────────────
+    <pre><code># ── SODA CHECKS en YAML (checks.yml) ──────────────────────────────────────
 # Mucho más legible para analistas no-técnicos
 # Se ejecuta directamente sobre la base de datos (pushdown)
 
@@ -306,8 +306,8 @@ if scan.has_check_failures():
 
   <!-- 13.3 -->
   <section id="s4">
-    <h2 data-num="13.3">dbt Tests para Data Quality</h2>
-    <pre><code"># ── DBT TESTS: Tests integrados en el pipeline de transformación ───────────
+    <h2 data-num="14.3">dbt Tests para Data Quality</h2>
+    <pre><code># ── DBT TESTS: Tests integrados en el pipeline de transformación ───────────
 # schema.yml en tu proyecto dbt
 
 version: 2
@@ -357,10 +357,10 @@ WHERE amount < 0  -- La query debe retornar 0 filas para pasar el test
 
   <!-- 13.4 -->
   <section id="s5">
-    <h2 data-num="13.4">Data Contracts</h2>
+    <h2 data-num="14.4">Data Contracts</h2>
     <p>Los Data Contracts son acuerdos formales entre el productor de datos y sus consumidores. Definen el schema, semántica, SLAs y calidad esperada. Son el estándar emergente para Data Mesh en 2026.</p>
 
-    <pre><code"># ── DATA CONTRACT: YAML Schema ─────────────────────────────────────────────
+    <pre><code># ── DATA CONTRACT: YAML Schema ─────────────────────────────────────────────
 # orders_contract.yaml
 # Basado en Data Contract Specification (datacontract.com)
 
@@ -444,8 +444,8 @@ serviceLevel:
 
   <!-- 13.5 -->
   <section id="s6">
-    <h2 data-num="13.5">Monitoreo Continuo con Anomaly Detection</h2>
-    <pre><code">"""
+    <h2 data-num="14.5">Monitoreo Continuo con Anomaly Detection</h2>
+    <pre><code>"""
 Detección de anomalías en datos con Monte Carlo / código propio
 """
 import pandas as pd

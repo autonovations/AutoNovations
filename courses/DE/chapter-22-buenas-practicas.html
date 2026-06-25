@@ -115,14 +115,14 @@ pre code{background:none;border:none;padding:0;font-size:0.85rem;color:var(--t1)
     
     <div class="info-box warning">
       <div class="info-box-title">❌ Script No Idempotente</div>
-      <pre style="margin-top:0.5rem;"><code">INSERT INTO ventas_diarias
+      <pre style="margin-top:0.5rem;"><code>INSERT INTO ventas_diarias
 SELECT * FROM ventas_crudas WHERE date = '2026-10-15';
 -- Si Airflow falla y reintenta, ¡tendrás datos duplicados!</code></pre>
     </div>
 
     <div class="info-box success">
       <div class="info-box-title">✅ Script Idempotente</div>
-      <pre style="margin-top:0.5rem;"><code">-- Primero limpiamos si ya existía algo de esa fecha
+      <pre style="margin-top:0.5rem;"><code>-- Primero limpiamos si ya existía algo de esa fecha
 DELETE FROM ventas_diarias WHERE date = '2026-10-15';
 
 -- Luego insertamos (o usamos MERGE / UPSERT)
@@ -166,9 +166,9 @@ SELECT * FROM ventas_crudas WHERE date = '2026-10-15';</code></pre>
       <span class="arrow">←</span>
       <div><div class="ch-nav-meta">Capítulo 21</div><div class="ch-nav-title">Mercado Laboral</div></div>
     </a>
-    <a href="index.html" class="ch-nav-btn next">
-      <span class="arrow">🏠</span>
-      <div><div class="ch-nav-meta">Volver al inicio</div><div class="ch-nav-title">Índice General</div></div>
+    <a href="chapter-23-data-contracts.html" class="ch-nav-btn next">
+      <span class="arrow">→</span>
+      <div><div class="ch-nav-meta">Capítulo 23</div><div class="ch-nav-title">Data Contracts</div></div>
     </a>
   </div>
 </main>
