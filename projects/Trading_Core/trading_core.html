@@ -546,17 +546,23 @@
             flex-direction: column;
             position: relative;
             background: #080c14;
+            overflow: hidden;
+            width: 100%;
         }
 
         .chart-area {
             flex-grow: 1;
             position: relative;
+            overflow: hidden;
+            width: 100%;
         }
 
         .rsi-area {
             height: 100px;
             border-top: 1px solid var(--panel-border);
             position: relative;
+            overflow: hidden;
+            width: 100%;
         }
 
         /* Overlay indicator details inside the chart */
@@ -1143,6 +1149,25 @@
             font-weight: 500;
         }
 
+        .toast-close {
+            cursor: pointer;
+            margin-left: auto;
+            opacity: 0.5;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 2px 4px;
+            transition: opacity 0.2s, color 0.2s;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast-close:hover {
+            opacity: 1;
+            color: var(--color-down);
+        }
+
         /* Custom Modal System */
         .modal-overlay {
             position: fixed;
@@ -1614,8 +1639,16 @@
             #tab-markets table td:nth-child(7) > div {
                 justify-content: flex-end !important;
             }
-            #tab-markets .table-container {
-                overflow: visible !important;
+            #tab-markets .table-container,
+            #tab-trading .bots-panel .table-container,
+            #tab-bots .table-container,
+            #tab-trading .positions-panel .table-container,
+            #tab-dashboard .table-container,
+            #tab-trading .history-panel .table-container,
+            #tab-history .table-container {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                max-width: 100% !important;
             }
 
             /* Prevent horizontal scrolling in other tables by hiding secondary columns on mobile/tablet */
@@ -1625,18 +1658,12 @@
             #tab-trading .bots-panel table td:nth-child(5) {
                 display: none !important;
             }
-            #tab-trading .bots-panel .table-container {
-                overflow: visible !important;
-            }
 
             #tab-bots table th:nth-child(2),
             #tab-bots table td:nth-child(2),
             #tab-bots table th:nth-child(6),
             #tab-bots table td:nth-child(6) {
                 display: none !important;
-            }
-            #tab-bots .table-container {
-                overflow: visible !important;
             }
 
             #tab-trading .positions-panel table th:nth-child(5),
@@ -1645,9 +1672,6 @@
             #tab-trading .positions-panel table td:nth-child(6) {
                 display: none !important;
             }
-            #tab-trading .positions-panel .table-container {
-                overflow: visible !important;
-            }
 
             #tab-dashboard table th:nth-child(3),
             #tab-dashboard table td:nth-child(3),
@@ -1655,18 +1679,12 @@
             #tab-dashboard table td:nth-child(4) {
                 display: none !important;
             }
-            #tab-dashboard .table-container {
-                overflow: visible !important;
-            }
 
             #tab-trading .history-panel table th:nth-child(1),
             #tab-trading .history-panel table td:nth-child(1),
             #tab-trading .history-panel table th:nth-child(4),
             #tab-trading .history-panel table td:nth-child(4) {
                 display: none !important;
-            }
-            #tab-trading .history-panel .table-container {
-                overflow: visible !important;
             }
 
             #tab-history table th:nth-child(1),
@@ -1678,9 +1696,6 @@
             #tab-history table th:nth-child(6),
             #tab-history table td:nth-child(6) {
                 display: none !important;
-            }
-            #tab-history .table-container {
-                overflow: visible !important;
             }
 
             .market-table-action-btn {
@@ -1695,6 +1710,31 @@
             }
             .panel-header .search-input-wrapper {
                 width: 100% !important;
+            }
+
+            /* Reposition notification container to the top on mobile */
+            #notification-container {
+                top: 65px; /* Just below header */
+                bottom: auto !important;
+                right: 12px !important;
+                left: 12px !important;
+                max-width: none !important;
+                width: auto !important;
+                gap: 6px;
+            }
+
+            .toast {
+                transform: translateY(-30px) scale(0.95);
+                opacity: 0;
+                transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15), opacity 0.3s ease;
+                padding: 10px 14px;
+                font-size: 11px;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 8px rgba(0, 242, 254, 0.1);
+            }
+
+            .toast.show {
+                transform: translateY(0) scale(1);
+                opacity: 1;
             }
         }
 
@@ -1764,6 +1804,25 @@
             .stats-trigger-btn {
                 font-size: 11px !important;
                 padding: 4px 8px !important;
+            }
+
+            /* Stack settings section rows vertically */
+            .setting-row-control {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 10px !important;
+            }
+            .setting-row-control .order-select,
+            .setting-row-control .order-input,
+            .setting-row-control button {
+                width: 100% !important;
+            }
+            .settings-container {
+                padding: 16px !important;
+                gap: 16px !important;
+            }
+            .order-input, .order-select, .btn-deposit, .action-btn {
+                min-height: 40px;
             }
         }
 
@@ -6025,20 +6084,49 @@
             if (type === 'success') iconText = '✓';
             if (type === 'error') iconText = '×';
 
+            // Limit active toasts to max 3 on mobile
+            if (window.innerWidth <= 768) {
+                const activeToasts = container.querySelectorAll('.toast.show');
+                if (activeToasts.length >= 3) {
+                    const oldest = activeToasts[0];
+                    oldest.classList.remove('show');
+                    setTimeout(() => oldest.remove(), 300);
+                }
+            }
+
             toast.innerHTML = `
                 <div class="toast-icon">${iconText}</div>
                 <div class="toast-message">${message}</div>
+                <div class="toast-close">&times;</div>
             `;
             container.appendChild(toast);
             
             // Show animation
             setTimeout(() => toast.classList.add('show'), 50);
 
+            let autoRemoveTimeout;
+
+            const dismissToast = () => {
+                if (toast.classList.contains('show')) {
+                    toast.classList.remove('show');
+                    if (autoRemoveTimeout) clearTimeout(autoRemoveTimeout);
+                    setTimeout(() => toast.remove(), 300);
+                }
+            };
+
+            const closeBtn = toast.querySelector('.toast-close');
+            if (closeBtn) {
+                closeBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    dismissToast();
+                };
+            }
+            toast.onclick = () => {
+                dismissToast();
+            };
+
             // Remove automatically
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
+            autoRemoveTimeout = setTimeout(dismissToast, 4000);
         }
 
         // Helper to format money
