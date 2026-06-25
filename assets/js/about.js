@@ -147,7 +147,7 @@ window.addEventListener('scroll', () => {
 });
 
 // Scroll Spy for active nav links
-const sections = ['projects']; // Only projects section exists on this page
+const sections = ['projects', 'courses']; // Both projects and courses sections exist on this page
 const navLinks = document.querySelectorAll('nav div.hidden.md\\:flex a');
 const mobileNavLinks = document.querySelectorAll('#mobileMenu a.menu-link');
 
