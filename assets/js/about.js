@@ -508,6 +508,7 @@ function setLanguage(lang) {
     });
 
     localStorage.setItem('preferredLang', lang);
+    document.documentElement.classList.remove('lang-es-loading');
 }
 
 // Animated Counters
@@ -596,10 +597,12 @@ if (heroSection && terminalElement) {
     heroObserver.observe(heroSection);
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    const savedLang = localStorage.getItem('preferredLang') || 'en';
-    setLanguage(savedLang);
+// Run language initialization immediately to avoid flicker of English text
+const savedLang = localStorage.getItem('preferredLang') || 
+                  ((navigator.language || navigator.userLanguage || '').startsWith('es') ? 'es' : 'en');
+setLanguage(savedLang);
 
+window.addEventListener('DOMContentLoaded', () => {
     // Initial theme set to handle lucide icons properly on load
     const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
     setTheme(savedTheme);

@@ -42,15 +42,36 @@
     <script src="assets/js/about.js" defer></script>
     <script src="assets/js/cursor.js" defer></script>
     <script>
-            (function () {
-                const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
-                if (savedTheme === 'light') {
-                    document.documentElement.classList.add('light');
-                } else {
-                    document.documentElement.classList.remove('light');
-                }
-            })();
+        (function () {
+            // Theme preference
+            const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+            if (savedTheme === 'light') {
+                document.documentElement.classList.add('light');
+            } else {
+                document.documentElement.classList.remove('light');
+            }
+
+            // Language preference
+            const savedLang = localStorage.getItem('preferredLang');
+            let lang = savedLang;
+            if (!lang) {
+                const userLang = navigator.language || navigator.userLanguage;
+                lang = userLang && userLang.startsWith('es') ? 'es' : 'en';
+            }
+            if (lang === 'es') {
+                document.documentElement.classList.add('lang-es-loading');
+                // Safeguard: remove class after 1 second if JS fails to run
+                setTimeout(function() {
+                    document.documentElement.classList.remove('lang-es-loading');
+                }, 1000);
+            }
+        })();
     </script>
+    <style>
+        .lang-es-loading body {
+            visibility: hidden !important;
+        }
+    </style>
 </head>
 
 <body class="antialiased selection:bg-neon selection:text-dark bg-[#020504]">
