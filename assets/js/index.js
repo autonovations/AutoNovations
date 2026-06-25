@@ -205,13 +205,6 @@ menuLinks.forEach(link => {
     });
 });
 
-//             btn.classList.add('active');
-        }
-    });
-
-    localStorage.setItem('preferredLang', lang);
-    document.documentElement.classList.remove('lang-es-loading');
-}
 
 // Animated Counters
 const counters = document.querySelectorAll('.counter');
