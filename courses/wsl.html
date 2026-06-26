@@ -1,0 +1,2561 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta name="theme-color" content="#00D9FF">
+  <meta name="theme-color" content="#00D9FF" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#020504" media="(prefers-color-scheme: dark)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WSL Mastery - Curso Completo de Windows Subsystem for Linux | AutoNovations Academy</title>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+      if (savedTheme === 'light') {
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.remove('light');
+      }
+    })();
+  </script>
+  <meta name="description" content="Domina WSL desde cero hasta nivel avanzado. Aprende a instalar, configurar y usar el Subsistema de Windows para Linux con simuladores interactivos y ejercicios prácticos.">
+  <meta name="keywords" content="WSL, Windows Subsystem for Linux, Linux en Windows, Ubuntu, Bash, Terminal, DevOps, AutoNovations Academy">
+  <meta name="author" content="AutoNovations Academy">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="../assets/js/lucide.min.js"></script>
+
+  <style>
+    :root {
+      --bg-darker: #06090f;
+      --bg-dark: #0a0e17;
+      --bg-card: #111827;
+      --bg-card-hover: #1b263b;
+      --border: #1e293b;
+      --border-focus: #00f0ff;
+      --accent-cyan: #00f0ff;
+      --accent-cyan-dim: rgba(0, 240, 255, 0.12);
+      --accent-green: #10b981;
+      --accent-green-neon: #39ff14;
+      --accent-green-dim: rgba(16, 185, 129, 0.15);
+      --accent-red: #ef4444;
+      --accent-red-neon: #ff3366;
+      --accent-red-dim: rgba(239, 68, 68, 0.15);
+      --accent-amber: #f59e0b;
+      --accent-amber-dim: rgba(245, 158, 11, 0.15);
+      --accent-purple: #8b5cf6;
+      --accent-purple-dim: rgba(139, 92, 246, 0.12);
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html.light {
+      --bg-darker: #f3f4f6;
+      --bg-dark: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f9fafb;
+      --border: #e5e7eb;
+      --border-focus: #3b82f6;
+      --accent-cyan: #2563eb;
+      --accent-cyan-dim: rgba(37, 99, 235, 0.1);
+      --accent-green: #059669;
+      --accent-green-neon: #10b981;
+      --accent-green-dim: rgba(5, 150, 105, 0.1);
+      --accent-red: #dc2626;
+      --accent-red-neon: #ef4444;
+      --accent-red-dim: rgba(220, 38, 38, 0.1);
+      --accent-amber: #d97706;
+      --accent-amber-dim: rgba(217, 119, 6, 0.1);
+      --accent-purple: #7c3aed;
+      --accent-purple-dim: rgba(124, 58, 237, 0.1);
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-muted: #9ca3af;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-darker);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-darker); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-sm); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+
+    .app-container { display: flex; min-height: 100vh; }
+
+    /* ── SIDEBAR ─────────────────────────── */
+    .sidebar {
+      width: 290px;
+      background-color: var(--bg-dark);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; bottom: 0; left: 0;
+      z-index: 100;
+      padding: 1.5rem;
+      transition: transform 0.3s;
+      overflow-y: auto;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .sidebar-subtitle {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1.5rem;
+      padding-left: 34px;
+    }
+
+    .nav-section-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      padding: 0.75rem 0 0.4rem 0;
+      border-top: 1px solid var(--border);
+      margin-top: 0.5rem;
+    }
+
+    .nav-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+
+    .nav-item button {
+      width: 100%;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.83rem;
+      font-weight: 500;
+      text-align: left;
+      padding: 9px 12px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: var(--transition);
+      border: 1px solid transparent;
+    }
+
+    .nav-item button:hover { background-color: var(--bg-card-hover); color: var(--text-primary); }
+
+    .nav-item.active button {
+      background-color: var(--accent-cyan-dim);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+    }
+
+    .nav-item.completed button { color: var(--accent-green); }
+    .nav-item.completed button .nav-check { display: inline-block; }
+
+    .nav-check { display: none; color: var(--accent-green); margin-left: auto; }
+    .nav-num {
+      min-width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--border);
+      color: var(--text-muted);
+      font-size: 0.65rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .nav-item.active .nav-num { background: var(--accent-cyan); color: #06090f; }
+    .nav-item.completed .nav-num { background: var(--accent-green-dim); color: var(--accent-green); }
+
+    .progress-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+    .progress-box-title {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .progress-circle-wrapper { position: relative; width: 90px; height: 90px; margin: 0 auto 8px; }
+    .progress-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .progress-bg-circle { fill: none; stroke: var(--border); stroke-width: 8; }
+    .progress-bar-circle {
+      fill: none;
+      stroke: var(--accent-cyan);
+      stroke-width: 8;
+      stroke-dasharray: 226;
+      stroke-dashoffset: 226;
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      stroke-linecap: round;
+    }
+    .progress-text {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--accent-cyan);
+    }
+    .progress-details { font-size: 0.7rem; color: var(--text-muted); }
+
+    /* ── MAIN CONTENT ─────────────────────── */
+    .main-content {
+      margin-left: 290px;
+      flex-grow: 1;
+      padding: 2.5rem;
+      max-width: calc(100% - 290px);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: margin-left 0.3s, max-width 0.3s;
+    }
+
+    .content-header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .content-header h1 {
+      font-family: var(--font-display);
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .content-header p { color: var(--text-secondary); font-size: 0.92rem; }
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-left: 1rem; }
+
+    .theme-toggle-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      width: 38px; height: 38px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: var(--transition);
+    }
+    .theme-toggle-btn:hover { border-color: var(--accent-cyan); }
+
+    .mobile-menu-btn {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      width: 38px; height: 38px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      align-items: center; justify-content: center;
+      transition: var(--transition);
+    }
+
+    /* ── TABS ─────────────────────────────── */
+    .tab-pane { display: none; animation: fadeIn 0.4s ease; }
+    .tab-pane.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── LEARNING SECTION ─────────────────── */
+    .learning-section {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 1.75rem;
+    }
+    .learning-section h2 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      margin-bottom: 1.25rem;
+      color: var(--accent-cyan);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .learning-section h3 {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      margin: 1.5rem 0 0.6rem 0;
+      color: var(--text-primary);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .learning-section p { color: var(--text-secondary); font-size: 0.93rem; margin-bottom: 1rem; line-height: 1.75; }
+    .learning-section ul, .learning-section ol { margin-left: 1.5rem; margin-bottom: 1rem; color: var(--text-secondary); }
+    .learning-section li { margin-bottom: 5px; font-size: 0.93rem; line-height: 1.6; }
+
+    .definition-box {
+      background-color: var(--bg-darker);
+      border-left: 3px solid var(--accent-cyan);
+      padding: 1rem 1.25rem;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      margin: 1rem 0;
+    }
+    .definition-term { font-family: var(--font-display); font-weight: 700; color: var(--accent-cyan); font-size: 0.88rem; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .definition-desc { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.55; }
+
+    .alert-box {
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-lg);
+      margin: 1.25rem 0;
+      display: flex; gap: 12px; align-items: flex-start;
+      border: 1px solid transparent;
+    }
+    .alert-box.info { background-color: var(--accent-cyan-dim); border-color: rgba(0,240,255,0.2); }
+    .alert-box.info i { color: var(--accent-cyan); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.warn { background-color: var(--accent-amber-dim); border-color: rgba(245,158,11,0.25); }
+    .alert-box.warn i { color: var(--accent-amber); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.success { background-color: var(--accent-green-dim); border-color: rgba(16,185,129,0.25); }
+    .alert-box.success i { color: var(--accent-green); flex-shrink: 0; margin-top: 2px; }
+    .alert-box-text { font-size: 0.87rem; line-height: 1.65; color: var(--text-primary); }
+
+    /* ── CODE BLOCKS ───────────────────────── */
+    .code-block {
+      background: #020509;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      margin: 1rem 0;
+      overflow: hidden;
+    }
+    .code-block-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid var(--border);
+    }
+    .code-lang { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-family: var(--font-mono); }
+    .code-copy-btn {
+      background: none; border: 1px solid var(--border); color: var(--text-muted);
+      padding: 3px 8px; border-radius: var(--radius-sm);
+      font-size: 0.7rem; cursor: pointer; transition: var(--transition);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .code-copy-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .code-block pre {
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.83rem;
+      line-height: 1.7;
+      color: #e2e8f0;
+    }
+    .code-block pre .cmd { color: var(--accent-cyan); }
+    .code-block pre .out { color: var(--accent-green); }
+    .code-block pre .cmt { color: var(--text-muted); font-style: italic; }
+    .code-block pre .kw { color: #c084fc; }
+    .code-block pre .str { color: #fbbf24; }
+    .code-block pre .num { color: #fb923c; }
+
+    /* ── INTERACTIVE TERMINAL ─────────────── */
+    .terminal-widget {
+      background: #020509;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin: 1.5rem 0;
+    }
+    .terminal-header-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid var(--border);
+    }
+    .t-dot { width: 11px; height: 11px; border-radius: 50%; }
+    .t-dot.red { background: #ff5f57; }
+    .t-dot.yellow { background: #ffbd2e; }
+    .t-dot.green { background: #28ca41; }
+    .terminal-title { margin-left: 8px; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .terminal-output {
+      padding: 1rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      line-height: 1.8;
+      min-height: 120px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+    .terminal-line.prompt { color: var(--accent-cyan); }
+    .terminal-line.result { color: var(--accent-green); }
+    .terminal-line.error-line { color: var(--accent-red); }
+    .terminal-line.info-line { color: var(--text-muted); }
+    .terminal-input-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.75rem 1.25rem;
+      border-top: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .terminal-prompt-sym { color: var(--accent-cyan); font-family: var(--font-mono); font-size: 0.85rem; white-space: nowrap; }
+    .terminal-input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      caret-color: var(--accent-cyan);
+    }
+    .terminal-run-btn {
+      background: var(--accent-cyan-dim);
+      border: 1px solid rgba(0,240,255,0.3);
+      color: var(--accent-cyan);
+      padding: 5px 12px;
+      border-radius: var(--radius-md);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .terminal-run-btn:hover { background: var(--accent-cyan); color: #06090f; }
+
+    /* ── QUIZ ──────────────────────────────── */
+    .quiz-section {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      margin-bottom: 1.75rem;
+    }
+    .quiz-title-bar {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+      color: var(--accent-cyan); margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border); padding-bottom: 10px;
+    }
+    .quiz-question { margin-bottom: 1.5rem; }
+    .q-text { font-size: 0.92rem; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+    .q-options { display: flex; flex-direction: column; gap: 7px; }
+    .q-option {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 9px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      cursor: pointer; text-align: left;
+      transition: var(--transition);
+    }
+    .q-option:hover { border-color: var(--accent-cyan); color: var(--text-primary); }
+    .q-option.correct { background-color: var(--accent-green-dim); border-color: var(--accent-green); color: var(--accent-green-neon); pointer-events: none; }
+    .q-option.incorrect { background-color: var(--accent-red-dim); border-color: var(--accent-red); color: var(--accent-red-neon); pointer-events: none; }
+    .q-option.disabled { pointer-events: none; opacity: 0.5; }
+    .q-explanation { font-size: 0.82rem; color: var(--text-secondary); margin-top: 8px; padding: 8px 12px; background: var(--bg-darker); border-radius: var(--radius-sm); display: none; border-left: 3px solid var(--accent-cyan); }
+    .quiz-score-msg {
+      background: var(--accent-green-dim); border: 1px solid var(--accent-green);
+      color: var(--accent-green-neon); padding: 10px 14px;
+      border-radius: var(--radius-md); font-size: 0.85rem;
+      text-align: center; margin-top: 1rem; display: none;
+    }
+
+    /* ── MODULE ACTIONS ────────────────────── */
+    .module-actions {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .action-btn {
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-primary); padding: 10px 18px;
+      border-radius: var(--radius-md); cursor: pointer;
+      font-weight: 600; font-size: 0.87rem;
+      display: flex; align-items: center; gap: 8px;
+      transition: var(--transition); font-family: var(--font-sans);
+    }
+    .action-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .action-btn.primary { background: var(--accent-cyan-dim); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .action-btn.primary:hover { background: var(--accent-cyan); color: #06090f; }
+    .action-btn:disabled { opacity: 0.4; pointer-events: none; }
+
+    .read-confirmation {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg-darker); border: 1px solid var(--border);
+      padding: 9px 14px; border-radius: var(--radius-md);
+    }
+    .read-checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent-cyan); }
+    .read-label { font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-secondary); }
+
+    /* ── COMPARISON TABLE ──────────────────── */
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 1rem 0; }
+    .compare-table th { background: var(--bg-darker); color: var(--accent-cyan); padding: 10px 12px; text-align: left; font-family: var(--font-display); font-weight: 600; border: 1px solid var(--border); }
+    .compare-table td { padding: 9px 12px; border: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+    .compare-table tr:hover td { background: var(--bg-card-hover); }
+    .compare-table .highlight { color: var(--accent-cyan); font-weight: 600; }
+
+    /* ── GRID CARDS ────────────────────────── */
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; margin: 1.25rem 0; }
+    .info-card {
+      background: var(--bg-darker); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 1.25rem;
+      border-top: 3px solid var(--accent-cyan);
+      transition: var(--transition);
+    }
+    .info-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+    .info-card-icon { color: var(--accent-cyan); margin-bottom: 10px; }
+    .info-card-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 5px; }
+    .info-card-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+
+    /* ── CERTIFICATE ───────────────────────── */
+    .certificate-card {
+      background: linear-gradient(135deg, rgba(17,24,39,0.95), rgba(10,14,23,0.98));
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      margin-top: 2rem;
+      text-align: center;
+      display: none;
+    }
+    .certificate-card.unlocked { display: block; animation: fadeIn 0.6s ease; }
+    .cert-icon { color: var(--accent-amber); margin-bottom: 1rem; }
+    .cert-title { font-family: var(--font-display); font-size: 1.5rem; color: var(--text-primary); margin-bottom: 0.5rem; }
+    .cert-text { color: var(--text-secondary); max-width: 560px; margin: 0 auto 1.5rem; font-size: 0.93rem; }
+    .cert-print-btn {
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green-neon));
+      border: none; color: #070b13;
+      padding: 10px 24px; border-radius: var(--radius-md);
+      font-weight: 700; font-size: 0.9rem; cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,240,255,0.3);
+      transition: var(--transition);
+    }
+    .cert-print-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,240,255,0.5); }
+
+    /* ── RESPONSIVE ───────────────────────── */
+    @media (max-width: 1024px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); box-shadow: 4px 0 30px rgba(0,0,0,0.5); }
+      .main-content { margin-left: 0; max-width: 100%; }
+      .mobile-menu-btn { display: flex; }
+    }
+    @media (max-width: 640px) {
+      .main-content { padding: 1.25rem; }
+      .content-header h1 { font-size: 1.3rem; }
+      .module-actions { flex-direction: column; }
+    }
+
+    /* ── LEVEL BADGE ──────────────────────── */
+    .level-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.72rem; padding: 3px 8px;
+      border-radius: var(--radius-sm); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .badge-beginner { background: var(--accent-green-dim); color: var(--accent-green); }
+    .badge-intermediate { background: var(--accent-amber-dim); color: var(--accent-amber); }
+    .badge-advanced { background: var(--accent-purple-dim); color: var(--accent-purple); }
+
+    /* ── FILE TREE ────────────────────────── */
+    .file-tree {
+      background: #020509; border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 1rem 1.25rem;
+      font-family: var(--font-mono); font-size: 0.82rem;
+      color: var(--text-secondary); line-height: 2;
+      margin: 1rem 0;
+    }
+    .file-tree .dir { color: var(--accent-cyan); }
+    .file-tree .file { color: #e2e8f0; }
+    .file-tree .link { color: var(--accent-green); }
+
+    /* ── STEP CARDS ───────────────────────── */
+    .steps-list { display: flex; flex-direction: column; gap: 1rem; margin: 1.25rem 0; }
+    .step-card {
+      display: flex; gap: 1rem; align-items: flex-start;
+      background: var(--bg-darker); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 1rem 1.25rem;
+      transition: var(--transition);
+    }
+    .step-card:hover { border-color: rgba(0,240,255,0.3); }
+    .step-num {
+      min-width: 32px; height: 32px; border-radius: 50%;
+      background: var(--accent-cyan-dim); border: 1px solid rgba(0,240,255,0.3);
+      color: var(--accent-cyan); font-family: var(--font-display);
+      font-weight: 700; font-size: 0.88rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .step-content-inner {}
+    .step-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .step-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 99;
+      backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.open { display: block; }
+  </style>
+</head>
+
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <div class="app-container">
+    <!-- ════════════ SIDEBAR ════════════ -->
+    <aside class="sidebar" id="sidebar">
+      <a class="sidebar-brand" href="../index.html">
+        <i data-lucide="cpu" style="width:20px;height:20px;flex-shrink:0;"></i>
+        AutoNovations
+      </a>
+      <div class="sidebar-subtitle">WSL Mastery Course</div>
+
+      <!-- Progress -->
+      <div class="progress-box">
+        <div class="progress-box-title">Progreso del Curso</div>
+        <div class="progress-circle-wrapper">
+          <svg class="progress-svg" viewBox="0 0 80 80">
+            <circle class="progress-bg-circle" cx="40" cy="40" r="36"/>
+            <circle class="progress-bar-circle" id="progressCircle" cx="40" cy="40" r="36"/>
+          </svg>
+          <div class="progress-text" id="progressText">0%</div>
+        </div>
+        <div class="progress-details" id="progressDetails">0 de 10 módulos</div>
+      </div>
+
+      <!-- Nav -->
+      <div class="nav-section-label">Módulos del Curso</div>
+      <ul class="nav-list" id="navList">
+        <li class="nav-item active" data-tab="tab-intro">
+          <button onclick="switchTab('tab-intro',this)">
+            <span class="nav-num">1</span>
+            ¿Qué es WSL?
+            <i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i>
+          </button>
+        </li>
+        <li class="nav-item" data-tab="tab-install">
+          <button onclick="switchTab('tab-install',this)">
+            <span class="nav-num">2</span>
+            Instalación
+            <i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i>
+          </button>
+        </li>
+        <li class="nav-item" data-tab="tab-terminal">
+          <button onclick="switchTab('tab-terminal',this)">
+            <span class="nav-num">3</span>
+            Terminal Básico
+            <i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i>
+          </button>
+        </li>
+        <li class="nav-item" data-tab="tab-filesystem">
+          <button onclick="switchTab('tab-filesystem',this)">
+            <span class="nav-num">4</span>
+            Sistema de Archivos
+            <i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i>
+          </button>
+        </li>
+        <li class="nav-item" data-tab="tab-packages">
+          <button onclick="switchTab('tab-packages',this)">
+            <span class="nav-num">5</span>
+            Gestión de Paquetes
+            <i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i>
+          </button>
+        </li>
+        <li class="nav-item" data-tab="tab-config">
+          <button onclick="switchTab('tab-config',this)">
+            <span class="nav-num">6</span>
+            Configuración Avanzada
+            <i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i>
+          </button>
+        </li>
+        <li class="nav-item" data-tab="tab-networking">
+          <button onclick="switchTab('tab-networking',this)">
+            <span class="nav-num">7</span>
+            Redes y Puertos
+            <i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i>
+          </button>
+        </li>
+        <li class="nav-item" data-tab="tab-devtools">
+          <button onclick="switchTab('tab-devtools',this)">
+            <span class="nav-num">8</span>
+            Dev Tools &amp; Docker
+            <i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i>
+          </button>
+        </li>
+        <li class="nav-item" data-tab="tab-scripting">
+          <button onclick="switchTab('tab-scripting',this)">
+            <span class="nav-num">9</span>
+            Shell Scripting
+            <i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i>
+          </button>
+        </li>
+        <li class="nav-item" data-tab="tab-advanced">
+          <button onclick="switchTab('tab-advanced',this)">
+            <span class="nav-num">10</span>
+            Nivel Master
+            <i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i>
+          </button>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- ════════════ MAIN ════════════ -->
+    <main class="main-content">
+      <div class="content-header">
+        <div>
+          <h1>
+            <i data-lucide="terminal" style="width:28px;height:28px;color:var(--accent-cyan);"></i>
+            WSL Mastery
+          </h1>
+          <p>Windows Subsystem for Linux · Desde Cero hasta Nivel Master</p>
+        </div>
+        <div class="header-actions">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()" aria-label="Menú">
+            <i data-lucide="menu" style="width:18px;height:18px;"></i>
+          </button>
+          <button class="theme-toggle-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Cambiar tema">
+            <i data-lucide="sun" style="width:16px;height:16px;" id="themeIcon"></i>
+          </button>
+          <a href="../index.html" class="action-btn" style="text-decoration:none;">
+            <i data-lucide="home" style="width:14px;height:14px;"></i>
+            Inicio
+          </a>
+        </div>
+      </div>
+
+      <!-- ───────────────────────────────────────────
+           TAB 1 — ¿QUÉ ES WSL?
+      ─────────────────────────────────────────────── -->
+      <div class="tab-pane active" id="tab-intro">
+
+        <div class="learning-section">
+          <h2><i data-lucide="info" style="width:20px;height:20px;"></i> ¿Qué es WSL?</h2>
+          <span class="level-badge badge-beginner" style="margin-bottom:1rem;display:inline-flex;">Nivel 1 · Principiante</span>
+
+          <p>El <strong style="color:var(--accent-cyan)">Windows Subsystem for Linux (WSL)</strong> es una capa de compatibilidad desarrollada por Microsoft que permite ejecutar un entorno GNU/Linux directamente sobre Windows, sin necesidad de máquinas virtuales ni dual boot.</p>
+
+          <p>Esto significa que puedes usar herramientas como <code style="color:var(--accent-cyan);font-family:var(--font-mono);font-size:0.85em;background:var(--bg-darker);padding:2px 6px;border-radius:3px;">bash</code>, <code style="color:var(--accent-cyan);font-family:var(--font-mono);font-size:0.85em;background:var(--bg-darker);padding:2px 6px;border-radius:3px;">grep</code>, <code style="color:var(--accent-cyan);font-family:var(--font-mono);font-size:0.85em;background:var(--bg-darker);padding:2px 6px;border-radius:3px;">git</code>, <code style="color:var(--accent-cyan);font-family:var(--font-mono);font-size:0.85em;background:var(--bg-darker);padding:2px 6px;border-radius:3px;">python</code> y cualquier aplicación Linux en tu máquina Windows sin salir de tu entorno habitual.</p>
+
+          <div class="definition-box">
+            <div class="definition-term">WSL vs WSL 2</div>
+            <div class="definition-desc">WSL 1 traduce llamadas de sistema Linux a llamadas de Windows. WSL 2 usa un kernel Linux real dentro de una máquina virtual ligera (Hyper-V), siendo mucho más rápido y compatible. En 2024+, siempre usa WSL 2.</div>
+          </div>
+
+          <h3><i data-lucide="layers" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Arquitectura de WSL 2</h3>
+          <p>WSL 2 corre un kernel Linux completo en una VM Hyper-V optimizada y liviana. Windows y Linux comparten el mismo sistema de archivos mediante un servidor 9P (protocolo de red para archivos).</p>
+
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-icon"><i data-lucide="zap" style="width:22px;height:22px;"></i></div>
+              <div class="info-card-title">Rendimiento Nativo</div>
+              <div class="info-card-desc">Kernel Linux real. Compilaciones hasta 20x más rápidas que WSL 1.</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-icon"><i data-lucide="shield" style="width:22px;height:22px;"></i></div>
+              <div class="info-card-title">Compatibilidad Completa</div>
+              <div class="info-card-desc">Soporta syscalls de Linux al 100%, incluyendo Docker, ptrace y más.</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-icon"><i data-lucide="git-merge" style="width:22px;height:22px;"></i></div>
+              <div class="info-card-title">Integración Windows</div>
+              <div class="info-card-desc">Accede a archivos de Windows desde Linux y viceversa sin fricción.</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-icon"><i data-lucide="monitor" style="width:22px;height:22px;"></i></div>
+              <div class="info-card-title">GUI Linux (WSLg)</div>
+              <div class="info-card-desc">Ejecuta aplicaciones gráficas Linux directamente en tu escritorio Windows.</div>
+            </div>
+          </div>
+
+          <h3><i data-lucide="git-compare" style="width:16px;height:16px;color:var(--accent-cyan);"></i> WSL vs Máquina Virtual vs Dual Boot</h3>
+          <div style="overflow-x:auto;">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>Característica</th>
+                  <th class="highlight">WSL 2</th>
+                  <th>VM Completa</th>
+                  <th>Dual Boot</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Tiempo de inicio</td><td class="highlight">~2 segundos</td><td>1-3 minutos</td><td>1-3 minutos</td></tr>
+                <tr><td>Uso de RAM</td><td class="highlight">Dinámico (~300MB base)</td><td>Fijo (mínimo 2GB)</td><td>Solo Linux disponible</td></tr>
+                <tr><td>Integración Windows</td><td class="highlight">Nativa y bidireccional</td><td>Limitada</td><td>Ninguna</td></tr>
+                <tr><td>Rendimiento I/O</td><td class="highlight">Nativo en /home</td><td>Bajo</td><td>Nativo</td></tr>
+                <tr><td>GUI Apps Linux</td><td class="highlight">Sí (WSLg)</td><td>Sí</td><td>Sí</td></tr>
+                <tr><td>Complejidad setup</td><td class="highlight">Muy baja</td><td>Media</td><td>Alta</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="alert-box info">
+            <i data-lucide="lightbulb" style="width:18px;height:18px;"></i>
+            <div class="alert-box-text"><strong>¿Para quién es WSL?</strong> Para desarrolladores, ingenieros de datos, estudiantes de DevOps, o cualquier persona que necesite herramientas Linux pero prefiera usar Windows como sistema principal. Es ideal para aprender Linux sin arriesgar tu sistema.</div>
+          </div>
+        </div>
+
+        <!-- Quiz 1 -->
+        <div class="quiz-section">
+          <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:18px;height:18px;"></i> Quiz — Módulo 1</div>
+          <div class="quiz-question" id="q1a">
+            <div class="q-text">1. ¿Qué versión de WSL se recomienda usar actualmente y por qué?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q1a')">WSL 1, porque es más compatible con el sistema de archivos de Windows</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q1a')">WSL 2, porque usa un kernel Linux real y es mucho más rápido y compatible</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q1a')">Cualquiera de los dos, ya que son idénticos en rendimiento</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q1a')">WSL 1, porque no necesita Hyper-V</button>
+            </div>
+            <div class="q-explanation" id="exp1a">WSL 2 corre un kernel Linux completo en una VM Hyper-V ligera, lo que le da compatibilidad total con syscalls de Linux y un rendimiento muy superior para compilaciones y E/S en el sistema de archivos de Linux.</div>
+          </div>
+          <div class="quiz-question" id="q1b">
+            <div class="q-text">2. ¿Cómo comparte archivos WSL 2 entre Windows y Linux?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q1b')">Mediante una carpeta compartida de red SMB</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q1b')">Copiando archivos entre sistemas cada vez que se acceden</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q1b')">Mediante el protocolo 9P que actúa como servidor de archivos entre ambos sistemas</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q1b')">No es posible compartir archivos entre Windows y Linux en WSL</button>
+            </div>
+            <div class="q-explanation" id="exp1b">WSL 2 usa el protocolo de red 9P (Plan 9 Filesystem Protocol) para montar el sistema de archivos de Windows en Linux (/mnt/c, /mnt/d) y viceversa, permitiendo acceso bidireccional en tiempo real.</div>
+          </div>
+          <div class="quiz-score-msg" id="quiz1Score">✅ ¡Excelente! Módulo 1 completado. Puedes avanzar al siguiente.</div>
+        </div>
+
+        <div class="module-actions">
+          <div class="read-confirmation">
+            <input type="checkbox" class="read-checkbox" id="check1" onchange="markRead(1,this)">
+            <label class="read-label" for="check1">He completado este módulo</label>
+          </div>
+          <button class="action-btn primary" onclick="goNext('tab-install')">
+            Siguiente: Instalación <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ───────────────────────────────────────────
+           TAB 2 — INSTALACIÓN
+      ─────────────────────────────────────────────── -->
+      <div class="tab-pane" id="tab-install">
+        <div class="learning-section">
+          <h2><i data-lucide="download" style="width:20px;height:20px;"></i> Instalación de WSL 2</h2>
+          <span class="level-badge badge-beginner" style="margin-bottom:1rem;display:inline-flex;">Nivel 1 · Principiante</span>
+
+          <div class="alert-box warn">
+            <i data-lucide="alert-triangle" style="width:18px;height:18px;"></i>
+            <div class="alert-box-text"><strong>Requisitos previos:</strong> Windows 10 (build 19041+) o Windows 11. Virtualización habilitada en BIOS/UEFI. Privilegios de administrador.</div>
+          </div>
+
+          <h3><i data-lucide="package" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Método 1: Un Solo Comando (Recomendado)</h3>
+          <p>Desde Windows 10 build 2004 en adelante, puedes instalar WSL con un único comando en PowerShell como <strong>Administrador</strong>:</p>
+
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">powershell (administrador)</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Instala WSL 2 con Ubuntu por defecto</span>
+<span class="cmd">wsl --install</span>
+
+<span class="cmt"># Si quieres elegir la distribución:</span>
+<span class="cmd">wsl --install -d Ubuntu-22.04</span></pre>
+          </div>
+
+          <div class="steps-list">
+            <div class="step-card">
+              <div class="step-num">1</div>
+              <div class="step-content-inner">
+                <div class="step-title">Abre PowerShell como Administrador</div>
+                <div class="step-desc">Presiona Win+X y selecciona "Terminal de Windows (Administrador)" o "Windows PowerShell (Administrador)".</div>
+              </div>
+            </div>
+            <div class="step-card">
+              <div class="step-num">2</div>
+              <div class="step-content-inner">
+                <div class="step-title">Ejecuta el comando de instalación</div>
+                <div class="step-desc">Copia y pega <code style="color:var(--accent-cyan);font-family:var(--font-mono);">wsl --install</code>. Windows descargará e instalará WSL 2 y Ubuntu automáticamente.</div>
+              </div>
+            </div>
+            <div class="step-card">
+              <div class="step-num">3</div>
+              <div class="step-content-inner">
+                <div class="step-title">Reinicia el sistema</div>
+                <div class="step-desc">Cuando termine la instalación, reinicia Windows. WSL requiere un reinicio para completar la configuración del kernel.</div>
+              </div>
+            </div>
+            <div class="step-card">
+              <div class="step-num">4</div>
+              <div class="step-content-inner">
+                <div class="step-title">Configura tu usuario Linux</div>
+                <div class="step-desc">Ubuntu se abrirá automáticamente y te pedirá crear un nombre de usuario y contraseña para tu entorno Linux.</div>
+              </div>
+            </div>
+          </div>
+
+          <h3><i data-lucide="list" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Ver Distribuciones Disponibles</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">powershell</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Listar distribuciones disponibles en la tienda</span>
+<span class="cmd">wsl --list --online</span>
+
+<span class="out">NAME                            FRIENDLY NAME
+Ubuntu                          Ubuntu
+Ubuntu-22.04                    Ubuntu 22.04 LTS
+Ubuntu-20.04                    Ubuntu 20.04 LTS
+Debian                          Debian GNU/Linux
+kali-linux                      Kali Linux Rolling
+openSUSE-42                     openSUSE Leap 42</span>
+
+<span class="cmt"># Ver distribuciones instaladas</span>
+<span class="cmd">wsl --list --verbose</span>
+
+<span class="out">  NAME            STATE           VERSION
+* Ubuntu-22.04    Running         2
+  Debian          Stopped         2</span></pre>
+          </div>
+
+          <h3><i data-lucide="settings" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Comandos de Gestión de WSL</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">powershell</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Establecer WSL 2 como versión por defecto</span>
+<span class="cmd">wsl --set-default-version 2</span>
+
+<span class="cmt"># Convertir distro de WSL1 a WSL2</span>
+<span class="cmd">wsl --set-version Ubuntu 2</span>
+
+<span class="cmt"># Iniciar una distribución específica</span>
+<span class="cmd">wsl -d Ubuntu-22.04</span>
+
+<span class="cmt"># Apagar todas las distribuciones</span>
+<span class="cmd">wsl --shutdown</span>
+
+<span class="cmt"># Actualizar el kernel de WSL</span>
+<span class="cmd">wsl --update</span>
+
+<span class="cmt"># Ver versión actual</span>
+<span class="cmd">wsl --version</span></pre>
+          </div>
+
+          <div class="alert-box success">
+            <i data-lucide="check-circle" style="width:18px;height:18px;"></i>
+            <div class="alert-box-text"><strong>¡Instalación exitosa!</strong> Cuando veas el prompt <code style="font-family:var(--font-mono);">username@HOSTNAME:~$</code> en tu terminal, WSL está funcionando correctamente.</div>
+          </div>
+        </div>
+
+        <!-- Terminal simulada -->
+        <div class="learning-section">
+          <h2><i data-lucide="terminal" style="width:20px;height:20px;"></i> Simulador: Primeros Pasos</h2>
+          <p>Practica aquí los comandos básicos de verificación de WSL. Escribe un comando y presiona Enter o el botón Ejecutar.</p>
+
+          <div class="terminal-widget">
+            <div class="terminal-header-bar">
+              <div class="t-dot red"></div>
+              <div class="t-dot yellow"></div>
+              <div class="t-dot green"></div>
+              <span class="terminal-title">WSL Simulator — Ubuntu 22.04</span>
+            </div>
+            <div class="terminal-output" id="term1">
+              <div class="terminal-line info-line">WSL Simulator v2.0 — AutoNovations Academy</div>
+              <div class="terminal-line info-line">Comandos disponibles: wsl --version, wsl --list, uname -a, whoami, echo, pwd</div>
+              <div class="terminal-line info-line">──────────────────────────────────────────────</div>
+            </div>
+            <div class="terminal-input-row">
+              <span class="terminal-prompt-sym">PS C:\Users\user&gt;</span>
+              <input class="terminal-input" id="termInput1" type="text" placeholder="Escribe un comando..." onkeydown="if(event.key==='Enter')runTerminal('term1','termInput1','install')">
+              <button class="terminal-run-btn" onclick="runTerminal('term1','termInput1','install')">Ejecutar ↵</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quiz 2 -->
+        <div class="quiz-section">
+          <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:18px;height:18px;"></i> Quiz — Módulo 2</div>
+          <div class="quiz-question" id="q2a">
+            <div class="q-text">1. ¿Qué comando instala WSL con Ubuntu por defecto en un solo paso?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q2a')">wsl --setup ubuntu</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q2a')">wsl --install</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q2a')">install-wsl2</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q2a')">winget install wsl</button>
+            </div>
+            <div class="q-explanation" id="exp2a">El comando <code style="font-family:var(--font-mono);">wsl --install</code> descarga e instala WSL 2 junto con Ubuntu automáticamente. Es el método oficial recomendado por Microsoft desde Windows 10 21H2.</div>
+          </div>
+          <div class="quiz-question" id="q2b">
+            <div class="q-text">2. ¿Qué flag usas para ver todas las distribuciones instaladas con su versión WSL?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q2b')">wsl --status</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q2b')">wsl --info</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q2b')">wsl --list --verbose</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q2b')">wsl --show --all</button>
+            </div>
+            <div class="q-explanation" id="exp2b"><code style="font-family:var(--font-mono);">wsl --list --verbose</code> (o <code style="font-family:var(--font-mono);">wsl -l -v</code>) muestra todas las distribuciones instaladas, su estado (Running/Stopped) y la versión WSL (1 o 2).</div>
+          </div>
+          <div class="quiz-score-msg" id="quiz2Score">✅ ¡Módulo 2 completado! Ya sabes instalar y gestionar WSL.</div>
+        </div>
+
+        <div class="module-actions">
+          <button class="action-btn" onclick="switchTab('tab-intro', document.querySelector('[data-tab=tab-intro] button'))">
+            <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior
+          </button>
+          <div class="read-confirmation">
+            <input type="checkbox" class="read-checkbox" id="check2" onchange="markRead(2,this)">
+            <label class="read-label" for="check2">He completado este módulo</label>
+          </div>
+          <button class="action-btn primary" onclick="goNext('tab-terminal')">
+            Siguiente: Terminal <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ───────────────────────────────────────────
+           TAB 3 — TERMINAL BÁSICO
+      ─────────────────────────────────────────────── -->
+      <div class="tab-pane" id="tab-terminal">
+        <div class="learning-section">
+          <h2><i data-lucide="terminal" style="width:20px;height:20px;"></i> Terminal Linux Básico</h2>
+          <span class="level-badge badge-beginner" style="margin-bottom:1rem;display:inline-flex;">Nivel 1 · Principiante</span>
+
+          <p>La terminal (shell) es la interfaz principal para trabajar en Linux. En WSL usarás principalmente <strong style="color:var(--accent-cyan)">Bash</strong> (Bourne Again Shell). Dominar los comandos básicos es fundamental.</p>
+
+          <h3><i data-lucide="compass" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Navegación del Sistema</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — Navegación</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># pwd — Print Working Directory (dónde estás)</span>
+<span class="cmd">pwd</span>
+<span class="out">/home/usuario</span>
+
+<span class="cmt"># ls — List files (listar archivos)</span>
+<span class="cmd">ls</span>
+<span class="out">Desktop  Documents  Downloads  Music  Pictures</span>
+
+<span class="cmt"># ls con detalles y archivos ocultos</span>
+<span class="cmd">ls -la</span>
+<span class="out">total 52
+drwxr-xr-x 8 usuario usuario 4096 Jun 26 09:00 .
+drwxr-xr-x 3 root    root    4096 Jun 25 18:00 ..
+-rw-r--r-- 1 usuario usuario  220 Jun 25 18:00 .bash_logout
+drwxr-xr-x 2 usuario usuario 4096 Jun 26 09:00 Documents</span>
+
+<span class="cmt"># cd — Change Directory (cambiar directorio)</span>
+<span class="cmd">cd Documents</span>
+<span class="cmd">cd ..          </span><span class="cmt"># Sube un nivel</span>
+<span class="cmd">cd ~           </span><span class="cmt"># Va al home del usuario</span>
+<span class="cmd">cd /           </span><span class="cmt"># Va a la raíz del sistema</span>
+<span class="cmd">cd -           </span><span class="cmt"># Va al directorio anterior</span></pre>
+          </div>
+
+          <h3><i data-lucide="file-plus" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Crear y Manejar Archivos</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — Archivos y Directorios</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Crear directorio</span>
+<span class="cmd">mkdir mi_proyecto</span>
+<span class="cmd">mkdir -p proyectos/web/css</span>    <span class="cmt"># Crea directorios anidados</span>
+
+<span class="cmt"># Crear archivo vacío</span>
+<span class="cmd">touch archivo.txt</span>
+
+<span class="cmt"># Escribir en un archivo</span>
+<span class="cmd">echo "Hola WSL" > hola.txt</span>      <span class="cmt"># Sobreescribe</span>
+<span class="cmd">echo "Segunda línea" >> hola.txt</span>  <span class="cmt"># Agrega al final</span>
+
+<span class="cmt"># Leer archivos</span>
+<span class="cmd">cat hola.txt</span>                     <span class="cmt"># Muestra el contenido</span>
+<span class="cmd">less archivo_largo.txt</span>           <span class="cmt"># Lectura paginada</span>
+<span class="cmd">head -n 5 archivo.txt</span>            <span class="cmt"># Primeras 5 líneas</span>
+<span class="cmd">tail -n 5 archivo.txt</span>            <span class="cmt"># Últimas 5 líneas</span>
+<span class="cmd">tail -f /var/log/syslog</span>          <span class="cmt"># Seguir un log en vivo</span>
+
+<span class="cmt"># Copiar, mover, eliminar</span>
+<span class="cmd">cp origen.txt destino.txt</span>
+<span class="cmd">mv archivo.txt nueva_ruta/</span>
+<span class="cmd">rm archivo.txt</span>
+<span class="cmd">rm -rf directorio/</span>              <span class="cmt"># ¡Cuidado! Elimina todo</span></pre>
+          </div>
+
+          <div class="alert-box warn">
+            <i data-lucide="alert-triangle" style="width:18px;height:18px;"></i>
+            <div class="alert-box-text"><strong>Precaución con rm -rf:</strong> En Linux no hay papelera de reciclaje. <code style="font-family:var(--font-mono);">rm -rf</code> elimina permanentemente sin confirmación. Siempre verifica el path antes de ejecutarlo.</div>
+          </div>
+
+          <h3><i data-lucide="search" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Buscar Archivos y Contenido</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — Búsqueda</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># find — buscar archivos</span>
+<span class="cmd">find . -name "*.txt"</span>             <span class="cmt"># Por nombre</span>
+<span class="cmd">find /home -size +10M</span>            <span class="cmt"># Por tamaño (>10MB)</span>
+<span class="cmd">find . -type d</span>                   <span class="cmt"># Solo directorios</span>
+<span class="cmd">find . -mtime -7</span>                 <span class="cmt"># Modificados últimos 7 días</span>
+
+<span class="cmt"># grep — buscar dentro de archivos</span>
+<span class="cmd">grep "error" logfile.txt</span>        <span class="cmt"># Busca "error"</span>
+<span class="cmd">grep -r "TODO" ./src/</span>           <span class="cmt"># Recursivo</span>
+<span class="cmd">grep -i "usuario" config.txt</span>    <span class="cmt"># Sin distinción mayúsculas</span>
+<span class="cmd">grep -n "error" app.log</span>         <span class="cmt"># Con número de línea</span>
+
+<span class="cmt"># Combinar con pipes</span>
+<span class="cmd">cat access.log | grep "404" | wc -l</span>  <span class="cmt"># Contar errores 404</span></pre>
+          </div>
+
+          <h3><i data-lucide="help-circle" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Atajos Indispensables del Terminal</h3>
+          <div style="overflow-x:auto;">
+            <table class="compare-table">
+              <thead><tr><th>Atajo</th><th>Acción</th></tr></thead>
+              <tbody>
+                <tr><td><code style="font-family:var(--font-mono);color:var(--accent-cyan);">Tab</code></td><td>Autocompletar comandos y rutas</td></tr>
+                <tr><td><code style="font-family:var(--font-mono);color:var(--accent-cyan);">↑ / ↓</code></td><td>Navegar historial de comandos</td></tr>
+                <tr><td><code style="font-family:var(--font-mono);color:var(--accent-cyan);">Ctrl+C</code></td><td>Interrumpir proceso en ejecución</td></tr>
+                <tr><td><code style="font-family:var(--font-mono);color:var(--accent-cyan);">Ctrl+Z</code></td><td>Suspender proceso (enviar a background)</td></tr>
+                <tr><td><code style="font-family:var(--font-mono);color:var(--accent-cyan);">Ctrl+L</code></td><td>Limpiar la pantalla (como <code style="font-family:var(--font-mono);">clear</code>)</td></tr>
+                <tr><td><code style="font-family:var(--font-mono);color:var(--accent-cyan);">Ctrl+A</code></td><td>Ir al inicio de la línea</td></tr>
+                <tr><td><code style="font-family:var(--font-mono);color:var(--accent-cyan);">Ctrl+E</code></td><td>Ir al final de la línea</td></tr>
+                <tr><td><code style="font-family:var(--font-mono);color:var(--accent-cyan);">Ctrl+R</code></td><td>Búsqueda reversa en el historial</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Terminal interactiva -->
+        <div class="learning-section">
+          <h2><i data-lucide="play-circle" style="width:20px;height:20px;"></i> Práctica Interactiva</h2>
+          <p>Prueba los comandos básicos aquí. Intenta: <code style="color:var(--accent-cyan);font-family:var(--font-mono);">ls</code>, <code style="color:var(--accent-cyan);font-family:var(--font-mono);">pwd</code>, <code style="color:var(--accent-cyan);font-family:var(--font-mono);">whoami</code>, <code style="color:var(--accent-cyan);font-family:var(--font-mono);">echo "hola"</code>, <code style="color:var(--accent-cyan);font-family:var(--font-mono);">uname -a</code>, <code style="color:var(--accent-cyan);font-family:var(--font-mono);">date</code>, <code style="color:var(--accent-cyan);font-family:var(--font-mono);">mkdir test</code>, <code style="color:var(--accent-cyan);font-family:var(--font-mono);">cat /etc/os-release</code></p>
+          <div class="terminal-widget">
+            <div class="terminal-header-bar">
+              <div class="t-dot red"></div><div class="t-dot yellow"></div><div class="t-dot green"></div>
+              <span class="terminal-title">ubuntu@DESKTOP-WSL:~$</span>
+            </div>
+            <div class="terminal-output" id="term2">
+              <div class="terminal-line info-line">Bienvenido al Simulador de Terminal Linux — WSL Mastery</div>
+            </div>
+            <div class="terminal-input-row">
+              <span class="terminal-prompt-sym">usuario@wsl:~$</span>
+              <input class="terminal-input" id="termInput2" type="text" placeholder="Escribe un comando..." onkeydown="if(event.key==='Enter')runTerminal('term2','termInput2','linux')">
+              <button class="terminal-run-btn" onclick="runTerminal('term2','termInput2','linux')">Ejecutar ↵</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quiz 3 -->
+        <div class="quiz-section">
+          <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:18px;height:18px;"></i> Quiz — Módulo 3</div>
+          <div class="quiz-question" id="q3a">
+            <div class="q-text">1. ¿Qué comando muestra el directorio de trabajo actual?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q3a')">cwd</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q3a')">pwd</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q3a')">dir</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q3a')">where</button>
+            </div>
+            <div class="q-explanation" id="exp3a"><code style="font-family:var(--font-mono);">pwd</code> = Print Working Directory. Muestra la ruta absoluta del directorio donde te encuentras actualmente.</div>
+          </div>
+          <div class="quiz-question" id="q3b">
+            <div class="q-text">2. ¿Qué hace el comando <code style="font-family:var(--font-mono);">grep -r "TODO" ./src/</code>?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q3b')">Elimina todos los archivos llamados "TODO" en ./src/</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q3b')">Busca la cadena "TODO" de forma recursiva en todos los archivos dentro de ./src/</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q3b')">Reemplaza "TODO" por texto vacío en ./src/</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q3b')">Cuenta cuántas veces aparece "TODO" en el directorio actual</button>
+            </div>
+            <div class="q-explanation" id="exp3b">El flag <code style="font-family:var(--font-mono);">-r</code> hace que grep busque de forma recursiva en todos los archivos y subdirectorios del path indicado, mostrando cada línea que contenga el patrón.</div>
+          </div>
+          <div class="quiz-score-msg" id="quiz3Score">✅ ¡Módulo 3 completado! Dominas el terminal básico.</div>
+        </div>
+
+        <div class="module-actions">
+          <button class="action-btn" onclick="switchTab('tab-install', document.querySelector('[data-tab=tab-install] button'))">
+            <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior
+          </button>
+          <div class="read-confirmation">
+            <input type="checkbox" class="read-checkbox" id="check3" onchange="markRead(3,this)">
+            <label class="read-label" for="check3">He completado este módulo</label>
+          </div>
+          <button class="action-btn primary" onclick="goNext('tab-filesystem')">
+            Siguiente: Sistema de Archivos <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ───────────────────────────────────────────
+           TAB 4 — SISTEMA DE ARCHIVOS
+      ─────────────────────────────────────────────── -->
+      <div class="tab-pane" id="tab-filesystem">
+        <div class="learning-section">
+          <h2><i data-lucide="hard-drive" style="width:20px;height:20px;"></i> Sistema de Archivos en WSL</h2>
+          <span class="level-badge badge-intermediate" style="margin-bottom:1rem;display:inline-flex;">Nivel 2 · Intermedio</span>
+
+          <p>Uno de los aspectos más importantes de WSL es entender cómo se integran los sistemas de archivos de <strong style="color:var(--accent-cyan)">Windows</strong> y <strong style="color:var(--accent-green)">Linux</strong>. Ambos son accesibles desde cualquiera de los dos entornos.</p>
+
+          <h3><i data-lucide="folder-tree" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Jerarquía del Sistema de Archivos Linux</h3>
+          <div class="file-tree">
+<span class="dir">/</span>                          <span class="cmt"># Raíz del sistema</span>
+├── <span class="dir">home/</span>                    <span class="cmt"># Directorios de usuarios</span>
+│   └── <span class="dir">usuario/</span>             <span class="cmt"># Tu home (~)</span>
+├── <span class="dir">mnt/</span>                     <span class="cmt"># Montajes — aquí están tus discos Windows</span>
+│   ├── <span class="dir">c/</span>                   <span class="cmt"># Disco C: de Windows</span>
+│   └── <span class="dir">d/</span>                   <span class="cmt"># Disco D: de Windows</span>
+├── <span class="dir">etc/</span>                     <span class="cmt"># Configuración del sistema</span>
+├── <span class="dir">var/</span>                     <span class="cmt"># Datos variables (logs, cache)</span>
+├── <span class="dir">usr/</span>                     <span class="cmt"># Aplicaciones y librerías</span>
+├── <span class="dir">tmp/</span>                     <span class="cmt"># Archivos temporales</span>
+├── <span class="dir">root/</span>                    <span class="cmt"># Home del superusuario</span>
+└── <span class="dir">proc/</span>                    <span class="cmt"># Sistema de archivos virtual (procesos)</span>
+          </div>
+
+          <h3><i data-lucide="arrow-left-right" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Acceso Cruzado entre Windows y Linux</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — Acceso a Windows desde Linux</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Acceder al escritorio de Windows</span>
+<span class="cmd">cd /mnt/c/Users/TuNombre/Desktop</span>
+
+<span class="cmt"># Acceder a Documentos</span>
+<span class="cmd">cd /mnt/c/Users/TuNombre/Documents</span>
+
+<span class="cmt"># Listar archivos de C:</span>
+<span class="cmd">ls /mnt/c/</span>
+
+<span class="cmt"># Copiar archivo de Windows a Linux</span>
+<span class="cmd">cp /mnt/c/Users/TuNombre/archivo.txt ~/</span>
+
+<span class="cmt"># Crear alias para acceso rápido</span>
+<span class="cmd">echo 'alias cdesktop="cd /mnt/c/Users/TuNombre/Desktop"' >> ~/.bashrc</span>
+<span class="cmd">source ~/.bashrc</span></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">powershell / explorer — Acceso a Linux desde Windows</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Abrir el home de Linux en el Explorador de Archivos</span>
+<span class="cmd">explorer.exe .</span>     <span class="cmt"># Desde la terminal WSL</span>
+
+<span class="cmt"># En PowerShell, acceder a Linux via UNC path</span>
+<span class="cmd">dir \\wsl$\Ubuntu-22.04\home\usuario</span>
+
+<span class="cmt"># En el Explorador: busca "Linux" en el panel izquierdo</span>
+<span class="cmt"># O escribe en la barra: \\wsl$\Ubuntu-22.04</span></pre>
+          </div>
+
+          <div class="alert-box warn">
+            <i data-lucide="zap" style="width:18px;height:18px;"></i>
+            <div class="alert-box-text"><strong>Regla de Oro de Rendimiento:</strong> Guarda tus proyectos <strong>dentro del sistema de archivos Linux</strong> (<code style="font-family:var(--font-mono);">~/</code>) y no en <code style="font-family:var(--font-mono);">/mnt/c/</code>. Las operaciones de I/O dentro de Linux son hasta 10x más rápidas que en la ruta montada de Windows.</div>
+          </div>
+
+          <h3><i data-lucide="lock" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Permisos de Archivos en Linux</h3>
+          <p>Linux usa un sistema de permisos con tres categorías: <strong style="color:var(--accent-cyan)">propietario</strong>, <strong style="color:var(--accent-amber)">grupo</strong> y <strong style="color:var(--accent-purple)">otros</strong>. Cada uno puede tener permisos de <strong>r</strong>ead, <strong>w</strong>rite y e<strong>x</strong>ecute.</p>
+
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — Permisos</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Ver permisos</span>
+<span class="cmd">ls -la script.sh</span>
+<span class="out">-rwxr-xr-- 1 usuario grupo 1234 Jun 26 09:00 script.sh</span>
+<span class="cmt"># │││├─ usuario: rwx (leer, escribir, ejecutar)</span>
+<span class="cmt"># ││├── grupo: r-x (leer, ejecutar)</span>
+<span class="cmt"># │└─── otros: r-- (solo leer)</span>
+
+<span class="cmt"># Cambiar permisos (chmod)</span>
+<span class="cmd">chmod +x script.sh</span>      <span class="cmt"># Hacer ejecutable</span>
+<span class="cmd">chmod 755 script.sh</span>     <span class="cmt"># rwxr-xr-x (octal)</span>
+<span class="cmd">chmod 644 archivo.txt</span>   <span class="cmt"># rw-r--r--</span>
+<span class="cmd">chmod -R 755 directorio/</span> <span class="cmt"># Recursivo</span>
+
+<span class="cmt"># Cambiar propietario (chown)</span>
+<span class="cmd">sudo chown usuario:grupo archivo.txt</span>
+<span class="cmd">sudo chown -R usuario directorio/</span></pre>
+          </div>
+        </div>
+
+        <!-- Quiz 4 -->
+        <div class="quiz-section">
+          <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:18px;height:18px;"></i> Quiz — Módulo 4</div>
+          <div class="quiz-question" id="q4a">
+            <div class="q-text">1. ¿En qué ruta está montado el disco C: de Windows dentro de WSL?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q4a')">/windows/c</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q4a')">/drives/c</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q4a')">/mnt/c</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q4a')">/host/c</button>
+            </div>
+            <div class="q-explanation" id="exp4a">WSL monta automáticamente todas las unidades de Windows en <code style="font-family:var(--font-mono);">/mnt/</code>. El disco C: está en <code style="font-family:var(--font-mono);">/mnt/c</code>, el D: en <code style="font-family:var(--font-mono);">/mnt/d</code>, etc.</div>
+          </div>
+          <div class="quiz-question" id="q4b">
+            <div class="q-text">2. ¿Qué hace <code style="font-family:var(--font-mono);">chmod 755 script.sh</code>?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q4b')">Da acceso de solo lectura a todos</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q4b')">El propietario puede leer/escribir/ejecutar; grupo y otros pueden leer y ejecutar</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q4b')">Elimina todos los permisos del archivo</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q4b')">Solo el propietario puede ejecutar el archivo</button>
+            </div>
+            <div class="q-explanation" id="exp4b">755 en octal = 7(rwx) para propietario, 5(r-x) para grupo, 5(r-x) para otros. Es el permiso estándar para scripts y directorios públicos.</div>
+          </div>
+          <div class="quiz-score-msg" id="quiz4Score">✅ ¡Módulo 4 completado! Dominas el sistema de archivos.</div>
+        </div>
+
+        <div class="module-actions">
+          <button class="action-btn" onclick="switchTab('tab-terminal', document.querySelector('[data-tab=tab-terminal] button'))">
+            <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior
+          </button>
+          <div class="read-confirmation">
+            <input type="checkbox" class="read-checkbox" id="check4" onchange="markRead(4,this)">
+            <label class="read-label" for="check4">He completado este módulo</label>
+          </div>
+          <button class="action-btn primary" onclick="goNext('tab-packages')">
+            Siguiente: Paquetes <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ───────────────────────────────────────────
+           TAB 5 — GESTIÓN DE PAQUETES
+      ─────────────────────────────────────────────── -->
+      <div class="tab-pane" id="tab-packages">
+        <div class="learning-section">
+          <h2><i data-lucide="package" style="width:20px;height:20px;"></i> Gestión de Paquetes con APT</h2>
+          <span class="level-badge badge-intermediate" style="margin-bottom:1rem;display:inline-flex;">Nivel 2 · Intermedio</span>
+
+          <p>En Ubuntu/Debian (las distros más usadas en WSL), el gestor de paquetes es <strong style="color:var(--accent-cyan)">APT</strong> (Advanced Package Tool). Te permite instalar, actualizar y eliminar software de forma sencilla.</p>
+
+          <div class="definition-box">
+            <div class="definition-term">¿Qué es sudo?</div>
+            <div class="definition-desc">sudo (Super User DO) te permite ejecutar comandos con privilegios de administrador (root). Es necesario para instalar software y modificar configuraciones del sistema. Se te pedirá tu contraseña de usuario Linux.</div>
+          </div>
+
+          <h3><i data-lucide="refresh-cw" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Comandos APT Esenciales</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — APT Package Manager</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># SIEMPRE actualiza la lista de paquetes primero</span>
+<span class="cmd">sudo apt update</span>
+<span class="out">Hit:1 http://archive.ubuntu.com/ubuntu jammy InRelease
+Reading package lists... Done
+Building dependency tree... Done
+42 packages can be upgraded.</span>
+
+<span class="cmt"># Actualizar paquetes instalados</span>
+<span class="cmd">sudo apt upgrade -y</span>
+
+<span class="cmt"># Instalar un paquete</span>
+<span class="cmd">sudo apt install git</span>
+<span class="cmd">sudo apt install python3 python3-pip -y</span>
+
+<span class="cmt"># Buscar un paquete</span>
+<span class="cmd">apt search nodejs</span>
+<span class="cmd">apt show curl</span>         <span class="cmt"># Información detallada</span>
+
+<span class="cmt"># Eliminar paquetes</span>
+<span class="cmd">sudo apt remove paquete</span>
+<span class="cmd">sudo apt purge paquete</span>  <span class="cmt"># Elimina también configuración</span>
+<span class="cmd">sudo apt autoremove</span>     <span class="cmt"># Elimina dependencias huérfanas</span>
+
+<span class="cmt"># Limpiar cache</span>
+<span class="cmd">sudo apt clean</span></pre>
+          </div>
+
+          <h3><i data-lucide="box" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Software Esencial para Desarrolladores</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — Dev Stack Setup</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Actualizar e instalar herramientas base</span>
+<span class="cmd">sudo apt update && sudo apt upgrade -y</span>
+<span class="cmd">sudo apt install -y git curl wget build-essential</span>
+
+<span class="cmt"># Python</span>
+<span class="cmd">sudo apt install -y python3 python3-pip python3-venv</span>
+<span class="cmd">python3 --version</span>
+<span class="out">Python 3.10.12</span>
+
+<span class="cmt"># Node.js (vía nvm - recomendado)</span>
+<span class="cmd">curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash</span>
+<span class="cmd">source ~/.bashrc</span>
+<span class="cmd">nvm install --lts</span>
+<span class="cmd">node --version</span>
+<span class="out">v20.14.0</span>
+
+<span class="cmt"># Git configuración inicial</span>
+<span class="cmd">git config --global user.name "Tu Nombre"</span>
+<span class="cmd">git config --global user.email "tu@email.com"</span>
+<span class="cmd">git config --global core.editor "code --wait"</span></pre>
+          </div>
+
+          <h3><i data-lucide="wrench" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Herramientas de Productividad</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — Herramientas útiles</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># htop — monitor de sistema interactivo</span>
+<span class="cmd">sudo apt install htop</span>
+<span class="cmd">htop</span>
+
+<span class="cmt"># tmux — multiplexor de terminal</span>
+<span class="cmd">sudo apt install tmux</span>
+
+<span class="cmt"># zsh + oh-my-zsh — shell mejorada</span>
+<span class="cmd">sudo apt install zsh</span>
+<span class="cmd">sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"</span>
+
+<span class="cmt"># bat — cat con sintaxis coloreada</span>
+<span class="cmd">sudo apt install bat</span>
+<span class="cmd">batcat archivo.py</span>
+
+<span class="cmt"># fzf — buscador difuso</span>
+<span class="cmd">sudo apt install fzf</span>
+
+<span class="cmt"># tree — mostrar árbol de directorios</span>
+<span class="cmd">sudo apt install tree</span>
+<span class="cmd">tree -L 2 ./mi_proyecto</span></pre>
+          </div>
+        </div>
+
+        <!-- Quiz 5 -->
+        <div class="quiz-section">
+          <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:18px;height:18px;"></i> Quiz — Módulo 5</div>
+          <div class="quiz-question" id="q5a">
+            <div class="q-text">1. ¿Cuál es el orden correcto para instalar un paquete en Ubuntu?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q5a')">sudo apt install → sudo apt update</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q5a')">sudo apt update → sudo apt install nombre_paquete</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q5a')">apt get install → apt refresh</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q5a')">pip install → apt update</button>
+            </div>
+            <div class="q-explanation" id="exp5a">Siempre debes ejecutar <code style="font-family:var(--font-mono);">sudo apt update</code> primero para refrescar la lista de paquetes disponibles. Luego <code style="font-family:var(--font-mono);">sudo apt install</code> para instalar.</div>
+          </div>
+          <div class="quiz-question" id="q5b">
+            <div class="q-text">2. ¿Qué diferencia hay entre <code style="font-family:var(--font-mono);">apt remove</code> y <code style="font-family:var(--font-mono);">apt purge</code>?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q5b')">No hay diferencia, hacen lo mismo</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q5b')">remove es más seguro porque pide confirmación; purge no</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q5b')">remove elimina el paquete; purge elimina el paquete Y sus archivos de configuración</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q5b')">purge solo elimina la cache; remove elimina el binario</button>
+            </div>
+            <div class="q-explanation" id="exp5b"><code style="font-family:var(--font-mono);">apt purge</code> hace una desinstalación completa incluyendo los archivos de configuración en /etc. Usa <code style="font-family:var(--font-mono);">purge</code> cuando quieras empezar de cero con un servicio.</div>
+          </div>
+          <div class="quiz-score-msg" id="quiz5Score">✅ ¡Módulo 5 completado! Dominas APT y la gestión de paquetes.</div>
+        </div>
+
+        <div class="module-actions">
+          <button class="action-btn" onclick="switchTab('tab-filesystem', document.querySelector('[data-tab=tab-filesystem] button'))">
+            <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior
+          </button>
+          <div class="read-confirmation">
+            <input type="checkbox" class="read-checkbox" id="check5" onchange="markRead(5,this)">
+            <label class="read-label" for="check5">He completado este módulo</label>
+          </div>
+          <button class="action-btn primary" onclick="goNext('tab-config')">
+            Siguiente: Configuración <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ───────────────────────────────────────────
+           TAB 6 — CONFIGURACIÓN AVANZADA
+      ─────────────────────────────────────────────── -->
+      <div class="tab-pane" id="tab-config">
+        <div class="learning-section">
+          <h2><i data-lucide="settings" style="width:20px;height:20px;"></i> Configuración Avanzada de WSL</h2>
+          <span class="level-badge badge-intermediate" style="margin-bottom:1rem;display:inline-flex;">Nivel 2 · Intermedio</span>
+
+          <p>WSL es altamente configurable. Puedes ajustar recursos de hardware, comportamiento del sistema de archivos, integración con Windows y mucho más mediante archivos de configuración.</p>
+
+          <h3><i data-lucide="file-text" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Archivo .wslconfig (Global)</h3>
+          <p>Este archivo en <code style="color:var(--accent-cyan);font-family:var(--font-mono);">C:\Users\TuNombre\.wslconfig</code> controla los recursos globales de todas las distribuciones WSL.</p>
+
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">ini — C:\Users\TuNombre\.wslconfig</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="kw">[wsl2]</span>
+<span class="cmt"># Memoria RAM asignada a WSL (por defecto: 50% del sistema)</span>
+<span class="str">memory</span>=8GB
+
+<span class="cmt"># Núcleos de CPU (por defecto: todos los del sistema)</span>
+<span class="str">processors</span>=4
+
+<span class="cmt"># Memoria de swap</span>
+<span class="str">swap</span>=2GB
+
+<span class="cmt"># Habilitar soporte para GUI apps (WSLg)</span>
+<span class="str">guiApplications</span>=true
+
+<span class="cmt"># Networking — mirrored para mejor integración</span>
+<span class="str">networkingMode</span>=mirrored
+
+<span class="cmt"># Auto-reclamar memoria no usada</span>
+<span class="str">autoMemoryReclaim</span>=gradual
+
+<span class="cmt"># Habilitar DNS tunneling</span>
+<span class="str">dnsTunneling</span>=true
+
+<span class="cmt"># Habilitar firewall de Windows</span>
+<span class="str">firewall</span>=true</pre>
+          </div>
+
+          <h3><i data-lucide="file-code" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Archivo /etc/wsl.conf (Por Distribución)</h3>
+          <p>Este archivo dentro de cada distribución Linux controla su comportamiento individual.</p>
+
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">ini — /etc/wsl.conf (dentro de WSL)</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="kw">[automount]</span>
+<span class="cmt"># Montar drives de Windows automáticamente</span>
+<span class="str">enabled</span> = true
+<span class="str">root</span> = /mnt/
+<span class="cmt"># Opciones de montaje (drs: acceso a metadatos Windows)</span>
+<span class="str">options</span> = "metadata,umask=22,fmask=11"
+<span class="str">mountFsTab</span> = true
+
+<span class="kw">[boot]</span>
+<span class="cmt"># Ejecutar systemd (WSL2 con kernel 5.15+)</span>
+<span class="str">systemd</span> = true
+<span class="cmt"># Ejecutar script al iniciar</span>
+<span class="str">command</span> = "service ssh start"
+
+<span class="kw">[network]</span>
+<span class="cmt"># Nombre del host en la red</span>
+<span class="str">hostname</span> = mi-wsl-dev
+<span class="cmt"># Generar /etc/hosts automáticamente</span>
+<span class="str">generateHosts</span> = true
+<span class="str">generateResolvConf</span> = true
+
+<span class="kw">[interop]</span>
+<span class="cmt"># Permitir ejecutar binarios de Windows desde Linux</span>
+<span class="str">enabled</span> = true
+<span class="str">appendWindowsPath</span> = true</pre>
+          </div>
+
+          <h3><i data-lucide="user" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Personalizar el Shell con ~/.bashrc</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — ~/.bashrc</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Agregar al final de ~/.bashrc</span>
+
+<span class="cmt"># Alias útiles</span>
+<span class="kw">alias</span> ll=<span class="str">'ls -alF'</span>
+<span class="kw">alias</span> la=<span class="str">'ls -A'</span>
+<span class="kw">alias</span> cls=<span class="str">'clear'</span>
+<span class="kw">alias</span> update=<span class="str">'sudo apt update && sudo apt upgrade -y'</span>
+<span class="kw">alias</span> myip=<span class="str">'curl ifconfig.me'</span>
+
+<span class="cmt"># Acceso rápido al escritorio de Windows</span>
+<span class="kw">export</span> WIN_HOME=<span class="str">"/mnt/c/Users/TuNombre"</span>
+<span class="kw">alias</span> cdesktop=<span class="str">"cd $WIN_HOME/Desktop"</span>
+<span class="kw">alias</span> cdocs=<span class="str">"cd $WIN_HOME/Documents"</span>
+
+<span class="cmt"># Prompt personalizado con colores</span>
+<span class="kw">export</span> PS1=<span class="str">'\[\033[01;32m\]\u@wsl\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '</span>
+
+<span class="cmt"># Aplicar cambios</span>
+<span class="cmd">source ~/.bashrc</span></pre>
+          </div>
+
+          <div class="alert-box info">
+            <i data-lucide="info" style="width:18px;height:18px;"></i>
+            <div class="alert-box-text"><strong>Systemd en WSL:</strong> Con <code style="font-family:var(--font-mono);">systemd=true</code> en wsl.conf puedes usar <code style="font-family:var(--font-mono);">systemctl</code> para gestionar servicios como en Ubuntu real: <code style="font-family:var(--font-mono);">sudo systemctl start nginx</code></div>
+          </div>
+        </div>
+
+        <!-- Quiz 6 -->
+        <div class="quiz-section">
+          <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:18px;height:18px;"></i> Quiz — Módulo 6</div>
+          <div class="quiz-question" id="q6a">
+            <div class="q-text">1. ¿Dónde se guarda el archivo .wslconfig global?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q6a')">En /etc/wsl.conf dentro de la distro Linux</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q6a')">En C:\Users\TuNombre\.wslconfig en Windows</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q6a')">En C:\Windows\System32\wsl.config</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q6a')">En ~/.wslconfig dentro de la distro Linux</button>
+            </div>
+            <div class="q-explanation" id="exp6a"><code style="font-family:var(--font-mono);">.wslconfig</code> es un archivo de Windows que va en tu carpeta de usuario (<code style="font-family:var(--font-mono);">%USERPROFILE%</code>). Controla los recursos globales de WSL 2 como memoria y CPU.</div>
+          </div>
+          <div class="quiz-question" id="q6b">
+            <div class="q-text">2. ¿Qué opción en /etc/wsl.conf activa el soporte de systemd?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q6b')">[boot] enable_systemd = true</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q6b'">[boot] systemd = true</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q6b')">[systemd] enabled = true</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q6b')">[init] use_systemd = yes</button>
+            </div>
+            <div class="q-explanation" id="exp6b">En la sección <code style="font-family:var(--font-mono);">[boot]</code> de <code style="font-family:var(--font-mono);">/etc/wsl.conf</code>, la opción <code style="font-family:var(--font-mono);">systemd = true</code> activa el gestor de servicios systemd, disponible desde el kernel de WSL 5.15+.</div>
+          </div>
+          <div class="quiz-score-msg" id="quiz6Score">✅ ¡Módulo 6 completado! Sabes configurar WSL a fondo.</div>
+        </div>
+
+        <div class="module-actions">
+          <button class="action-btn" onclick="switchTab('tab-packages', document.querySelector('[data-tab=tab-packages] button'))">
+            <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior
+          </button>
+          <div class="read-confirmation">
+            <input type="checkbox" class="read-checkbox" id="check6" onchange="markRead(6,this)">
+            <label class="read-label" for="check6">He completado este módulo</label>
+          </div>
+          <button class="action-btn primary" onclick="goNext('tab-networking')">
+            Siguiente: Redes <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ───────────────────────────────────────────
+           TAB 7 — REDES Y PUERTOS
+      ─────────────────────────────────────────────── -->
+      <div class="tab-pane" id="tab-networking">
+        <div class="learning-section">
+          <h2><i data-lucide="network" style="width:20px;height:20px;"></i> Redes y Puertos en WSL</h2>
+          <span class="level-badge badge-intermediate" style="margin-bottom:1rem;display:inline-flex;">Nivel 2 · Intermedio</span>
+
+          <p>WSL 2 tiene su propia interfaz de red virtual. Entender cómo funcionan las redes te permite exponer servicios, conectarte a bases de datos y configurar proxies correctamente.</p>
+
+          <h3><i data-lucide="wifi" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Conceptos de Red en WSL</h3>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-icon"><i data-lucide="server" style="width:20px;height:20px;"></i></div>
+              <div class="info-card-title">localhost</div>
+              <div class="info-card-desc">Un servicio en WSL es accesible desde Windows en <code style="font-family:var(--font-mono);">localhost:puerto</code>. WSL redirige automáticamente.</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-icon"><i data-lucide="globe" style="width:20px;height:20px;"></i></div>
+              <div class="info-card-title">IP de WSL</div>
+              <div class="info-card-desc">WSL tiene su propia IP interna (ej: 172.x.x.x). Cambia con cada reinicio en modo NAT.</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-icon"><i data-lucide="arrows-up-down" style="width:20px;height:20px;"></i></div>
+              <div class="info-card-title">Modo Mirrored</div>
+              <div class="info-card-desc">Con networkingMode=mirrored, WSL comparte la IP de Windows, simplificando enormemente la red.</div>
+            </div>
+          </div>
+
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — Comandos de Red</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Ver IP de WSL</span>
+<span class="cmd">ip addr show eth0</span>
+<span class="cmd">hostname -I</span>
+<span class="out">172.20.48.1</span>
+
+<span class="cmt"># Ver puertos en uso</span>
+<span class="cmd">ss -tulpn</span>
+<span class="cmd">netstat -tulpn</span>
+
+<span class="cmt"># Probar conectividad</span>
+<span class="cmd">ping google.com -c 4</span>
+<span class="cmd">curl -I https://google.com</span>
+
+<span class="cmt"># Desde WSL, obtener IP del host Windows</span>
+<span class="cmd">cat /etc/resolv.conf | grep nameserver</span>
+<span class="out">nameserver 172.20.48.1   # Esta es la IP del host Windows</span>
+
+<span class="cmt"># Configurar una variable de entorno con la IP del host</span>
+<span class="cmd">export HOST_IP=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}')</span>
+<span class="cmd">echo $HOST_IP</span></pre>
+          </div>
+
+          <h3><i data-lucide="share-2" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Exponer un Servidor Web de WSL</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — Servidor Python desde WSL</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Iniciar servidor web simple en puerto 8080</span>
+<span class="cmd">python3 -m http.server 8080</span>
+<span class="out">Serving HTTP on 0.0.0.0 port 8080 (http://0.0.0.0:8080/) ...</span>
+
+<span class="cmt"># Ahora en Windows, abre el navegador en:</span>
+<span class="cmt"># http://localhost:8080</span>
+<span class="cmt"># WSL redirige el puerto automáticamente</span>
+
+<span class="cmt"># Instalar y levantar Nginx</span>
+<span class="cmd">sudo apt install nginx</span>
+<span class="cmd">sudo service nginx start</span>
+<span class="cmt"># → Abre http://localhost en Windows</span></pre>
+          </div>
+
+          <h3><i data-lucide="key" style="width:16px;height:16px;color:var(--accent-cyan);"></i> SSH desde WSL</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — SSH</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Instalar cliente SSH (ya viene instalado)</span>
+<span class="cmd">ssh usuario@servidor.com</span>
+<span class="cmd">ssh -p 2222 usuario@192.168.1.100</span>
+
+<span class="cmt"># Generar clave SSH en WSL</span>
+<span class="cmd">ssh-keygen -t ed25519 -C "tu@email.com"</span>
+<span class="out">Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/usuario/.ssh/id_ed25519):</span>
+
+<span class="cmt"># Copiar clave pública al servidor</span>
+<span class="cmd">ssh-copy-id usuario@servidor.com</span>
+
+<span class="cmt"># Configurar SSH para múltiples hosts</span>
+<span class="cmd">nano ~/.ssh/config</span></pre>
+          </div>
+        </div>
+
+        <!-- Quiz 7 -->
+        <div class="quiz-section">
+          <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:18px;height:18px;"></i> Quiz — Módulo 7</div>
+          <div class="quiz-question" id="q7a">
+            <div class="q-text">1. Si levantas un servidor en WSL en el puerto 3000, ¿cómo accedes desde Windows?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q7a')">Necesitas configurar port forwarding manualmente en PowerShell</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q7a')">Accedes directamente en http://localhost:3000 desde el navegador Windows</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q7a')">Debes usar la IP interna de WSL como http://172.x.x.x:3000</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q7a')">No es posible acceder desde Windows a servicios en WSL</button>
+            </div>
+            <div class="q-explanation" id="exp7a">WSL 2 redirige automáticamente los puertos de Linux al host Windows. Cualquier servicio que escuche en 0.0.0.0 o localhost en WSL es accesible desde Windows en localhost:puerto.</div>
+          </div>
+          <div class="quiz-score-msg" id="quiz7Score">✅ ¡Módulo 7 completado! Entiendes las redes en WSL.</div>
+        </div>
+
+        <div class="module-actions">
+          <button class="action-btn" onclick="switchTab('tab-config', document.querySelector('[data-tab=tab-config] button'))">
+            <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior
+          </button>
+          <div class="read-confirmation">
+            <input type="checkbox" class="read-checkbox" id="check7" onchange="markRead(7,this)">
+            <label class="read-label" for="check7">He completado este módulo</label>
+          </div>
+          <button class="action-btn primary" onclick="goNext('tab-devtools')">
+            Siguiente: Dev Tools <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ───────────────────────────────────────────
+           TAB 8 — DEV TOOLS & DOCKER
+      ─────────────────────────────────────────────── -->
+      <div class="tab-pane" id="tab-devtools">
+        <div class="learning-section">
+          <h2><i data-lucide="code-2" style="width:20px;height:20px;"></i> Dev Tools y Docker en WSL</h2>
+          <span class="level-badge badge-advanced" style="margin-bottom:1rem;display:inline-flex;">Nivel 3 · Avanzado</span>
+
+          <h3><i data-lucide="code" style="width:16px;height:16px;color:var(--accent-cyan);"></i> VS Code + WSL (Remote Extension)</h3>
+          <p>La integración de VS Code con WSL es una de las mejores funciones. Editas código en Windows, pero el servidor de lenguaje, el terminal y las extensiones corren en Linux.</p>
+
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — Abrir VS Code en WSL</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Desde cualquier directorio en WSL, abre VS Code</span>
+<span class="cmd">code .</span>
+
+<span class="cmt"># Abre un archivo específico</span>
+<span class="cmd">code archivo.py</span>
+
+<span class="cmt"># VS Code detecta automáticamente que estás en WSL
+# e instala el servidor "VS Code Server" en Linux</span></pre>
+          </div>
+
+          <div class="alert-box info">
+            <i data-lucide="info" style="width:18px;height:18px;"></i>
+            <div class="alert-box-text">Instala la extensión <strong>"WSL"</strong> (anteriormente Remote - WSL) en VS Code. Esto te da acceso completo al entorno Linux: IntelliSense, debugging, testing, todo dentro de WSL.</div>
+          </div>
+
+          <h3><i data-lucide="box" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Docker Desktop con Backend WSL 2</h3>
+          <p>Docker Desktop usa WSL 2 como su motor de contenedores, dando rendimiento nativo de Linux en Windows.</p>
+
+          <div class="steps-list">
+            <div class="step-card">
+              <div class="step-num">1</div>
+              <div class="step-content-inner">
+                <div class="step-title">Instala Docker Desktop para Windows</div>
+                <div class="step-desc">Descarga de docker.com/products/docker-desktop. Durante la instalación, selecciona "Use WSL 2 based engine".</div>
+              </div>
+            </div>
+            <div class="step-card">
+              <div class="step-num">2</div>
+              <div class="step-content-inner">
+                <div class="step-title">Habilita integración con tu distro</div>
+                <div class="step-desc">En Docker Desktop → Settings → Resources → WSL Integration → activa tu distribución Ubuntu.</div>
+              </div>
+            </div>
+            <div class="step-card">
+              <div class="step-num">3</div>
+              <div class="step-content-inner">
+                <div class="step-title">Usa Docker desde WSL</div>
+                <div class="step-desc">Ahora puedes usar <code style="font-family:var(--font-mono);color:var(--accent-cyan);">docker</code> y <code style="font-family:var(--font-mono);color:var(--accent-cyan);">docker compose</code> directamente en tu terminal WSL.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — Docker en WSL</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Verificar Docker funciona en WSL</span>
+<span class="cmd">docker --version</span>
+<span class="out">Docker version 25.0.3, build 4debf41</span>
+
+<span class="cmt"># Correr tu primer contenedor</span>
+<span class="cmd">docker run hello-world</span>
+
+<span class="cmt"># Correr Nginx en Docker</span>
+<span class="cmd">docker run -d -p 8080:80 --name mi-nginx nginx</span>
+<span class="cmt"># → Abre http://localhost:8080 en Windows</span>
+
+<span class="cmt"># Ver contenedores activos</span>
+<span class="cmd">docker ps</span>
+
+<span class="cmt"># Docker Compose</span>
+<span class="cmd">docker compose up -d</span>
+<span class="cmd">docker compose logs -f</span>
+<span class="cmd">docker compose down</span></pre>
+          </div>
+
+          <h3><i data-lucide="database" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Bases de Datos en WSL</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — PostgreSQL y MySQL</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># PostgreSQL</span>
+<span class="cmd">sudo apt install postgresql postgresql-contrib</span>
+<span class="cmd">sudo service postgresql start</span>
+<span class="cmd">sudo -u postgres psql</span>
+
+<span class="cmt"># MySQL</span>
+<span class="cmd">sudo apt install mysql-server</span>
+<span class="cmd">sudo service mysql start</span>
+<span class="cmd">sudo mysql</span>
+
+<span class="cmt"># Redis</span>
+<span class="cmd">sudo apt install redis-server</span>
+<span class="cmd">sudo service redis-server start</span>
+<span class="cmd">redis-cli ping</span>
+<span class="out">PONG</span>
+
+<span class="cmt"># Con systemd activado, usa systemctl</span>
+<span class="cmd">sudo systemctl enable postgresql</span>
+<span class="cmd">sudo systemctl start postgresql</span></pre>
+          </div>
+        </div>
+
+        <!-- Quiz 8 -->
+        <div class="quiz-section">
+          <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:18px;height:18px;"></i> Quiz — Módulo 8</div>
+          <div class="quiz-question" id="q8a">
+            <div class="q-text">1. ¿Qué comando abre VS Code desde el terminal WSL en el directorio actual?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q8a')">vscode .</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q8a')">open vscode</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q8a')">code .</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q8a')">wsl code</button>
+            </div>
+            <div class="q-explanation" id="exp8a"><code style="font-family:var(--font-mono);">code .</code> lanza VS Code desde WSL. Si tienes la extensión WSL instalada, VS Code se conecta automáticamente al entorno Linux y ejecuta el servidor de lenguaje ahí.</div>
+          </div>
+          <div class="quiz-score-msg" id="quiz8Score">✅ ¡Módulo 8 completado! Sabes configurar tu entorno de desarrollo completo.</div>
+        </div>
+
+        <div class="module-actions">
+          <button class="action-btn" onclick="switchTab('tab-networking', document.querySelector('[data-tab=tab-networking] button'))">
+            <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior
+          </button>
+          <div class="read-confirmation">
+            <input type="checkbox" class="read-checkbox" id="check8" onchange="markRead(8,this)">
+            <label class="read-label" for="check8">He completado este módulo</label>
+          </div>
+          <button class="action-btn primary" onclick="goNext('tab-scripting')">
+            Siguiente: Shell Scripting <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ───────────────────────────────────────────
+           TAB 9 — SHELL SCRIPTING
+      ─────────────────────────────────────────────── -->
+      <div class="tab-pane" id="tab-scripting">
+        <div class="learning-section">
+          <h2><i data-lucide="scroll" style="width:20px;height:20px;"></i> Shell Scripting en Bash</h2>
+          <span class="level-badge badge-advanced" style="margin-bottom:1rem;display:inline-flex;">Nivel 3 · Avanzado</span>
+
+          <p>El scripting en Bash te permite automatizar tareas repetitivas, crear pipelines de datos, configurar entornos de desarrollo y mucho más. Es una habilidad fundamental para cualquier ingeniero.</p>
+
+          <h3><i data-lucide="file-code-2" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Tu Primer Script</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — hello_wsl.sh</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt">#!/bin/bash</span>
+<span class="cmt"># La primera línea (shebang) indica qué intérprete usar</span>
+
+<span class="cmt"># Variables</span>
+<span class="kw">NOMBRE</span>=<span class="str">"AutoNovations"</span>
+<span class="kw">FECHA</span>=$(date +"%Y-%m-%d")  <span class="cmt"># Capturar salida de comando</span>
+
+<span class="cmt"># Echo con colores</span>
+<span class="cmd">echo -e "\033[36m=== WSL Master Script ===\033[0m"</span>
+<span class="cmd">echo "Hola desde $NOMBRE — $FECHA"</span>
+
+<span class="cmt"># Condicionales</span>
+<span class="kw">if</span> [ -d "/tmp/test" ]; <span class="kw">then</span>
+    <span class="cmd">echo "El directorio /tmp/test existe"</span>
+<span class="kw">else</span>
+    <span class="cmd">mkdir /tmp/test</span>
+    <span class="cmd">echo "Directorio creado: /tmp/test"</span>
+<span class="kw">fi</span>
+
+<span class="cmt"># Bucle for</span>
+<span class="kw">for</span> i <span class="kw">in</span> 1 2 3 4 5; <span class="kw">do</span>
+    <span class="cmd">echo "Iteración: $i"</span>
+<span class="kw">done</span>
+
+<span class="cmt"># Funciones</span>
+<span class="kw">saludar</span>() {
+    <span class="kw">local</span> nombre=$1
+    <span class="cmd">echo "¡Bienvenido, $nombre!"</span>
+}
+
+saludar <span class="str">"DevOps Engineer"</span></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — Ejecutar el script</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Crear el archivo</span>
+<span class="cmd">nano hello_wsl.sh</span>
+
+<span class="cmt"># Hacerlo ejecutable</span>
+<span class="cmd">chmod +x hello_wsl.sh</span>
+
+<span class="cmt"># Ejecutarlo</span>
+<span class="cmd">./hello_wsl.sh</span>
+<span class="out">=== WSL Master Script ===
+Hola desde AutoNovations — 2024-06-26
+Directorio creado: /tmp/test
+Iteración: 1
+Iteración: 2
+Iteración: 3
+Iteración: 4
+Iteración: 5
+¡Bienvenido, DevOps Engineer!</span></pre>
+          </div>
+
+          <h3><i data-lucide="git-branch" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Script Real: Setup de Proyecto Dev</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — setup_project.sh</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt">#!/bin/bash
+# Script para configurar un nuevo proyecto Python</span>
+
+<span class="kw">set -e</span>  <span class="cmt"># Salir si hay algún error</span>
+
+<span class="kw">PROJECT_NAME</span>=${1:-<span class="str">"mi_proyecto"</span>}  <span class="cmt"># Parámetro o default</span>
+<span class="kw">PYTHON</span>=python3
+
+<span class="cmd">echo "🚀 Creando proyecto: $PROJECT_NAME"</span>
+
+<span class="cmt"># Crear estructura</span>
+<span class="cmd">mkdir -p $PROJECT_NAME/{src,tests,docs}</span>
+<span class="kw">cd</span> $PROJECT_NAME
+
+<span class="cmt"># Entorno virtual</span>
+<span class="cmd">$PYTHON -m venv .venv</span>
+<span class="cmd">source .venv/bin/activate</span>
+
+<span class="cmt"># Archivos base</span>
+<span class="cmd">cat</span> &gt; README.md <span class="kw">&lt;&lt;EOF</span>
+<span class="str"># $PROJECT_NAME
+Proyecto creado con WSL + AutoNovations setup script.
+</span><span class="kw">EOF</span>
+
+<span class="cmd">touch src/__init__.py tests/__init__.py</span>
+<span class="cmd">echo "requests\npytest" > requirements.txt</span>
+<span class="cmd">pip install -r requirements.txt -q</span>
+
+<span class="cmt"># Inicializar git</span>
+<span class="cmd">git init && git add . && git commit -m "Initial commit"</span>
+
+<span class="cmd">echo "✅ Proyecto $PROJECT_NAME listo en $(pwd)"</span></pre>
+          </div>
+
+          <h3><i data-lucide="clock" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Automatización con Cron</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — Cron Jobs</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Abrir el editor de cron del usuario actual</span>
+<span class="cmd">crontab -e</span>
+
+<span class="cmt"># Formato: MIN HORA DIA MES DIASEMANA COMANDO</span>
+
+<span class="cmt"># Ejecutar backup.sh cada día a las 2:00 AM</span>
+<span class="str">0 2 * * * /home/usuario/scripts/backup.sh</span>
+
+<span class="cmt"># Ejecutar cada 5 minutos</span>
+<span class="str">*/5 * * * * /home/usuario/scripts/monitor.sh</span>
+
+<span class="cmt"># Ver cron jobs activos</span>
+<span class="cmd">crontab -l</span></pre>
+          </div>
+        </div>
+
+        <!-- Quiz 9 -->
+        <div class="quiz-section">
+          <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:18px;height:18px;"></i> Quiz — Módulo 9</div>
+          <div class="quiz-question" id="q9a">
+            <div class="q-text">1. ¿Qué hace la línea <code style="font-family:var(--font-mono);">#!/bin/bash</code> al inicio de un script?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q9a')">Es un comentario decorativo sin función real</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q9a')">Es el "shebang": le indica al sistema operativo qué intérprete usar para ejecutar el script</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q9a')">Importa el módulo bash al script</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q9a')">Define la versión de Bash requerida</button>
+            </div>
+            <div class="q-explanation" id="exp9a">El shebang (#!) seguido de la ruta del intérprete dice al kernel qué programa usar para ejecutar el script. <code style="font-family:var(--font-mono);">#!/bin/bash</code> usa Bash, <code style="font-family:var(--font-mono);">#!/usr/bin/env python3</code> usaría Python.</div>
+          </div>
+          <div class="quiz-question" id="q9b">
+            <div class="q-text">2. ¿Cómo capturas la salida de un comando en una variable Bash?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q9b')">VAR = [comando]</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q9b')">VAR=$(comando)</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q9b')">VAR &lt;- comando</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q9b')">VAR = `comando` (sin espacio)</button>
+            </div>
+            <div class="q-explanation" id="exp9b">La sintaxis <code style="font-family:var(--font-mono);">$(...)</code> se llama "command substitution". Ejecuta el comando dentro y captura su salida stdout como string. Por ejemplo: <code style="font-family:var(--font-mono);">FECHA=$(date)</code></div>
+          </div>
+          <div class="quiz-score-msg" id="quiz9Score">✅ ¡Módulo 9 completado! Dominas el scripting en Bash.</div>
+        </div>
+
+        <div class="module-actions">
+          <button class="action-btn" onclick="switchTab('tab-devtools', document.querySelector('[data-tab=tab-devtools] button'))">
+            <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior
+          </button>
+          <div class="read-confirmation">
+            <input type="checkbox" class="read-checkbox" id="check9" onchange="markRead(9,this)">
+            <label class="read-label" for="check9">He completado este módulo</label>
+          </div>
+          <button class="action-btn primary" onclick="goNext('tab-advanced')">
+            Siguiente: Nivel Master <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ───────────────────────────────────────────
+           TAB 10 — NIVEL MASTER
+      ─────────────────────────────────────────────── -->
+      <div class="tab-pane" id="tab-advanced">
+        <div class="learning-section">
+          <h2><i data-lucide="award" style="width:20px;height:20px;"></i> Nivel Master: WSL Avanzado</h2>
+          <span class="level-badge badge-advanced" style="margin-bottom:1rem;display:inline-flex;">Nivel 3 · Master</span>
+
+          <h3><i data-lucide="copy" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Exportar e Importar Distribuciones</h3>
+          <p>Puedes crear backups completos de tu distribución WSL y restaurarlos en otro equipo.</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">powershell — Backup y Restore</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Exportar distro a archivo .tar</span>
+<span class="cmd">wsl --export Ubuntu-22.04 C:\backups\ubuntu-dev.tar</span>
+
+<span class="cmt"># Importar en otro equipo o con otro nombre</span>
+<span class="cmd">wsl --import Ubuntu-Dev C:\WSL\Ubuntu-Dev C:\backups\ubuntu-dev.tar</span>
+
+<span class="cmt"># Verificar importación</span>
+<span class="cmd">wsl --list --verbose</span>
+
+<span class="cmt"># Iniciar la distro importada</span>
+<span class="cmd">wsl -d Ubuntu-Dev</span></pre>
+          </div>
+
+          <h3><i data-lucide="monitor" style="width:16px;height:16px;color:var(--accent-cyan);"></i> WSLg: Aplicaciones GUI Linux</h3>
+          <p>Con WSL 2 y WSLg puedes ejecutar aplicaciones gráficas de Linux directamente en tu escritorio Windows sin configuración adicional.</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — Aplicaciones GUI</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Instalar Gedit (editor de texto gráfico)</span>
+<span class="cmd">sudo apt install gedit</span>
+<span class="cmd">gedit &amp;   </span><span class="cmt"># Se abre en tu escritorio Windows</span>
+
+<span class="cmt"># Instalar navegador Firefox</span>
+<span class="cmd">sudo apt install firefox</span>
+<span class="cmd">firefox &amp;</span>
+
+<span class="cmt"># Instalar Nautilus (explorador de archivos GNOME)</span>
+<span class="cmd">sudo apt install nautilus</span>
+<span class="cmd">nautilus &amp;</span>
+
+<span class="cmt"># Ver variable DISPLAY (debería estar configurada)</span>
+<span class="cmd">echo $DISPLAY</span>
+<span class="out">:0</span></pre>
+          </div>
+
+          <h3><i data-lucide="cpu" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Múltiples Distribuciones y Gestión Avanzada</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">powershell — Multi-distro</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre><span class="cmt"># Instalar múltiples distribuciones</span>
+<span class="cmd">wsl --install -d Ubuntu-22.04</span>
+<span class="cmd">wsl --install -d Debian</span>
+<span class="cmd">wsl --install -d kali-linux</span>
+
+<span class="cmt"># Establecer distribución por defecto</span>
+<span class="cmd">wsl --set-default Ubuntu-22.04</span>
+
+<span class="cmt"># Ejecutar comando en una distro específica</span>
+<span class="cmd">wsl -d Debian -- apt list --installed</span>
+
+<span class="cmt"># Terminar una distro específica</span>
+<span class="cmd">wsl --terminate Debian</span>
+
+<span class="cmt"># Eliminar una distro completamente</span>
+<span class="cmd">wsl --unregister Debian</span></pre>
+          </div>
+
+          <h3><i data-lucide="zap" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Optimización de Rendimiento</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash + .wslconfig — Optimización</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre"><span class="cmt"># Ver uso de memoria del sistema Linux</span>
+<span class="cmd">free -h</span>
+<span class="out">               total        used        free
+Mem:           7.8Gi       1.2Gi       6.6Gi
+Swap:          2.0Gi          0B       2.0Gi</span>
+
+<span class="cmt"># Ver procesos por uso de CPU</span>
+<span class="cmd">top -bn1 | head -20</span>
+<span class="cmd">htop</span>
+
+<span class="cmt"># Ver uso de disco</span>
+<span class="cmd">df -h</span>
+<span class="cmd">du -sh * | sort -h</span>  <span class="cmt"># Tamaño de cada item, ordenado</span>
+
+<span class="cmt"># Compactar el VHD de WSL (libera espacio en Windows)</span>
+<span class="cmd">wsl --shutdown</span>
+<span class="cmt"># Luego en PowerShell como admin:</span>
+<span class="cmt"># Optimize-VHD -Path "$env:LOCALAPPDATA\Packages\...\LocalState\ext4.vhdx" -Mode Full</span></span></pre>
+          </div>
+
+          <h3><i data-lucide="shield" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Seguridad y SSH Keys para GitHub/GitLab</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-lang">bash — SSH para GitHub</span>
+              <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar</button>
+            </div>
+            <pre"><span class="cmt"># Generar clave SSH Ed25519 (más segura)</span>
+<span class="cmd">ssh-keygen -t ed25519 -C "tu@email.com" -f ~/.ssh/github_key</span>
+
+<span class="cmt"># Iniciar el agente SSH</span>
+<span class="cmd">eval "$(ssh-agent -s)"</span>
+<span class="cmd">ssh-add ~/.ssh/github_key</span>
+
+<span class="cmt"># Ver tu clave pública (cópiala a GitHub Settings > SSH Keys)</span>
+<span class="cmd">cat ~/.ssh/github_key.pub</span>
+
+<span class="cmt"># Configurar ~/.ssh/config para múltiples cuentas</span>
+<span class="cmd">nano ~/.ssh/config</span>
+
+<span class="cmt"># Dentro del archivo:</span>
+<span class="kw">Host</span> github.com
+    <span class="str">HostName</span> github.com
+    <span class="str">User</span> git
+    <span class="str">IdentityFile</span> ~/.ssh/github_key
+
+<span class="cmt"># Probar conexión</span>
+<span class="cmd">ssh -T git@github.com</span>
+<span class="out">Hi username! You've successfully authenticated.</span></pre>
+          </div>
+        </div>
+
+        <!-- Quiz 10 -->
+        <div class="quiz-section">
+          <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:18px;height:18px;"></i> Quiz Final — Módulo 10</div>
+          <div class="quiz-question" id="q10a">
+            <div class="q-text">1. ¿Qué comando exporta una distribución WSL completa para hacer un backup?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q10a')">wsl --backup Ubuntu-22.04 ubuntu.tar</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q10a')">wsl --export Ubuntu-22.04 ubuntu.tar</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q10a')">wsl --save Ubuntu-22.04</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q10a')">wsl --snapshot Ubuntu-22.04</button>
+            </div>
+            <div class="q-explanation" id="exp10a"><code style="font-family:var(--font-mono);">wsl --export &lt;Distro&gt; &lt;archivo.tar&gt;</code> guarda el sistema de archivos completo en un tar. Luego puedes restaurarlo en cualquier equipo con <code style="font-family:var(--font-mono);">wsl --import</code>.</div>
+          </div>
+          <div class="quiz-question" id="q10b">
+            <div class="q-text">2. ¿Qué tipo de clave SSH se recomienda usar hoy en día para mayor seguridad?</div>
+            <div class="q-options">
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q10b')">RSA de 1024 bits</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q10b')">DSA</button>
+              <button class="q-option" onclick="answerQuiz(this,'correct','q10b')">Ed25519</button>
+              <button class="q-option" onclick="answerQuiz(this,'wrong','q10b')">RSA de 512 bits</button>
+            </div>
+            <div class="q-explanation" id="exp10b">Ed25519 usa curvas elípticas y es más seguro y rápido que RSA. Es el estándar recomendado por GitHub, GitLab y la mayoría de servicios modernos. Genera claves más cortas pero con mayor seguridad criptográfica.</div>
+          </div>
+          <div class="quiz-score-msg" id="quiz10Score">🏆 ¡FELICIDADES! Completaste todos los módulos del curso WSL Mastery.</div>
+        </div>
+
+        <!-- Certificate -->
+        <div class="certificate-card" id="certificateCard">
+          <div class="cert-icon">
+            <i data-lucide="award" style="width:56px;height:56px;"></i>
+          </div>
+          <div class="cert-title">Certificado de Completación</div>
+          <div class="cert-text">Has completado con éxito el curso <strong>WSL Mastery</strong> de AutoNovations University. Dominas el Windows Subsystem for Linux desde instalación básica hasta configuración avanzada, scripting y DevOps.</div>
+          <button class="cert-print-btn" onclick="window.print()">
+            <i data-lucide="printer" style="width:14px;height:14px;display:inline;"></i> Imprimir Certificado
+          </button>
+        </div>
+
+        <div class="module-actions">
+          <button class="action-btn" onclick="switchTab('tab-scripting', document.querySelector('[data-tab=tab-scripting] button'))">
+            <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior
+          </button>
+          <div class="read-confirmation">
+            <input type="checkbox" class="read-checkbox" id="check10" onchange="markRead(10,this)">
+            <label class="read-label" for="check10">He completado el curso completo</label>
+          </div>
+          <a href="../index.html" class="action-btn primary" style="text-decoration:none;">
+            <i data-lucide="home" style="width:14px;height:14px;"></i> Volver al inicio
+          </a>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // ── LUCIDE INIT ──────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+      updateProgress();
+      updateThemeIcon();
+    });
+
+    // ── THEME ────────────────────────────────────
+    function toggleTheme() {
+      const isLight = document.documentElement.classList.toggle('light');
+      localStorage.setItem('preferredTheme', isLight ? 'light' : 'dark');
+      updateThemeIcon();
+    }
+    function updateThemeIcon() {
+      const icon = document.getElementById('themeIcon');
+      if (!icon) return;
+      const isLight = document.documentElement.classList.contains('light');
+      icon.setAttribute('data-lucide', isLight ? 'moon' : 'sun');
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    // ── SIDEBAR MOBILE ───────────────────────────
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('open');
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').classList.remove('open');
+    }
+
+    // ── TAB SWITCHING ────────────────────────────
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      const navItem = document.querySelector(`[data-tab="${tabId}"]`);
+      if (navItem) navItem.classList.add('active');
+      closeSidebar();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goNext(tabId) {
+      const navBtn = document.querySelector(`[data-tab="${tabId}"] button`);
+      switchTab(tabId, navBtn);
+    }
+
+    // ── PROGRESS ─────────────────────────────────
+    const completed = new Set(JSON.parse(localStorage.getItem('wslCompleted') || '[]'));
+    const TOTAL = 10;
+
+    function updateProgress() {
+      const count = completed.size;
+      const pct = Math.round((count / TOTAL) * 100);
+      const circumference = 226;
+      const offset = circumference - (pct / 100) * circumference;
+      const circle = document.getElementById('progressCircle');
+      if (circle) circle.style.strokeDashoffset = offset;
+      const txt = document.getElementById('progressText');
+      if (txt) txt.textContent = pct + '%';
+      const det = document.getElementById('progressDetails');
+      if (det) det.textContent = `${count} de ${TOTAL} módulos`;
+
+      // Restore checkboxes and completed styles
+      completed.forEach(n => {
+        const cb = document.getElementById('check' + n);
+        if (cb) cb.checked = true;
+        const navItem = document.querySelector(`[data-tab="tab-${getTabName(n)}"]`);
+        if (navItem) navItem.classList.add('completed');
+      });
+
+      // Show certificate if all done
+      if (count >= TOTAL) {
+        const cert = document.getElementById('certificateCard');
+        if (cert) cert.classList.add('unlocked');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      }
+    }
+
+    const TAB_NAMES = ['','intro','install','terminal','filesystem','packages','config','networking','devtools','scripting','advanced'];
+    function getTabName(n) { return TAB_NAMES[n] || ''; }
+
+    function markRead(moduleNum, checkbox) {
+      if (checkbox.checked) {
+        completed.add(moduleNum);
+      } else {
+        completed.delete(moduleNum);
+        const navItem = document.querySelector(`[data-tab="tab-${getTabName(moduleNum)}"]`);
+        if (navItem) navItem.classList.remove('completed');
+      }
+      localStorage.setItem('wslCompleted', JSON.stringify([...completed]));
+      updateProgress();
+    }
+
+    // ── QUIZ ─────────────────────────────────────
+    const quizState = {};
+
+    function answerQuiz(btn, result, questionId) {
+      const container = document.getElementById(questionId);
+      if (!container) return;
+      const options = container.querySelectorAll('.q-option');
+      const exp = document.getElementById('exp' + questionId.replace('q', '').replace(/[ab]/,'') + questionId.slice(-1));
+
+      options.forEach(o => o.classList.add('disabled'));
+      if (result === 'correct') {
+        btn.classList.add('correct');
+      } else {
+        btn.classList.add('incorrect');
+        // Show correct one
+        options.forEach(o => {
+          if (o.getAttribute('onclick').includes("'correct'")) o.classList.add('correct');
+        });
+      }
+
+      // Show explanation
+      const expEl = document.getElementById('exp' + questionId);
+      if (expEl) expEl.style.display = 'block';
+
+      // Track quiz completion
+      if (!quizState[questionId]) quizState[questionId] = result;
+      checkQuizScore(questionId);
+    }
+
+    function checkQuizScore(questionId) {
+      // Derive quiz number from question id (q1a -> 1, q2b -> 2)
+      const match = questionId.match(/q(\d+)/);
+      if (!match) return;
+      const num = match[1];
+      const scoreEl = document.getElementById('quiz' + num + 'Score');
+      if (!scoreEl) return;
+
+      // Find all questions with this prefix
+      const allQuestions = document.querySelectorAll(`[id^="q${num}"]`);
+      let allAnswered = true;
+      allQuestions.forEach(q => {
+        if (!quizState['q' + num + q.id.replace('q' + num, '')]) allAnswered = false;
+      });
+      // Simple: show if any correct answer given
+      if (quizState[questionId] === 'correct') {
+        scoreEl.style.display = 'block';
+      }
+    }
+
+    // ── TERMINAL SIMULATOR ───────────────────────
+    const terminalDbs = {
+      install: {
+        'wsl --version': `WSL version: 2.0.9.0
+Kernel version: 5.15.133.1-1
+WSLg version: 1.0.59
+Windows version: 10.0.22631.0`,
+        'wsl --list': `Windows Subsystem for Linux Distributions:
+Ubuntu-22.04 (Default)
+Debian`,
+        'wsl --list --verbose': `  NAME            STATE           VERSION
+* Ubuntu-22.04    Running         2
+  Debian          Stopped         2`,
+        'wsl --list --online': `NAME                            FRIENDLY NAME
+Ubuntu                          Ubuntu
+Ubuntu-22.04                    Ubuntu 22.04 LTS
+Debian                          Debian GNU/Linux
+kali-linux                      Kali Linux Rolling`,
+        'wsl --install': `Installing: Windows Subsystem for Linux
+Windows Subsystem for Linux has been installed.
+Installing: Ubuntu
+Ubuntu has been installed.
+The requested operation is successful. Reboot required.`,
+      },
+      linux: {
+        'pwd': '/home/usuario',
+        'whoami': 'usuario',
+        'ls': 'Desktop  Documents  Downloads  Music  Pictures  projects',
+        'ls -la': `total 56
+drwxr-xr-x 8 usuario usuario 4096 Jun 26 09:00 .
+drwxr-xr-x 3 root    root    4096 Jun 25 18:00 ..
+-rw-r--r-- 1 usuario usuario  220 Jun 25 .bash_logout
+-rw-r--r-- 1 usuario usuario 3526 Jun 25 .bashrc
+drwxr-xr-x 2 usuario usuario 4096 Jun 26 Documents
+drwxr-xr-x 2 usuario usuario 4096 Jun 26 projects`,
+        'uname -a': 'Linux DESKTOP-WSL2 5.15.133.1-microsoft-standard-WSL2 #1 SMP Thu Oct 5 21:02:42 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux',
+        'date': new Date().toString(),
+        'cat /etc/os-release': `NAME="Ubuntu"
+VERSION="22.04.3 LTS (Jammy Jellyfish)"
+ID=ubuntu
+ID_LIKE=debian
+PRETTY_NAME="Ubuntu 22.04.3 LTS"
+VERSION_ID="22.04"`,
+        'mkdir test': '(directorio "test" creado)',
+        'echo "hola"': 'hola',
+        'echo hola': 'hola',
+        'clear': '',
+        'ls /mnt/c': 'Program Files  Program Files (x86)  Users  Windows  pagefile.sys',
+        'df -h': `Filesystem      Size  Used Avail Use% Mounted on
+/dev/sdb        251G   12G  227G   5% /
+/dev/sda1       476G  120G  356G  26% /mnt/c`,
+        'free -h': `               total        used        free
+Mem:           7.8Gi       1.4Gi       6.4Gi
+Swap:          2.0Gi          0B       2.0Gi`,
+        'ip addr': `1: lo: <LOOPBACK> mtu 65536
+    inet 127.0.0.1/8 scope host lo
+2: eth0: <BROADCAST,MULTICAST,UP>
+    inet 172.20.48.2/20 brd 172.20.63.255`,
+        'hostname -I': '172.20.48.2',
+      }
+    };
+
+    function runTerminal(outputId, inputId, mode) {
+      const input = document.getElementById(inputId);
+      const output = document.getElementById(outputId);
+      const cmd = input.value.trim();
+      if (!cmd) return;
+
+      // Prompt line
+      const promptLine = document.createElement('div');
+      promptLine.className = 'terminal-line prompt';
+      const promptText = mode === 'install' ? 'PS C:\\Users\\user> ' : 'usuario@wsl:~$ ';
+      promptLine.textContent = promptText + cmd;
+      output.appendChild(promptLine);
+
+      // Response
+      const db = terminalDbs[mode] || {};
+      const response = db[cmd];
+      if (response !== undefined) {
+        if (response === '') {
+          output.innerHTML = '';
+          output.appendChild(document.createElement('div'));
+        } else {
+          const lines = response.split('\n');
+          lines.forEach(line => {
+            const el = document.createElement('div');
+            el.className = 'terminal-line result';
+            el.textContent = line;
+            output.appendChild(el);
+          });
+        }
+      } else {
+        const err = document.createElement('div');
+        err.className = 'terminal-line error-line';
+        if (mode === 'install') {
+          err.textContent = `'${cmd}' is not recognized as a WSL command. Try: wsl --list, wsl --version`;
+        } else {
+          err.textContent = `bash: ${cmd}: command not found`;
+        }
+        output.appendChild(err);
+      }
+
+      input.value = '';
+      output.scrollTop = output.scrollHeight;
+    }
+
+    // ── COPY CODE ────────────────────────────────
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre');
+      const text = pre.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.innerHTML = '<i data-lucide="check" style="width:11px;height:11px;"></i> Copiado';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        setTimeout(() => {
+          btn.innerHTML = '<i data-lucide="copy" style="width:11px;height:11px;"></i> Copiar';
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+        }, 1800);
+      });
+    }
+  </script>
+</body>
+</html>
