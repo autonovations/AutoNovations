@@ -630,16 +630,16 @@ function appendTerminalInput() {
 
     const line = document.createElement('div');
     line.className = 'terminal-line flex items-center';
-    line.innerHTML = `<span class="terminal-prompt text-neon mr-2">></span><input type="text" id="terminalInput" class="bg-transparent border-none outline-none text-white font-mono text-sm w-full" autofocus autocomplete="off" />`;
+    line.innerHTML = `<span class="terminal-prompt text-neon mr-2">></span><input type="text" id="terminalInput" class="bg-transparent border-none outline-none text-white font-mono text-sm w-full" autocomplete="off" />`;
     terminalContent.appendChild(line);
     terminalContent.scrollTop = terminalContent.scrollHeight;
 
     const input = document.getElementById('terminalInput');
-    input.focus();
+    input.focus({ preventScroll: true });
 
     // Re-focus on click anywhere inside terminal content
     terminalContent.addEventListener('click', () => {
-        input.focus();
+        input.focus({ preventScroll: true });
     });
 
     input.addEventListener('keydown', (e) => {
