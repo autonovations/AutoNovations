@@ -114,7 +114,7 @@ window.addEventListener('scroll', () => {
 });
 
 // Scroll Spy for active nav links
-const sections = ['about', 'technologies', 'projects'];
+const sections = ['about', 'technologies', 'projects', 'courses', 'contact'];
 const navLinks = document.querySelectorAll('nav div.hidden.md\\:flex a[href^="#"]');
 const mobileNavLinks = document.querySelectorAll('#mobileMenu a.menu-link[href^="#"]');
 

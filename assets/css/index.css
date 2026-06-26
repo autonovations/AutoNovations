@@ -826,10 +826,17 @@ html.light .terminal-window .terminal-line.text-gray-500 {
 }
 
 /* Active links in dark mode */
-#navbar .text-neon,
-#mobileMenu .text-neon {
+#navbar a:not(.glow-button).text-neon,
+#mobileMenu a.text-neon {
     color: #00D9FF !important;
     text-shadow: 0 0 8px rgba(0, 217, 255, 0.3);
+}
+
+/* Glow button hover text contrast fix in dark mode */
+#navbar .glow-button:hover,
+#mobileMenu .glow-button:hover {
+    color: var(--color-dark) !important;
+    text-shadow: none !important;
 }
 
 /* Light Mode - Opaque Navbar Backgrounds */
@@ -863,9 +870,16 @@ html.light #navbar .lang-btn:hover {
 }
 
 /* Active links in light mode */
-html.light #navbar .text-neon,
-html.light #mobileMenu .text-neon {
+html.light #navbar a:not(.glow-button).text-neon,
+html.light #mobileMenu a.text-neon {
     color: #0088CC !important;
+    text-shadow: none !important;
+}
+
+/* Glow button hover text contrast fix in light mode */
+html.light #navbar .glow-button:hover,
+html.light #mobileMenu .glow-button:hover {
+    color: #ffffff !important;
     text-shadow: none !important;
 }
 
