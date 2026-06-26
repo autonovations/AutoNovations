@@ -176,7 +176,10 @@ menuBtn.addEventListener('click', () => {
                 mobileMenu.classList.add('flex', 'active');
             }, 10);
         }
-        if (menuBtn) menuBtn.innerHTML = '<i data-lucide="x"></i>';
+        if (menuBtn) {
+            menuBtn.innerHTML = '<i data-lucide="x"></i>';
+            menuBtn.setAttribute('aria-expanded', 'true');
+        }
         document.body.style.overflow = 'hidden';
     } else {
         if (mobileMenu) {
@@ -186,7 +189,10 @@ menuBtn.addEventListener('click', () => {
                 mobileMenu.classList.remove('flex');
             }, 400);
         }
-        if (menuBtn) menuBtn.innerHTML = '<i data-lucide="menu"></i>';
+        if (menuBtn) {
+            menuBtn.innerHTML = '<i data-lucide="menu"></i>';
+            menuBtn.setAttribute('aria-expanded', 'false');
+        }
         document.body.style.overflow = '';
     }
     lucide.createIcons();
@@ -202,7 +208,10 @@ menuLinks.forEach(link => {
             }, 400);
         }
         menuOpen = false;
-        if (menuBtn) menuBtn.innerHTML = '<i data-lucide="menu"></i>';
+        if (menuBtn) {
+            menuBtn.innerHTML = '<i data-lucide="menu"></i>';
+            menuBtn.setAttribute('aria-expanded', 'false');
+        }
         document.body.style.overflow = '';
         lucide.createIcons();
     });
@@ -242,58 +251,7 @@ const counterObserver = new IntersectionObserver((entries, observer) => {
 
 counters.forEach(counter => counterObserver.observe(counter));
 
-// Terminal Simulation Logic
-const terminalContent = document.getElementById('terminalContent');
-const commands = [
-    { text: 'Initializing Neural Core v2.0.4...', delay: 1000 },
-    { text: 'Status: ONLINE', color: '#00D9FF', delay: 500 },
-    { text: 'Connecting to global IoT mesh...', delay: 1200 },
-    { text: 'Nodes found: 1,420,892', delay: 400 },
-    { text: 'Executing: SwarmIntelligence.deploy()', delay: 1500 },
-    { text: 'Analyzing real-world telemetry...', delay: 800 },
-    { text: 'Pattern detected: Autonomous convergence', delay: 1000 },
-    { text: 'Action: Optimization protocol active', color: '#00D9FF', delay: 600 },
-    { text: 'Waiting for operator command...', delay: 2000, isPrompt: true }
-];
 
-let commandIndex = 0;
-
-function typeTerminal() {
-    if (commandIndex >= commands.length) {
-        return;
-    }
-
-    const cmd = commands[commandIndex];
-    const line = document.createElement('div');
-    line.className = 'terminal-line';
-    if (cmd.color) line.style.color = cmd.color;
-
-    if (cmd.isPrompt) {
-        line.innerHTML = `<span class="terminal-prompt">></span>${cmd.text}<span class="terminal-cursor"></span>`;
-    } else {
-        line.innerHTML = `<span class="terminal-prompt">></span>${cmd.text}`;
-    }
-
-    terminalContent.appendChild(line);
-    terminalContent.scrollTop = terminalContent.scrollHeight;
-
-    commandIndex++;
-    setTimeout(typeTerminal, cmd.delay);
-}
-
-const heroSection = document.getElementById('home');
-const terminalElement = document.querySelector('.terminal-window');
-
-if (heroSection && terminalElement) {
-    const heroObserver = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && window.getComputedStyle(terminalElement).display !== 'none') {
-            typeTerminal();
-            heroObserver.disconnect();
-        }
-    }, { threshold: 0.5 });
-
-    heroObserver.observe(heroSection);
-}
 
 
 
@@ -314,6 +272,9 @@ window.addEventListener('DOMContentLoaded', () => {
     
     // Initialize project filter listeners
     initProjectFilters();
+
+    // Setup Language Dropdowns (Click/Tap interaction)
+    initLangDropdowns();
 });
 
 // Theme Toggle Logic
@@ -365,3 +326,36 @@ function initProjectFilters() {
         });
     });
 }
+
+function initLangDropdowns() {
+    const dropdowns = document.querySelectorAll('.lang-dropdown');
+    
+    dropdowns.forEach(dropdown => {
+        const btn = dropdown.querySelector('.lang-btn');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // Close other dropdowns
+                dropdowns.forEach(other => {
+                    if (other !== dropdown) {
+                        other.classList.remove('active');
+                        const otherBtn = other.querySelector('.lang-btn');
+                        if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+                    }
+                });
+                const isActive = dropdown.classList.toggle('active');
+                btn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+            });
+        }
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', () => {
+        dropdowns.forEach(dropdown => {
+            dropdown.classList.remove('active');
+            const btn = dropdown.querySelector('.lang-btn');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+        });
+    });
+}
+

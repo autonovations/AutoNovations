@@ -22,6 +22,7 @@
     --text-gradient-start: #ffffff;
     --text-gradient-end: #00D9FF;
     --grid-color: rgba(0, 217, 255, 0.1);
+    --neon-dark: #00D9FF;
 }
 
 html.light {
@@ -48,6 +49,7 @@ html.light {
     --text-gradient-start: #0F172A;
     --text-gradient-end: #0088CC;
     --grid-color: rgba(0, 217, 255, 0.07);
+    --neon-dark: #007699;
 }
 
 body {
@@ -218,8 +220,11 @@ body {
 .lang-btn {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    padding: 6px 12px;
+    padding: 6px 16px;
+    min-height: 44px;
+    min-width: 44px;
     border-radius: 9999px;
     border: 1px solid var(--lang-btn-border);
     background: var(--lang-btn-bg);
@@ -253,7 +258,7 @@ body {
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
 }
 
-.lang-dropdown:hover .lang-options {
+.lang-dropdown.active .lang-options {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
@@ -273,11 +278,11 @@ body {
 
 .lang-option:hover {
     background: rgba(0, 217, 255, 0.1);
-    color: #00D9FF;
+    color: var(--neon-dark);
 }
 
 .lang-option.active {
-    color: #00D9FF;
+    color: var(--neon-dark);
     background: rgba(0, 217, 255, 0.05);
 }
 
@@ -644,8 +649,8 @@ section[id] {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     border: 1px solid var(--lang-btn-border);
     background: var(--lang-btn-bg);
@@ -1009,4 +1014,87 @@ html.light #liveTelemetry .text-neon {
     padding: 0 !important;
     margin: 0 !important;
     border: none !important;
+}
+
+/* Custom dynamic neon contrast color overrides */
+.text-neon {
+    color: var(--neon-dark) !important;
+}
+.hover\:text-neon:hover {
+    color: var(--neon-dark) !important;
+}
+.group:hover .group-hover\:text-neon {
+    color: var(--neon-dark) !important;
+}
+
+/* ===== ACCESSIBILITY: Focus outlines for keyboard navigation ===== */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+.lang-btn:focus-visible,
+.theme-toggle-btn:focus-visible {
+    outline: 2px solid var(--neon-dark) !important;
+    outline-offset: 4px;
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.5) !important;
+}
+
+html.light a:focus-visible,
+html.light button:focus-visible,
+html.light input:focus-visible,
+html.light textarea:focus-visible,
+html.light .lang-btn:focus-visible,
+html.light .theme-toggle-btn:focus-visible {
+    box-shadow: 0 0 10px rgba(0, 136, 204, 0.4) !important;
+}
+
+/* ===== LIGHT MODE: Color contrast accessibility overrides ===== */
+html.light .bg-neon {
+    background-color: #007699 !important; /* Accessible dark cian for text readability */
+}
+
+html.light .bg-neon.text-dark {
+    color: #ffffff !important; /* High contrast text on cyan background */
+}
+
+html.light .hover\:bg-neon:hover {
+    background-color: #005f7a !important;
+    color: #ffffff !important;
+}
+
+html.light .glow-button {
+    box-shadow: 0 0 15px rgba(0, 118, 153, 0.2) !important;
+}
+
+html.light .glow-button:hover {
+    box-shadow: 0 0 25px rgba(0, 118, 153, 0.4) !important;
+}
+
+html.light footer .text-gray-400,
+html.light footer a.text-gray-400 {
+    color: #475569 !important; /* High contrast Slate-600 on light footer background */
+}
+
+html.light footer a.text-gray-400:hover {
+    color: #0088CC !important;
+}
+
+/* ===== RESPONSIVE DESIGN: Academy Mobile Carousel Scroll fatigue fix ===== */
+@media (max-width: 768px) {
+    #courses .grid {
+        display: flex !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory !important;
+        gap: 1.5rem !important;
+        padding: 1rem 0.5rem 2rem 0.5rem !important;
+        scrollbar-width: none; /* Hide scrollbar for Firefox */
+    }
+    #courses .grid::-webkit-scrollbar {
+        display: none; /* Hide scrollbar for Chrome/Safari */
+    }
+    #courses .course-card {
+        flex: 0 0 85% !important; /* Mobile cards take 85% width for visual swipe indication */
+        scroll-snap-align: center !important;
+        height: auto !important;
+    }
 }

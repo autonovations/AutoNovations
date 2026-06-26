@@ -56,7 +56,7 @@
     </style>
 </head>
 
-<body class="antialiased selection:bg-neon selection:text-dark bg-[#020504]">
+<body class="antialiased selection:bg-neon selection:text-dark">
     <!-- Particles & Mouse Glow Background -->
     <div id="particles-js"></div>
     <div class="mouse-glow" id="mouseGlow"></div>
@@ -80,23 +80,19 @@
                     data-i18n="nav_projects">Projects</a>
                 <a href="#courses" class="text-gray-400 hover:text-neon transition-colors duration-300"
                     data-i18n="nav_academy">Academy</a>
-                <a href="about.html"
-                    class="text-neon transition-colors duration-300 font-bold border-b-2 border-neon pb-1"
-                    data-i18n="nav_profile">Profile</a>
 
                 <!-- Language Dropdown -->
                 <div class="lang-dropdown ml-4">
-                    <button class="lang-btn" id="currentLangBtn">
-                        <img src="https://flagcdn.com/w40/us.png" alt="English" class="flag-icon" id="currentFlag">
+                    <button class="lang-btn" id="currentLangBtn" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Language">
+                        <i data-lucide="languages" class="w-4 h-4"></i>
+                        <span id="currentLangText" class="font-tech text-xs font-bold uppercase">EN</span>
                         <i data-lucide="chevron-down" class="w-4 h-4"></i>
                     </button>
-                    <div class="lang-options">
-                        <button class="lang-option active" onclick="setLanguage('en')">
-                            <img src="https://flagcdn.com/w40/us.png" alt="English" class="flag-icon">
+                    <div class="lang-options" role="listbox">
+                        <button class="lang-option active" onclick="setLanguage('en')" role="option" aria-selected="true">
                             <span data-i18n="lang_en">English</span>
                         </button>
-                        <button class="lang-option" onclick="setLanguage('es')">
-                            <img src="https://flagcdn.com/w40/co.png" alt="Español" class="flag-icon">
+                        <button class="lang-option" onclick="setLanguage('es')" role="option" aria-selected="false">
                             <span data-i18n="lang_es">Spanish</span>
                         </button>
                     </div>
@@ -111,17 +107,15 @@
             <!-- Mobile Navigation -->
             <div class="flex md:hidden items-center gap-4">
                 <div class="lang-dropdown">
-                    <button class="lang-btn" id="mobileCurrentLangBtn">
-                        <img src="https://flagcdn.com/w40/us.png" alt="Language" class="flag-icon"
-                            id="mobileCurrentFlag">
+                    <button class="lang-btn" id="mobileCurrentLangBtn" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Language">
+                        <i data-lucide="languages" class="w-4 h-4"></i>
+                        <span id="mobileCurrentLangText" class="font-tech text-xs font-bold uppercase">EN</span>
                     </button>
-                    <div class="lang-options">
-                        <button class="lang-option" onclick="setLanguage('en')">
-                            <img src="https://flagcdn.com/w40/us.png" alt="English" class="flag-icon">
+                    <div class="lang-options" role="listbox">
+                        <button class="lang-option" onclick="setLanguage('en')" role="option">
                             <span data-i18n="lang_en">English</span>
                         </button>
-                        <button class="lang-option" onclick="setLanguage('es')">
-                            <img src="https://flagcdn.com/w40/co.png" alt="Español" class="flag-icon">
+                        <button class="lang-option" onclick="setLanguage('es')" role="option">
                             <span data-i18n="lang_es">Spanish</span>
                         </button>
                     </div>
@@ -131,7 +125,7 @@
                     <i data-lucide="sun" class="w-5 h-5 sun-icon"></i>
                     <i data-lucide="moon" class="w-5 h-5 moon-icon"></i>
                 </button>
-                <button class="text-neon" id="menuBtn">
+                <button class="text-neon p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl hover:bg-white/5 active:scale-95 transition-all" id="menuBtn" aria-label="Toggle Navigation Menu" aria-expanded="false">
                     <i data-lucide="menu"></i>
                 </button>
             </div>
@@ -149,8 +143,6 @@
             data-i18n="nav_projects">Projects</a>
         <a href="#courses" class="text-3xl font-tech text-white hover:text-neon transition-all menu-link"
             data-i18n="nav_academy">Academy</a>
-        <a href="about.html" class="text-3xl font-tech text-neon font-bold menu-link"
-            data-i18n="nav_profile">Profile</a>
     </div>
 
     <!-- Profile Section -->
@@ -493,7 +485,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- Project 1 -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -525,7 +517,7 @@
                     </div>
                     <!-- Project 2 -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -557,7 +549,7 @@
                     </div>
                     <!-- Project 3 -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -598,7 +590,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- Project 4 -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -631,7 +623,7 @@
                     </div>
                     <!-- Project 5 -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -664,7 +656,7 @@
                     </div>
                     <!-- Project 6 -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -707,7 +699,7 @@
 
                     <!-- Project 7 -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -738,7 +730,7 @@
                     </div>
                     <!-- Project 8 -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -772,7 +764,7 @@
 
                     <!-- Project 9 -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -815,7 +807,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- Project 11a (Data Engineering) -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -865,7 +857,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- Project 12 -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -897,7 +889,7 @@
                     </div>
                     <!-- Project 13 -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -929,7 +921,7 @@
                     </div>
                     <!-- Project 14 -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -961,7 +953,7 @@
                     </div>
                     <!-- Project 10 -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -1004,7 +996,7 @@
 
                     <!-- Project 15 -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -1037,7 +1029,7 @@
                     </div>
                     <!-- Project 16 -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -1070,7 +1062,7 @@
                     </div>
                     <!-- Project 17 -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -1112,7 +1104,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- Project 18 (System Design) -->
                     <div
-                        class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                        class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                         <div class="relative h-48 overflow-hidden bg-black/50">
                             <div
                                 class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
@@ -1164,9 +1156,9 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Course 1 -->
                 <div
-                    class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                    class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         1
                     </div>
                     <div class="relative h-56 overflow-hidden bg-black/50">
@@ -1208,9 +1200,9 @@
 
                 <!-- Course 2 -->
                 <div
-                    class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                    class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         2
                     </div>
                     <div class="relative h-56 overflow-hidden bg-black/50">
@@ -1253,9 +1245,9 @@
 
                 <!-- Course 3 -->
                 <div
-                    class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                    class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         3
                     </div>
                     <div class="relative h-56 overflow-hidden bg-black/50">
@@ -1296,9 +1288,9 @@
 
                 <!-- Course 4 -->
                 <div
-                    class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                    class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         4
                     </div>
                     <div class="relative h-56 overflow-hidden bg-black/50">
@@ -1341,9 +1333,9 @@
 
                 <!-- Course 5 -->
                 <div
-                    class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                    class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         5
                     </div>
                     <div class="relative h-56 overflow-hidden bg-black/50">
@@ -1385,9 +1377,9 @@
 
                 <!-- Course 6 -->
                 <div
-                    class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                    class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         6
                     </div>
                     <div class="relative h-56 overflow-hidden bg-black/50">
@@ -1428,9 +1420,9 @@
 
                 <!-- Course 7 -->
                 <div
-                    class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                    class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         7
                     </div>
                     <div class="relative h-56 overflow-hidden bg-black/50">
@@ -1469,9 +1461,9 @@
 
                 <!-- Course 8 -->
                 <div
-                    class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                    class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         8
                     </div>
                     <div class="relative h-56 overflow-hidden bg-black/50">
@@ -1510,9 +1502,9 @@
 
                 <!-- Course 9 -->
                 <div
-                    class="group relative rounded-2xl overflow-hidden border border-neon/90 bg-white/5 hover:border-neon/50 transition-all duration-500 shadow-lg flex flex-col h-full">
+                    class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-neon/40 transition-all duration-500 shadow-lg flex flex-col h-full">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/50 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         9
                     </div>
                     <div class="relative h-56 overflow-hidden bg-black/50">

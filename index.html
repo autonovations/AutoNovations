@@ -106,17 +106,16 @@
 
                 <!-- Language Dropdown -->
                 <div class="lang-dropdown ml-4">
-                    <button class="lang-btn" id="currentLangBtn">
-                        <img src="https://flagcdn.com/w40/us.png" alt="English" class="flag-icon" id="currentFlag">
+                    <button class="lang-btn" id="currentLangBtn" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Language">
+                        <i data-lucide="languages" class="w-4 h-4"></i>
+                        <span id="currentLangText" class="font-tech text-xs font-bold uppercase">EN</span>
                         <i data-lucide="chevron-down" class="w-4 h-4"></i>
                     </button>
-                    <div class="lang-options">
-                        <button class="lang-option active" onclick="setLanguage('en')">
-                            <img src="https://flagcdn.com/w40/us.png" alt="English" class="flag-icon">
+                    <div class="lang-options" role="listbox">
+                        <button class="lang-option active" onclick="setLanguage('en')" role="option" aria-selected="true">
                             <span data-i18n="lang_en">English</span>
                         </button>
-                        <button class="lang-option" onclick="setLanguage('es')">
-                            <img src="https://flagcdn.com/w40/co.png" alt="Español" class="flag-icon">
+                        <button class="lang-option" onclick="setLanguage('es')" role="option" aria-selected="false">
                             <span data-i18n="lang_es">Spanish</span>
                         </button>
                     </div>
@@ -130,17 +129,15 @@
             </div>
             <div class="flex md:hidden items-center gap-4">
                 <div class="lang-dropdown">
-                    <button class="lang-btn" id="mobileCurrentLangBtn">
-                        <img src="https://flagcdn.com/w40/us.png" alt="Language" class="flag-icon"
-                            id="mobileCurrentFlag">
+                    <button class="lang-btn" id="mobileCurrentLangBtn" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Language">
+                        <i data-lucide="languages" class="w-4 h-4"></i>
+                        <span id="mobileCurrentLangText" class="font-tech text-xs font-bold uppercase">EN</span>
                     </button>
-                    <div class="lang-options">
-                        <button class="lang-option" onclick="setLanguage('en')">
-                            <img src="https://flagcdn.com/w40/us.png" alt="English" class="flag-icon">
+                    <div class="lang-options" role="listbox">
+                        <button class="lang-option" onclick="setLanguage('en')" role="option">
                             <span data-i18n="lang_en">English</span>
                         </button>
-                        <button class="lang-option" onclick="setLanguage('es')">
-                            <img src="https://flagcdn.com/w40/co.png" alt="Español" class="flag-icon">
+                        <button class="lang-option" onclick="setLanguage('es')" role="option">
                             <span data-i18n="lang_es">Spanish</span>
                         </button>
                     </div>
@@ -150,7 +147,7 @@
                     <i data-lucide="sun" class="w-5 h-5 sun-icon"></i>
                     <i data-lucide="moon" class="w-5 h-5 moon-icon"></i>
                 </button>
-                <button class="text-neon" id="menuBtn">
+                <button class="text-neon p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl hover:bg-white/5 active:scale-95 transition-all" id="menuBtn" aria-label="Toggle Navigation Menu" aria-expanded="false">
                     <i data-lucide="menu"></i>
                 </button>
             </div>
@@ -242,7 +239,7 @@
 
                 <!-- Interactive Terminal -->
                 <div class="hidden lg:block animate-fade-in" style="animation-delay: 1s;">
-                    <div class="terminal-window glass-panel mx-auto lg:mx-0 border border-neon/90">
+                    <div class="terminal-window glass-panel mx-auto lg:mx-0 border border-white/10">
                         <div class="terminal-header">
                             <div class="terminal-dot bg-red-500/50"></div>
                             <div class="terminal-dot bg-yellow-500/50"></div>
@@ -305,7 +302,7 @@
                 <div class="relative reveal delay-200">
                     <div class="absolute inset-0 bg-neon/20 blur-[100px] rounded-full -z-10"></div>
                     <img src="assets/images/about_vision.png" alt="Autonovations Vision"
-                        class="w-full rounded-2xl border border-neon/90 shadow-2xl glass-panel object-cover"
+                        class="w-full rounded-2xl border border-white/10 shadow-2xl glass-panel object-cover"
                         onerror="this.src='https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80'">
                 </div>
             </div>
@@ -325,7 +322,7 @@
 
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Feature 1 -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal relative overflow-hidden group cursor-pointer tech-card border border-neon/90"
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal relative overflow-hidden group cursor-pointer tech-card"
                     data-tech-id="1">
                     <div
                         class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
@@ -340,7 +337,7 @@
                 </div>
 
                 <!-- Feature 2 -->
-                <div class="glass-panel p-8 rounded-2xl reveal delay-100 relative overflow-hidden group cursor-pointer tech-card border border-neon/90"
+                <div class="glass-panel p-8 rounded-2xl reveal delay-100 relative overflow-hidden group cursor-pointer tech-card"
                     data-tech-id="2">
                     <div
                         class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
@@ -356,7 +353,7 @@
                 </div>
 
                 <!-- Feature 3 -->
-                <div class="glass-panel p-8 rounded-2xl reveal delay-200 relative overflow-hidden group cursor-pointer tech-card border border-neon/90"
+                <div class="glass-panel p-8 rounded-2xl reveal delay-200 relative overflow-hidden group cursor-pointer tech-card"
                     data-tech-id="3">
                     <div
                         class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
@@ -372,7 +369,7 @@
                 </div>
 
                 <!-- Feature 4 -->
-                <div class="glass-panel p-8 rounded-2xl reveal delay-300 relative overflow-hidden group cursor-pointer tech-card border border-neon/90"
+                <div class="glass-panel p-8 rounded-2xl reveal delay-300 relative overflow-hidden group cursor-pointer tech-card"
                     data-tech-id="4">
                     <div
                         class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
@@ -421,13 +418,13 @@
 
             <div class="space-y-8">
                 <!-- Project 1 (AI Trading Core) -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden project-card border border-neon/90"
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden project-card"
                     data-category="ai-systems data-systems">
                     <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                         <div
                             class="w-full md:w-2/5 h-48 sm:h-56 md:h-64 bg-gray-800 rounded-xl overflow-hidden relative glitch-hover">
                             <img src="assets/images/projects/project_trading.png" alt="Trading AI"
-                                class="w-full h-full object-cover border border-neon/90 transition-transform duration-700">
+                                class="w-full h-full object-cover border border-white/10 transition-transform duration-700">
                             <div
                                 class="absolute inset-0 bg-neon/10 group-hover:bg-transparent transition-colors duration-500">
                             </div>
@@ -457,13 +454,13 @@
                 </div>
 
                 <!-- Project 2 (Railytics) -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-100 group cursor-pointer overflow-hidden project-card border border-neon/90"
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-100 group cursor-pointer overflow-hidden project-card"
                     data-category="ai-systems data-systems">
                     <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                         <div
                             class="w-full md:w-2/5 h-48 sm:h-56 md:h-64 bg-gray-800 rounded-xl overflow-hidden relative md:order-2 glitch-hover">
                             <img src="assets/images/projects/project_railytics.png" alt="Railytics"
-                                class="w-full h-full object-cover border border-neon/90 transition-transform duration-700">
+                                class="w-full h-full object-cover border border-white/10 transition-transform duration-700">
                             <div
                                 class="absolute inset-0 bg-neon/10 group-hover:bg-transparent transition-colors duration-500">
                             </div>
@@ -494,13 +491,13 @@
                 </div>
 
                 <!-- Project 3 (VSOC) -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-200 group cursor-pointer overflow-hidden project-card border border-neon/90"
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-200 group cursor-pointer overflow-hidden project-card"
                     data-category="ai-systems data-systems">
                     <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                         <div
                             class="w-full md:w-2/5 h-48 sm:h-56 md:h-64 bg-gray-800 rounded-xl overflow-hidden relative glitch-hover">
                             <img src="assets/images/projects/project_vsoc.png" alt="VSOC"
-                                class="w-full h-full object-cover border border-neon/90 transition-transform duration-700">
+                                class="w-full h-full object-cover border border-white/10 transition-transform duration-700">
                             <div
                                 class="absolute inset-0 bg-neon/10 group-hover:bg-transparent transition-colors duration-500">
                             </div>
@@ -529,13 +526,13 @@
                 </div>
 
                 <!-- Project 4 (AeroExplorer) -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-300 group cursor-pointer overflow-hidden project-card border border-neon/90"
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-300 group cursor-pointer overflow-hidden project-card"
                     data-category="robotics data-systems">
                     <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                         <div
                             class="w-full md:w-2/5 h-48 sm:h-56 md:h-64 bg-gray-800 rounded-xl overflow-hidden relative md:order-2 glitch-hover">
                             <img src="assets/images/projects/drone_an.png" alt="AeroExplorer"
-                                class="w-full h-full object-cover border border-neon/90 transition-transform duration-700">
+                                class="w-full h-full object-cover border border-white/10 transition-transform duration-700">
                             <div
                                 class="absolute inset-0 bg-neon/10 group-hover:bg-transparent transition-colors duration-500">
                             </div>
@@ -565,13 +562,13 @@
                 </div>
 
                 <!-- Project 5 (Cognitive Companions) -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-300 group cursor-pointer overflow-hidden project-card border border-neon/90"
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-300 group cursor-pointer overflow-hidden project-card"
                     data-category="robotics ai-systems">
                     <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                         <div
                             class="w-full md:w-2/5 h-48 sm:h-56 md:h-64 bg-gray-800 rounded-xl overflow-hidden relative glitch-hover">
                             <img src="assets/images/projects/project_companions.png" alt="Robotics"
-                                class="w-full h-full object-cover border border-neon/90 transition-transform duration-700">
+                                class="w-full h-full object-cover border border-white/10 transition-transform duration-700">
                             <div
                                 class="absolute inset-0 bg-neon/10 group-hover:bg-transparent transition-colors duration-500">
                             </div>
@@ -618,24 +615,24 @@
             <!-- Course Level Filters -->
             <div class="flex flex-wrap gap-3 mb-12 justify-center reveal" id="courseFilters">
                 <button
-                    class="course-filter-btn active px-4 py-1.5 rounded-full border border-neon/90 text-xs font-tech uppercase tracking-wider text-neon bg-neon/10 transition-all duration-300 hover:scale-105"
+                    class="course-filter-btn active px-4 py-1.5 rounded-full border border-neon/30 text-xs font-tech uppercase tracking-wider text-neon bg-neon/10 transition-all duration-300 hover:scale-105"
                     data-filter="all" data-i18n="course_level_all">All Levels</button>
                 <button
-                    class="course-filter-btn px-4 py-1.5 rounded-full border border-neon/90 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/90 transition-all duration-300 hover:scale-105"
+                    class="course-filter-btn px-4 py-1.5 rounded-full border border-white/10 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/30 transition-all duration-300 hover:scale-105"
                     data-filter="level-beginner" data-i18n="course_level_beginner_filter">Beginner</button>
                 <button
-                    class="course-filter-btn px-4 py-1.5 rounded-full border border-neon/90 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/90 transition-all duration-300 hover:scale-105"
+                    class="course-filter-btn px-4 py-1.5 rounded-full border border-white/10 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/30 transition-all duration-300 hover:scale-105"
                     data-filter="level-advanced" data-i18n="course_level_advanced_filter">Advanced</button>
                 <button
-                    class="course-filter-btn px-4 py-1.5 rounded-full border border-neon/90 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/90 transition-all duration-300 hover:scale-105"
+                    class="course-filter-btn px-4 py-1.5 rounded-full border border-white/10 text-xs font-tech uppercase tracking-wider text-gray-400 hover:text-neon hover:border-neon/30 transition-all duration-300 hover:scale-105"
                     data-filter="level-master" data-i18n="course_level_master_filter">Master</button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Course 1 -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-neon/90 transition-all duration-500 shadow-lg relative course-card"
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full transition-all duration-500 shadow-lg relative course-card"
                     data-category="level-beginner">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/90 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         1
                     </div>
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
@@ -643,7 +640,7 @@
                             class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
                         </div>
                         <img src="assets/images/projects/project_trading.png" alt="Basic Trading Course"
-                            class="w-full h-full object-cover border border-neon/90 group-hover:scale-110 transition-transform duration-700">
+                            class="w-full h-full object-cover border border-white/10 group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
@@ -675,10 +672,10 @@
                 </div>
 
                 <!-- Course 2 -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-neon/90 transition-all duration-500 shadow-lg relative course-card"
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full transition-all duration-500 shadow-lg relative course-card"
                     data-category="level-master">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/90 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         2
                     </div>
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
@@ -686,7 +683,7 @@
                             class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
                         </div>
                         <img src="assets/images/courses/algo_trading_cover.png" alt="Algorithmic Trading Course"
-                            class="w-full h-full object-cover border border-neon/90 group-hover:scale-110 transition-transform duration-700">
+                            class="w-full h-full object-cover border border-white/10 group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
@@ -719,10 +716,10 @@
                 </div>
 
                 <!-- Course 3 (Data Engineering) -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-neon/90 transition-all duration-500 shadow-lg relative course-card"
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full transition-all duration-500 shadow-lg relative course-card"
                     data-category="level-master">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/90 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         3
                     </div>
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
@@ -730,7 +727,7 @@
                             class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
                         </div>
                         <img src="assets/images/courses/data_engineering_cover.png" alt="Data Engineering Course"
-                            class="w-full h-full object-cover border border-neon/90 group-hover:scale-110 transition-transform duration-700">
+                            class="w-full h-full object-cover border border-white/10 group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
@@ -765,10 +762,10 @@
                 </div>
 
                 <!-- Course 4 -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-neon/90 transition-all duration-500 shadow-lg relative course-card"
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full transition-all duration-500 shadow-lg relative course-card"
                     data-category="level-beginner">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/90 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         4
                     </div>
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
@@ -776,7 +773,7 @@
                             class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
                         </div>
                         <img src="assets/images/courses/ml_course_cover.png" alt="Machine Learning Course"
-                            class="w-full h-full object-cover border border-neon/90 group-hover:scale-110 transition-transform duration-700">
+                            class="w-full h-full object-cover border border-white/10 group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
@@ -809,10 +806,10 @@
                 </div>
 
                 <!-- Course 5 -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-neon/90 transition-all duration-500 shadow-lg relative course-card"
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full transition-all duration-500 shadow-lg relative course-card"
                     data-category="level-beginner">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/90 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         5
                     </div>
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
@@ -820,7 +817,7 @@
                             class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
                         </div>
                         <img src="assets/images/courses/electronic_course_cover.png" alt="Electronics Course"
-                            class="w-full h-full object-cover border border-neon/90 group-hover:scale-110 transition-transform duration-700">
+                            class="w-full h-full object-cover border border-white/10 group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
@@ -850,10 +847,10 @@
                         </a>
                     </div>
                 </div>                <!-- Course 6 -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-100 group cursor-pointer overflow-hidden flex flex-col h-full border border-neon/90 transition-all duration-500 shadow-lg relative course-card"
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal delay-100 group cursor-pointer overflow-hidden flex flex-col h-full transition-all duration-500 shadow-lg relative course-card"
                     data-category="level-advanced">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/90 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         6
                     </div>
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
@@ -861,7 +858,7 @@
                             class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
                         </div>
                         <img src="assets/images/courses/uav_course_cover.png" alt="UAV Course"
-                            class="w-full h-full object-cover border border-neon/90 group-hover:scale-110 transition-transform duration-700">
+                            class="w-full h-full object-cover border border-white/10 group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
@@ -892,10 +889,10 @@
                 </div>
 
                 <!-- Course 7 -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-neon/90 transition-all duration-500 shadow-lg relative course-card"
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full transition-all duration-500 shadow-lg relative course-card"
                     data-category="level-beginner">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/90 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         7
                     </div>
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
@@ -903,7 +900,7 @@
                             class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
                         </div>
                         <img src="assets/images/courses/wsl_course_cover.png" alt="WSL Course"
-                            class="w-full h-full object-cover border border-neon/90 group-hover:scale-110 transition-transform duration-700">
+                            class="w-full h-full object-cover border border-white/10 group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
@@ -932,10 +929,10 @@
                 </div>
 
                 <!-- Course 8 -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-neon/90 transition-all duration-500 shadow-lg relative course-card"
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full transition-all duration-500 shadow-lg relative course-card"
                     data-category="level-advanced">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/90 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         8
                     </div>
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
@@ -943,7 +940,7 @@
                             class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
                         </div>
                         <img src="assets/images/courses/docker_course_cover.png" alt="Docker Course"
-                            class="w-full h-full object-cover border border-neon/90 group-hover:scale-110 transition-transform duration-700">
+                            class="w-full h-full object-cover border border-white/10 group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
@@ -972,10 +969,10 @@
                 </div>
 
                 <!-- Course 9 -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full border border-neon/90 transition-all duration-500 shadow-lg relative course-card"
+                <div class="glass-panel p-6 md:p-8 rounded-2xl reveal group cursor-pointer overflow-hidden flex flex-col h-full transition-all duration-500 shadow-lg relative course-card"
                     data-category="level-beginner">
                     <div
-                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/90 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+                        class="absolute top-4 right-4 z-20 w-10 h-10 bg-dark/80 backdrop-blur-md rounded-full border border-neon/30 flex items-center justify-center font-tech font-bold text-neon text-lg shadow-[0_0_15px_rgba(0,217,255,0.2)]">
                         9
                     </div>
                     <div class="relative h-56 overflow-hidden rounded-xl mb-6 bg-black/50">
@@ -983,7 +980,7 @@
                             class="absolute inset-0 bg-neon/10 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500 z-10">
                         </div>
                         <img src="assets/images/courses/python_course_cover.png" alt="Python Course"
-                            class="w-full h-full object-cover border border-neon/90 group-hover:scale-110 transition-transform duration-700">
+                            class="w-full h-full object-cover border border-white/10 group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="flex-1 flex flex-col justify-between">
                         <div>

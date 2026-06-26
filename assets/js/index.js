@@ -173,7 +173,10 @@ menuBtn.addEventListener('click', () => {
                 mobileMenu.classList.add('flex', 'active');
             }, 10);
         }
-        if (menuBtn) menuBtn.innerHTML = '<i data-lucide="x"></i>';
+        if (menuBtn) {
+            menuBtn.innerHTML = '<i data-lucide="x"></i>';
+            menuBtn.setAttribute('aria-expanded', 'true');
+        }
         document.body.style.overflow = 'hidden';
     } else {
         if (mobileMenu) {
@@ -183,7 +186,10 @@ menuBtn.addEventListener('click', () => {
                 mobileMenu.classList.remove('flex');
             }, 400);
         }
-        if (menuBtn) menuBtn.innerHTML = '<i data-lucide="menu"></i>';
+        if (menuBtn) {
+            menuBtn.innerHTML = '<i data-lucide="menu"></i>';
+            menuBtn.setAttribute('aria-expanded', 'false');
+        }
         document.body.style.overflow = '';
     }
     lucide.createIcons();
@@ -199,7 +205,10 @@ menuLinks.forEach(link => {
             }, 400);
         }
         menuOpen = false;
-        if (menuBtn) menuBtn.innerHTML = '<i data-lucide="menu"></i>';
+        if (menuBtn) {
+            menuBtn.innerHTML = '<i data-lucide="menu"></i>';
+            menuBtn.setAttribute('aria-expanded', 'false');
+        }
         document.body.style.overflow = '';
         lucide.createIcons();
     });
@@ -389,6 +398,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Setup SweetAlert2 Contact Form
     initContactForm();
+
+    // Setup Language Dropdowns (Click/Tap interaction)
+    initLangDropdowns();
 });
 
 // Live Telemetry Simulation
@@ -697,3 +709,37 @@ function processTerminalCommand(cmd) {
     // Append new input line
     setTimeout(appendTerminalInput, 100);
 }
+
+// Language Dropdowns (Click/Tap active toggling)
+function initLangDropdowns() {
+    const dropdowns = document.querySelectorAll('.lang-dropdown');
+    
+    dropdowns.forEach(dropdown => {
+        const btn = dropdown.querySelector('.lang-btn');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // Close other dropdowns
+                dropdowns.forEach(other => {
+                    if (other !== dropdown) {
+                        other.classList.remove('active');
+                        const otherBtn = other.querySelector('.lang-btn');
+                        if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+                    }
+                });
+                const isActive = dropdown.classList.toggle('active');
+                btn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+            });
+        }
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', () => {
+        dropdowns.forEach(dropdown => {
+            dropdown.classList.remove('active');
+            const btn = dropdown.querySelector('.lang-btn');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+        });
+    });
+}
+

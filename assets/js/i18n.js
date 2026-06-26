@@ -15,8 +15,8 @@ const translations = {
         about_title: "Building the Future of Autonomous Intelligence",
         about_p1: "Autonovations is a deep-tech engineering lab focused on the seamless integration of Artificial Intelligence, Robotics, and Industrial IoT (IIoT).",
         about_p2: "We don't just build software; we build physical-digital systems that perceive, decide, and act in the real world. From intelligent drones mapping complex environments to robotic systems integrated with state-of-the-art AI.",
-        about_stat1: "Unified",
-        about_stat2: "Robotics",
+        about_stat1: "Core Integration",
+        about_stat2: "Active Robotics Projects",
         tech_subtitle: "Core Architecture",
         tech_title: "Technological Arsenal",
         tech_card1_title: "AI Systems",
@@ -198,8 +198,8 @@ const translations = {
         about_title: "Construyendo el Futuro de la Inteligencia Autónoma",
         about_p1: "Autonovations es un laboratorio de ingeniería de tecnología profunda enfocado en la integración perfecta de Inteligencia Artificial, Robótica e IoT Industrial (IIoT).",
         about_p2: "No solo construimos software; construimos sistemas físico-digitales que perciben, deciden y actúan en el mundo real. Desde drones inteligentes que mapean entornos complejos hasta sistemas robóticos integrados con IA de vanguardia.",
-        about_stat1: "Unificado",
-        about_stat2: "Robótica",
+        about_stat1: "Integración Core",
+        about_stat2: "Proyectos Activos de Robótica",
         tech_subtitle: "Arquitectura Core",
         tech_title: "Arsenal Tecnológico",
         tech_card1_title: "Sistemas de IA",
@@ -369,13 +369,23 @@ const translations = {
 };
 
 function setLanguage(lang) {
-    const flagUrl = lang === 'es' ? 'https://flagcdn.com/w40/co.png' : 'https://flagcdn.com/w40/us.png';
+    const langText = lang.toUpperCase();
 
-    const currentFlag = document.getElementById('currentFlag');
-    if (currentFlag) currentFlag.src = flagUrl;
+    const currentLangText = document.getElementById('currentLangText');
+    if (currentLangText) currentLangText.textContent = langText;
     
-    const mobileCurrentFlag = document.getElementById('mobileCurrentFlag');
-    if (mobileCurrentFlag) mobileCurrentFlag.src = flagUrl;
+    const mobileCurrentLangText = document.getElementById('mobileCurrentLangText');
+    if (mobileCurrentLangText) mobileCurrentLangText.textContent = langText;
+
+    // Update triggers visual ARIA states
+    const currentLangBtn = document.getElementById('currentLangBtn');
+    if (currentLangBtn) {
+        currentLangBtn.setAttribute('aria-label', lang === 'es' ? 'Seleccionar idioma' : 'Select Language');
+    }
+    const mobileCurrentLangBtn = document.getElementById('mobileCurrentLangBtn');
+    if (mobileCurrentLangBtn) {
+        mobileCurrentLangBtn.setAttribute('aria-label', lang === 'es' ? 'Seleccionar idioma' : 'Select Language');
+    }
 
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
@@ -393,9 +403,11 @@ function setLanguage(lang) {
 
     document.querySelectorAll('.lang-option').forEach(btn => {
         btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
         const onClickAttr = btn.getAttribute('onclick');
         if (onClickAttr && onClickAttr.includes(`'${lang}'`)) {
             btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
         }
     });
 
