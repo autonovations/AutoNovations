@@ -35,20 +35,6 @@
   I'm a <strong>Software Engineer</strong> and <strong>Data Engineer</strong> passionate about building intelligent systems that connect software with the physical world. At <strong>AutoNovations</strong>, I work on <strong>Artificial Intelligence</strong>, <strong>Robotics</strong>, <strong>Industrial IoT (IIoT)</strong>, and <strong>real-time data solutions</strong>, designing scalable architectures that enable automation and data-driven decision making.
   <br><br>
 
-  <strong>🚀 Core Specialties</strong><br><br>
-
-  • Data Engineering<br>
-  • Artificial Intelligence &amp; Machine Learning<br>
-  • Robotics &amp; Automation<br>
-  • Industrial Internet of Things (IIoT)<br>
-  • Real-Time Data Processing<br>
-  • Computer Vision<br>
-  • Backend Development &amp; APIs<br>
-  • Cloud Computing &amp; Docker<br>
-  • Data Pipelines &amp; ETL<br>
-  • Distributed Systems
-  <br><br>
-
 
   Here you'll find my projects, technologies, and professional journey as I continue building intelligent, scalable, and data-driven solutions. 🚀
 </p>
