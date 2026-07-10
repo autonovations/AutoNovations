@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="https://factordeveloper.github.io/Portafolio-Proyectos/" target="_blank">
+  <a href="https://autonovations.github.io/AutoNovations/about.html" target="_blank">
     <img src="https://img.shields.io/badge/Portfolio-Active-00D9FF?style=for-the-badge&logo=react&logoColor=black" alt="Portfolio">
   </a>
   <a href="mailto:felipeherrerapinzon@gmail.com">
@@ -154,7 +154,7 @@
       <h3>✨ Professional Profiles</h3>
       <ul>
         <li>
-          <a href="https://factordeveloper.github.io/Portafolio-Proyectos/" target="_blank">
+          <a href="https://autonovations.github.io/AutoNovations/about.html" target="_blank">
             <img src="./assets/profile/star.webp" width="20px"> <b>Personal Portfolio</b>
           </a>
           <br>Explore my client projects, open-source work, and live demos.
@@ -168,7 +168,7 @@
         </li>
         <br>
         <li>
-          <a href="https://developers.google.com/profile/u/factor-developer" target="_blank">
+          <a href="https://developers.google.com/profile/u/autonovations" target="_blank">
             <img src="./assets/profile/googlemap.webp" width="20px"> <b>Google Developer Program</b>
           </a>
           <br>Learn about my active participation and profile badge achievements.
@@ -205,7 +205,7 @@
   <a target="_blank" href="#">
     <img src="https://skillicons.dev/icons?i=discord" alt="Discord" />
   </a>
-  <a target="_blank" href="https://github.com/factordeveloper">
+  <a target="_blank" href="https://autonovations.github.io/AutoNovations/">
     <img src="https://skillicons.dev/icons?i=github" alt="GitHub" />
   </a>
   <a target="_blank" href="https://www.youtube.com/channel/UC-cU2oHg4-hjeI21ov3wn4w">
