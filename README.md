@@ -26,12 +26,44 @@
 
 <br>
 
+
 <p align="center">
-  <img src="./assets/profile/gato_dev.webp" width="28%" align="right">
-  Welcome to my developer profile! I bridge the gap between software systems and physical realities. 
-  As an engineering lead, I focus on the seamless integration of Artificial Intelligence, Robotics, and Industrial IoT (IIoT) at <b>AutoNovations</b>. 
-  Feel free to explore my profile sections below! 🚀
+  <img src="./assets/profile/gato_dev.webp" width="28%" align="right" alt="Profile">
+
+  <strong>Welcome! 👋</strong><br><br>
+
+  I'm a <strong>Software Engineer</strong> and <strong>Data Engineer</strong> passionate about building intelligent systems that connect software with the physical world. At <strong>AutoNovations</strong>, I work on <strong>Artificial Intelligence</strong>, <strong>Robotics</strong>, <strong>Industrial IoT (IIoT)</strong>, and <strong>real-time data solutions</strong>, designing scalable architectures that enable automation and data-driven decision making.
+  <br><br>
+
+  <strong>🚀 Core Specialties</strong><br><br>
+
+  • Data Engineering<br>
+  • Artificial Intelligence &amp; Machine Learning<br>
+  • Robotics &amp; Automation<br>
+  • Industrial Internet of Things (IIoT)<br>
+  • Real-Time Data Processing<br>
+  • Computer Vision<br>
+  • Backend Development &amp; APIs<br>
+  • Cloud Computing &amp; Docker<br>
+  • Data Pipelines &amp; ETL<br>
+  • Distributed Systems
+  <br><br>
+
+  <strong>💻 Tech Stack</strong><br><br>
+
+  <strong>Languages:</strong> Python, JavaScript, SQL, C++<br>
+  <strong>Backend:</strong> FastAPI, Node.js<br>
+  <strong>Frontend:</strong> React<br>
+  <strong>Databases:</strong> PostgreSQL, MongoDB<br>
+  <strong>Data Engineering:</strong> Apache Spark, Apache Kafka, Apache Airflow<br>
+  <strong>DevOps &amp; Cloud:</strong> Docker, Git, Linux, AWS
+  <br><br>
+
+  Here you'll find my projects, technologies, and professional journey as I continue building intelligent, scalable, and data-driven solutions. 🚀
 </p>
+
+
+
 
 <br clear="right">
 <br>
@@ -117,7 +149,7 @@
 
 ---
 
-## 🎮 04_activity_board.exe
+## 🎮 03_activity_board.exe
 
 <p align="center">
   <b>🏆 Contributions Trophy Board</b>
@@ -137,7 +169,7 @@
 
 ---
 
-## 🔗 05_portfolio_and_stores.lnk
+## 🔗 04_portfolio_and_stores.lnk
 
 <table>
   <tr>
@@ -178,7 +210,7 @@
 
 ---
 
-## 🤝 06_communication_channels.net
+## 🤝 05_communication_channels.net
 
 <p align="center">
   <img src="./assets/profile/Earth.gif" width="40px">
