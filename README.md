@@ -49,15 +49,6 @@
   • Distributed Systems
   <br><br>
 
-  <strong>💻 Tech Stack</strong><br><br>
-
-  <strong>Languages:</strong> Python, JavaScript, SQL, C++<br>
-  <strong>Backend:</strong> FastAPI, Node.js<br>
-  <strong>Frontend:</strong> React<br>
-  <strong>Databases:</strong> PostgreSQL, MongoDB<br>
-  <strong>Data Engineering:</strong> Apache Spark, Apache Kafka, Apache Airflow<br>
-  <strong>DevOps &amp; Cloud:</strong> Docker, Git, Linux, AWS
-  <br><br>
 
   Here you'll find my projects, technologies, and professional journey as I continue building intelligent, scalable, and data-driven solutions. 🚀
 </p>
