@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="theme-color" content="#3776AB">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python 3.12+ Mastery 2026 - Curso Profesional Completo | AutoNovations Academy</title>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+      if (savedTheme === 'light') { document.documentElement.classList.add('light'); }
+      else { document.documentElement.classList.remove('light'); }
+    })();
+  </script>
+  <meta name="description" content="Curso completo e interactivo de Python 3.12+ en 2026. Desde fundamentos, POO, concurrencia, asyncio, type hinting, hasta FastAPI, testing y proyectos reales.">
+  <meta name="keywords" content="Python, Python 3.12, Programación, Asyncio, FastAPI, POO, Data Science, AutoNovations Academy">
+  <meta name="author" content="AutoNovations Academy">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="../assets/js/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-darker: #06090f; --bg-dark: #0a0e17; --bg-card: #111827;
+      --bg-card-hover: #1b263b; --border: #1e293b; --border-focus: #3776ab;
+      --accent-cyan: #306998; --accent-cyan-bright: #4b8bbe;
+      --accent-cyan-dim: rgba(55,118,171,0.15);
+      --accent-yellow: #ffd43b; --accent-yellow-dim: rgba(255,212,59,0.15);
+      --accent-green: #10b981; --accent-green-neon: #39ff14;
+      --accent-green-dim: rgba(16,185,129,0.15);
+      --accent-red: #ef4444; --accent-red-neon: #ff3366;
+      --accent-red-dim: rgba(239,68,68,0.15);
+      --accent-amber: #f59e0b; --accent-amber-dim: rgba(245,158,11,0.15);
+      --accent-purple: #8b5cf6; --accent-purple-dim: rgba(139,92,246,0.12);
+      --accent-blue: #3b82f6; --accent-blue-dim: rgba(59,130,246,0.12);
+      --text-primary: #f3f4f6; --text-secondary: #9ca3af; --text-muted: #6b7280;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
+      --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    html.light {
+      --bg-darker: #f3f4f6; --bg-dark: #ffffff; --bg-card: #ffffff;
+      --bg-card-hover: #f9fafb; --border: #e5e7eb; --border-focus: #2563eb;
+      --accent-cyan: #2563eb; --accent-cyan-bright: #3b82f6;
+      --accent-cyan-dim: rgba(37,99,235,0.1);
+      --accent-yellow: #d97706; --accent-yellow-dim: rgba(217,119,6,0.1);
+      --accent-green: #059669; --accent-green-neon: #10b981;
+      --accent-green-dim: rgba(5,150,105,0.1);
+      --accent-red: #dc2626; --accent-red-neon: #ef4444;
+      --accent-red-dim: rgba(220,38,38,0.1);
+      --accent-amber: #d97706; --accent-amber-dim: rgba(217,119,6,0.1);
+      --accent-purple: #7c3aed; --accent-purple-dim: rgba(124,58,237,0.1);
+      --accent-blue: #2563eb; --accent-blue-dim: rgba(37,99,235,0.1);
+      --text-primary: #111827; --text-secondary: #4b5563; --text-muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg-darker); color: var(--text-primary); font-family: var(--font-sans); line-height: 1.6; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-darker); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-sm); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-yellow); }
+    .app-container { display: flex; min-height: 100vh; }
+    .sidebar { width: 290px; background-color: var(--bg-dark); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; padding: 1.5rem; transition: transform 0.3s; overflow-y: auto; }
+    .sidebar-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--accent-yellow); letter-spacing: 0.05em; margin-bottom: 0.5rem; text-transform: uppercase; text-decoration: none; }
+    .sidebar-subtitle { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.5rem; padding-left: 34px; }
+    .nav-section-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); padding: 0.75rem 0 0.4rem 0; border-top: 1px solid var(--border); margin-top: 0.5rem; }
+    .nav-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .nav-item button { width: 100%; background: none; border: none; outline: none; color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.8rem; font-weight: 500; text-align: left; padding: 8px 12px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: var(--transition); border: 1px solid transparent; }
+    .nav-item button:hover { background-color: var(--bg-card-hover); color: var(--text-primary); }
+    .nav-item.active button { background-color: var(--accent-yellow-dim); color: var(--accent-yellow); border: 1px solid rgba(255,212,59,0.3); }
+    .nav-item.completed button { color: var(--accent-green); }
+    .nav-check { display: none; color: var(--accent-green); margin-left: auto; }
+    .nav-item.completed .nav-check { display: inline-block; }
+    .nav-num { min-width: 20px; height: 20px; border-radius: 50%; background: var(--border); color: var(--text-muted); font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-item.active .nav-num { background: var(--accent-yellow); color: #06090f; }
+    .nav-item.completed .nav-num { background: var(--accent-green-dim); color: var(--accent-green); }
+    .progress-box { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 1.5rem; text-align: center; }
+    .progress-box-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .progress-circle-wrapper { position: relative; width: 90px; height: 90px; margin: 0 auto 8px; }
+    .progress-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .progress-bg-circle { fill: none; stroke: var(--border); stroke-width: 8; }
+    .progress-bar-circle { fill: none; stroke: var(--accent-yellow); stroke-width: 8; stroke-dasharray: 226; stroke-dashoffset: 226; transition: stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1); stroke-linecap: round; }
+    .progress-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--accent-yellow); }
+    .progress-details { font-size: 0.7rem; color: var(--text-muted); }
+    .main-content { margin-left: 290px; flex-grow: 1; padding: 2.5rem; max-width: calc(100% - 290px); min-height: 100vh; display: flex; flex-direction: column; transition: margin-left 0.3s, max-width 0.3s; }
+    .content-header { margin-bottom: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; }
+    .content-header h1 { font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 12px; }
+    .content-header p { color: var(--text-secondary); font-size: 0.92rem; }
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-left: 1rem; }
+    .theme-toggle-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 38px; height: 38px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+    .theme-toggle-btn:hover { border-color: var(--accent-yellow); }
+    .mobile-menu-btn { display: none; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 38px; height: 38px; border-radius: var(--radius-md); cursor: pointer; align-items: center; justify-content: center; transition: var(--transition); }
+    .tab-pane { display: none; animation: fadeIn 0.4s ease; }
+    .tab-pane.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .learning-section { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 1.75rem; }
+    .learning-section h2 { font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 1.25rem; color: var(--accent-yellow); border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+    .learning-section h3 { font-family: var(--font-display); font-size: 1.05rem; margin: 1.5rem 0 0.6rem 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+    .learning-section h4 { font-family: var(--font-display); font-size: 0.95rem; margin: 1.2rem 0 0.5rem 0; color: var(--accent-yellow); }
+    .learning-section p { color: var(--text-secondary); font-size: 0.93rem; margin-bottom: 1rem; line-height: 1.75; }
+    .learning-section ul, .learning-section ol { margin-left: 1.5rem; margin-bottom: 1rem; color: var(--text-secondary); }
+    .learning-section li { margin-bottom: 5px; font-size: 0.93rem; line-height: 1.6; }
+    .definition-box { background-color: var(--bg-darker); border-left: 3px solid var(--accent-yellow); padding: 1rem 1.25rem; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin: 1rem 0; }
+    .definition-term { font-family: var(--font-display); font-weight: 700; color: var(--accent-yellow); font-size: 0.88rem; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .definition-desc { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.55; }
+    .alert-box { padding: 1rem 1.25rem; border-radius: var(--radius-lg); margin: 1.25rem 0; display: flex; gap: 12px; align-items: flex-start; border: 1px solid transparent; }
+    .alert-box.info { background-color: var(--accent-cyan-dim); border-color: rgba(55,118,171,0.25); }
+    .alert-box.info i { color: var(--accent-cyan-bright); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.warn { background-color: var(--accent-amber-dim); border-color: rgba(245,158,11,0.25); }
+    .alert-box.warn i { color: var(--accent-amber); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.success { background-color: var(--accent-green-dim); border-color: rgba(16,185,129,0.25); }
+    .alert-box.success i { color: var(--accent-green); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.danger { background-color: var(--accent-red-dim); border-color: rgba(239,68,68,0.25); }
+    .alert-box.danger i { color: var(--accent-red); flex-shrink: 0; margin-top: 2px; }
+    .alert-box-text { font-size: 0.87rem; line-height: 1.65; color: var(--text-primary); }
+    .code-block { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); margin: 1rem 0; overflow: hidden; }
+    .code-block-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); }
+    .code-lang { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-family: var(--font-mono); }
+    .code-copy-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 3px 8px; border-radius: var(--radius-sm); font-size: 0.7rem; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 4px; }
+    .code-copy-btn:hover { border-color: var(--accent-yellow); color: var(--accent-yellow); }
+    .code-block pre { padding: 1rem 1.25rem; overflow-x: auto; font-family: var(--font-mono); font-size: 0.83rem; line-height: 1.7; color: #e2e8f0; }
+    .code-block pre .cmd { color: var(--accent-yellow); }
+    .code-block pre .out { color: var(--accent-green); }
+    .code-block pre .cmt { color: var(--text-muted); font-style: italic; }
+    .code-block pre .kw { color: #c084fc; }
+    .code-block pre .str { color: #fbbf24; }
+    .code-block pre .num { color: #fb923c; }
+    .code-block pre .type { color: #38bdf8; }
+    .code-block pre .dec { color: #f472b6; }
+    .quiz-section { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; margin-bottom: 1.75rem; }
+    .quiz-title-bar { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--accent-yellow); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .quiz-question { margin-bottom: 1.5rem; }
+    .q-text { font-size: 0.92rem; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+    .q-options { display: flex; flex-direction: column; gap: 7px; }
+    .q-option { background: var(--bg-darker); border: 1px solid var(--border); color: var(--text-secondary); padding: 9px 14px; border-radius: var(--radius-md); font-size: 0.85rem; cursor: pointer; text-align: left; transition: var(--transition); }
+    .q-option:hover { border-color: var(--accent-yellow); color: var(--text-primary); }
+    .q-option.correct { background-color: var(--accent-green-dim); border-color: var(--accent-green); color: var(--accent-green-neon); pointer-events: none; }
+    .q-option.incorrect { background-color: var(--accent-red-dim); border-color: var(--accent-red); color: var(--accent-red-neon); pointer-events: none; }
+    .q-option.disabled { pointer-events: none; opacity: 0.5; }
+    .q-explanation { font-size: 0.82rem; color: var(--text-secondary); margin-top: 8px; padding: 8px 12px; background: var(--bg-darker); border-radius: var(--radius-sm); display: none; border-left: 3px solid var(--accent-yellow); }
+    .quiz-score-msg { background: var(--accent-green-dim); border: 1px solid var(--accent-green); color: var(--accent-green-neon); padding: 10px 14px; border-radius: var(--radius-md); font-size: 0.85rem; text-align: center; margin-top: 1rem; display: none; }
+    .module-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; flex-wrap: wrap; gap: 10px; }
+    .action-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; font-size: 0.87rem; display: flex; align-items: center; gap: 8px; transition: var(--transition); font-family: var(--font-sans); text-decoration: none; }
+    .action-btn:hover { border-color: var(--accent-yellow); color: var(--accent-yellow); }
+    .action-btn.primary { background: var(--accent-yellow-dim); border-color: var(--accent-yellow); color: var(--accent-yellow); }
+    .action-btn.primary:hover { background: var(--accent-yellow); color: #06090f; }
+    .action-btn:disabled { opacity: 0.4; pointer-events: none; }
+    .read-confirmation { display: flex; align-items: center; gap: 10px; background: var(--bg-darker); border: 1px solid var(--border); padding: 9px 14px; border-radius: var(--radius-md); }
+    .read-checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent-yellow); }
+    .read-label { font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-secondary); }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 1rem 0; }
+    .compare-table th { background: var(--bg-darker); color: var(--accent-yellow); padding: 10px 12px; text-align: left; font-family: var(--font-display); font-weight: 600; border: 1px solid var(--border); }
+    .compare-table td { padding: 9px 12px; border: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+    .compare-table tr:hover td { background: var(--bg-card-hover); }
+    .compare-table .highlight { color: var(--accent-yellow); font-weight: 600; }
+    .compare-table .good { color: var(--accent-green); }
+    .compare-table .bad { color: var(--accent-red); }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 1rem; margin: 1.25rem 0; }
+    .info-card { background: var(--bg-darker); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; border-top: 3px solid var(--accent-yellow); transition: var(--transition); }
+    .info-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+    .info-card-icon { color: var(--accent-yellow); margin-bottom: 10px; }
+    .info-card-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 5px; }
+    .info-card-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+    .level-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; padding: 3px 8px; border-radius: var(--radius-sm); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-beginner { background: var(--accent-green-dim); color: var(--accent-green); }
+    .badge-intermediate { background: var(--accent-amber-dim); color: var(--accent-amber); }
+    .badge-advanced { background: var(--accent-purple-dim); color: var(--accent-purple); }
+    .file-tree { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.25rem; font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-secondary); line-height: 2; margin: 1rem 0; }
+    .file-tree .dir { color: var(--accent-yellow); }
+    .file-tree .file { color: #e2e8f0; }
+    .steps-list { display: flex; flex-direction: column; gap: 1rem; margin: 1.25rem 0; }
+    .step-card { display: flex; gap: 1rem; align-items: flex-start; background: var(--bg-darker); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.25rem; transition: var(--transition); }
+    .step-card:hover { border-color: rgba(255,212,59,0.3); }
+    .step-num { min-width: 32px; height: 32px; border-radius: 50%; background: var(--accent-yellow-dim); border: 1px solid rgba(255,212,59,0.3); color: var(--accent-yellow); font-family: var(--font-display); font-weight: 700; font-size: 0.88rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .step-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .step-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; }
+    .ascii-diagram { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.8; color: var(--accent-yellow); margin: 1rem 0; overflow-x: auto; white-space: pre; }
+    .lab-card { background: linear-gradient(135deg, rgba(55,118,171,0.12), rgba(255,212,59,0.06)); border: 1px solid rgba(255,212,59,0.3); border-radius: var(--radius-lg); padding: 1.5rem; margin: 1.25rem 0; }
+    .lab-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; font-family: var(--font-display); font-weight: 700; color: var(--accent-yellow); font-size: 1rem; }
+    .lab-card p { color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 0.5rem; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 99; backdrop-filter: blur(2px); }
+    .sidebar-overlay.open { display: block; }
+    .certificate-card { background: linear-gradient(135deg, rgba(17,24,39,0.95), rgba(10,14,23,0.98)); border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 2.5rem; margin-top: 2rem; text-align: center; display: none; }
+    .certificate-card.unlocked { display: block; animation: fadeIn 0.6s ease; }
+    .cert-icon { color: var(--accent-yellow); margin-bottom: 1rem; }
+    .cert-title { font-family: var(--font-display); font-size: 1.5rem; color: var(--text-primary); margin-bottom: 0.5rem; }
+    .cert-text { color: var(--text-secondary); max-width: 560px; margin: 0 auto 1.5rem; font-size: 0.93rem; }
+    .cert-print-btn { background: linear-gradient(90deg, var(--accent-yellow), #4b8bbe); border: none; color: #070b13; padding: 10px 24px; border-radius: var(--radius-md); font-weight: 700; font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 15px rgba(255,212,59,0.3); transition: var(--transition); }
+    .cert-print-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,212,59,0.5); }
+    @media (max-width: 1024px) { .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); box-shadow: 4px 0 30px rgba(0,0,0,0.5); } .main-content { margin-left: 0; max-width: 100%; } .mobile-menu-btn { display: flex; } }
+    @media (max-width: 640px) { .main-content { padding: 1.25rem; } .content-header h1 { font-size: 1.3rem; } .module-actions { flex-direction: column; } }
+    code { color: var(--accent-yellow); font-family: var(--font-mono); font-size: 0.85em; background: var(--bg-darker); padding: 2px 6px; border-radius: 3px; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 0.75rem 0; }
+    .tag { font-size: 0.72rem; padding: 3px 8px; border-radius: var(--radius-sm); font-family: var(--font-mono); }
+    .tag-blue { background: var(--accent-blue-dim); color: var(--accent-blue); border: 1px solid rgba(59,130,246,0.3); }
+    .tag-yellow { background: var(--accent-yellow-dim); color: var(--accent-yellow); border: 1px solid rgba(255,212,59,0.3); }
+    .tag-green { background: var(--accent-green-dim); color: var(--accent-green); border: 1px solid rgba(16,185,129,0.3); }
+    .tag-purple { background: var(--accent-purple-dim); color: var(--accent-purple); border: 1px solid rgba(139,92,246,0.3); }
+    .tag-amber { background: var(--accent-amber-dim); color: var(--accent-amber); border: 1px solid rgba(245,158,11,0.3); }
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="app-container">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <a class="sidebar-brand" href="../index.html">
+      <i data-lucide="terminal" style="width:20px;height:20px;flex-shrink:0;"></i>
+      AutoNovations
+    </a>
+    <div class="sidebar-subtitle">Python 3.12+ Mastery 2026</div>
+    <div class="progress-box">
+      <div class="progress-box-title">Progreso del Curso</div>
+      <div class="progress-circle-wrapper">
+        <svg class="progress-svg" viewBox="0 0 80 80">
+          <circle class="progress-bg-circle" cx="40" cy="40" r="36"/>
+          <circle class="progress-bar-circle" id="progressCircle" cx="40" cy="40" r="36"/>
+        </svg>
+        <div class="progress-text" id="progressText">0%</div>
+      </div>
+      <div class="progress-details" id="progressDetails">0 de 14 módulos</div>
+    </div>
+    <div class="nav-section-label">Módulos del Curso</div>
+    <ul class="nav-list" id="navList">
+      <li class="nav-item active" data-tab="tab-01"><button onclick="switchTab('tab-01',this)"><span class="nav-num">1</span>Intro &amp; Entorno 2026<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-02"><button onclick="switchTab('tab-02',this)"><span class="nav-num">2</span>Sintaxis &amp; Tipos Básicos<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-03"><button onclick="switchTab('tab-03',this)"><span class="nav-num">3</span>Control &amp; Pattern Matching<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-04"><button onclick="switchTab('tab-04',this)"><span class="nav-num">4</span>Estructuras de Datos<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-05"><button onclick="switchTab('tab-05',this)"><span class="nav-num">5</span>Funciones &amp; Scopes<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-06"><button onclick="switchTab('tab-06',this)"><span class="nav-num">6</span>POO &amp; Data Classes<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-07"><button onclick="switchTab('tab-07',this)"><span class="nav-num">7</span>Excepciones &amp; Debugging<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-08"><button onclick="switchTab('tab-08',this)"><span class="nav-num">8</span>Archivos &amp; Context Managers<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-09"><button onclick="switchTab('tab-09',this)"><span class="nav-num">9</span>Módulos &amp; Packaging<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-10"><button onclick="switchTab('tab-10',this)"><span class="nav-num">10</span>Decoradores &amp; Generadores<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-11"><button onclick="switchTab('tab-11',this)"><span class="nav-num">11</span>Concurrencia &amp; Asyncio<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-12"><button onclick="switchTab('tab-12',this)"><span class="nav-num">12</span>Type Hinting &amp; Metaprogramación<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-13"><button onclick="switchTab('tab-13',this)"><span class="nav-num">13</span>Testing &amp; Calidad de Código<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-14"><button onclick="switchTab('tab-14',this)"><span class="nav-num">14</span>Proyectos Pro de Industria<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="content-header">
+      <div>
+        <h1>
+          <i data-lucide="code" style="width:28px;height:28px;color:var(--accent-yellow);"></i>
+          Python 3.12+ Mastery 2026
+        </h1>
+        <p>Programación Moderna · Principios SOLID · Concurrencia Asyncio · Proyectos Reales · 14 Módulos</p>
+      </div>
+      <div class="header-actions">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()" aria-label="Menú">
+          <i data-lucide="menu" style="width:18px;height:18px;"></i>
+        </button>
+        <button class="theme-toggle-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Cambiar tema">
+          <i data-lucide="sun" style="width:16px;height:16px;" id="themeIcon"></i>
+        </button>
+        <a href="../index.html" class="action-btn" style="text-decoration:none;">
+          <i data-lucide="home" style="width:14px;height:14px;"></i> Inicio
+        </a>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 01 — INTRODUCCIÓN Y ENTORNO
+    ═══════════════════════════════════════════ -->
+    <div class="tab-pane active" id="tab-01">
+      <div class="learning-section">
+        <h2><i data-lucide="info" style="width:20px;height:20px;"></i> Capítulo 1 · Introducción a Python 3.12+ y Entorno de Desarrollo</h2>
+        <span class="level-badge badge-beginner" style="margin-bottom:1rem;display:inline-flex;">Nivel 1 · Principiante</span>
+
+        <p>Python es el lenguaje número #1 en la industria global del software en 2026, dominando desarrollo backend, ciencia de datos, inteligencia artificial, automatización, backend de microservicios y ciberseguridad. Su sintaxis clara y expresiva combinada con un ecosistema gigantesco lo convierten en una herramienta fundamental.</p>
+
+        <div class="definition-box">
+          <div class="definition-term">¿Por qué Python 3.12+?</div>
+          <div class="definition-desc">Python 3.12 introdujo mejoras masivas de rendimiento (Interpreter Speedups de 15-60%), mensajes de error hiperprecisos y legibles, mejor sintaxis de tipos genéricos y soporte optimizado de sub-intérpretes aislados (PEP 684).</div>
+        </div>
+
+        <h3><i data-lucide="terminal" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 1.1 El Zen de Python</h3>
+        <p>Ingresa <code>import this</code> en la consola interactiva de Python para leer las directrices de diseño de Tim Peters:</p>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python REPL</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="cmd">python3</span>
+<span class="out">>>> import this</span>
+<span class="cmt"># Beautiful is better than ugly.</span>
+<span class="cmt"># Explicit is better than implicit.</span>
+<span class="cmt"># Simple is better than complex.</span>
+<span class="cmt"># Readability counts.</span>
+<span class="cmt"># Special cases aren't special enough to break the rules.</span></pre>
+        </div>
+
+        <h3><i data-lucide="box" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 1.2 Configuración del Entorno de Desarrollo</h3>
+        <p>En el desarrollo moderno se utilizan herramientas ultra rápidas como <code>uv</code> (de Astral) o <code>poetry</code> para gestionar versiones y entornos virtuales aislados.</p>
+
+        <div class="steps-list">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title">Instalar Python 3.12+</div>
+              <div class="step-desc">En Windows / Linux / macOS verifica la versión instalada ejecutando <code>python --version</code> o <code>python3 --version</code>.</div>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title">Crear un Entorno Virtual (venv)</div>
+              <div class="step-desc">Aísla las dependencias de tu proyecto para evitar conflictos globales en el sistema.</div>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title">Activar el Entorno</div>
+              <div class="step-desc">En Windows PowerShell: <code>.\venv\Scripts\Activate.ps1</code>. En Linux/macOS: <code>source venv/bin/activate</code>.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Bash / Terminal</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="cmt"># Crear directorio e iniciar venv</span>
+<span class="cmd">mkdir mi_proyecto_python && cd mi_proyecto_python</span>
+<span class="cmd">python -m venv venv</span>
+
+<span class="cmt"># Activar entorno (Linux/macOS)</span>
+<span class="cmd">source venv/bin/activate</span>
+
+<span class="cmt"># O usar uv (Administrador de paquetes ultra rápido escrito en Rust)</span>
+<span class="cmd">uv venv</span>
+<span class="cmd">uv pip install requests pydantic pytest</span></pre>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="zap" style="width:22px;height:22px;"></i></div>
+            <div class="info-card-title">Interpretado y Rápido</div>
+            <div class="info-card-desc">Python es interpretado mediante código de bytes (bytecode .pyc) y optimizado con un compilador JIT especializado.</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="layers" style="width:22px;height:22px;"></i></div>
+            <div class="info-card-title">Tipado Dinámico Fuertemente Tipado</div>
+            <div class="info-card-desc">No necesitas declarar el tipo de una variable explícitamente, pero Python impide operaciones inválidas entre tipos incompatibles.</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="cpu" style="width:22px;height:22px;"></i></div>
+            <div class="info-card-title">Multiparadigma</div>
+            <div class="info-card-desc">Soporta estilo imperativo, orientado a objetos (POO), funcional y asíncrono en un mismo ecosistema limpio.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUIZ 1 -->
+      <div class="quiz-section" id="quiz-01">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 1</div>
+        <div class="quiz-question" id="q01-1">
+          <div class="q-text">1. ¿Qué comando crea un entorno virtual nativo en Python?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q01-1',false)">A) python init venv</button>
+            <button class="q-option" onclick="checkAnswer(this,'q01-1',true)">B) python -m venv venv</button>
+            <button class="q-option" onclick="checkAnswer(this,'q01-1',false)">C) pip create virtualenv</button>
+            <button class="q-option" onclick="checkAnswer(this,'q01-1',false)">D) python create environment</button>
+          </div>
+          <div class="q-explanation">El módulo nativo <code>venv</code> incluido en la librería estándar se invoca mediante <code>python -m venv nombre_entorno</code>.</div>
+        </div>
+        <div class="quiz-question" id="q01-2">
+          <div class="q-text">2. ¿Qué significa que Python sea de "tipado dinámico fuertemente tipado"?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q01-2',false)">A) Que los tipos de datos deben ser declarados estrictamente antes de compilar</button>
+            <button class="q-option" onclick="checkAnswer(this,'q01-2',true)">B) Que las variables infieren su tipo en tiempo de ejecución, pero no se pueden mezclar implícitamente tipos incompatibles (ej. "5" + 5 lanza TypeError)</button>
+            <button class="q-option" onclick="checkAnswer(this,'q01-2',false)">C) Que Python convierte automáticamente strings a enteros sin error</button>
+            <button class="q-option" onclick="checkAnswer(this,'q01-2',false)">D) Que todas las variables son punteros sin tipo</button>
+          </div>
+          <div class="q-explanation">En Python, el tipo pertenece al objeto, no a la variable (dinámico). Sin embargo, Python no realiza coerción implícita de tipos peligrosos como C o JS (fuerte).</div>
+        </div>
+        <div class="quiz-score-msg" id="score-01"></div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-01" onchange="markComplete('tab-01','check-01')">
+          <label class="read-label" for="check-01">Marcar capítulo como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-02',null)">Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 02 — SINTAXIS BÁSICA Y TIPOS DE DATOS
+    ═══════════════════════════════════════════ -->
+    <div class="tab-pane" id="tab-02">
+      <div class="learning-section">
+        <h2><i data-lucide="database" style="width:20px;height:20px;"></i> Capítulo 2 · Sintaxis Básica, Variables y Tipos Primitivos</h2>
+        <span class="level-badge badge-beginner" style="margin-bottom:1rem;display:inline-flex;">Nivel 1 · Principiante</span>
+
+        <p>En Python todo es un objeto. Las variables actúan como etiquetas de referencia que apuntan a objetos en memoria.</p>
+
+        <h3><i data-lucide="code-2" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 2.1 Tipos de Datos Primitivos</h3>
+        <table class="compare-table">
+          <thead><tr><th>Tipo</th><th>Ejemplo</th><th>Descripción</th><th>Mutabilidad</th></tr></thead>
+          <tbody>
+            <tr><td><code>int</code></td><td><code>42</code>, <code>-1000</code></td><td>Enteros de precisión arbitraria</td><td class="bad">Inmutable</td></tr>
+            <tr><td><code>float</code></td><td><code>3.14159</code>, <code>2.5e-3</code></td><td>Números de punto flotante de 64-bit</td><td class="bad">Inmutable</td></tr>
+            <tr><td><code>str</code></td><td><code>"Hola Python"</code></td><td>Cadenas de caracteres Unicode</td><td class="bad">Inmutable</td></tr>
+            <tr><td><code>bool</code></td><td><code>True</code>, <code>False</code></td><td>Booleanos (subclase de int)</td><td class="bad">Inmutable</td></tr>
+            <tr><td><code>bytes</code></td><td><code>b"ASCII"</code></td><td>Secuencia inmutable de bytes</td><td class="bad">Inmutable</td></tr>
+            <tr><td><code>NoneType</code></td><td><code>None</code></td><td>Representa la ausencia explícita de valor</td><td class="bad">Inmutable</td></tr>
+          </tbody>
+        </table>
+
+        <h3><i data-lucide="file-text" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 2.2 Manipulación de Strings e Interpolación</h3>
+        <p>Python soporta f-strings (format strings) con expresiones avanzadas evaluadas en tiempo de ejecución:</p>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="cmt"># Variables</span>
+nombre = <span class="str">"AutoNovations"</span>
+módulos = <span class="num">14</span>
+tasa_éxito = <span class="num">0.985</span>
+
+<span class="cmt"># f-string moderno con especificaciones de formato</span>
+mensaje = <span class="str">f"Curso {nombre.upper()} | Módulos: {módulos} | Éxito: {tasa_éxito:.1%}"</span>
+<span class="kw">print</span>(mensaje)
+<span class="out"># Output: Curso AUTONOVATIONS | Módulos: 14 | Éxito: 98.5%</span>
+
+<span class="cmt"># Operador de autodocumentación (=) disponible desde Python 3.8+</span>
+x = <span class="num">10</span>
+y = <span class="num">25</span>
+<span class="kw">print</span>(<span class="str">f"{x=}, {y=}, {x+y=}"</span>)
+<span class="out"># Output: x=10, y=25, x+y=35</span></pre>
+        </div>
+
+        <h3><i data-lucide="cpu" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 2.3 Conversión de Tipos (Casting) y Operadores</h3>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="cmt"># Casting explícito</span>
+edad_str = <span class="str">"28"</span>
+edad_num = <span class="type">int</span>(edad_str)
+
+<span class="cmt"># Divisibilidad entera (//) y exponenciación (**)</span>
+cuadrado = <span class="num">5</span> ** <span class="num">2</span>   <span class="cmt"># 25</span>
+div_entera = <span class="num">17</span> // <span class="num">5</span> <span class="cmt"># 3</span>
+modulo = <span class="num">17</span> % <span class="num">5</span>     <span class="cmt"># 2</span>
+
+<span class="cmt"># Operadores Lógicos (and, or, not) y de Pertenencia (in, not in)</span>
+es_valido = <span class="num">18</span> <= edad_num <span class="kw">and</span> <span class="str">"Auto"</span> <span class="kw">in</span> nombre</pre>
+        </div>
+      </div>
+
+      <!-- QUIZ 2 -->
+      <div class="quiz-section" id="quiz-02">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 2</div>
+        <div class="quiz-question" id="q02-1">
+          <div class="q-text">1. ¿Qué resultado produce la expresión <code>10 // 3</code> en Python?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q02-1',false)">A) 3.3333333333333335</button>
+            <button class="q-option" onclick="checkAnswer(this,'q02-1',true)">B) 3 (entero redondeado hacia abajo)</button>
+            <button class="q-option" onclick="checkAnswer(this,'q02-1',false)">C) 1 (resto de la división)</button>
+            <button class="q-option" onclick="checkAnswer(this,'q02-1',false)">D) Lanza un SyntaxError</button>
+          </div>
+          <div class="q-explanation">El operador <code>//</code> realiza división floor (división entera redondeada hacia el infinito negativo).</div>
+        </div>
+        <div class="quiz-question" id="q02-2">
+          <div class="q-text">2. ¿Por qué los strings (<code>str</code>) son considerados inmutables?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q02-2',false)">A) Porque no pueden contener caracteres Unicode</button>
+            <button class="q-option" onclick="checkAnswer(this,'q02-2',true)">B) Porque una vez creados en memoria, sus caracteres individuales no pueden ser modificados in-place</button>
+            <button class="q-option" onclick="checkAnswer(this,'q02-2',false)">C) Porque se convierten automáticamente en constantes del sistema operativo</button>
+            <button class="q-option" onclick="checkAnswer(this,'q02-2',false)">D) Porque no se pueden concatenar con otros strings</button>
+          </div>
+          <div class="q-explanation">Intenta <code>s = "hola"; s[0] = "H"</code> resultará en un <code>TypeError</code>. Cualquier método de string (ej. <code>s.upper()</code>) retorna una *nueva* cadena.</div>
+        </div>
+        <div class="quiz-score-msg" id="score-02"></div>
+      </div>
+
+      <div class="module-actions">
+        <button class="action-btn" onclick="switchTab('tab-01',null)"><i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior</button>
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-02" onchange="markComplete('tab-02','check-02')">
+          <label class="read-label" for="check-02">Marcar capítulo como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-03',null)">Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 03 — CONTROL DE FLUJO Y PATTERN MATCHING
+    ═══════════════════════════════════════════ -->
+    <div class="tab-pane" id="tab-03">
+      <div class="learning-section">
+        <h2><i data-lucide="git-fork" style="width:20px;height:20px;"></i> Capítulo 3 · Control de Flujo y Pattern Matching</h2>
+        <span class="level-badge badge-beginner" style="margin-bottom:1rem;display:inline-flex;">Nivel 1 · Principiante</span>
+
+        <p>Python utiliza la indentación (4 espacios por estándar PEP 8) para delimitar bloques de código. A partir de Python 3.10, la sentencia <code>match-case</code> provee un poderoso sistema de coincidencia de patrones estructurales.</p>
+
+        <h3><i data-lucide="corner-down-right" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 3.1 Condicionales e Iteraciones</h3>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="cmt"># Condicionales con asignación expresión ternaria</span>
+estado = <span class="str">"Activo"</span> <span class="kw">if</span> limite > <span class="num">0</span> <span class="kw">else</span> <span class="str">"Inactivo"</span>
+
+<span class="cmt"># Bucle for con enumerate y range</span>
+usuarios = [<span class="str">"Alice"</span>, <span class="str">"Bob"</span>, <span class="str">"Charlie"</span>]
+<span class="kw">for</span> indice, usuario <span class="kw">in</span> <span class="type">enumerate</span>(usuarios, start=<span class="num">1</span>):
+    <span class="kw">print</span>(<span class="str">f"[{indice}] Procesando usuario: {usuario}"</span>)
+
+<span class="cmt"># Bucle while con cláusula else (se ejecuta si NO hubo break)</span>
+intentos = <span class="num">0</span>
+<span class="kw">while</span> intentos < <span class="num">3</span>:
+    <span class="kw">if</span> conectar_servidor():
+        <span class="kw">print</span>(<span class="str">"Conexión exitosa"</span>)
+        <span class="kw">break</span>
+    intentos += <span class="num">1</span>
+<span class="kw">else</span>:
+    <span class="kw">print</span>(<span class="str">"Error: Máximo número de reintentos alcanzado"</span>)</pre>
+        </div>
+
+        <h3><i data-lucide="layout-grid" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 3.2 Structural Pattern Matching (match-case)</h3>
+        <p>Mucho más avanzado que un simple <code>switch</code> de C/Java; permite desestructurar diccionarios, tuplas, clases y evaluar guardas <code>if</code>:</p>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python 3.10+</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="kw">def</span> procesar_comando(comando):
+    <span class="kw">match</span> comando.split():
+        <span class="kw">case</span> [<span class="str">"QUIT"</span> | <span class="str">"EXIT"</span>]:
+            <span class="kw">return</span> <span class="str">"Saliendo del programa..."</span>
+        <span class="kw">case</span> [<span class="str">"MOVE"</span>, (<span class="str">"NORTH"</span> | <span class="str">"SOUTH"</span> | <span class="str">"EAST"</span> | <span class="str">"WEST"</span>) <span class="kw">as</span> direccion]:
+            <span class="kw">return</span> <span class="str">f"Moviéndose hacia {direccion}"</span>
+        <span class="kw">case</span> [<span class="str">"GET"</span>, item, <span class="str">"COUNT"</span>, <span class="type">int</span>(cantidad)] <span class="kw">if</span> cantidad > <span class="num">0</span>:
+            <span class="kw">return</span> <span class="str">f"Obteniendo {cantidad} unidades de {item}"</span>
+        <span class="kw">case</span> _:
+            <span class="kw">return</span> <span class="str">"Comando no reconocido"</span></pre>
+        </div>
+      </div>
+
+      <!-- QUIZ 3 -->
+      <div class="quiz-section" id="quiz-03">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 3</div>
+        <div class="quiz-question" id="q03-1">
+          <div class="q-text">1. ¿Cuándo se ejecuta el bloque <code>else</code> asociado a un bucle <code>for</code> o <code>while</code>?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q03-1',false)">A) Siempre al finalizar la primera iteración</button>
+            <button class="q-option" onclick="checkAnswer(this,'q03-1',true)">B) Únicamente si el bucle termina de forma natural sin haber ejecutado una sentencia <code>break</code></button>
+            <button class="q-option" onclick="checkAnswer(this,'q03-1',false)">C) Solo cuando ocurre una excepción sin capturar</button>
+            <button class="q-option" onclick="checkAnswer(this,'q03-1',false)">D) Cuando la condición inicial evalúa a False de inmediato</button>
+          </div>
+          <div class="q-explanation">La cláusula <code>else</code> de los bucles es perfecta para búsquedas: si encuentras el elemento haces <code>break</code>, pero si recorres todo sin encontrarlo se ejecuta el <code>else</code>.</div>
+        </div>
+        <div class="quiz-score-msg" id="score-03"></div>
+      </div>
+
+      <div class="module-actions">
+        <button class="action-btn" onclick="switchTab('tab-02',null)"><i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior</button>
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-03" onchange="markComplete('tab-03','check-03')">
+          <label class="read-label" for="check-03">Marcar capítulo como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-04',null)">Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 04 — ESTRUCTURAS DE DATOS INTEGRADAS
+    ═══════════════════════════════════════════ -->
+    <div class="tab-pane" id="tab-04">
+      <div class="learning-section">
+        <h2><i data-lucide="layers" style="width:20px;height:20px;"></i> Capítulo 4 · Estructuras de Datos Integradas y Comprehensions</h2>
+        <span class="level-badge badge-beginner" style="margin-bottom:1rem;display:inline-flex;">Nivel 1 · Principiante</span>
+
+        <p>Python incluye cuatro estructuras de datos coleccionables fundamentales: <strong>Listas</strong>, <strong>Tuplas</strong>, <strong>Conjuntos (Sets)</strong> y <strong>Diccionarios (Dicts)</strong>.</p>
+
+        <table class="compare-table">
+          <thead><tr><th>Estructura</th><th>Sintaxis</th><th>Ordenada</th><th>Mutable</th><th>Duplicados</th><th>Uso Principal</th></tr></thead>
+          <tbody>
+            <tr><td><code>list</code></td><td><code>[1, 2, 3]</code></td><td class="good">Sí</td><td class="good">Sí</td><td class="good">Sí</td><td>Secuencias mutables generales</td></tr>
+            <tr><td><code>tuple</code></td><td><code>(1, 2, 3)</code></td><td class="good">Sí</td><td class="bad">No</td><td class="good">Sí</td><td>Registros inmutables y retornos múltiples</td></tr>
+            <tr><td><code>dict</code></td><td><code>{"a": 1}</code></td><td class="good">Sí (3.7+)</td><td class="good">Sí</td><td class="bad">Claves únicas</td><td>Mapeos clave-valor / JSON</td></tr>
+            <tr><td><code>set</code></td><td><code>{1, 2, 3}</code></td><td class="bad">No</td><td class="good">Sí</td><td class="bad">No</td><td>Filtro de duplicados y operaciones matemáticas</td></tr>
+          </tbody>
+        </table>
+
+        <h3><i data-lucide="zap" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 4.1 Comprehensions (Comprensiones)</h3>
+        <p>Permiten construir nuevas colecciones de forma concisa y altamente optimizada en código C subyacente:</p>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="cmt"># List Comprehension</span>
+numeros = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>, <span class="num">7</span>, <span class="num">8</span>, <span class="num">9</span>, <span class="num">10</span>]
+cuadrados_pares = [x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> numeros <span class="kw">if</span> x % <span class="num">2</span> == <span class="num">0</span>]
+<span class="cmt"># Result: [4, 16, 36, 64, 100]</span>
+
+<span class="cmt"># Dict Comprehension</span>
+estudiantes = [<span class="str">"Ana"</span>, <span class="str">"Pedro"</span>, <span class="str">"Maria"</span>]
+notas = [<span class="num">95</span>, <span class="num">88</span>, <span class="num">92</span>]
+mapa_notas = {est: nota <span class="kw">for</span> est, nota <span class="kw">in</span> <span class="type">zip</span>(estudiantes, notas)}
+<span class="cmt"># Result: {'Ana': 95, 'Pedro': 88, 'Maria': 92}</span>
+
+<span class="cmt"># Set Comprehension (Elimina duplicados automáticamente)</span>
+tags = [<span class="str">"PYTHON"</span>, <span class="str">"python"</span>, <span class="str">"AI"</span>, <span class="str">"ai"</span>, <span class="str">"FASTAPI"</span>]
+tags_limpios = {t.lower() <span class="kw">for</span> t <span class="kw">in</span> tags}
+<span class="cmt"># Result: {'python', 'ai', 'fastapi'}</span></pre>
+        </div>
+
+        <h3><i data-lucide="scissors" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 4.2 Slicing Avanzado (Rebanado)</h3>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre>items = [<span class="num">0</span>, <span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>, <span class="num">60</span>, <span class="num">70</span>]
+
+<span class="cmt"># Sintaxis: lista[inicio:fin:paso]</span>
+sub_lista = items[<span class="num">2</span>:<span class="num">6</span>]    <span class="cmt"># [20, 30, 40, 50]</span>
+invertida = items[::-<span class="num">1</span>]   <span class="cmt"># [70, 60, 50, 40, 30, 20, 10, 0]</span>
+saltos = items[::<span class="num">2</span>]       <span class="cmt"># [0, 20, 40, 60]</span></pre>
+        </div>
+      </div>
+
+      <!-- QUIZ 4 -->
+      <div class="quiz-section" id="quiz-04">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 4</div>
+        <div class="quiz-question" id="q04-1">
+          <div class="q-text">1. ¿Cuál es la complejidad temporal promedio de búsqueda (<code>x in s</code>) en un <code>set</code> de Python comparado con una <code>list</code>?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q04-1',true)">A) O(1) en Set (Hash Table) vs O(N) en List (Búsqueda Lineal)</button>
+            <button class="q-option" onclick="checkAnswer(this,'q04-1',false)">B) O(N) en ambos casos</button>
+            <button class="q-option" onclick="checkAnswer(this,'q04-1',false)">C) O(log N) en Set vs O(1) en List</button>
+            <button class="q-option" onclick="checkAnswer(this,'q04-1',false)">D) Las listas son siempre más rápidas que los sets</button>
+          </div>
+          <div class="q-explanation">Los conjuntos y claves de diccionarios utilizan tablas Hash internamente, lo que otorga búsquedas instantáneas O(1).</div>
+        </div>
+        <div class="quiz-score-msg" id="score-04"></div>
+      </div>
+
+      <div class="module-actions">
+        <button class="action-btn" onclick="switchTab('tab-03',null)"><i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior</button>
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-04" onchange="markComplete('tab-04','check-04')">
+          <label class="read-label" for="check-04">Marcar capítulo como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-05',null)">Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 05 — FUNCIONES, PARÁMETROS Y SCOPE
+    ═══════════════════════════════════════════ -->
+    <div class="tab-pane" id="tab-05">
+      <div class="learning-section">
+        <h2><i data-lucide="terminal" style="width:20px;height:20px;"></i> Capítulo 5 · Funciones Avanzadas, Type Hinting y Ámbitos</h2>
+        <span class="level-badge badge-intermediate" style="margin-bottom:1rem;display:inline-flex;">Nivel 2 · Intermedio</span>
+
+        <p>Las funciones en Python son ciudadanos de primera clase (first-class citizens), lo que significa que pueden ser asignadas a variables, pasadas como argumentos y retornadas desde otras funciones.</p>
+
+        <h3><i data-lucide="sliders" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 5.1 Parámetros Flexibles: *args, **kwargs y Posicionales Obligatorios</h3>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python 3.8+ Syntax</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="kw">def</span> crear_usuario(
+    nombre: <span class="type">str</span>,
+    /,  <span class="cmt"># Todo antes de '/' DEBE ser posicional únicamente</span>
+    *,  <span class="cmt"># Todo después de '*' DEBE ser mediante keyword explícito</span>
+    email: <span class="type">str</span>,
+    rol: <span class="type">str</span> = <span class="str">"developer"</span>,
+    *habilidades: <span class="type">str</span>,
+    **metadatos: <span class="type">any</span>
+) -> <span class="type">dict</span>:
+    <span class="kw">return</span> {
+        <span class="str">"nombre"</span>: nombre,
+        <span class="str">"email"</span>: email,
+        <span class="str">"rol"</span>: rol,
+        <span class="str">"habilidades"</span>: habilidades,
+        <span class="str">"metadatos"</span>: metadatos
+    }
+
+<span class="cmt"># Uso correcto</span>
+usr = crear_usuario(<span class="str">"Carlos"</span>, email=<span class="str">"carlos@autonovations.com"</span>, <span class="str">"Python"</span>, <span class="str">"Docker"</span>, departamento=<span class="str">"AI"</span>)</pre>
+        </div>
+
+        <div class="alert-box warn">
+          <i data-lucide="alert-triangle" style="width:18px;height:18px;"></i>
+          <div class="alert-box-text"><strong>¡Cuidado con Valores por Defecto Mutables!</strong> Nunca uses objetos mutables como <code>list</code> o <code>dict</code> por defecto (ej. <code>def f(l=[])</code>). Usa <code>def f(l=None): if l is None: l = []</code> en su lugar.</div>
+        </div>
+
+        <h3><i data-lucide="globe" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 5.2 Regla de Scope LEGB (Local, Enclosing, Global, Built-in)</h3>
+        <p>Python busca identificadores en cuatro niveles jerárquicos:</p>
+        <div class="file-tree">
+          1. <span class="dir">L (Local)</span>: Variables definidas dentro de la función activa.<br>
+          2. <span class="dir">E (Enclosing)</span>: Scope de funciones anidadas contenedoras (Closure).<br>
+          3. <span class="dir">G (Global)</span>: Scope a nivel de archivo/módulo actual.<br>
+          4. <span class="dir">B (Built-in)</span>: Funciones globales de Python como print, len, range.
+        </div>
+      </div>
+
+      <!-- QUIZ 5 -->
+      <div class="quiz-section" id="quiz-05">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 5</div>
+        <div class="quiz-question" id="q05-1">
+          <div class="q-text">1. ¿Qué sucede si ejecutas una función definida como <code>def procesar(datos=[])</code> y la llamas múltiples veces seguidas?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q05-1',false)">A) Se crea una nueva lista vacía en cada llamada</button>
+            <button class="q-option" onclick="checkAnswer(this,'q05-1',true)">B) La lista se crea una sola vez al definir la función, compartiendo estado entre llamadas (Trampa de argumento mutable)</button>
+            <button class="q-option" onclick="checkAnswer(this,'q05-1',false)">C) Ocurre un SyntaxError de inmediato</button>
+            <button class="q-option" onclick="checkAnswer(this,'q05-1',false)">D) Python vacía el objeto antes de cada invocación</button>
+          </div>
+          <div class="q-explanation">Los valores por defecto se evalúan en tiempo de *definición* del módulo, no cuando la función se invoca.</div>
+        </div>
+        <div class="quiz-score-msg" id="score-05"></div>
+      </div>
+
+      <div class="module-actions">
+        <button class="action-btn" onclick="switchTab('tab-04',null)"><i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior</button>
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-05" onchange="markComplete('tab-05','check-05')">
+          <label class="read-label" for="check-05">Marcar capítulo como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-06',null)">Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 06 — PROGRAMACIÓN ORIENTADA A OBJETOS (POO)
+    ═══════════════════════════════════════════ -->
+    <div class="tab-pane" id="tab-06">
+      <div class="learning-section">
+        <h2><i data-lucide="cpu" style="width:20px;height:20px;"></i> Capítulo 6 · POO, Dunder Methods y Data Classes</h2>
+        <span class="level-badge badge-intermediate" style="margin-bottom:1rem;display:inline-flex;">Nivel 2 · Intermedio</span>
+
+        <p>La Programación Orientada a Objetos en Python destaca por el uso de métodos especiales rodeados de doble guion bajo (Dunder Methods / Magic Methods) y encapsulamiento idiomático mediante propiedades.</p>
+
+        <h3><i data-lucide="box" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 6.1 Clase Completa con Encapsulamiento y Decoradores</h3>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="kw">class</span> <span class="type">CuentaBancaria</span>:
+    <span class="cmt"># Atributo de Clase</span>
+    banco = <span class="str">"AutoNovations Bank"</span>
+
+    <span class="kw">def</span> <span class="dec">__init__</span>(self, titular: <span class="type">str</span>, saldo_inicial: <span class="type">float</span> = <span class="num">0.0</span>):
+        self.titular = titular
+        self._saldo = saldo_inicial  <span class="cmt"># Atributo protegido por convención</span>
+
+    <span class="dec">@property</span>
+    <span class="kw">def</span> saldo(self) -> <span class="type">float</span>:
+        <span class="str">"""Getter idiomático para saldo"""</span>
+        <span class="kw">return</span> self._saldo
+
+    <span class="dec">@saldo.setter</span>
+    <span class="kw">def</span> saldo(self, nuevo_monto: <span class="type">float</span>):
+        <span class="str">"""Setter con validación de negocio"""</span>
+        <span class="kw">if</span> nuevo_monto < <span class="num">0</span>:
+            <span class="kw">raise</span> <span class="type">ValueError</span>(<span class="str">"El saldo no puede ser negativo"</span>)
+        self._saldo = nuevo_monto
+
+    <span class="cmt"># Dunder Methods</span>
+    <span class="kw">def</span> <span class="dec">__repr__</span>(self) -> <span class="type">str</span>:
+        <span class="kw">return</span> <span class="str">f"CuentaBancaria(titular='{self.titular}', saldo={self._saldo})"</span>
+
+    <span class="kw">def</span> <span class="dec">__eq__</span>(self, otro) -> <span class="type">bool</span>:
+        <span class="kw">return</span> <span class="type">isinstance</span>(otro, CuentaBancaria) <span class="kw">and</span> self._saldo == otro._saldo</pre>
+        </div>
+
+        <h3><i data-lucide="sparkles" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 6.2 Data Classes Moderna (@dataclass)</h3>
+        <p>Disponible en el módulo estándar <code>dataclasses</code>; genera automáticamente <code>__init__</code>, <code>__repr__</code>, <code>__eq__</code> y soporte inmutable con <code>frozen=True</code>:</p>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="dec">@dataclass</span>(frozen=<span class="kw">True</span>, order=<span class="kw">True</span>)
+<span class="kw">class</span> <span class="type">Transaccion</span>:
+    id: <span class="type">str</span>
+    monto: <span class="type">float</span>
+    timestamp: datetime = field(default_factory=datetime.now)
+
+<span class="cmt"># Inmutable y auto-comparable</span>
+tx1 = Transaccion(id=<span class="str">"TX-101"</span>, monto=<span class="num">250.0</span>)
+<span class="kw">print</span>(tx1)
+<span class="out"># Output: Transaccion(id='TX-101', monto=250.0, timestamp=datetime.datetime(...))</span></pre>
+        </div>
+      </div>
+
+      <!-- QUIZ 6 -->
+      <div class="quiz-section" id="quiz-06">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 6</div>
+        <div class="quiz-question" id="q06-1">
+          <div class="q-text">1. ¿Qué ventaja ofrece la propiedad <code>@property</code> sobre los getters tradicionales tipo <code>get_saldo()</code>?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q06-1',false)">A) Acelera la velocidad de cómputo del procesador</button>
+            <button class="q-option" onclick="checkAnswer(this,'q06-1',true)">B) Permite acceder a un método como si fuera un atributo público (<code>objeto.saldo</code>) manteniendo validación interna limpia</button>
+            <button class="q-option" onclick="checkAnswer(this,'q06-1',false)">C) Convierte el objeto en una base de datos SQL</button>
+            <button class="q-option" onclick="checkAnswer(this,'q06-1',false)">D) Desactiva el Garbage Collector</button>
+          </div>
+          <div class="q-explanation">Favorece la sintaxis pythonica manteniendo la encapsulación sin romper el código existente de los clientes.</div>
+        </div>
+        <div class="quiz-score-msg" id="score-06"></div>
+      </div>
+
+      <div class="module-actions">
+        <button class="action-btn" onclick="switchTab('tab-05',null)"><i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior</button>
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-06" onchange="markComplete('tab-06','check-06')">
+          <label class="read-label" for="check-06">Marcar capítulo como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-07',null)">Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 07 — MANEJO DE EXCEPCIONES Y DEBUGGING
+    ═══════════════════════════════════════════ -->
+    <div class="tab-pane" id="tab-07">
+      <div class="learning-section">
+        <h2><i data-lucide="alert-octagon" style="width:20px;height:20px;"></i> Capítulo 7 · Manejo Robustos de Excepciones y Debugging</h2>
+        <span class="level-badge badge-intermediate" style="margin-bottom:1rem;display:inline-flex;">Nivel 2 · Intermedio</span>
+
+        <p>Escribir código tolerante a fallos implica usar la filosofía de Python: <em>"It's easier to ask for forgiveness than permission"</em> (EAFP).</p>
+
+        <h3><i data-lucide="shield-alert" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 7.1 Bloque try-except-else-finally y Excepciones Custom</h3>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="kw">class</span> <span class="type">APIError</span>(<span class="type">Exception</span>):
+    <span class="str">"""Excepción personalizada para servicios web"""</span>
+    <span class="kw">def</span> <span class="dec">__init__</span>(self, codigo: <span class="type">int</span>, mensaje: <span class="type">str</span>):
+        self.codigo = codigo
+        super().<span class="dec">__init__</span>(<span class="str">f"[{codigo}] {mensaje}"</span>)
+
+<span class="kw">def</span> realizar_peticion(url: <span class="type">str</span>):
+    <span class="kw">try</span>:
+        <span class="cmt"># Simulación de llamada</span>
+        res = conectar(url)
+    <span class="kw">except</span> <span class="type">ConnectionError</span> <span class="kw">as</span> err:
+        <span class="kw">raise</span> APIError(<span class="num">503</span>, <span class="str">"Servicio no disponible"</span>) <span class="kw">from</span> err
+    <span class="kw">else</span>:
+        <span class="cmt"># Se ejecuta SOLO si NO hubo excepciones</span>
+        <span class="kw">print</span>(<span class="str">"Petición procesada correctamente"</span>)
+        <span class="kw">return</span> res.json()
+    <span class="kw">finally</span>:
+        <span class="cmt"># Se ejecuta SIEMPRE para liberar recursos</span>
+        cerrar_socket()</pre>
+        </div>
+
+        <h3><i data-lucide="bug" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 7.2 Debugging con breakpoint() nativo</h3>
+        <p>Al invocar <code>breakpoint()</code> en cualquier parte del código, Python pausará la ejecución y abrirá la consola interactiva PDB (Python Debugger).</p>
+      </div>
+
+      <!-- QUIZ 7 -->
+      <div class="quiz-section" id="quiz-07">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 7</div>
+        <div class="quiz-question" id="q07-1">
+          <div class="q-text">1. ¿Para qué sirve la cláusula <code>else</code> en un bloque <code>try-except</code>?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q07-1',false)">A) Se ejecuta si ocurrió algún error no esperado</button>
+            <button class="q-option" onclick="checkAnswer(this,'q07-1',true)">B) Se ejecuta únicamente cuando el bloque try finalizó sin lanzar ninguna excepción</button>
+            <button class="q-option" onclick="checkAnswer(this,'q07-1',false)">C) Reemplaza al bloque finally</button>
+            <button class="q-option" onclick="checkAnswer(this,'q07-1',false)">D) Sirve para reintentar el try automáticamente</button>
+          </div>
+          <div class="q-explanation">Evita colocar código extra dentro del <code>try</code>, previniendo capturar excepciones accidentales.</div>
+        </div>
+        <div class="quiz-score-msg" id="score-07"></div>
+      </div>
+
+      <div class="module-actions">
+        <button class="action-btn" onclick="switchTab('tab-06',null)"><i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior</button>
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-07" onchange="markComplete('tab-07','check-07')">
+          <label class="read-label" for="check-07">Marcar capítulo como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-08',null)">Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 08 — ARCHIVOS, E/S Y CONTEXT MANAGERS
+    ═══════════════════════════════════════════ -->
+    <div class="tab-pane" id="tab-08">
+      <div class="learning-section">
+        <h2><i data-lucide="file-code" style="width:20px;height:20px;"></i> Capítulo 8 · Gestión de Archivos, Pathlib y Context Managers</h2>
+        <span class="level-badge badge-intermediate" style="margin-bottom:1rem;display:inline-flex;">Nivel 2 · Intermedio</span>
+
+        <p>La gestión de recursos (archivos, conexiones a bases de datos, locks) debe realizarse con la sentencia <code>with</code> para garantizar el cierre seguro de descriptores.</p>
+
+        <h3><i data-lucide="folder" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 8.1 Pathlib: Manejo Moderno de Rutas</h3>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">import</span> json
+
+<span class="cmt"># Rutas orientadas a objetos multiplataforma</span>
+directorio_base = Path(__file__).resolve().parent
+archivo_config = directorio_base / <span class="str">"config"</span> / <span class="str">"settings.json"</span>
+
+<span class="cmt"># Crear directorio si no existe</span>
+archivo_config.parent.mkdir(parents=<span class="kw">True</span>, exist_ok=<span class="kw">True</span>)
+
+<span class="cmt"># Escritura directa</span>
+datos = {<span class="str">"app"</span>: <span class="str">"AutoNovations"</span>, <span class="str">"version"</span>: <span class="str">"2026.1"</span>}
+archivo_config.write_text(json.dumps(datos, indent=<span class="num">2</span>), encoding=<span class="str">"utf-8"</span>)
+
+<span class="cmt"># Lectura directa</span>
+contenido = json.loads(archivo_config.read_text(encoding=<span class="str">"utf-8"</span>))</pre>
+        </div>
+
+        <h3><i data-lucide="lock" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 8.2 Crear Context Managers Custom con @contextmanager</h3>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="kw">from</span> contextlib <span class="kw">import</span> contextmanager
+<span class="kw">import</span> time
+
+<span class="dec">@contextmanager</span>
+<span class="kw">def</span> temporizador(etiqueta: <span class="type">str</span>):
+    inicio = time.perf_counter()
+    <span class="kw">try</span>:
+        <span class="kw">yield</span>
+    <span class="kw">finally</span>:
+        duracion = time.perf_counter() - inicio
+        <span class="kw">print</span>(<span class="str">f"⏱️ [{etiqueta}] Ejecutado en {duracion:.4f}s"</span>)
+
+<span class="cmt"># Uso práctico</span>
+<span class="kw">with</span> temporizador(<span class="str">"Carga masiva de datos"</span>):
+    matriz = [i**<span class="num">2</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="type">range</span>(<span class="num">1_000_000</span>)]</pre>
+        </div>
+      </div>
+
+      <!-- QUIZ 8 -->
+      <div class="quiz-section" id="quiz-08">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 8</div>
+        <div class="quiz-question" id="q08-1">
+          <div class="q-text">1. ¿Qué métodos dunder debe implementar una clase para funcionar con la sentencia <code>with</code>?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q08-1',false)">A) __init__ y __del__</button>
+            <button class="q-option" onclick="checkAnswer(this,'q08-1',true)">B) __enter__ y __exit__</button>
+            <button class="q-option" onclick="checkAnswer(this,'q08-1',false)">C) __start__ y __stop__</button>
+            <button class="q-option" onclick="checkAnswer(this,'q08-1',false)">D) __open__ y __close__</button>
+          </div>
+          <div class="q-explanation"><code>__enter__</code> se ejecuta al iniciar el bloque <code>with</code> y su retorno se asigna a <code>as var</code>. <code>__exit__</code> atiende la limpieza final.</div>
+        </div>
+        <div class="quiz-score-msg" id="score-08"></div>
+      </div>
+
+      <div class="module-actions">
+        <button class="action-btn" onclick="switchTab('tab-07',null)"><i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior</button>
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-08" onchange="markComplete('tab-08','check-08')">
+          <label class="read-label" for="check-08">Marcar capítulo como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-09',null)">Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 09 — MÓDULOS, PAQUETES Y PACKAGING
+    ═══════════════════════════════════════════ -->
+    <div class="tab-pane" id="tab-09">
+      <div class="learning-section">
+        <h2><i data-lucide="package" style="width:20px;height:20px;"></i> Capítulo 9 · Arquitectura de Módulos y Estándar pyproject.toml</h2>
+        <span class="level-badge badge-intermediate" style="margin-bottom:1rem;display:inline-flex;">Nivel 2 · Intermedio</span>
+
+        <p>Estructurar paquetes reutilizables requiere adoptar las especificaciones PEP 621 y el archivo estandarizado <code>pyproject.toml</code>.</p>
+
+        <h3><i data-lucide="folder-tree" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 9.1 Estructura Profesional de Paquete Python</h3>
+        <div class="file-tree">
+          mi_libreria/<br>
+          ├── <span class="file">pyproject.toml</span><br>
+          ├── <span class="file">README.md</span><br>
+          └── src/<br>
+              └── mi_libreria/<br>
+                  ├── <span class="file">__init__.py</span><br>
+                  ├── <span class="file">core.py</span><br>
+                  └── utils/<br>
+                      ├── <span class="file">__init__.py</span><br>
+                      └── <span class="file">helpers.py</span>
+        </div>
+
+        <h3><i data-lucide="settings" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 9.2 pyproject.toml Estándar</h3>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">TOML</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre>[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "autonovations-core"
+version = "1.0.0"
+description = "Librería core de utilidades para sistemas autónomos"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.7.0",
+    "httpx>=0.27.0",
+]
+
+[project.scripts]
+auto-cli = "autonovations_core.cli:main"</pre>
+        </div>
+      </div>
+
+      <!-- QUIZ 9 -->
+      <div class="quiz-section" id="quiz-09">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 9</div>
+        <div class="quiz-question" id="q09-1">
+          <div class="q-text">1. ¿Qué archivo es el estándar moderno actual en empaquetado Python para definir metadatos del proyecto y dependencias?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q09-1',false)">A) setup.py</button>
+            <button class="q-option" onclick="checkAnswer(this,'q09-1',false)">B) requirements.txt</button>
+            <button class="q-option" onclick="checkAnswer(this,'q09-1',true)">C) pyproject.toml (PEP 621)</button>
+            <button class="q-option" onclick="checkAnswer(this,'q09-1',false)">D) Makefile</button>
+          </div>
+          <div class="q-explanation"><code>pyproject.toml</code> unifica la configuración de herramientas (ruff, pytest, mypy) y metadatos de empaquetado.</div>
+        </div>
+        <div class="quiz-score-msg" id="score-09"></div>
+      </div>
+
+      <div class="module-actions">
+        <button class="action-btn" onclick="switchTab('tab-08',null)"><i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior</button>
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-09" onchange="markComplete('tab-09','check-09')">
+          <label class="read-label" for="check-09">Marcar capítulo como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-10',null)">Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 10 — DECORADORES Y GENERADORES
+    ═══════════════════════════════════════════ -->
+    <div class="tab-pane" id="tab-10">
+      <div class="learning-section">
+        <h2><i data-lucide="sparkles" style="width:20px;height:20px;"></i> Capítulo 10 · Decoradores de Alto Nivel y Generadores Memory-Efficient</h2>
+        <span class="level-badge badge-advanced" style="margin-bottom:1rem;display:inline-flex;">Nivel 3 · Avanzado</span>
+
+        <p>Los decoradores permiten modificar o extender dinámicamente el comportamiento de funciones o clases sin alterar su código fuente.</p>
+
+        <h3><i data-lucide="repeat" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 10.1 Construcción de un Decorador con Parámetros y functools.wraps</h3>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="kw">from</span> functools <span class="kw">import</span> wraps
+<span class="kw">import</span> time
+
+<span class="kw">def</span> reintentar(max_intentos: <span class="type">int</span> = <span class="num">3</span>, retardo: <span class="type">float</span> = <span class="num">1.0</span>):
+    <span class="kw">def</span> decorador(func):
+        <span class="dec">@wraps</span>(func)  <span class="cmt"># Preserva el __name__ y __doc__ original</span>
+        <span class="kw">def</span> wrapper(*args, **kwargs):
+            <span class="kw">for</span> intento <span class="kw">in</span> <span class="type">range</span>(<span class="num">1</span>, max_intentos + <span class="num">1</span>):
+                <span class="kw">try</span>:
+                    <span class="kw">return</span> func(*args, **kwargs)
+                <span class="kw">except</span> <span class="type">Exception</span> <span class="kw">as</span> e:
+                    <span class="kw">print</span>(<span class="str">f"⚠️ Intento {intento}/{max_intentos} falló: {e}"</span>)
+                    <span class="kw">if</span> intento == max_intentos:
+                        <span class="kw">raise</span>
+                    time.sleep(retardo)
+        <span class="kw">return</span> wrapper
+    <span class="kw">return</span> decorador
+
+<span class="dec">@reintentar</span>(max_intentos=<span class="num">3</span>, retardo=<span class="num">0.5</span>)
+<span class="kw">def</span> conectar_sensor_iot():
+    <span class="str">"""Simula conexión a microcontrolador"""</span>
+    <span class="kw">raise</span> <span class="type">ConnectionResetError</span>(<span class="str">"Sensor no responde"</span>)</pre>
+        </div>
+
+        <h3><i data-lucide="database" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 10.2 Generadores e Iteradores de Memoria Mínima (yield)</h3>
+        <p>En lugar de almacenar millones de registros en memoria RAM, las funciones generadoras devuelven un iterador perezoso (lazy evaluation) mediante <code>yield</code>:</p>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="kw">def</span> stream_telemetria_gigante(total_registros: <span class="type">int</span>):
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="type">range</span>(total_registros):
+        <span class="cmt"># Genera un dato a la vez en RAM constante O(1)</span>
+        <span class="kw">yield</span> {<span class="str">"timestamp"</span>: time.time(), <span class="str">"lectura"</span>: i * <span class="num">0.42</span>}
+
+<span class="cmt"># Procesamiento streaming de 10 millones de items consumiendo < 5MB RAM</span>
+<span class="kw">for</span> lectura <span class="kw">in</span> stream_telemetria_gigante(<span class="num">10_000_000</span>):
+    <span class="kw">if</span> lectura[<span class="str">"lectura"</span>] > <span class="num">100</span>:
+        <span class="kw">print</span>(<span class="str">"Alerta detectada:"</span>, lectura)
+        <span class="kw">break</span></pre>
+        </div>
+      </div>
+
+      <!-- QUIZ 10 -->
+      <div class="quiz-section" id="quiz-10">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 10</div>
+        <div class="quiz-question" id="q10-1">
+          <div class="q-text">1. ¿Qué función cumple el decorador <code>@functools.wraps(func)</code> al construir un decorador personalizado?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q10-1',false)">A) Acelera la función un 200%</button>
+            <button class="q-option" onclick="checkAnswer(this,'q10-1',true)">B) Copia los metadatos de la función original (__name__, __doc__, __annotations__) a la función wrapper</button>
+            <button class="q-option" onclick="checkAnswer(this,'q10-1',false)">C) Convierte la función en un proceso multihilo</button>
+            <button class="q-option" onclick="checkAnswer(this,'q10-1',false)">D) Impide que se lancen excepciones</button>
+          </div>
+          <div class="q-explanation">Es fundamental para que las herramientas de inspección, documentación e IDEs sigan reconociendo el nombre y la firma original de la función.</div>
+        </div>
+        <div class="quiz-score-msg" id="score-10"></div>
+      </div>
+
+      <div class="module-actions">
+        <button class="action-btn" onclick="switchTab('tab-09',null)"><i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior</button>
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-10" onchange="markComplete('tab-10','check-10')">
+          <label class="read-label" for="check-10">Marcar capítulo como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-11',null)">Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 11 — CONCURRENCIA Y ASINCRONÍA (ASYNCIO)
+    ═══════════════════════════════════════════ -->
+    <div class="tab-pane" id="tab-11">
+      <div class="learning-section">
+        <h2><i data-lucide="activity" style="width:20px;height:20px;"></i> Capítulo 11 · Concurrencia Avanzada y Programación Asíncrona (`asyncio`)</h2>
+        <span class="level-badge badge-advanced" style="margin-bottom:1rem;display:inline-flex;">Nivel 3 · Avanzado</span>
+
+        <p>Elegir el modelo de concurrencia adecuado es vital para escalar aplicaciones en Python:</p>
+
+        <table class="compare-table">
+          <thead><tr><th>Modelo</th><th>Módulo Integrado</th><th>Ideal Para</th><th>Supera el GIL</th></tr></thead>
+          <tbody>
+            <tr><td><code>Threading</code></td><td><code>threading</code></td><td>Operaciones I/O intensivas simples</td><td class="bad">No (GIL activo)</td></tr>
+            <tr><td><code>Multiprocessing</code></td><td><code>multiprocessing</code></td><td>Cálculo intensivo CPU (Math, ML)</td><td class="good">Sí (Procesos separados)</td></tr>
+            <tr><td><code>Asyncio</code></td><td><code>asyncio</code></td><td>I/O concurrente masivo (Web APIs, Sockets)</td><td class="good">No (Single-thread Event Loop)</td></tr>
+          </tbody>
+        </table>
+
+        <h3><i data-lucide="cpu" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 11.1 Async / Await y asyncio.TaskGroup (Python 3.11+)</h3>
+        <p>La sintaxis <code>asyncio.TaskGroup</code> ofrece manejo de concurrencia estructurada (structured concurrency), garantizando que si una tarea falla, las demás asociadas sean canceladas limpiamente:</p>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python 3.11+</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="kw">import</span> asyncio
+<span class="kw">import</span> time
+
+<span class="kw">async def</span> consultar_servicio(id_servicio: <span class="type">int</span>, retardo: <span class="type">float</span>) -> <span class="type">dict</span>:
+    <span class="kw">await</span> asyncio.sleep(retardo)  <span class="cmt"># Cede el control al Event Loop</span>
+    <span class="kw">return</span> {<span class="str">"id"</span>: id_servicio, <span class="str">"status"</span>: <span class="str">"OK"</span>, <span class="str">"tiempo"</span>: retardo}
+
+<span class="kw">async def</span> main():
+    inicio = time.perf_counter()
+    
+    <span class="cmt"># Concurrencia estructurada con TaskGroup</span>
+    <span class="kw">async with</span> asyncio.TaskGroup() <span class="kw">as</span> tg:
+        t1 = tg.create_task(consultar_servicio(<span class="num">1</span>, <span class="num">1.5</span>))
+        t2 = tg.create_task(consultar_servicio(<span class="num">2</span>, <span class="num">0.8</span>))
+        t3 = tg.create_task(consultar_servicio(<span class="num">3</span>, <span class="num">1.2</span>))
+        
+    <span class="cmt"># Todas las tareas finalizan aquí</span>
+    resultados = [t1.result(), t2.result(), t3.result()]
+    duracion = time.perf_counter() - inicio
+    <span class="kw">print</span>(<span class="str">f"⚡ 3 peticiones completadas en {duracion:.2f}s (en paralelo)"</span>)
+
+<span class="cmt"># Iniciar el Event Loop de asyncio</span>
+asyncio.run(main())</pre>
+        </div>
+      </div>
+
+      <!-- QUIZ 11 -->
+      <div class="quiz-section" id="quiz-11">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 11</div>
+        <div class="quiz-question" id="q11-1">
+          <div class="q-text">1. ¿Para qué tipo de tareas es óptimo utilizar <code>asyncio</code> frente a <code>multiprocessing</code>?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q11-1',false)">A) Procesamiento de imágenes pesadas 4K</button>
+            <button class="q-option" onclick="checkAnswer(this,'q11-1',true)">B) Tareas I/O Bound (llamadas HTTP a APIS, lecturas de BD y Sockets masivos)</button>
+            <button class="q-option" onclick="checkAnswer(this,'q11-1',false)">C) Entrenamiento de redes neuronales profundas</button>
+            <button class="q-option" onclick="checkAnswer(this,'q11-1',false)">D) Criptominería de alto consumo de CPU</button>
+          </div>
+          <div class="q-explanation">Asyncio aprovecha los tiempos muertos de espera de entrada/salida (I/O) sin el overhead de memoria de crear múltiples procesos.</div>
+        </div>
+        <div class="quiz-score-msg" id="score-11"></div>
+      </div>
+
+      <div class="module-actions">
+        <button class="action-btn" onclick="switchTab('tab-10',null)"><i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior</button>
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-11" onchange="markComplete('tab-11','check-11')">
+          <label class="read-label" for="check-11">Marcar capítulo como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-12',null)">Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 12 — TYPE HINTING Y METAPROGRAMACIÓN
+    ═══════════════════════════════════════════ -->
+    <div class="tab-pane" id="tab-12">
+      <div class="learning-section">
+        <h2><i data-lucide="shield-check" style="width:20px;height:20px;"></i> Capítulo 12 · Type Hinting Avanzado (PEP 695) y Metaprogramación</h2>
+        <span class="level-badge badge-advanced" style="margin-bottom:1rem;display:inline-flex;">Nivel 3 · Avanzado</span>
+
+        <p>Python 3.12 simplificó radicalmente la sintaxis de tipos genéricos mediante la palabra clave <code>type</code>.</p>
+
+        <h3><i data-lucide="code" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 12.1 Sintaxis de Tipos Genéricos de Python 3.12 (PEP 695)</h3>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python 3.12+</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="cmt"># Definición de alias de tipo genérico conciso con la palabra clave type</span>
+<span class="kw">type</span> <span class="type">Vector</span>[T] = <span class="type">list</span>[T]
+<span class="kw">type</span> <span class="type">RespuestaAPI</span>[D] = <span class="type">dict</span>[<span class="type">str</span>, D | <span class="type">None</span>]
+
+<span class="cmt"># Función genérica moderna sin TypeVar verboso</span>
+<span class="kw">def</span> primero_o_defecto[T](elementos: <span class="type">list</span>[T], defecto: T) -> T:
+    <span class="kw">return</span> elementos[<span class="num">0</span>] <span class="kw">if</span> elementos <span class="kw">else</span> defecto</pre>
+        </div>
+
+        <h3><i data-lucide="git-merge" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 12.2 Metaclases y __init_subclass__</h3>
+        <p>Usa <code>__init_subclass__</code> como alternativa limpia a las metaclases tradicionales para registrar subclases de forma automática:</p>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="kw">class</span> <span class="type">PluginBase</span>:
+    registro_plugins = {}
+
+    <span class="kw">def</span> <span class="dec">__init_subclass__</span>(cls, nombre_plugin: <span class="type">str</span>, **kwargs):
+        super().<span class="dec">__init_subclass__</span>(**kwargs)
+        cls.registro_plugins[nombre_plugin] = cls
+
+<span class="kw">class</span> <span class="type">PluginSQL</span>(PluginBase, nombre_plugin=<span class="str">"sql"</span>):
+    <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="type">PluginMongo</span>(PluginBase, nombre_plugin=<span class="str">"mongodb"</span>):
+    <span class="kw">pass</span>
+
+<span class="kw">print</span>(PluginBase.registro_plugins)
+<span class="out"># Output: {'sql': <class '__main__.PluginSQL'>, 'mongodb': <class '__main__.PluginMongo'>}</span></pre>
+        </div>
+      </div>
+
+      <!-- QUIZ 12 -->
+      <div class="quiz-section" id="quiz-12">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 12</div>
+        <div class="quiz-question" id="q12-1">
+          <div class="q-text">1. ¿Qué novedad introdujo la PEP 695 en Python 3.12 para el Type Hinting?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q12-1',false)">A) Obliga a declarar tipos en compilación</button>
+            <button class="q-option" onclick="checkAnswer(this,'q12-1',true)">B) La sentencia <code>type</code> y sintaxis directa con corchetes <code>[T]</code> para tipos genéricos sin requerir <code>TypeVar</code></button>
+            <button class="q-option" onclick="checkAnswer(this,'q12-1',false)">C) Elimina las anotaciones de tipos del lenguaje</button>
+            <button class="q-option" onclick="checkAnswer(this,'q12-1',false)">D) Valida los tipos automáticamente en tiempo de ejecución con error fatal</button>
+          </div>
+          <div class="q-explanation">Simplifica radicalmente la escritura de genéricos haciendo el código mucho más limpio.</div>
+        </div>
+        <div class="quiz-score-msg" id="score-12"></div>
+      </div>
+
+      <div class="module-actions">
+        <button class="action-btn" onclick="switchTab('tab-11',null)"><i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior</button>
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-12" onchange="markComplete('tab-12','check-12')">
+          <label class="read-label" for="check-12">Marcar capítulo como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-13',null)">Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 13 — TESTING Y CALIDAD DE CÓDIGO
+    ═══════════════════════════════════════════ -->
+    <div class="tab-pane" id="tab-13">
+      <div class="learning-section">
+        <h2><i data-lucide="check-square" style="width:20px;height:20px;"></i> Capítulo 13 · Testing Profesional con Pytest y Linters Modernos (Ruff)</h2>
+        <span class="level-badge badge-advanced" style="margin-bottom:1rem;display:inline-flex;">Nivel 3 · Avanzado</span>
+
+        <p>El estándar de la industria para pruebas automatizadas en Python es <strong>pytest</strong>, complementado por herramientas ultrarrápidas de linting como <strong>Ruff</strong>.</p>
+
+        <h3><i data-lucide="check-circle-2" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 13.1 Tests Unitarios con Fixtures y Parametrización en Pytest</h3>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python (test_core.py)</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="kw">import</span> pytest
+
+<span class="cmt"># Fixture reutilizable</span>
+<span class="dec">@pytest.fixture</span>
+<span class="kw">def</span> cliente_base_datos():
+    db = {"estado": "conectado", "registros": []}
+    <span class="kw">yield</span> db  <span class="cmt"># Setup finalizado, entrega el objeto</span>
+    db["registros"].clear()  <span class="cmt"># Teardown de limpieza</span>
+
+<span class="cmt"># Test parametrizado (evalúa múltiples entradas)</span>
+<span class="dec">@pytest.mark.parametrize</span>(<span class="str">"entrada,esperado"</span>, [
+    (<span class="num">2</span>, <span class="num">4</span>),
+    (<span class="num">5</span>, <span class="num">25</span>),
+    (<span class="num">10</span>, <span class="num">100</span>),
+])
+<span class="kw">def</span> test_calcular_cuadrado(entrada, esperado):
+    <span class="kw">assert</span> entrada ** <span class="num">2</span> == esperado
+
+<span class="kw">def</span> test_insercion_db(cliente_base_datos):
+    cliente_base_datos[<span class="str">"registros"</span>].append(<span class="str">"Item 1"</span>)
+    <span class="kw">assert</span> <span class="type">len</span>(cliente_base_datos[<span class="str">"registros"</span>]) == <span class="num">1</span></pre>
+        </div>
+
+        <h3><i data-lucide="zap" style="width:16px;height:16px;color:var(--accent-yellow);"></i> 13.2 Linting Ultra Rápido con Ruff</h3>
+        <p>Ruff reemplaza a flake8, black, isort y pydocstyle siendo entre 100x y 1000x más rápido al estar escrito en Rust:</p>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Bash</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="cmd">uv pip install ruff pytest pytest-cov</span>
+<span class="cmd">ruff check . --fix</span>     <span class="cmt"># Revisa y auto-corrige errores de código</span>
+<span class="cmd">ruff format .</span>          <span class="cmt"># Formateo automático de código</span>
+<span class="cmd">pytest --cov=src</span>       <span class="cmt"># Ejecuta tests con reporte de cobertura</span></pre>
+        </div>
+      </div>
+
+      <!-- QUIZ 13 -->
+      <div class="quiz-section" id="quiz-13">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 13</div>
+        <div class="quiz-question" id="q13-1">
+          <div class="q-text">1. ¿Qué ventaja principal ofrece un <code>@pytest.fixture</code> que utiliza <code>yield</code> en lugar de <code>return</code>?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q13-1',false)">A) Permite que el test se ejecute en la nube</button>
+            <button class="q-option" onclick="checkAnswer(this,'q13-1',true)">B) Permite ejecutar código de preparación (setup) antes del yield y código de limpieza (teardown) después del yield</button>
+            <button class="q-option" onclick="checkAnswer(this,'q13-1',false)">C) Convierte el test en una función asíncrona</button>
+            <button class="q-option" onclick="checkAnswer(this,'q13-1',false)">D) Desactiva los asserts fallidos</button>
+          </div>
+          <div class="q-explanation">Es la forma idiomática de pytest para manejar la preparación y limpieza de recursos (bases de datos de prueba, archivos temporales).</div>
+        </div>
+        <div class="quiz-score-msg" id="score-13"></div>
+      </div>
+
+      <div class="module-actions">
+        <button class="action-btn" onclick="switchTab('tab-12',null)"><i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior</button>
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-13" onchange="markComplete('tab-13','check-13')">
+          <label class="read-label" for="check-13">Marcar capítulo como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-14',null)">Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 14 — PROYECTOS PRÁCTICOS DE INDUSTRIA
+    ═══════════════════════════════════════════ -->
+    <div class="tab-pane" id="tab-14">
+      <div class="learning-section">
+        <h2><i data-lucide="rocket" style="width:20px;height:20px;"></i> Capítulo 14 · Proyectos de Producción e Integración Final</h2>
+        <span class="level-badge badge-advanced" style="margin-bottom:1rem;display:inline-flex;">Nivel 3 · Avanzado</span>
+
+        <p>Aplica todo lo aprendido en tres proyectos arquitectónicos completos del mundo real.</p>
+
+        <h3><i data-lucide="folder" style="width:16px;height:16px;color:var(--accent-yellow);"></i> Proyecto 1 — CLI de Automatización con Typer & Rich</h3>
+        <p><strong>Stack:</strong> Typer + Rich + Pydantic</p>
+        <p><strong>Objetivo:</strong> Desarrollar una herramienta de línea de comandos profesional con paneles de color, barras de progreso y autocompletado en shell.</p>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python (cli_app.py)</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="kw">import</span> typer
+<span class="kw">from</span> rich.console <span class="kw">import</span> Console
+<span class="kw">from</span> rich.table <span class="kw">import</span> Table
+
+app = typer.Typer(help=<span class="str">"AutoNovations CLI Tool 2026"</span>)
+console = Console()
+
+<span class="dec">@app.command</span>()
+<span class="kw">def</span> listar_servicios(region: <span class="type">str</span> = <span class="str">"us-east-1"</span>):
+    <span class="str">"""Muestra el estado de microservicios en una región"""</span>
+    table = Table(title=<span class="str">f"Estado de Servicios - {region}"</span>)
+    table.add_column(<span class="str">"ID"</span>, style=<span class="str">"cyan"</span>)
+    table.add_column(<span class="str">"Servicio"</span>, style=<span class="str">"white"</span>)
+    table.add_column(<span class="str">"Estado"</span>, style=<span class="str">"green"</span>)
+
+    table.add_row(<span class="str">"SRV-01"</span>, <span class="str">"Auth Service"</span>, <span class="str">"HEALTHY"</span>)
+    table.add_row(<span class="str">"SRV-02"</span>, <span class="str">"AI Pipeline Engine"</span>, <span class="str">"HEALTHY"</span>)
+    console.print(table)
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    app()</pre>
+        </div>
+
+        <h3><i data-lucide="folder" style="width:16px;height:16px;color:var(--accent-yellow);"></i> Proyecto 2 — API REST Asíncrona de Alto Rendimiento con FastAPI & SQLAlchemy 2.0</h3>
+        <p><strong>Stack:</strong> FastAPI + Uvicorn + Pydantic V2 + SQLAlchemy 2.0 Async + PostgreSQL</p>
+
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">Python (api_server.py)</span><button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button></div>
+          <pre><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, HTTPException, status
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, EmailStr
+
+app = FastAPI(title=<span class="str">"AutoNovations Core API"</span>, version=<span class="str">"2026.1"</span>)
+
+<span class="kw">class</span> <span class="type">UsuarioCrear</span>(BaseModel):
+    nombre: <span class="type">str</span>
+    email: EmailStr
+    edad: <span class="type">int</span>
+
+<span class="dec">@app.post</span>(<span class="str">"/api/v1/usuarios"</span>, status_code=status.HTTP_201_CREATED)
+<span class="kw">async def</span> crear_nuevo_usuario(usuario: UsuarioCrear):
+    <span class="cmt"># Simulación de persistencia asíncrona</span>
+    <span class="kw">if</span> usuario.edad < <span class="num">18</span>:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="num">400</span>, detail=<span class="str">"Debe ser mayor de edad"</span>)
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"creado"</span>, <span class="str">"datos"</span>: usuario}</pre>
+        </div>
+
+        <div class="lab-card">
+          <div class="lab-card-header"><i data-lucide="trophy" style="width:20px;height:20px;"></i> Proyecto Final Integrador — Crawler / Scraper Web Asyncio con Pipeline ETL</div>
+          <p><strong>Stack:</strong> Asyncio + HTTPX + BeautifulSoup4 + Polars + Pytest</p>
+          <p><strong>Funcionalidades:</strong> Extracción concurrente asíncrona de 1,000+ páginas web, procesamiento ultrarrápido con Polars en lugar de Pandas, validación con Pydantic y tests automatizados en GitHub Actions.</p>
+          <div class="alert-box success" style="margin-top:1rem;">
+            <i data-lucide="check-circle" style="width:18px;height:18px;"></i>
+            <div class="alert-box-text"><strong>Portfolio Ready:</strong> Este proyecto integra patrones de desarrollo profesional solicitados en roles Senior de Python en 2026.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUIZ FINAL -->
+      <div class="quiz-section" id="quiz-14">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario Final — Evaluación General</div>
+        <div class="quiz-question" id="q14-1">
+          <div class="q-text">1. ¿Qué marco de trabajo asíncrono para Python es el referente moderno para crear APIs de altísimo rendimiento con validación de tipos automática?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q14-1',false)">A) Django 1.0</button>
+            <button class="q-option" onclick="checkAnswer(this,'q14-1',true)">B) FastAPI con Pydantic V2</button>
+            <button class="q-option" onclick="checkAnswer(this,'q14-1',false)">C) Flask síncrono</button>
+            <button class="q-option" onclick="checkAnswer(this,'q14-1',false)">D) CGI Scripts</button>
+          </div>
+          <div class="q-explanation">FastAPI aprovecha asyncio y anotaciones de tipos nativas de Python para ofrecer velocidad comparable a Go y Node.js.</div>
+        </div>
+        <div class="quiz-score-msg" id="score-14"></div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-14" onchange="markComplete('tab-14','check-14')">
+          <label class="read-label" for="check-14">Marcar curso como completado</label>
+        </div>
+        <button class="action-btn" onclick="switchTab('tab-13',null)"><i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Anterior</button>
+      </div>
+
+      <!-- CERTIFICADO -->
+      <div class="certificate-card" id="certificateCard">
+        <div class="cert-icon"><i data-lucide="award" style="width:60px;height:60px;"></i></div>
+        <div class="cert-title">¡Curso Python 3.12+ Mastery Completado!</div>
+        <p class="cert-text">Has completado exitosamente el curso profesional de Python 2026, dominando sintaxis moderna, arquitectura POO, type hinting, concurrencia asyncio, pytest y desarrollo de proyectos de producción.</p>
+        <button class="cert-print-btn" onclick="window.print()">🖨️ Imprimir Certificado</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // ── LUCIDE ICONS ──
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+
+  // ── PROGRESS TRACKING ──
+  const TOTAL_MODULES = 14;
+  let completedModules = JSON.parse(localStorage.getItem('python-completed') || '[]');
+
+  function updateProgress() {
+    const pct = Math.round((completedModules.length / TOTAL_MODULES) * 100);
+    const circumference = 226;
+    const offset = circumference - (pct / 100) * circumference;
+    document.getElementById('progressCircle').style.strokeDashoffset = offset;
+    document.getElementById('progressText').textContent = pct + '%';
+    document.getElementById('progressDetails').textContent = completedModules.length + ' de ' + TOTAL_MODULES + ' módulos';
+    
+    completedModules.forEach(tab => {
+      const li = document.querySelector('[data-tab="' + tab + '"]');
+      if (li) li.classList.add('completed');
+    });
+
+    const certCard = document.getElementById('certificateCard');
+    if (certCard) {
+      if (completedModules.length === TOTAL_MODULES) {
+        certCard.classList.add('unlocked');
+      } else {
+        certCard.classList.remove('unlocked');
+      }
+    }
+  }
+
+  function markComplete(tabId, checkId) {
+    const cb = document.getElementById(checkId);
+    if (cb.checked) {
+      if (!completedModules.includes(tabId)) completedModules.push(tabId);
+    } else {
+      completedModules = completedModules.filter(t => t !== tabId);
+    }
+    localStorage.setItem('python-completed', JSON.stringify(completedModules));
+    updateProgress();
+  }
+
+  // ── TAB SWITCHING ──
+  function switchTab(tabId, btnEl) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(li => li.classList.remove('active'));
+    
+    const targetPane = document.getElementById(tabId);
+    if (targetPane) targetPane.classList.add('active');
+    
+    const li = document.querySelector('[data-tab="' + tabId + '"]');
+    if (li) li.classList.add('active');
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    
+    const checkId = 'check-' + tabId.replace('tab-', '');
+    const cb = document.getElementById(checkId);
+    if (cb && completedModules.includes(tabId)) cb.checked = true;
+  }
+
+  // ── QUIZ ──
+  function checkAnswer(btn, qId, isCorrect) {
+    const container = document.getElementById(qId);
+    const options = container.querySelectorAll('.q-option');
+    options.forEach(o => o.classList.add('disabled'));
+    btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+    if (!isCorrect) {
+      options.forEach(o => {
+        if (o.getAttribute('onclick').includes('true')) o.classList.add('correct');
+      });
+    }
+    const exp = container.querySelector('.q-explanation');
+    if (exp) exp.style.display = 'block';
+    checkQuizComplete(qId);
+  }
+
+  function checkQuizComplete(qId) {
+    const num = qId.match(/q(\d+)/)[1].padStart(2,'0');
+    const quizEl = document.getElementById('quiz-' + num);
+    if (!quizEl) return;
+    const allQ = quizEl.querySelectorAll('.quiz-question');
+    const answered = quizEl.querySelectorAll('.q-option.correct, .q-option.incorrect');
+    const unique = new Set([...answered].map(el => el.closest('.quiz-question').id));
+    if (unique.size === allQ.length) {
+      const correct = quizEl.querySelectorAll('.q-option.correct:not(.disabled)').length;
+      const msg = document.getElementById('score-' + num);
+      if (msg) {
+        msg.style.display = 'block';
+        msg.textContent = '✅ Cuestionario completado: ' + correct + '/' + allQ.length + ' correctas';
+      }
+    }
+  }
+
+  // ── COPY CODE ──
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    const text = pre.innerText || pre.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.innerHTML = '<i data-lucide="check" style="width:12px;height:12px;"></i> Copiado';
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+      setTimeout(() => {
+        btn.innerHTML = '<i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      }, 2000);
+    });
+  }
+
+  // ── SIDEBAR MOBILE ──
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('open');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  }
+
+  // ── THEME ──
+  function toggleTheme() {
+    const isLight = document.documentElement.classList.toggle('light');
+    localStorage.setItem('preferredTheme', isLight ? 'light' : 'dark');
+    const icon = document.getElementById('themeIcon');
+    if (icon) icon.setAttribute('data-lucide', isLight ? 'moon' : 'sun');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
+
+  // ── INIT ──
+  document.addEventListener('DOMContentLoaded', () => {
+    updateProgress();
+    const isLight = document.documentElement.classList.contains('light');
+    const icon = document.getElementById('themeIcon');
+    if (icon) icon.setAttribute('data-lucide', isLight ? 'moon' : 'sun');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  });
+</script>
+</body>
+</html>
