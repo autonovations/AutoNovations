@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="theme-color" content="#00D9FF">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLOps & Edge Deployment 2026 - Kubeflow, Balena & Cloud CI/CD | AutoNovations Academy</title>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+      if (savedTheme === 'light') { document.documentElement.classList.add('light'); }
+      else { document.documentElement.classList.remove('light'); }
+    })();
+  </script>
+  <meta name="description" content="Curso completo de MLOps & Edge Deployment 2026. Despliegue de modelos de IA en producción y dispositivos Edge usando Kubeflow, Balena, GitHub Actions, TensorRT y CI/CD.">
+  <meta name="keywords" content="MLOps, Edge AI, Kubeflow, BalenaCloud, Docker, TensorRT, CI/CD, GitHub Actions, NVIDIA Jetson, AutoNovations Academy">
+  <meta name="author" content="AutoNovations Academy">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="../assets/js/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-darker: #06090f; --bg-dark: #0a0e17; --bg-card: #111827;
+      --bg-card-hover: #1b263b; --border: #1e293b; --border-focus: #00f0ff;
+      --accent-cyan: #00f0ff; --accent-cyan-dim: rgba(0,240,255,0.12);
+      --accent-green: #10b981; --accent-green-neon: #39ff14;
+      --accent-green-dim: rgba(16,185,129,0.15);
+      --accent-red: #ef4444; --accent-red-neon: #ff3366;
+      --accent-red-dim: rgba(239,68,68,0.15);
+      --accent-amber: #f59e0b; --accent-amber-dim: rgba(245,158,11,0.15);
+      --accent-purple: #8b5cf6; --accent-purple-dim: rgba(139,92,246,0.12);
+      --accent-blue: #3b82f6; --accent-blue-dim: rgba(59,130,246,0.12);
+      --text-primary: #f3f4f6; --text-secondary: #9ca3af; --text-muted: #6b7280;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
+      --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    html.light {
+      --bg-darker: #f3f4f6; --bg-dark: #ffffff; --bg-card: #ffffff;
+      --bg-card-hover: #f9fafb; --border: #e5e7eb; --border-focus: #3b82f6;
+      --accent-cyan: #2563eb; --accent-cyan-dim: rgba(37,99,235,0.1);
+      --accent-green: #059669; --accent-green-neon: #10b981;
+      --accent-green-dim: rgba(5,150,105,0.1);
+      --accent-red: #dc2626; --accent-red-neon: #ef4444;
+      --accent-red-dim: rgba(220,38,38,0.1);
+      --accent-amber: #d97706; --accent-amber-dim: rgba(217,119,6,0.1);
+      --accent-purple: #7c3aed; --accent-purple-dim: rgba(124,58,237,0.1);
+      --accent-blue: #2563eb; --accent-blue-dim: rgba(37,99,235,0.1);
+      --text-primary: #111827; --text-secondary: #4b5563; --text-muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg-darker); color: var(--text-primary); font-family: var(--font-sans); line-height: 1.6; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-darker); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-sm); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+    .app-container { display: flex; min-height: 100vh; }
+    .sidebar { width: 290px; background-color: var(--bg-dark); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; padding: 1.5rem; transition: transform 0.3s; overflow-y: auto; }
+    .sidebar-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--accent-cyan); letter-spacing: 0.05em; margin-bottom: 0.5rem; text-transform: uppercase; text-decoration: none; }
+    .sidebar-subtitle { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.5rem; padding-left: 34px; }
+    .nav-section-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); padding: 0.75rem 0 0.4rem 0; border-top: 1px solid var(--border); margin-top: 0.5rem; }
+    .nav-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .nav-item button { width: 100%; background: none; border: none; outline: none; color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.8rem; font-weight: 500; text-align: left; padding: 8px 12px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: var(--transition); border: 1px solid transparent; }
+    .nav-item button:hover { background-color: var(--bg-card-hover); color: var(--text-primary); }
+    .nav-item.active button { background-color: var(--accent-cyan-dim); color: var(--accent-cyan); border: 1px solid rgba(0,240,255,0.25); }
+    .nav-item.completed button { color: var(--accent-green); }
+    .nav-check { display: none; color: var(--accent-green); margin-left: auto; }
+    .nav-item.completed .nav-check { display: inline-block; }
+    .nav-num { min-width: 20px; height: 20px; border-radius: 50%; background: var(--border); color: var(--text-muted); font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-item.active .nav-num { background: var(--accent-cyan); color: #06090f; }
+    .nav-item.completed .nav-num { background: var(--accent-green-dim); color: var(--accent-green); }
+    .progress-box { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 1.5rem; text-align: center; }
+    .progress-box-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .progress-circle-wrapper { position: relative; width: 90px; height: 90px; margin: 0 auto 8px; }
+    .progress-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .progress-bg-circle { fill: none; stroke: var(--border); stroke-width: 8; }
+    .progress-bar-circle { fill: none; stroke: var(--accent-cyan); stroke-width: 8; stroke-dasharray: 226; stroke-dashoffset: 226; transition: stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1); stroke-linecap: round; }
+    .progress-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--accent-cyan); }
+    .progress-details { font-size: 0.7rem; color: var(--text-muted); }
+    .main-content { margin-left: 290px; flex-grow: 1; padding: 2.5rem; max-width: calc(100% - 290px); min-height: 100vh; display: flex; flex-direction: column; transition: margin-left 0.3s, max-width 0.3s; }
+    .content-header { margin-bottom: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; }
+    .content-header h1 { font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 12px; }
+    .content-header p { color: var(--text-secondary); font-size: 0.92rem; }
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-left: 1rem; }
+    .theme-toggle-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 38px; height: 38px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+    .theme-toggle-btn:hover { border-color: var(--accent-cyan); }
+    .mobile-menu-btn { display: none; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 38px; height: 38px; border-radius: var(--radius-md); cursor: pointer; align-items: center; justify-content: center; transition: var(--transition); }
+    .tab-pane { display: none; animation: fadeIn 0.4s ease; }
+    .tab-pane.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .learning-section { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 1.75rem; }
+    .learning-section h2 { font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 1.25rem; color: var(--accent-cyan); border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+    .learning-section h3 { font-family: var(--font-display); font-size: 1.05rem; margin: 1.5rem 0 0.6rem 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+    .learning-section h4 { font-family: var(--font-display); font-size: 0.95rem; margin: 1.2rem 0 0.5rem 0; color: var(--accent-amber); }
+    .learning-section p { color: var(--text-secondary); font-size: 0.93rem; margin-bottom: 1rem; line-height: 1.75; }
+    .learning-section ul, .learning-section ol { margin-left: 1.5rem; margin-bottom: 1rem; color: var(--text-secondary); }
+    .learning-section li { margin-bottom: 5px; font-size: 0.93rem; line-height: 1.6; }
+    .definition-box { background-color: var(--bg-darker); border-left: 3px solid var(--accent-cyan); padding: 1rem 1.25rem; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin: 1rem 0; }
+    .definition-term { font-family: var(--font-display); font-weight: 700; color: var(--accent-cyan); font-size: 0.88rem; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .definition-desc { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.55; }
+    .alert-box { padding: 1rem 1.25rem; border-radius: var(--radius-lg); margin: 1.25rem 0; display: flex; gap: 12px; align-items: flex-start; border: 1px solid transparent; }
+    .alert-box.info { background-color: var(--accent-cyan-dim); border-color: rgba(0,240,255,0.2); }
+    .alert-box.info i { color: var(--accent-cyan); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.warn { background-color: var(--accent-amber-dim); border-color: rgba(245,158,11,0.25); }
+    .alert-box.warn i { color: var(--accent-amber); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.success { background-color: var(--accent-green-dim); border-color: rgba(16,185,129,0.25); }
+    .alert-box.success i { color: var(--accent-green); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.danger { background-color: var(--accent-red-dim); border-color: rgba(239,68,68,0.25); }
+    .alert-box.danger i { color: var(--accent-red); flex-shrink: 0; margin-top: 2px; }
+    .alert-box-text { font-size: 0.87rem; line-height: 1.65; color: var(--text-primary); }
+    .code-block { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); margin: 1rem 0; overflow: hidden; }
+    .code-block-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); }
+    .code-lang { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-family: var(--font-mono); }
+    .code-copy-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 3px 8px; border-radius: var(--radius-sm); font-size: 0.7rem; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 4px; }
+    .code-copy-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .code-block pre { padding: 1rem 1.25rem; overflow-x: auto; font-family: var(--font-mono); font-size: 0.83rem; line-height: 1.7; color: #e2e8f0; }
+    .code-block pre .cmd { color: var(--accent-cyan); }
+    .code-block pre .out { color: var(--accent-green); }
+    .code-block pre .cmt { color: var(--text-muted); font-style: italic; }
+    .code-block pre .kw { color: #c084fc; }
+    .code-block pre .str { color: #fbbf24; }
+    .code-block pre .num { color: #fb923c; }
+    .code-block pre .flag { color: var(--accent-amber); }
+    .quiz-section { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; margin-bottom: 1.75rem; }
+    .quiz-title-bar { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--accent-cyan); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .quiz-question { margin-bottom: 1.5rem; }
+    .q-text { font-size: 0.92rem; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+    .q-options { display: flex; flex-direction: column; gap: 7px; }
+    .q-option { background: var(--bg-darker); border: 1px solid var(--border); color: var(--text-secondary); padding: 9px 14px; border-radius: var(--radius-md); font-size: 0.85rem; cursor: pointer; text-align: left; transition: var(--transition); }
+    .q-option:hover { border-color: var(--accent-cyan); color: var(--text-primary); }
+    .q-option.correct { background-color: var(--accent-green-dim); border-color: var(--accent-green); color: var(--accent-green-neon); pointer-events: none; }
+    .q-option.incorrect { background-color: var(--accent-red-dim); border-color: var(--accent-red); color: var(--accent-red-neon); pointer-events: none; }
+    .q-option.disabled { pointer-events: none; opacity: 0.5; }
+    .q-explanation { font-size: 0.82rem; color: var(--text-secondary); margin-top: 8px; padding: 8px 12px; background: var(--bg-darker); border-radius: var(--radius-sm); display: none; border-left: 3px solid var(--accent-cyan); }
+    .quiz-score-msg { background: var(--accent-green-dim); border: 1px solid var(--accent-green); color: var(--accent-green-neon); padding: 10px 14px; border-radius: var(--radius-md); font-size: 0.85rem; text-align: center; margin-top: 1rem; display: none; }
+    .module-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; flex-wrap: wrap; gap: 10px; }
+    .action-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; font-size: 0.87rem; display: flex; align-items: center; gap: 8px; transition: var(--transition); font-family: var(--font-sans); text-decoration: none; }
+    .action-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .action-btn.primary { background: var(--accent-cyan-dim); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .action-btn.primary:hover { background: var(--accent-cyan); color: #06090f; }
+    .action-btn:disabled { opacity: 0.4; pointer-events: none; }
+    .read-confirmation { display: flex; align-items: center; gap: 10px; background: var(--bg-darker); border: 1px solid var(--border); padding: 9px 14px; border-radius: var(--radius-md); }
+    .read-checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent-cyan); }
+    .read-label { font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-secondary); }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 1rem 0; }
+    .compare-table th { background: var(--bg-darker); color: var(--accent-cyan); padding: 10px 12px; text-align: left; font-family: var(--font-display); font-weight: 600; border: 1px solid var(--border); }
+    .compare-table td { padding: 9px 12px; border: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+    .compare-table tr:hover td { background: var(--bg-card-hover); }
+    .compare-table .highlight { color: var(--accent-cyan); font-weight: 600; }
+    .compare-table .good { color: var(--accent-green); }
+    .compare-table .bad { color: var(--accent-red); }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 1rem; margin: 1.25rem 0; }
+    .info-card { background: var(--bg-darker); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; border-top: 3px solid var(--accent-cyan); transition: var(--transition); }
+    .info-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+    .info-card-icon { color: var(--accent-cyan); margin-bottom: 10px; }
+    .info-card-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 5px; }
+    .info-card-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+    .level-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; padding: 3px 8px; border-radius: var(--radius-sm); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-master { background: var(--accent-purple-dim); color: var(--accent-purple); }
+    .badge-advanced { background: var(--accent-amber-dim); color: var(--accent-amber); }
+    .ascii-diagram { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.8; color: var(--accent-cyan); margin: 1rem 0; overflow-x: auto; white-space: pre; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 99; backdrop-filter: blur(2px); }
+    .sidebar-overlay.open { display: block; }
+    @media (max-width: 1024px) { .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); box-shadow: 4px 0 30px rgba(0,0,0,0.5); } .main-content { margin-left: 0; max-width: 100%; } .mobile-menu-btn { display: flex; } }
+    @media (max-width: 640px) { .main-content { padding: 1.25rem; } .content-header h1 { font-size: 1.3rem; } .module-actions { flex-direction: column; } }
+    code { color: var(--accent-cyan); font-family: var(--font-mono); font-size: 0.85em; background: var(--bg-darker); padding: 2px 6px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="app-container">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <a class="sidebar-brand" href="../index.html">
+      <i data-lucide="cpu" style="width:20px;height:20px;flex-shrink:0;"></i>
+      AutoNovations
+    </a>
+    <div class="sidebar-subtitle">MLOps &amp; Edge Deployment</div>
+    <div class="progress-box">
+      <div class="progress-box-title">Progreso del Curso</div>
+      <div class="progress-circle-wrapper">
+        <svg class="progress-svg" viewBox="0 0 80 80">
+          <circle class="progress-bg-circle" cx="40" cy="40" r="36"/>
+          <circle class="progress-bar-circle" id="progressCircle" cx="40" cy="40" r="36"/>
+        </svg>
+        <div class="progress-text" id="progressText">0%</div>
+      </div>
+      <div class="progress-details" id="progressDetails">0 de 6 módulos</div>
+    </div>
+    <div class="nav-section-label">Módulos del Curso</div>
+    <ul class="nav-list" id="navList">
+      <li class="nav-item active" data-tab="tab-01"><button onclick="switchTab('tab-01',this)"><span class="nav-num">1</span>Intro MLOps &amp; Edge<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-02"><button onclick="switchTab('tab-02',this)"><span class="nav-num">2</span>Kubeflow Pipelines<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-03"><button onclick="switchTab('tab-03',this)"><span class="nav-num">3</span>TensorRT &amp; ONNX Edge<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-04"><button onclick="switchTab('tab-04',this)"><span class="nav-num">4</span>BalenaCloud &amp; OTA<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-05"><button onclick="switchTab('tab-05',this)"><span class="nav-num">5</span>GitOps &amp; Cloud CI/CD<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-06"><button onclick="switchTab('tab-06',this)"><span class="nav-num">6</span>Monitoreo &amp; Proyecto E2E<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="content-header">
+      <div>
+        <h1>
+          <i data-lucide="git-pull-request" style="width:28px;height:28px;color:var(--accent-purple);"></i>
+          MLOps &amp; Edge Deployment
+        </h1>
+        <p>Kubeflow · BalenaCloud · TensorRT · GitHub Actions CI/CD · Edge Computing</p>
+      </div>
+      <div class="header-actions">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()" aria-label="Menú">
+          <i data-lucide="menu" style="width:18px;height:18px;"></i>
+        </button>
+        <button class="theme-toggle-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Cambiar tema">
+          <i data-lucide="sun" style="width:16px;height:16px;" id="themeIcon"></i>
+        </button>
+        <a href="../index.html" class="action-btn" style="text-decoration:none;">
+          <i data-lucide="home" style="width:14px;height:14px;"></i> Inicio
+        </a>
+      </div>
+    </div>
+
+    <!-- Cover Image Hero Preview -->
+    <div style="width:100%; height: 260px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 2rem; border: 1px solid var(--border); position: relative;">
+      <img src="../assets/images/courses/mlops_edge_cover.png" alt="MLOps & Edge Deployment Cover" style="width: 100%; height: 100%; object-fit: cover;">
+      <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6,9,15,0.2) 0%, rgba(6,9,15,0.85) 100%); display: flex; align-items: flex-end; padding: 1.5rem;">
+        <span class="level-badge badge-master">Level 3 · Master Architect</span>
+      </div>
+    </div>
+
+    <!-- TAB 01 -->
+    <div class="tab-pane active" id="tab-01">
+      <div class="learning-section">
+        <h2><i data-lucide="layers" style="width:20px;height:20px;"></i> Capítulo 1 · Introducción a MLOps &amp; Desafíos en el Edge</h2>
+        <p>Llevar modelos de Machine Learning desde un cuaderno Jupyter hasta un entorno de producción masivo y dispositivos remotos (Robots, Drones, Sensores Industriales) requiere una arquitectura automatizada, confiable y auditable. Esto es <strong>MLOps</strong> (Machine Learning Operations).</p>
+        
+        <div class="definition-box">
+          <div class="definition-term">¿Qué es MLOps?</div>
+          <div class="definition-desc">MLOps es la unión de Machine Learning, DevOps y Data Engineering. Su objetivo es automatizar todo el ciclo de vida de los modelos: ingesta de datos, entrenamiento continuo, validación, empaquetado, despliegue y monitoreo de la deriva de datos (Data Drift).</div>
+        </div>
+
+        <div class="ascii-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       CICLO DE VIDA MLOPS & EDGE                            │
+│                                                                             │
+│  [ Datos ] ──► [ Kubeflow Pipeline ] ──► [ Model Registry / MLflow ]       │
+│                        │                            │                       │
+│                        ▼                            ▼                       │
+│               [ Optimización TensorRT ]    [ GitHub Actions CI/CD ]         │
+│                        │                            │                       │
+│                        └────────────┬───────────────┘                       │
+│                                     ▼                                       │
+│                       [ BalenaCloud OTA Update ]                            │
+│                                     │                                       │
+│                        ┌────────────┴────────────┐                          │
+│                        ▼                         ▼                          │
+│               [ Drone Edge Node ]      [ Jetson Robot Node ]                │
+└─────────────────────────────────────────────────────────────────────────────┘
+        </div>
+
+        <h3><i data-lucide="cpu" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Por qué Edge Computing cambia las reglas del juego</h3>
+        <p>A diferencia del despliegue Nube tradicional donde dispones de recursos ilimitados, los nodos <strong>Edge</strong> (NVIDIA Jetson Orin, Raspberry Pi 5, ESP32) enfrentan limitaciones extremas de latencia, conectividad y energía.</p>
+
+        <table class="compare-table">
+          <thead><tr><th>Criterio</th><th>Cloud Inference</th><th>Edge AI Deployment</th></tr></thead>
+          <tbody>
+            <tr><td>Latencia</td><td class="bad">50ms - 500ms (red)</td><td class="good">&lt; 5ms (Local)</td></tr>
+            <tr><td>Conectividad</td><td class="bad">Requiere 100% Online</td><td class="good">Opera Offline</td></tr>
+            <tr><td>Privacidad de datos</td><td>Tráfico por Internet</td><td class="good">Procesado On-Device</td></tr>
+            <tr><td>Ancho de Banda</td><td class="bad">Alto consumo de red</td><td class="good">Mínimo (solo telemetría)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 1</div>
+        <div class="quiz-question" id="q1-1">
+          <div class="q-text">1. ¿Cuál es el principal beneficio de desplegar modelos de IA en dispositivos Edge en lugar de la Nube?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',false)">A) Mayor potencia de cómputo GPU inagotable</button>
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',true)">B) Latencia ultra baja y capacidad de operar sin conexión a Internet</button>
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',false)">C) Menor necesidad de cuantización de modelos</button>
+          </div>
+          <div class="q-explanation">El procesamiento Edge elimina la latencia de red y permite que drones y robots tomen decisiones en milisegundos de forma autónoma.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-01" onchange="toggleModuleRead('tab-01')">
+          <label class="read-label" for="check-01">Marcar Capítulo 1 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-02', document.querySelectorAll('.nav-item')[1].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 02 -->
+    <div class="tab-pane" id="tab-02">
+      <div class="learning-section">
+        <h2><i data-lucide="git-branch" style="width:20px;height:20px;"></i> Capítulo 2 · Kubeflow Pipelines &amp; Experiment Tracking</h2>
+        <p><strong>Kubeflow</strong> es la plataforma estándar de la industria sobre Kubernetes para construir y desplegar pipelines de ML escalables y reproducibles.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">python (Kubeflow SDK)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="kw">from</span> kfp <span class="kw">import</span> dsl
+<span class="kw">from</span> kfp.dsl <span class="kw">import</span> component, Output, Dataset, Model
+
+<span class="cmd">@component</span>(base_image=<span class="str">'python:3.11-slim'</span>)
+<span class="kw">def</span> <span class="cmd">train_edge_model</span>(dataset: Input[Dataset], model: Output[Model]):
+    <span class="kw">import</span> torch
+    <span class="cmt"># Entrenamiento optimizado</span>
+    print(<span class="str">"Entrenando red neuronal para Edge inference..."</span>)
+
+<span class="cmd">@dsl.pipeline</span>(
+    name=<span class="str">'Edge Vision Pipeline'</span>,
+    description=<span class="str">'Pipeline automatizado de vision industrial'</span>
+)
+<span class="kw">def</span> <span class="cmd">vision_pipeline</span>():
+    train_task = train_edge_model()</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 2</div>
+        <div class="quiz-question" id="q2-1">
+          <div class="q-text">1. ¿Sobre qué infraestructura se ejecuta nativamente Kubeflow Pipelines?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',false)">A) Servidores Bare Metal sin contenedores</button>
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',true)">B) Clusters de Kubernetes</button>
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',false)">C) Tarjetas MicroSD solas</button>
+          </div>
+          <div class="q-explanation">Kubeflow se orquesta sobre Kubernetes, convirtiendo cada paso del pipeline en un Pod o contenedor aislado.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-02" onchange="toggleModuleRead('tab-02')">
+          <label class="read-label" for="check-02">Marcar Capítulo 2 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-03', document.querySelectorAll('.nav-item')[2].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 03 -->
+    <div class="tab-pane" id="tab-03">
+      <div class="learning-section">
+        <h2><i data-lucide="zap" style="width:20px;height:20px;"></i> Capítulo 3 · Optimización de Modelos: ONNX, TensorRT &amp; Quantization</h2>
+        <p>Un modelo de PyTorch/TensorFlow crudo es demasiado pesado para un dispositivo embebido. En este módulo aprendemos a acelerar la inferencia hasta **10x** usando **TensorRT** y **Cuantización INT8**.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">bash (TensorRT CLI)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="cmt"># Exportar modelo PyTorch a ONNX format</span>
+<span class="cmd">python</span> -m torch.onnx.export --model model.pt --output model.onnx
+
+<span class="cmt"># Compilar motor de alta velocidad TensorRT en NVIDIA Jetson</span>
+<span class="cmd">trtexec</span> --onnx=model.onnx --saveEngine=model_int8.engine --int8 --fp16</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 3</div>
+        <div class="quiz-question" id="q3-1">
+          <div class="q-text">1. ¿Qué beneficio aporta la cuantización FP32 a INT8 en modelos de IA?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',true)">A) Reduce drásticamente la memoria RAM/VRAM y acelera la inferencia con mínima pérdida de precisión</button>
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',false)">B) Incrementa el tamaño del archivo binario del modelo</button>
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',false)">C) Permite entrenar modelos sin datos</button>
+          </div>
+          <div class="q-explanation">La cuantización representa los pesos de 32 bits en enteros de 8 bits, reduciendo el consumo de memoria en un 75% y acelerando la velocidad de computación en hardware Edge.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-03" onchange="toggleModuleRead('tab-03')">
+          <label class="read-label" for="check-03">Marcar Capítulo 3 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-04', document.querySelectorAll('.nav-item')[3].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 04 -->
+    <div class="tab-pane" id="tab-04">
+      <div class="learning-section">
+        <h2><i data-lucide="cloud-rain" style="width:20px;height:20px;"></i> Capítulo 4 · Despliegue de Flotas con BalenaCloud &amp; Updates OTA</h2>
+        <p>Gestionar miles de robots o cámaras de seguridad distribuidas por todo el mundo requiere actualizaciones Over-The-Air (OTA) seguras y a prueba de fallas con **BalenaCloud**.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">dockerfile (balena-yml)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="kw">version</span>: <span class="str">'2.1'</span>
+<span class="kw">services</span>:
+  <span class="cmd">ai-inference-engine</span>:
+    <span class="kw">build</span>: ./engine
+    <span class="kw">privileged</span>: true
+    <span class="kw">devices</span>:
+      - <span class="str">"/dev/nvhost-ctrl:/dev/nvhost-ctrl"</span>
+    <span class="kw">restart</span>: always</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 4</div>
+        <div class="quiz-question" id="q4-1">
+          <div class="q-text">1. ¿Qué significa una actualización OTA (Over-The-Air) en flotas de IoT/Edge?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q4-1',true)">A) Actualizar remotamente el software/modelos en dispositivos sin intervención física</button>
+            <button class="q-option" onclick="checkAnswer(this,'q4-1',false)">B) Conectar un cable USB manualmente a cada dispositivo</button>
+          </div>
+          <div class="q-explanation">BalenaCloud permite enviar nuevos contenedores de IA a miles de dispositivos en cualquier lugar del mundo de forma remota y segura.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-04" onchange="toggleModuleRead('tab-04')">
+          <label class="read-label" for="check-04">Marcar Capítulo 4 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-05', document.querySelectorAll('.nav-item')[4].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 05 -->
+    <div class="tab-pane" id="tab-05">
+      <div class="learning-section">
+        <h2><i data-lucide="refresh-cw" style="width:20px;height:20px;"></i> Capítulo 5 · Cloud CI/CD Automático &amp; GitOps</h2>
+        <p>Integramos GitHub Actions y ArgoCD para que cada vez que subas código o nuevos datos a tu repositorio, el pipeline compile automáticamente las imágenes Docker multi-arquitectura (`arm64`/`amd64`).</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">yaml (GitHub Actions Workflow)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="kw">name</span>: <span class="str">Build & Deploy Edge Container</span>
+<span class="kw">on</span>:
+  <span class="kw">push</span>:
+    <span class="kw">branches</span>: [ <span class="str">main</span> ]
+<span class="kw">jobs</span>:
+  <span class="cmd">build-edge</span>:
+    <span class="kw">runs-on</span>: ubuntu-latest
+    <span class="kw">steps</span>:
+      - <span class="kw">uses</span>: actions/checkout@v4
+      - <span class="kw">name</span>: BuildX ARM64 Container
+        <span class="kw">run</span>: docker buildx build --platform linux/arm64 -t autonovations/edge-ai:latest --push .</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 5</div>
+        <div class="quiz-question" id="q5-1">
+          <div class="q-text">1. ¿Por qué es vital usar Docker Buildx con plataformas multi-arch (ej: linux/arm64)?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q5-1',true)">A) Para compilar imágenes compatibles con procesadores ARM de dispositivos Edge desde servidores de CI/CD Intel/AMD</button>
+            <button class="q-option" onclick="checkAnswer(this,'q5-1',false)">B) Para evitar usar comandos Git</button>
+          </div>
+          <div class="q-explanation">Buildx permite emular y construir contenedores ARM64 (Jetson, Raspberry Pi) directamente en servidores CI/CD basados en x86.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-05" onchange="toggleModuleRead('tab-05')">
+          <label class="read-label" for="check-05">Marcar Capítulo 5 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-06', document.querySelectorAll('.nav-item')[5].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 06 -->
+    <div class="tab-pane" id="tab-06">
+      <div class="learning-section">
+        <h2><i data-lucide="activity" style="width:20px;height:20px;"></i> Capítulo 6 · Monitoreo de Data Drift &amp; Proyecto Capstone E2E</h2>
+        <p>Los modelos pierden precisión con el tiempo debido al cambio en las condiciones del mundo real (<strong>Concept & Data Drift</strong>). Aprendemos a detectarlo con Prometheus + Evidently AI y disparar re-entrenamientos automáticos.</p>
+
+        <div class="ascii-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    PROYECTO INTEGRADOR FINAL (CAPSTONE)                     │
+│                                                                             │
+│  [ Cámara Nube/Edge ] ──► [ Inferencia TensorRT ] ──► [ Telemetría MQTT ]    │
+│                                                            │                │
+│                                                            ▼                │
+│  [ Re-entrenamiento Auto ] ◄── [ Alerta Drift ] ◄── [ Evidently AI Dashboard]│
+└─────────────────────────────────────────────────────────────────────────────┘
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario Final — Capítulo 6</div>
+        <div class="quiz-question" id="q6-1">
+          <div class="q-text">1. ¿Qué se entiende por Data Drift en producción?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q6-1',true)">A) Un cambio estadístico en los datos de entrada en producción comparado con los datos de entrenamiento</button>
+            <button class="q-option" onclick="checkAnswer(this,'q6-1',false)">B) La pérdida de conexión WiFi del robot</button>
+          </div>
+          <div class="q-explanation">El Data Drift ocurre cuando la distribución de los datos reales del entorno cambia, requiriendo re-entrenar el modelo con nuevos ejemplos.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-06" onchange="toggleModuleRead('tab-06')">
+          <label class="read-label" for="check-06">Marcar Capítulo 6 como completado</label>
+        </div>
+        <a href="../index.html" class="action-btn primary">¡Curso Finalizado! Volver al Inicio <i data-lucide="check" style="width:14px;height:14px;"></i></a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  const totalModules = 6;
+  const completedSet = new Set();
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('open');
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  }
+
+  function toggleTheme() {
+    const isLight = document.documentElement.classList.toggle('light');
+    localStorage.setItem('preferredTheme', isLight ? 'light' : 'dark');
+    document.getElementById('themeIcon').setAttribute('data-lucide', isLight ? 'moon' : 'sun');
+    lucide.createIcons();
+  }
+
+  function switchTab(tabId, btnElement) {
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    if (btnElement) {
+      btnElement.closest('.nav-item').classList.add('active');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    closeSidebar();
+  }
+
+  function checkAnswer(btn, qId, isCorrect) {
+    const parent = document.getElementById(qId);
+    const options = parent.querySelectorAll('.q-option');
+    options.forEach(opt => opt.classList.add('disabled'));
+
+    if (isCorrect) {
+      btn.classList.add('correct');
+    } else {
+      btn.classList.add('incorrect');
+    }
+    const exp = parent.querySelector('.q-explanation');
+    if (exp) exp.style.display = 'block';
+  }
+
+  function toggleModuleRead(tabId) {
+    const navItems = document.querySelectorAll('.nav-list .nav-item');
+    const index = parseInt(tabId.replace('tab-', '')) - 1;
+    const checkbox = document.getElementById('check-' + tabId.replace('tab-', ''));
+
+    if (checkbox.checked) {
+      completedSet.add(tabId);
+      navItems[index].classList.add('completed');
+    } else {
+      completedSet.delete(tabId);
+      navItems[index].classList.remove('completed');
+    }
+
+    const pct = Math.round((completedSet.size / totalModules) * 100);
+    document.getElementById('progressText').innerText = pct + '%';
+    document.getElementById('progressDetails').innerText = completedSet.size + ' de ' + totalModules + ' módulos';
+
+    const circle = document.getElementById('progressCircle');
+    const offset = 226 - (226 * pct) / 100;
+    circle.style.strokeDashoffset = offset;
+  }
+
+  function copyCode(btn) {
+    const code = btn.closest('.code-block').querySelector('pre').innerText;
+    navigator.clipboard.writeText(code);
+    btn.innerHTML = '<i data-lucide="check" style="width:12px;height:12px;"></i> Copiado';
+    lucide.createIcons();
+    setTimeout(() => {
+      btn.innerHTML = '<i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar';
+      lucide.createIcons();
+    }, 2000);
+  }
+</script>
+</body>
+</html>

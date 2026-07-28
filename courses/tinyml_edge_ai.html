@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="theme-color" content="#00D9FF">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TinyML & Edge AI (Inteligencia Artificial en Microcontroladores) | AutoNovations Academy</title>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+      if (savedTheme === 'light') { document.documentElement.classList.add('light'); }
+      else { document.documentElement.classList.remove('light'); }
+    })();
+  </script>
+  <meta name="description" content="Curso avanzado de TinyML & Edge AI. Aprende cuantización INT8, pruning de modelos PyTorch/TensorFlow, TFLite Micro, TensorRT y despliegue en hardware embebido como ESP32, STM32 y Jetson Nano.">
+  <meta name="keywords" content="TinyML, Edge AI, Microcontrollers, ESP32, STM32, Jetson Nano, Quantization, INT8, Pruning, PyTorch, TensorFlow Lite Micro, TensorRT, CMSIS-NN, AutoNovations Academy">
+  <meta name="author" content="AutoNovations Academy">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="../assets/js/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-darker: #050811; --bg-dark: #0a0f1d; --bg-card: #101728;
+      --bg-card-hover: #18233c; --border: #1e2c48; --border-focus: #00f0ff;
+      --accent-cyan: #00f0ff; --accent-cyan-dim: rgba(0,240,255,0.12);
+      --accent-green: #10b981; --accent-green-neon: #39ff14;
+      --accent-green-dim: rgba(16,185,129,0.15);
+      --accent-red: #ef4444; --accent-red-neon: #ff3366;
+      --accent-red-dim: rgba(239,68,68,0.15);
+      --accent-amber: #f59e0b; --accent-amber-dim: rgba(245,158,11,0.15);
+      --accent-purple: #a855f7; --accent-purple-dim: rgba(168,85,247,0.15);
+      --accent-blue: #3b82f6; --accent-blue-dim: rgba(59,130,246,0.12);
+      --text-primary: #f3f4f6; --text-secondary: #9ca3af; --text-muted: #6b7280;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
+      --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    html.light {
+      --bg-darker: #f3f4f6; --bg-dark: #ffffff; --bg-card: #ffffff;
+      --bg-card-hover: #f9fafb; --border: #e5e7eb; --border-focus: #2563eb;
+      --accent-cyan: #0284c7; --accent-cyan-dim: rgba(2,132,199,0.1);
+      --accent-green: #059669; --accent-green-neon: #10b981;
+      --accent-green-dim: rgba(5,150,105,0.1);
+      --accent-red: #dc2626; --accent-red-neon: #ef4444;
+      --accent-red-dim: rgba(220,38,38,0.1);
+      --accent-amber: #d97706; --accent-amber-dim: rgba(217,119,6,0.1);
+      --accent-purple: #7c3aed; --accent-purple-dim: rgba(124,58,237,0.1);
+      --accent-blue: #2563eb; --accent-blue-dim: rgba(37,99,235,0.1);
+      --text-primary: #111827; --text-secondary: #4b5563; --text-muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg-darker); color: var(--text-primary); font-family: var(--font-sans); line-height: 1.6; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-darker); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-sm); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+    .app-container { display: flex; min-height: 100vh; }
+    .sidebar { width: 290px; background-color: var(--bg-dark); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; padding: 1.5rem; transition: transform 0.3s; overflow-y: auto; }
+    .sidebar-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--accent-cyan); letter-spacing: 0.05em; margin-bottom: 0.5rem; text-transform: uppercase; text-decoration: none; }
+    .sidebar-subtitle { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.5rem; padding-left: 34px; }
+    .nav-section-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); padding: 0.75rem 0 0.4rem 0; border-top: 1px solid var(--border); margin-top: 0.5rem; }
+    .nav-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .nav-item button { width: 100%; background: none; border: none; outline: none; color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.8rem; font-weight: 500; text-align: left; padding: 8px 12px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: var(--transition); border: 1px solid transparent; }
+    .nav-item button:hover { background-color: var(--bg-card-hover); color: var(--text-primary); }
+    .nav-item.active button { background-color: var(--accent-cyan-dim); color: var(--accent-cyan); border: 1px solid rgba(0,240,255,0.25); }
+    .nav-item.completed button { color: var(--accent-green); }
+    .nav-check { display: none; color: var(--accent-green); margin-left: auto; }
+    .nav-item.completed .nav-check { display: inline-block; }
+    .nav-num { min-width: 20px; height: 20px; border-radius: 50%; background: var(--border); color: var(--text-muted); font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-item.active .nav-num { background: var(--accent-cyan); color: #06090f; }
+    .nav-item.completed .nav-num { background: var(--accent-green-dim); color: var(--accent-green); }
+    .progress-box { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 1.5rem; text-align: center; }
+    .progress-box-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .progress-circle-wrapper { position: relative; width: 90px; height: 90px; margin: 0 auto 8px; }
+    .progress-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .progress-bg-circle { fill: none; stroke: var(--border); stroke-width: 8; }
+    .progress-bar-circle { fill: none; stroke: var(--accent-cyan); stroke-width: 8; stroke-dasharray: 226; stroke-dashoffset: 226; transition: stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1); stroke-linecap: round; }
+    .progress-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--accent-cyan); }
+    .progress-details { font-size: 0.7rem; color: var(--text-muted); }
+    .main-content { margin-left: 290px; flex-grow: 1; padding: 2.5rem; max-width: calc(100% - 290px); min-height: 100vh; display: flex; flex-direction: column; transition: margin-left 0.3s, max-width 0.3s; }
+    .content-header { margin-bottom: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; }
+    .content-header h1 { font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 12px; }
+    .content-header p { color: var(--text-secondary); font-size: 0.92rem; }
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-left: 1rem; }
+    .theme-toggle-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 38px; height: 38px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+    .theme-toggle-btn:hover { border-color: var(--accent-cyan); }
+    .mobile-menu-btn { display: none; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 38px; height: 38px; border-radius: var(--radius-md); cursor: pointer; align-items: center; justify-content: center; transition: var(--transition); }
+    .tab-pane { display: none; animation: fadeIn 0.4s ease; }
+    .tab-pane.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .learning-section { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 1.75rem; }
+    .learning-section h2 { font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 1.25rem; color: var(--accent-cyan); border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+    .learning-section h3 { font-family: var(--font-display); font-size: 1.05rem; margin: 1.5rem 0 0.6rem 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+    .learning-section h4 { font-family: var(--font-display); font-size: 0.95rem; margin: 1.2rem 0 0.5rem 0; color: var(--accent-amber); }
+    .learning-section p { color: var(--text-secondary); font-size: 0.93rem; margin-bottom: 1rem; line-height: 1.75; }
+    .learning-section ul, .learning-section ol { margin-left: 1.5rem; margin-bottom: 1rem; color: var(--text-secondary); }
+    .learning-section li { margin-bottom: 5px; font-size: 0.93rem; line-height: 1.6; }
+    .definition-box { background-color: var(--bg-darker); border-left: 3px solid var(--accent-cyan); padding: 1rem 1.25rem; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin: 1rem 0; }
+    .definition-term { font-family: var(--font-display); font-weight: 700; color: var(--accent-cyan); font-size: 0.88rem; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .definition-desc { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.55; }
+    .alert-box { padding: 1rem 1.25rem; border-radius: var(--radius-lg); margin: 1.25rem 0; display: flex; gap: 12px; align-items: flex-start; border: 1px solid transparent; }
+    .alert-box.info { background-color: var(--accent-cyan-dim); border-color: rgba(0,240,255,0.2); }
+    .alert-box.info i { color: var(--accent-cyan); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.warn { background-color: var(--accent-amber-dim); border-color: rgba(245,158,11,0.25); }
+    .alert-box.warn i { color: var(--accent-amber); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.success { background-color: var(--accent-green-dim); border-color: rgba(16,185,129,0.25); }
+    .alert-box.success i { color: var(--accent-green); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.danger { background-color: var(--accent-red-dim); border-color: rgba(239,68,68,0.25); }
+    .alert-box.danger i { color: var(--accent-red); flex-shrink: 0; margin-top: 2px; }
+    .alert-box-text { font-size: 0.87rem; line-height: 1.65; color: var(--text-primary); }
+    .code-block { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); margin: 1rem 0; overflow: hidden; }
+    .code-block-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); }
+    .code-lang { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-family: var(--font-mono); }
+    .code-copy-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 3px 8px; border-radius: var(--radius-sm); font-size: 0.7rem; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 4px; }
+    .code-copy-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .code-block pre { padding: 1rem 1.25rem; overflow-x: auto; font-family: var(--font-mono); font-size: 0.83rem; line-height: 1.7; color: #e2e8f0; }
+    .code-block pre .cmd { color: var(--accent-cyan); }
+    .code-block pre .out { color: var(--accent-green); }
+    .code-block pre .cmt { color: var(--text-muted); font-style: italic; }
+    .code-block pre .kw { color: #c084fc; }
+    .code-block pre .str { color: #fbbf24; }
+    .code-block pre .num { color: #fb923c; }
+    .quiz-section { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; margin-bottom: 1.75rem; }
+    .quiz-title-bar { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--accent-cyan); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .quiz-question { margin-bottom: 1.5rem; }
+    .q-text { font-size: 0.92rem; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+    .q-options { display: flex; flex-direction: column; gap: 7px; }
+    .q-option { background: var(--bg-darker); border: 1px solid var(--border); color: var(--text-secondary); padding: 9px 14px; border-radius: var(--radius-md); font-size: 0.85rem; cursor: pointer; text-align: left; transition: var(--transition); }
+    .q-option:hover { border-color: var(--accent-cyan); color: var(--text-primary); }
+    .q-option.correct { background-color: var(--accent-green-dim); border-color: var(--accent-green); color: var(--accent-green-neon); pointer-events: none; }
+    .q-option.incorrect { background-color: var(--accent-red-dim); border-color: var(--accent-red); color: var(--accent-red-neon); pointer-events: none; }
+    .q-explanation { font-size: 0.82rem; color: var(--text-secondary); margin-top: 8px; padding: 8px 12px; background: var(--bg-darker); border-radius: var(--radius-sm); display: none; border-left: 3px solid var(--accent-cyan); }
+    .module-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; flex-wrap: wrap; gap: 10px; }
+    .action-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; font-size: 0.87rem; display: flex; align-items: center; gap: 8px; transition: var(--transition); font-family: var(--font-sans); text-decoration: none; }
+    .action-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .action-btn.primary { background: var(--accent-cyan-dim); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .action-btn.primary:hover { background: var(--accent-cyan); color: #06090f; }
+    .action-btn:disabled { opacity: 0.4; pointer-events: none; }
+    .read-confirmation { display: flex; align-items: center; gap: 10px; background: var(--bg-darker); border: 1px solid var(--border); padding: 9px 14px; border-radius: var(--radius-md); }
+    .read-checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent-cyan); }
+    .read-label { font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-secondary); }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 1rem 0; }
+    .compare-table th { background: var(--bg-darker); color: var(--accent-cyan); padding: 10px 12px; text-align: left; font-family: var(--font-display); font-weight: 600; border: 1px solid var(--border); }
+    .compare-table td { padding: 9px 12px; border: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+    .compare-table tr:hover td { background: var(--bg-card-hover); }
+    .compare-table .highlight { color: var(--accent-cyan); font-weight: 600; }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 1rem; margin: 1.25rem 0; }
+    .info-card { background: var(--bg-darker); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; border-top: 3px solid var(--accent-cyan); transition: var(--transition); }
+    .info-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+    .info-card-icon { color: var(--accent-cyan); margin-bottom: 10px; }
+    .info-card-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 5px; }
+    .info-card-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+    .level-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; padding: 3px 8px; border-radius: var(--radius-sm); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-master { background: var(--accent-purple-dim); color: var(--accent-purple); border: 1px solid rgba(168,85,247,0.3); }
+    .badge-success { background: var(--accent-green-dim); color: var(--accent-green-neon); border: 1px solid rgba(16,185,129,0.3); }
+    .badge-danger { background: var(--accent-red-dim); color: var(--accent-red-neon); border: 1px solid rgba(239,68,68,0.3); }
+    .ascii-diagram { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.8; color: var(--accent-cyan); margin: 1rem 0; overflow-x: auto; white-space: pre; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 99; backdrop-filter: blur(2px); }
+    .sidebar-overlay.open { display: block; }
+    
+    /* Interactive Simulator Styles */
+    .sim-panel { background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-top: 1rem; }
+    .sim-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
+    .sim-control-group { display: flex; flex-direction: column; gap: 6px; }
+    .sim-label { font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; }
+    .sim-select, .sim-slider { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 12px; border-radius: var(--radius-md); font-family: var(--font-sans); font-size: 0.85rem; outline: none; transition: var(--transition); }
+    .sim-select:focus { border-color: var(--accent-cyan); }
+    .telemetry-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
+    .gauge-card { background: var(--bg-darker); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; text-align: center; }
+    .gauge-title { font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-display); letter-spacing: 0.05em; }
+    .gauge-val { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 700; color: var(--accent-cyan); margin: 6px 0; }
+    .gauge-status { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+    .terminal-box { background: #010408; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; font-family: var(--font-mono); font-size: 0.8rem; height: 220px; overflow-y: auto; color: #a5f3fc; }
+    .term-line { margin-bottom: 4px; display: flex; gap: 12px; }
+    .term-time { color: var(--text-muted); }
+    .term-data { color: #fde047; }
+    .term-status { color: #4ade80; }
+
+    @media (max-width: 1024px) { .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); box-shadow: 4px 0 30px rgba(0,0,0,0.5); } .main-content { margin-left: 0; max-width: 100%; } .mobile-menu-btn { display: flex; } }
+    @media (max-width: 640px) { .main-content { padding: 1.25rem; } .content-header h1 { font-size: 1.3rem; } .module-actions { flex-direction: column; } }
+    code { color: var(--accent-cyan); font-family: var(--font-mono); font-size: 0.85em; background: var(--bg-darker); padding: 2px 6px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="app-container">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <a class="sidebar-brand" href="../index.html">
+      <i data-lucide="cpu" style="width:20px;height:20px;flex-shrink:0;color:var(--accent-cyan);"></i>
+      AutoNovations
+    </a>
+    <div class="sidebar-subtitle">TinyML &amp; Edge AI Engineering</div>
+    <div class="progress-box">
+      <div class="progress-box-title">Progreso del Curso</div>
+      <div class="progress-circle-wrapper">
+        <svg class="progress-svg" viewBox="0 0 80 80">
+          <circle class="progress-bg-circle" cx="40" cy="40" r="36"/>
+          <circle class="progress-bar-circle" id="progressCircle" cx="40" cy="40" r="36"/>
+        </svg>
+        <div class="progress-text" id="progressText">0%</div>
+      </div>
+      <div class="progress-details" id="progressDetails">0 de 6 módulos</div>
+    </div>
+    <div class="nav-section-label">Módulos del Curso</div>
+    <ul class="nav-list" id="navList">
+      <li class="nav-item active" data-tab="tab-01"><button onclick="switchTab('tab-01',this)"><span class="nav-num">1</span>Fundamentos TinyML &amp; Hardware<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-02"><button onclick="switchTab('tab-02',this)"><span class="nav-num">2</span>Cuantización (INT8, PTQ &amp; QAT)<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-03"><button onclick="switchTab('tab-03',this)"><span class="nav-num">3</span>Pruning &amp; Sparsity PyTorch/TF<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-04"><button onclick="switchTab('tab-04',this)"><span class="nav-num">4</span>TFLite Micro (ESP32 / STM32)<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-05"><button onclick="switchTab('tab-05',this)"><span class="nav-num">5</span>TensorRT en NVIDIA Jetson Nano<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-06"><button onclick="switchTab('tab-06',this)"><span class="nav-num">6</span>Simulador Benchmark &amp; Latencia<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="content-header">
+      <div>
+        <h1>
+          <i data-lucide="microchip" style="width:28px;height:28px;color:var(--accent-cyan);"></i>
+          TinyML &amp; Edge AI
+        </h1>
+        <p>Cuantización INT8 · Pruning de Redes · TFLite Micro · TensorRT · ESP32 · STM32 · Jetson Nano</p>
+      </div>
+      <div class="header-actions">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()" aria-label="Menú">
+          <i data-lucide="menu" style="width:18px;height:18px;"></i>
+        </button>
+        <button class="theme-toggle-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Cambiar tema">
+          <i data-lucide="sun" style="width:16px;height:16px;" id="themeIcon"></i>
+        </button>
+        <a href="../index.html" class="action-btn" style="text-decoration:none;">
+          <i data-lucide="home" style="width:14px;height:14px;"></i> Inicio
+        </a>
+      </div>
+    </div>
+
+    <!-- Cover Image Hero Preview -->
+    <div style="width:100%; height: 260px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 2rem; border: 1px solid var(--border); position: relative;">
+      <img src="../assets/images/courses/tinyml_edge_ai_cover.png" alt="TinyML & Edge AI Cover" style="width: 100%; height: 100%; object-fit: cover;">
+      <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,8,17,0.2) 0%, rgba(5,8,17,0.88) 100%); display: flex; align-items: flex-end; padding: 1.5rem;">
+        <span class="level-badge badge-master">Level 3 · Edge AI Architect</span>
+      </div>
+    </div>
+
+    <!-- TAB 01 -->
+    <div class="tab-pane active" id="tab-01">
+      <div class="learning-section">
+        <h2><i data-lucide="zap" style="width:20px;height:20px;"></i> Capítulo 1 · Fundamentos de TinyML y Edge AI</h2>
+        <p><strong>TinyML (Tiny Machine Learning)</strong> es el área de vanguardia que integra algoritmos de Machine Learning y Deep Learning en microcontroladores y dispositivos ultra embebidos con presupuestos de consumo energético inferiores a <strong>1 mW</strong> y memorias RAM medidas en <strong>kilobytes</strong>.</p>
+        
+        <div class="definition-box">
+          <div class="definition-term">¿Por qué TinyML frente al Cloud AI Tradicional?</div>
+          <div class="definition-desc">Enviar streaming continuo de audio o video a servidores en la Nube genera alta latencia, dependencia de conectividad, elevados costos de ancho de banda y vulnerabilidades de privacidad. TinyML procesa la información directamente en el sensor (In-Sensor Computing).</div>
+        </div>
+
+        <div class="ascii-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    PARADIGMA EDGE AI vs CLOUD AI TRADICIONAL                 │
+│                                                                             │
+│  [ Sensor / Cámara ] ──(Streaming Wi-Fi 5G)──► [ Nube Cloud AWS/GCP ]        │
+│                                                 • Latencia: >150 ms         │
+│                                                 • Ancho de Banda: Elevado    │
+│                                                 • Privacidad: Expuesta      │
+│                                                                             │
+│  vs.                                                                        │
+│                                                                             │
+│  [ Sensor + Microcontrolador (ESP32/STM32) ]  ──► [ TinyML Local Inference ] │
+│                                                 • Latencia: < 2 ms          │
+│                                                 • Ancho de Banda: 0 Bytes     │
+│                                                 • Energía: < 1 mW (Batería) │
+└─────────────────────────────────────────────────────────────────────────────┘
+        </div>
+
+        <h3><i data-lucide="layers" style="width:16px;height:16px;color:var(--accent-amber);"></i> Limitaciones Físicas de Hardware Embebido</h3>
+        <table class="compare-table">
+          <thead><tr><th>Hardware Embebido</th><th>Arquitectura CPU / GPU</th><th>SRAM / RAM</th><th>Memoria Flash</th><th>Casos de Uso Principales</th></tr></thead>
+          <tbody>
+            <tr><td class="highlight">STM32F407 (ARM)</td><td>Cortex-M4 (168 MHz)</td><td>192 KB</td><td>1 MB</td><td>Audio Anomaly, Keyphrase Spotting.</td></tr>
+            <tr><td class="highlight">ESP32-S3 (Xtensa)</td><td>Dual-Core LX7 (240 MHz) + Vector Ext</td><td>512 KB SRAM + 8MB PSRAM</td><td>8 MB - 16 MB</td><td>Visión en Borde (Person Detection), BLE.</td></tr>
+            <tr><td class="highlight">NVIDIA Jetson Nano</td><td>128-core Maxwell GPU + ARM A57</td><td>4 GB LPDDR4</td><td>MicroSD / eMMC</td><td>Detección YOLOv8 a 30 FPS en tiempo real.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 1</div>
+        <div class="quiz-question" id="q1-1">
+          <div class="q-text">1. ¿Cuál es el beneficio más crítico de realizar la inferencia en el borde (Edge AI) en lugar de la Nube en aplicaciones industriales?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',false)">A) La Nube procesa los datos sin requerir consumo de energía local</button>
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',true)">B) Inferencia de ultra-baja latencia determinista y garantía de privacidad al no transmitir datos crudos por la red</button>
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',false)">C) Los modelos en la Nube pesan menos de 10 KB</button>
+          </div>
+          <div class="q-explanation">En procesamiento de datos en el borde, la inferencia no requiere conectividad constante, elimina los retrasos de latencia de red y evita que datos sensibles de sensores o cámaras salgan del dispositivo.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-01" onchange="toggleModuleRead('tab-01')">
+          <label class="read-label" for="check-01">Marcar Capítulo 1 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-02', document.querySelectorAll('.nav-item')[1].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 02 -->
+    <div class="tab-pane" id="tab-02">
+      <div class="learning-section">
+        <h2><i data-lucide="binary" style="width:20px;height:20px;"></i> Capítulo 2 · Cuantización de Modelos (FP32 -&gt; INT8, PTQ &amp; QAT)</h2>
+        <p>La **Cuantización** es el proceso de mapear números de punto flotante de alta precisión de 32 bits (<code>float32</code>) a enteros de baja precisión de 8 bits (<code>int8</code>). Esto reduce el tamaño del modelo en un **75%** y permite ejecutar operaciones aritméticas con instrucciones SIMD / neon de enteros mucho más rápidas en el microcontrolador.</p>
+
+        <div class="definition-box">
+          <div class="definition-term">Ecuación de Cuantización Uniforme Afín</div>
+          <div class="definition-desc">$$q = \text{clamp}\left(\text{round}\left(\frac{r}{S}\right) + Z, q_{min}, q_{max}\right)$$
+          Donde $r$ es el valor flotante real, $S$ es el Factor de Escala (Scale) y $Z$ es el Punto Cero (Zero-Point) correspondiente al flotante 0.0.</div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="file-code"></i></div>
+            <div class="info-card-title">PTQ (Post-Training Quantization)</div>
+            <div class="info-card-desc">Cuantización directa tras entrenar el modelo en FP32. Rápida y sin necesidad de reentrenamiento, adecuada si el impacto en precisión es bajo.</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="refresh-cw"></i></div>
+            <div class="info-card-title">QAT (Quantization-Aware Training)</div>
+            <div class="info-card-desc">Modela los efectos del redondeo a INT8 durante el entrenamiento con grafos FakeQuantize, logrando una precisión casi idéntica a FP32.</div>
+          </div>
+        </div>
+
+        <h3>Pipeline de Conversión a INT8 con TensorFlow &amp; Representative Dataset</h3>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">python (TFLite Converter Full INT8)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="kw">import</span> tensorflow <span class="kw">as</span> tf
+
+<span class="cmt"># 1. Cargar modelo preentrenado Keras / SavedModel</span>
+model = tf.keras.models.load_model(<span class="str">'tinyml_resnet_model.h5'</span>)
+
+<span class="cmt"># 2. Definir un Representative Dataset para calibración de activaciones INT8</span>
+<span class="kw">def</span> <span class="cmd">representative_data_gen</span>():
+    <span class="kw">for</span> input_value <span class="kw">in</span> test_ds.take(<span class="num">100</span>):
+        <span class="kw">yield</span> [tf.cast(input_value, tf.float32)]
+
+<span class="cmt"># 3. Configurar TFLiteConverter para cuantización INT8 estricta</span>
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+converter.optimizations = [tf.lite.Optimize.DEFAULT]
+converter.representative_dataset = representative_data_gen
+converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+converter.inference_input_type = tf.int8
+converter.inference_output_type = tf.int8
+
+<span class="cmt"># 4. Convertir y guardar binario .tflite cuantizado</span>
+tflite_quant_model = converter.convert()
+<span class="kw">with</span> <span class="cmd">open</span>(<span class="str">'model_int8.tflite'</span>, <span class="str">'wb'</span>) <span class="kw">as</span> f:
+    f.write(tflite_quant_model)
+print(<span class="str">"[+] Modelo cuantizado INT8 exportado exitosamente."</span>)</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 2</div>
+        <div class="quiz-question" id="q2-1">
+          <div class="q-text">1. ¿Para qué sirve el `representative_dataset` durante el proceso de Post-Training Quantization (PTQ)?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',true)">A) Permite medir el rango dinámico de valores (mínimo y máximo) en los mapas de activaciones intermedias para calcular Scale y Zero-point en INT8</button>
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',false)">B) Sirve para reescribir el código fuente del microcontrolador en lenguaje ensamblador</button>
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',false)">C) Borra las capas convolucionales sobrantes</button>
+          </div>
+          <div class="q-explanation">A diferencia de los pesos estáticos, los rangos de las activaciones dependen de las entradas. El dataset representativo pasa muestras reales para calcular el rango dinámico exacto de cada capa.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-02" onchange="toggleModuleRead('tab-02')">
+          <label class="read-label" for="check-02">Marcar Capítulo 2 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-03', document.querySelectorAll('.nav-item')[2].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 03 -->
+    <div class="tab-pane" id="tab-03">
+      <div class="learning-section">
+        <h2><i data-lucide="scissors" style="width:20px;height:20px;"></i> Capítulo 3 · Pruning &amp; Sparsity en PyTorch / TensorFlow</h2>
+        <p>El **Pruning (Poda)** consiste en eliminar las conexiones o parámetros de la red neuronal cuyas contribuciones (pesos o magnitud de gradientes) son insignificantes para la salida final.</p>
+
+        <div class="ascii-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    DIFERENCIA ENTRE PRUNING ESTRUCTURADO Y NO ESTRUCTURADO  │
+│                                                                             │
+│  [ Unstructured Pruning (L1 Magnitude) ]                                    │
+│  Elimina pesos individuales aleatorios (Genera matrices dispersas/sparse).  │
+│  [ 0.42  0.00  0.15 ]  ──► Gran reducción teórica, requiere compresión.    │
+│  [ 0.00  0.88  0.00 ]                                                       │
+│                                                                             │
+│  [ Structured Pruning (Channel / Filter Pruning) ]                          │
+│  Elimina canales o filtros enteros de convolución.                          │
+│  [ Filter 1: OK ]                                                           │
+│  [ Filter 2: DELETED ] ──► Reduce dimensiones directas de tensores (RAM/FPS)│
+└─────────────────────────────────────────────────────────────────────────────┘
+        </div>
+
+        <h3>Implementación de Pruning No Estructurado con PyTorch</h3>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">python (PyTorch L1 Unstructured Pruning)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="kw">import</span> torch
+<span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+<span class="kw">import</span> torch.nn.utils.prune <span class="kw">as</span> prune
+
+<span class="cmt"># 1. Definir una red convolucional sencilla</span>
+model = nn.Sequential(
+    nn.Conv2d(<span class="num">1</span>, <span class="num">32</span>, kernel_size=<span class="num">3</span>),
+    nn.ReLU(),
+    nn.Linear(<span class="num">32</span> * <span class="num">26</span> * <span class="num">26</span>, <span class="num">10</span>)
+)
+
+<span class="cmt"># 2. Aplicar poda L1 del 50% de los pesos en la primera capa convolucional</span>
+prune.l1_unstructured(model[<span class="num">0</span>], name=<span class="str">'weight'</span>, amount=<span class="num">0.50</span>)
+
+<span class="cmt"># 3. Imprimir el porcentaje de ceros (sparsity) logrado</span>
+weight_tensor = model[<span class="num">0</span>].weight
+sparsity = float(torch.sum(weight_tensor == <span class="num">0</span>)) / float(weight_tensor.nelement())
+print(<span class="str">f"[+] Sparsity en Conv2d: {sparsity * 100:.2f}%"</span>)
+
+<span class="cmt"># 4. Hacer la poda permanente eliminando la máscara</span>
+prune.remove(model[<span class="num">0</span>], <span class="str">'weight'</span>)</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 3</div>
+        <div class="quiz-question" id="q3-1">
+          <div class="q-text">1. ¿Por qué el Pruning estructurado (Channel Pruning) resulta más ventajoso en microcontroladores sin hardware especializado en matrices dispersas?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',true)">A) Elimina canales enteros, reduciendo las dimensiones fácticas de los tensores sin requerir índices de matriz dispersa en memoria</button>
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',false)">B) Aumenta el consumo de memoria Flash para mayor precisión</button>
+          </div>
+          <div class="q-explanation">El Pruning estructurado modifica directamente la forma (shape) de los tensores. Esto acelera las multiplicaciones matriciales estándar sin necesidad de librerías complejas de Sparse Matrix Vector Multiplication.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-03" onchange="toggleModuleRead('tab-03')">
+          <label class="read-label" for="check-03">Marcar Capítulo 3 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-04', document.querySelectorAll('.nav-item')[3].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 04 -->
+    <div class="tab-pane" id="tab-04">
+      <div class="learning-section">
+        <h2><i data-lucide="cpu" style="width:20px;height:20px;"></i> Capítulo 4 · TFLite Micro &amp; C++ Deployment en ESP32 / STM32</h2>
+        <p><strong>TensorFlow Lite for Microcontrollers (TFLite Micro)</strong> está diseñado para ejecutar modelos de ML en procesadores bare-metal o bajo RTOS (FreeRTOS) sin necesidad de sistema operativo Linux ni soporte dinámico de asignación de memoria (<code>malloc</code>/<code>free</code>).</p>
+
+        <div class="definition-box">
+          <div class="definition-term">Tensor Arena Allocator</div>
+          <div class="definition-desc">Un arreglo estático contiguo en memoria SRAM (<code>uint8_t tensor_arena[kArenaSize]</code>) donde TFLite Micro reserva la memoria necesaria para cargar la estructura del grafo y los búferes de entrada/salida de las capas.</div>
+        </div>
+
+        <div class="alert-box info">
+          <i data-lucide="cpu"></i>
+          <div class="alert-box-text">
+            <strong>Aceleración CMSIS-NN &amp; ESP-NN:</strong> ARM provee las librerías <strong>CMSIS-NN</strong> y Espressif proporciona <strong>ESP-NN</strong>, implementando kernels de convolución e inferencia optimizados en ensamblador con SIMD para Cortex-M y Xtensa LX7.
+          </div>
+        </div>
+
+        <h3>Código C++ para Inferencia en ESP32-S3 / STM32</h3>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">cpp (TFLite Micro Execution Loop)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="kw">#include</span> <span class="str">&lt;TensorFlowLite_ESP32.h&gt;</span>
+<span class="kw">#include</span> <span class="str">"tensorflow/lite/micro/all_ops_resolver.h"</span>
+<span class="kw">#include</span> <span class="str">"tensorflow/lite/micro/micro_interpreter.h"</span>
+<span class="kw">#include</span> <span class="str">"model_data.h"</span> <span class="cmt">// Arreglo C++ const unsigned char g_model[]</span>
+
+<span class="kw">constexpr int</span> kTensorArenaSize = <span class="num">64</span> * <span class="num">1024</span>; <span class="cmt">// 64 KB Tensor Arena</span>
+<span class="kw">alignas</span>(<span class="num">16</span>) <span class="kw">uint8_t</span> tensor_arena[kTensorArenaSize];
+
+<span class="kw">void</span> <span class="cmd">setup_tinyml</span>() {
+    <span class="cmt">// 1. Obtener puntero al modelo FlatBuffer en memoria Flash</span>
+    <span class="kw">const tflite::Model</span>* model = tflite::GetModel(g_model);
+    
+    <span class="cmt">// 2. Instanciar Resolvedor de Operaciones</span>
+    <span class="kw">static tflite::AllOpsResolver</span> resolver;
+    
+    <span class="cmt">// 3. Crear Intérprete apuntando al Tensor Arena estático</span>
+    <span class="kw">static tflite::MicroInterpreter</span> interpreter(
+        model, resolver, tensor_arena, kTensorArenaSize);
+        
+    interpreter.AllocateTensors();
+    
+    <span class="cmt">// 4. Configurar búferes de entrada</span>
+    <span class="kw">TfLiteTensor</span>* input = interpreter.input(<span class="num">0</span>);
+    input-&gt;data.int8[<span class="num">0</span>] = <span class="num">42</span>; <span class="cmt">// Valor cuantizado de sensor</span>
+    
+    <span class="cmt">// 5. Ejecutar Inferencia Local</span>
+    <span class="kw">TfLiteStatus</span> invoke_status = interpreter.Invoke();
+    <span class="kw">if</span> (invoke_status == kTfLiteOk) {
+        <span class="kw">TfLiteTensor</span>* output = interpreter.output(<span class="num">0</span>);
+        printf(<span class="str">"Inferencia Exitosa! Score: %d\n"</span>, output-&gt;data.int8[<span class="num">0</span>]);
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 4</div>
+        <div class="quiz-question" id="q4-1">
+          <div class="q-text">1. En TFLite Micro, ¿por qué la memoria Tensor Arena debe asignarse de forma estática en lugar de usar `new` o `malloc`?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q4-1',true)">A) Para evitar la fragmentación dinámica de memoria en sistemas RTOS y garantizar ejecución determinista sin fallos de desbordamiento de heap</button>
+            <button class="q-option" onclick="checkAnswer(this,'q4-1',false)">B) Porque la memoria Flash no soporta enteros de 8 bits</button>
+          </div>
+          <div class="q-explanation">En sistemas embebidos de misión crítica, la asignación dinámica de memoria genera fragmentación impredecible en la RAM, lo cual puede colapsar el microcontrolador en ejecución prolongada.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-04" onchange="toggleModuleRead('tab-04')">
+          <label class="read-label" for="check-04">Marcar Capítulo 4 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-05', document.querySelectorAll('.nav-item')[4].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 05 -->
+    <div class="tab-pane" id="tab-05">
+      <div class="learning-section">
+        <h2><i data-lucide="gpu" style="width:20px;height:20px;"></i> Capítulo 5 · Edge AI de Alto Rendimiento en NVIDIA Jetson Nano (TensorRT)</h2>
+        <p>Para aplicaciones de Edge AI de alto rendimiento que exigen procesamiento de video multicanal o detección de objetos en tiempo real (ej. YOLOv8 / MobileNet), la plataforma **NVIDIA Jetson Nano** utiliza el motor de optimización **TensorRT**.</p>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="layers"></i></div>
+            <div class="info-card-title">Layer &amp; Tensor Fusion</div>
+            <div class="info-card-desc">TensorRT combina automáticamente capas Convolución + Bias + ReLU en una sola operación de kernel CUDA, reduciendo lecturas/escrituras a memoria global.</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="gauge"></i></div>
+            <div class="info-card-title">Precision Calibration</div>
+            <div class="info-card-desc">Optimiza la ejecución en cuantización INT8 y FP16 aprovechando los núcleos CUDA y Tensor Cores de NVIDIA.</div>
+          </div>
+        </div>
+
+        <h3>Compilación de Motores TensorRT `.engine` desde ONNX</h3>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">bash (trtexec CLI Optimization)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="cmt"># 1. Exportar modelo PyTorch a ONNX</span>
+<span class="cmd">python3</span> -m ultralytics export model=yolov8n.pt format=onnx int8=True
+
+<span class="cmt"># 2. Compilar motor de TensorRT ultra-optimizado en INT8 en la Jetson Nano</span>
+<span class="cmd">trtexec</span> --onnx=yolov8n.onnx \
+        --saveEngine=yolov8n_int8.engine \
+        --int8 \
+        --calib=calibration.cache \
+        --workspace=1024</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 5</div>
+        <div class="quiz-question" id="q5-1">
+          <div class="q-text">1. ¿Cuál es el principal beneficio de la fusión de capas (Layer Fusion) realizada por NVIDIA TensorRT?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q5-1',true)">A) Fusiona múltiples kernels en una sola ejecución GPU, minimizando los cuellos de botella de ancho de banda de memoria VRAM</button>
+            <button class="q-option" onclick="checkAnswer(this,'q5-1',false)">B) Aumenta el número de canales de entrada del video</button>
+          </div>
+          <div class="q-explanation">En la GPU de la Jetson, lanzar kernels pequeños independientes genera latencia de sincronización. Fusionar capas reduce los accesos a la memoria global DRAM y maximiza el rendimiento FPS.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-05" onchange="toggleModuleRead('tab-05')">
+          <label class="read-label" for="check-05">Marcar Capítulo 5 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-06', document.querySelectorAll('.nav-item')[5].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 06 -->
+    <div class="tab-pane" id="tab-06">
+      <div class="learning-section">
+        <h2><i data-lucide="activity" style="width:20px;height:20px;"></i> Capítulo 6 · Simulador Live Benchmark: Cuantización &amp; Latencia TinyML</h2>
+        <p>Ajusta la precisión de la cuantización (FP32, FP16, INT8, INT4), la tasa de Pruning (0% a 90%) y el objetivo de hardware embebido (ESP32-S3, STM32F4, Jetson Nano) para observar en tiempo real el consumo de memoria, la latencia por muestra y la pérdida de precisión estimada.</p>
+
+        <div class="sim-panel">
+          <div class="sim-controls">
+            <div class="sim-control-group">
+              <label class="sim-label">Target Hardware Embebido</label>
+              <select class="sim-select" id="simHwSelect" onchange="updateSimMetrics()">
+                <option value="esp32">ESP32-S3 (Dual-Core LX7 240 MHz)</option>
+                <option value="stm32">STM32F407 (ARM Cortex-M4 168 MHz)</option>
+                <option value="jetson">NVIDIA Jetson Nano (128-core GPU)</option>
+              </select>
+            </div>
+            <div class="sim-control-group">
+              <label class="sim-label">Nivel de Cuantización (Precision)</label>
+              <select class="sim-select" id="simQuantSelect" onchange="updateSimMetrics()">
+                <option value="fp32">FP32 (Float 32-bit Original)</option>
+                <option value="fp16">FP16 (Half Float 16-bit)</option>
+                <option value="int8" selected>INT8 (Integer 8-bit Quantized)</option>
+                <option value="int4">INT4 (Sub-byte 4-bit Quantized)</option>
+              </select>
+            </div>
+            <div class="sim-control-group">
+              <label class="sim-label">Sparsity de Pruning: <span id="pruneValDisplay" style="color:var(--accent-cyan)">40%</span></label>
+              <input type="range" class="sim-slider" id="simPruneSlider" min="0" max="90" step="5" value="40" oninput="updateSimMetrics()">
+            </div>
+          </div>
+
+          <div class="telemetry-grid">
+            <div class="gauge-card">
+              <div class="gauge-title">Tamaño Flash / Disco</div>
+              <div class="gauge-val" id="valFlash">320 KB</div>
+              <div class="gauge-status" style="color:var(--accent-green)">REDUCCIÓN -75%</div>
+            </div>
+            <div class="gauge-card">
+              <div class="gauge-title">Uso RAM / Tensor Arena</div>
+              <div class="gauge-val" id="valRam">48 KB</div>
+              <div class="gauge-status" style="color:var(--accent-green)">DENTRO DE SRAM</div>
+            </div>
+            <div class="gauge-card">
+              <div class="gauge-title">Latencia de Inferencia</div>
+              <div class="gauge-val" id="valLatency">1.8 ms</div>
+              <div class="gauge-status" style="color:var(--accent-cyan)">555 FPS</div>
+            </div>
+            <div class="gauge-card">
+              <div class="gauge-title">Precisión Est. (Top-1)</div>
+              <div class="gauge-val" id="valAccuracy">94.2%</div>
+              <div class="gauge-status" style="color:var(--accent-amber)">PÉRDIDA -0.6%</div>
+            </div>
+          </div>
+
+          <div class="sim-control-group" style="margin-bottom: 10px;">
+            <label class="sim-label">Log de Telemetría e Inferencia en Vivo</label>
+          </div>
+          <div class="terminal-box" id="simTerminal">
+            <div class="term-line">
+              <span class="term-time">[00:00:01]</span>
+              <span class="term-data">TinyML Runtime initialized. Sensor stream ready.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 6</div>
+        <div class="quiz-question" id="q6-1">
+          <div class="q-text">1. ¿Qué combinación de optimizaciones resulta óptima para desplegar una red neuronal de visión en un microcontrolador ESP32-S3 de 512 KB SRAM?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q6-1',true)">A) Cuantización INT8 con Representative Dataset + Pruning estructurado de canales del 30-50%</button>
+            <button class="q-option" onclick="checkAnswer(this,'q6-1',false)">B) Mantener el modelo en FP32 sin compresión</button>
+          </div>
+          <div class="q-explanation">La cuantización INT8 reduce el footprint de memoria en un 75%, y el pruning de canales ajusta las activaciones para caber holgadamente dentro del Tensor Arena asignado en SRAM.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-06" onchange="toggleModuleRead('tab-06')">
+          <label class="read-label" for="check-06">Marcar Capítulo 6 como completado</label>
+        </div>
+        <a href="../index.html" class="action-btn primary"><i data-lucide="award" style="width:14px;height:14px;"></i> ¡Curso Completado! Volver al Inicio</a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  const totalModules = 6;
+  let completedModules = new Set();
+
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.add('active');
+    if (btn) {
+      btn.closest('.nav-item').classList.add('active');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    closeSidebar();
+  }
+
+  function toggleModuleRead(tabId) {
+    const check = document.querySelector(`#${tabId} .read-checkbox`);
+    const navItem = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
+    
+    if (check.checked) {
+      completedModules.add(tabId);
+      navItem.classList.add('completed');
+    } else {
+      completedModules.delete(tabId);
+      navItem.classList.remove('completed');
+    }
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const count = completedModules.size;
+    const pct = Math.round((count / totalModules) * 100);
+    
+    document.getElementById('progressText').innerText = pct + '%';
+    document.getElementById('progressDetails').innerText = `${count} de ${totalModules} módulos`;
+    
+    const circle = document.getElementById('progressCircle');
+    const offset = 226 - (226 * pct) / 100;
+    circle.style.strokeDashoffset = offset;
+  }
+
+  function checkAnswer(btn, qId, isCorrect) {
+    const container = document.getElementById(qId);
+    const options = container.querySelectorAll('.q-option');
+    options.forEach(opt => opt.classList.add('disabled'));
+    
+    if (isCorrect) {
+      btn.classList.add('correct');
+    } else {
+      btn.classList.add('incorrect');
+    }
+    
+    const exp = container.querySelector('.q-explanation');
+    if (exp) exp.style.display = 'block';
+  }
+
+  function copyCode(btn) {
+    const code = btn.closest('.code-block').querySelector('pre').innerText;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.innerHTML = '<i data-lucide="check" style="width:12px;height:12px;"></i> Copiado';
+      lucide.createIcons();
+      setTimeout(() => {
+        btn.innerHTML = '<i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar';
+        lucide.createIcons();
+      }, 2000);
+    });
+  }
+
+  function toggleTheme() {
+    const isLight = document.documentElement.classList.toggle('light');
+    localStorage.setItem('preferredTheme', isLight ? 'light' : 'dark');
+    document.getElementById('themeIcon').setAttribute('data-lucide', isLight ? 'moon' : 'sun');
+    lucide.createIcons();
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('open');
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  }
+
+  // SIMULATOR LOGIC
+  function updateSimMetrics() {
+    const hw = document.getElementById('simHwSelect').value;
+    const quant = document.getElementById('simQuantSelect').value;
+    const prune = parseInt(document.getElementById('simPruneSlider').value);
+    
+    document.getElementById('pruneValDisplay').innerText = prune + '%';
+
+    let baseFlash = 1280; // KB original FP32
+    let baseRam = 192;   // KB original FP32
+    let baseLatency = 8.5; // ms
+    let baseAcc = 95.8; // %
+
+    // Factor cuantización
+    let quantFactor = 1.0;
+    if (quant === 'fp16') quantFactor = 0.5;
+    if (quant === 'int8') quantFactor = 0.25;
+    if (quant === 'int4') quantFactor = 0.125;
+
+    // Factor pruning
+    let pruneFactor = (100 - prune) / 100.0;
+
+    // Factor HW speed multiplier
+    let hwMult = 1.0;
+    if (hw === 'stm32') hwMult = 1.8;
+    if (hw === 'jetson') hwMult = 0.15;
+
+    let finalFlash = Math.round(baseFlash * quantFactor * pruneFactor);
+    let finalRam = Math.round(baseRam * quantFactor * (0.4 + 0.6 * pruneFactor));
+    let finalLatency = (baseLatency * quantFactor * pruneFactor * hwMult).toFixed(1);
+    
+    // Acc calculation
+    let lossQuant = 0;
+    if (quant === 'fp16') lossQuant = 0.1;
+    if (quant === 'int8') lossQuant = 0.6;
+    if (quant === 'int4') lossQuant = 3.2;
+    let lossPrune = (prune * 0.04).toFixed(1);
+    let finalAcc = (baseAcc - lossQuant - parseFloat(lossPrune)).toFixed(1);
+
+    document.getElementById('valFlash').innerText = finalFlash >= 1024 ? (finalFlash/1024).toFixed(2) + ' MB' : finalFlash + ' KB';
+    document.getElementById('valRam').innerText = finalRam >= 1024 ? (finalRam/1024).toFixed(2) + ' MB' : finalRam + ' KB';
+    document.getElementById('valLatency').innerText = finalLatency + ' ms';
+    document.getElementById('valAccuracy').innerText = finalAcc + '%';
+
+    // Log update
+    const term = document.getElementById('simTerminal');
+    const timestamp = new Date().toISOString().substring(11, 19);
+    const logLine = `<div class="term-line">
+      <span class="term-time">[${timestamp}]</span>
+      <span class="term-data">${hw.toUpperCase()} | Precision: ${quant.toUpperCase()} | Pruning: ${prune}%</span>
+      <span class="term-status">INFERENCE LATENCY: ${finalLatency} ms | RAM: ${finalRam} KB</span>
+    </div>`;
+    term.insertAdjacentHTML('afterbegin', logLine);
+    if (term.children.length > 15) term.removeChild(term.lastChild);
+  }
+
+  // Run initial simulator update
+  setInterval(() => {
+    if (document.getElementById('tab-06').classList.contains('active')) {
+      updateSimMetrics();
+    }
+  }, 3000);
+</script>
+</body>
+</html>

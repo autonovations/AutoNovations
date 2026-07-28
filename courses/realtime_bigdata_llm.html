@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="theme-color" content="#00D9FF">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Big Data & LLM Agents para la Industria | AutoNovations Academy</title>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+      if (savedTheme === 'light') { document.documentElement.classList.add('light'); }
+      else { document.documentElement.classList.remove('light'); }
+    })();
+  </script>
+  <meta name="description" content="Curso avanzado de Real-Time Big Data y Agentes LLM para la Industria. Aprende Apache Kafka, ClickHouse, PySpark Streaming, RAG Industrial, Vector DBs y Orquestación Multi-Agente.">
+  <meta name="keywords" content="Real Time Big Data, LLM Agents, RAG Industrial, Apache Kafka, ClickHouse, PySpark, TimescaleDB, Qdrant, LangChain, Multi Agent Orchestration, AutoNovations Academy">
+  <meta name="author" content="AutoNovations Academy">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="../assets/js/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-darker: #050811; --bg-dark: #0a0f1d; --bg-card: #101728;
+      --bg-card-hover: #18233c; --border: #1e2c48; --border-focus: #00f0ff;
+      --accent-cyan: #00f0ff; --accent-cyan-dim: rgba(0,240,255,0.12);
+      --accent-green: #10b981; --accent-green-neon: #39ff14;
+      --accent-green-dim: rgba(16,185,129,0.15);
+      --accent-red: #ef4444; --accent-red-neon: #ff3366;
+      --accent-red-dim: rgba(239,68,68,0.15);
+      --accent-amber: #f59e0b; --accent-amber-dim: rgba(245,158,11,0.15);
+      --accent-purple: #a855f7; --accent-purple-dim: rgba(168,85,247,0.15);
+      --accent-blue: #3b82f6; --accent-blue-dim: rgba(59,130,246,0.12);
+      --text-primary: #f3f4f6; --text-secondary: #9ca3af; --text-muted: #6b7280;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
+      --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    html.light {
+      --bg-darker: #f3f4f6; --bg-dark: #ffffff; --bg-card: #ffffff;
+      --bg-card-hover: #f9fafb; --border: #e5e7eb; --border-focus: #2563eb;
+      --accent-cyan: #0284c7; --accent-cyan-dim: rgba(2,132,199,0.1);
+      --accent-green: #059669; --accent-green-neon: #10b981;
+      --accent-green-dim: rgba(5,150,105,0.1);
+      --accent-red: #dc2626; --accent-red-neon: #ef4444;
+      --accent-red-dim: rgba(220,38,38,0.1);
+      --accent-amber: #d97706; --accent-amber-dim: rgba(217,119,6,0.1);
+      --accent-purple: #7c3aed; --accent-purple-dim: rgba(124,58,237,0.1);
+      --accent-blue: #2563eb; --accent-blue-dim: rgba(37,99,235,0.1);
+      --text-primary: #111827; --text-secondary: #4b5563; --text-muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg-darker); color: var(--text-primary); font-family: var(--font-sans); line-height: 1.6; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-darker); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-sm); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+    .app-container { display: flex; min-height: 100vh; }
+    .sidebar { width: 290px; background-color: var(--bg-dark); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; padding: 1.5rem; transition: transform 0.3s; overflow-y: auto; }
+    .sidebar-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--accent-cyan); letter-spacing: 0.05em; margin-bottom: 0.5rem; text-transform: uppercase; text-decoration: none; }
+    .sidebar-subtitle { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.5rem; padding-left: 34px; }
+    .nav-section-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); padding: 0.75rem 0 0.4rem 0; border-top: 1px solid var(--border); margin-top: 0.5rem; }
+    .nav-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .nav-item button { width: 100%; background: none; border: none; outline: none; color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.8rem; font-weight: 500; text-align: left; padding: 8px 12px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: var(--transition); border: 1px solid transparent; }
+    .nav-item button:hover { background-color: var(--bg-card-hover); color: var(--text-primary); }
+    .nav-item.active button { background-color: var(--accent-cyan-dim); color: var(--accent-cyan); border: 1px solid rgba(0,240,255,0.25); }
+    .nav-item.completed button { color: var(--accent-green); }
+    .nav-check { display: none; color: var(--accent-green); margin-left: auto; }
+    .nav-item.completed .nav-check { display: inline-block; }
+    .nav-num { min-width: 20px; height: 20px; border-radius: 50%; background: var(--border); color: var(--text-muted); font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-item.active .nav-num { background: var(--accent-cyan); color: #06090f; }
+    .nav-item.completed .nav-num { background: var(--accent-green-dim); color: var(--accent-green); }
+    .progress-box { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 1.5rem; text-align: center; }
+    .progress-box-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .progress-circle-wrapper { position: relative; width: 90px; height: 90px; margin: 0 auto 8px; }
+    .progress-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .progress-bg-circle { fill: none; stroke: var(--border); stroke-width: 8; }
+    .progress-bar-circle { fill: none; stroke: var(--accent-cyan); stroke-width: 8; stroke-dasharray: 226; stroke-dashoffset: 226; transition: stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1); stroke-linecap: round; }
+    .progress-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--accent-cyan); }
+    .progress-details { font-size: 0.7rem; color: var(--text-muted); }
+    .main-content { margin-left: 290px; flex-grow: 1; padding: 2.5rem; max-width: calc(100% - 290px); min-height: 100vh; display: flex; flex-direction: column; transition: margin-left 0.3s, max-width 0.3s; }
+    .content-header { margin-bottom: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; }
+    .content-header h1 { font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 12px; }
+    .content-header p { color: var(--text-secondary); font-size: 0.92rem; }
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-left: 1rem; }
+    .theme-toggle-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 38px; height: 38px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+    .theme-toggle-btn:hover { border-color: var(--accent-cyan); }
+    .mobile-menu-btn { display: none; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 38px; height: 38px; border-radius: var(--radius-md); cursor: pointer; align-items: center; justify-content: center; transition: var(--transition); }
+    .tab-pane { display: none; animation: fadeIn 0.4s ease; }
+    .tab-pane.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .learning-section { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 1.75rem; }
+    .learning-section h2 { font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 1.25rem; color: var(--accent-cyan); border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+    .learning-section h3 { font-family: var(--font-display); font-size: 1.05rem; margin: 1.5rem 0 0.6rem 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+    .learning-section h4 { font-family: var(--font-display); font-size: 0.95rem; margin: 1.2rem 0 0.5rem 0; color: var(--accent-amber); }
+    .learning-section p { color: var(--text-secondary); font-size: 0.93rem; margin-bottom: 1rem; line-height: 1.75; }
+    .learning-section ul, .learning-section ol { margin-left: 1.5rem; margin-bottom: 1rem; color: var(--text-secondary); }
+    .learning-section li { margin-bottom: 5px; font-size: 0.93rem; line-height: 1.6; }
+    .definition-box { background-color: var(--bg-darker); border-left: 3px solid var(--accent-cyan); padding: 1rem 1.25rem; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin: 1rem 0; }
+    .definition-term { font-family: var(--font-display); font-weight: 700; color: var(--accent-cyan); font-size: 0.88rem; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .definition-desc { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.55; }
+    .alert-box { padding: 1rem 1.25rem; border-radius: var(--radius-lg); margin: 1.25rem 0; display: flex; gap: 12px; align-items: flex-start; border: 1px solid transparent; }
+    .alert-box.info { background-color: var(--accent-cyan-dim); border-color: rgba(0,240,255,0.2); }
+    .alert-box.info i { color: var(--accent-cyan); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.warn { background-color: var(--accent-amber-dim); border-color: rgba(245,158,11,0.25); }
+    .alert-box.warn i { color: var(--accent-amber); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.success { background-color: var(--accent-green-dim); border-color: rgba(16,185,129,0.25); }
+    .alert-box.success i { color: var(--accent-green); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.danger { background-color: var(--accent-red-dim); border-color: rgba(239,68,68,0.25); }
+    .alert-box.danger i { color: var(--accent-red); flex-shrink: 0; margin-top: 2px; }
+    .alert-box-text { font-size: 0.87rem; line-height: 1.65; color: var(--text-primary); }
+    .code-block { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); margin: 1rem 0; overflow: hidden; }
+    .code-block-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); }
+    .code-lang { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-family: var(--font-mono); }
+    .code-copy-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 3px 8px; border-radius: var(--radius-sm); font-size: 0.7rem; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 4px; }
+    .code-copy-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .code-block pre { padding: 1rem 1.25rem; overflow-x: auto; font-family: var(--font-mono); font-size: 0.83rem; line-height: 1.7; color: #e2e8f0; }
+    .code-block pre .cmd { color: var(--accent-cyan); }
+    .code-block pre .out { color: var(--accent-green); }
+    .code-block pre .cmt { color: var(--text-muted); font-style: italic; }
+    .code-block pre .kw { color: #c084fc; }
+    .code-block pre .str { color: #fbbf24; }
+    .code-block pre .num { color: #fb923c; }
+    .code-block pre .flag { color: var(--accent-amber); }
+    .quiz-section { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; margin-bottom: 1.75rem; }
+    .quiz-title-bar { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--accent-cyan); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .quiz-question { margin-bottom: 1.5rem; }
+    .q-text { font-size: 0.92rem; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+    .q-options { display: flex; flex-direction: column; gap: 7px; }
+    .q-option { background: var(--bg-darker); border: 1px solid var(--border); color: var(--text-secondary); padding: 9px 14px; border-radius: var(--radius-md); font-size: 0.85rem; cursor: pointer; text-align: left; transition: var(--transition); }
+    .q-option:hover { border-color: var(--accent-cyan); color: var(--text-primary); }
+    .q-option.correct { background-color: var(--accent-green-dim); border-color: var(--accent-green); color: var(--accent-green-neon); pointer-events: none; }
+    .q-option.incorrect { background-color: var(--accent-red-dim); border-color: var(--accent-red); color: var(--accent-red-neon); pointer-events: none; }
+    .q-option.disabled { pointer-events: none; opacity: 0.5; }
+    .q-explanation { font-size: 0.82rem; color: var(--text-secondary); margin-top: 8px; padding: 8px 12px; background: var(--bg-darker); border-radius: var(--radius-sm); display: none; border-left: 3px solid var(--accent-cyan); }
+    .module-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; flex-wrap: wrap; gap: 10px; }
+    .action-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; font-size: 0.87rem; display: flex; align-items: center; gap: 8px; transition: var(--transition); font-family: var(--font-sans); text-decoration: none; }
+    .action-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .action-btn.primary { background: var(--accent-cyan-dim); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .action-btn.primary:hover { background: var(--accent-cyan); color: #06090f; }
+    .action-btn:disabled { opacity: 0.4; pointer-events: none; }
+    .read-confirmation { display: flex; align-items: center; gap: 10px; background: var(--bg-darker); border: 1px solid var(--border); padding: 9px 14px; border-radius: var(--radius-md); }
+    .read-checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent-cyan); }
+    .read-label { font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-secondary); }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 1rem 0; }
+    .compare-table th { background: var(--bg-darker); color: var(--accent-cyan); padding: 10px 12px; text-align: left; font-family: var(--font-display); font-weight: 600; border: 1px solid var(--border); }
+    .compare-table td { padding: 9px 12px; border: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+    .compare-table tr:hover td { background: var(--bg-card-hover); }
+    .compare-table .highlight { color: var(--accent-cyan); font-weight: 600; }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 1rem; margin: 1.25rem 0; }
+    .info-card { background: var(--bg-darker); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; border-top: 3px solid var(--accent-cyan); transition: var(--transition); }
+    .info-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+    .info-card-icon { color: var(--accent-cyan); margin-bottom: 10px; }
+    .info-card-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 5px; }
+    .info-card-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+    .level-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; padding: 3px 8px; border-radius: var(--radius-sm); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-master { background: var(--accent-purple-dim); color: var(--accent-purple); border: 1px solid rgba(168,85,247,0.3); }
+    .ascii-diagram { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.8; color: var(--accent-cyan); margin: 1rem 0; overflow-x: auto; white-space: pre; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 99; backdrop-filter: blur(2px); }
+    .sidebar-overlay.open { display: block; }
+
+    /* Interactive Simulator Styles */
+    .sim-panel { background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-top: 1rem; }
+    .sim-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1.25rem; }
+    .sim-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 14px; border-radius: var(--radius-md); font-size: 0.8rem; font-family: var(--font-mono); cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 6px; }
+    .sim-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .sim-btn.danger { border-color: var(--accent-red); color: var(--accent-red); }
+    .sim-btn.danger:hover { background: var(--accent-red-dim); }
+    .sim-btn.active { background: var(--accent-cyan-dim); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .telemetry-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
+    .gauge-card { background: var(--bg-darker); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; text-align: center; }
+    .gauge-title { font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-display); letter-spacing: 0.05em; }
+    .gauge-val { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 700; color: var(--accent-cyan); margin: 6px 0; }
+    .gauge-status { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+    .terminal-box { background: #010408; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; font-family: var(--font-mono); font-size: 0.8rem; height: 260px; overflow-y: auto; color: #a5f3fc; }
+    .term-line { margin-bottom: 4px; display: flex; gap: 12px; }
+    .term-time { color: var(--text-muted); }
+    .term-tag { color: var(--accent-purple); font-weight: 700; }
+    .term-data { color: #fde047; }
+    .term-agent { color: var(--accent-green-neon); font-weight: 600; }
+
+    @media (max-width: 1024px) { .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); box-shadow: 4px 0 30px rgba(0,0,0,0.5); } .main-content { margin-left: 0; max-width: 100%; } .mobile-menu-btn { display: flex; } }
+    @media (max-width: 640px) { .main-content { padding: 1.25rem; } .content-header h1 { font-size: 1.3rem; } .module-actions { flex-direction: column; } }
+    code { color: var(--accent-cyan); font-family: var(--font-mono); font-size: 0.85em; background: var(--bg-darker); padding: 2px 6px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="app-container">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <a class="sidebar-brand" href="../index.html">
+      <i data-lucide="cpu" style="width:20px;height:20px;flex-shrink:0;color:var(--accent-cyan);"></i>
+      AutoNovations
+    </a>
+    <div class="sidebar-subtitle">Real-Time Big Data &amp; LLM Agents</div>
+    <div class="progress-box">
+      <div class="progress-box-title">Progreso del Curso</div>
+      <div class="progress-circle-wrapper">
+        <svg class="progress-svg" viewBox="0 0 80 80">
+          <circle class="progress-bg-circle" cx="40" cy="40" r="36"/>
+          <circle class="progress-bar-circle" id="progressCircle" cx="40" cy="40" r="36"/>
+        </svg>
+        <div class="progress-text" id="progressText">0%</div>
+      </div>
+      <div class="progress-details" id="progressDetails">0 de 6 módulos</div>
+    </div>
+    <div class="nav-section-label">Módulos del Curso</div>
+    <ul class="nav-list" id="navList">
+      <li class="nav-item active" data-tab="tab-01"><button onclick="switchTab('tab-01',this)"><span class="nav-num">1</span>Ingesta &amp; Streaming IIoT (Kafka)<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-02"><button onclick="switchTab('tab-02',this)"><span class="nav-num">2</span>OLAP DB (ClickHouse &amp; Timescale)<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-03"><button onclick="switchTab('tab-03',this)"><span class="nav-num">3</span>PySpark Streaming &amp; Anomaly Analytics<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-04"><button onclick="switchTab('tab-04',this)"><span class="nav-num">4</span>RAG Industrial &amp; Vector Databases<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-05"><button onclick="switchTab('tab-05',this)"><span class="nav-num">5</span>Multi-Agent Orchestration &amp; ReAct<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-06"><button onclick="switchTab('tab-06',this)"><span class="nav-num">6</span>Simulador Live Telemetry &amp; LLM Copilot<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="content-header">
+      <div>
+        <h1>
+          <i data-lucide="activity" style="width:28px;height:28px;color:var(--accent-cyan);"></i>
+          Real-Time Big Data &amp; LLM Agents para la Industria
+        </h1>
+        <p>Apache Kafka · ClickHouse · PySpark Streaming · Vector DBs · LangChain/LlamaIndex · Multi-Agent RAG</p>
+      </div>
+      <div class="header-actions">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()" aria-label="Menú">
+          <i data-lucide="menu" style="width:18px;height:18px;"></i>
+        </button>
+        <button class="theme-toggle-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Cambiar tema">
+          <i data-lucide="sun" style="width:16px;height:16px;" id="themeIcon"></i>
+        </button>
+        <a href="../index.html" class="action-btn" style="text-decoration:none;">
+          <i data-lucide="home" style="width:14px;height:14px;"></i> Inicio
+        </a>
+      </div>
+    </div>
+
+    <!-- Cover Image Hero Preview -->
+    <div style="width:100%; height: 260px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 2rem; border: 1px solid var(--border); position: relative;">
+      <img src="../assets/images/courses/realtime_bigdata_llm_cover.png" alt="Real-Time Big Data & LLM Agents Cover" style="width: 100%; height: 100%; object-fit: cover;">
+      <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,8,17,0.2) 0%, rgba(5,8,17,0.88) 100%); display: flex; align-items: flex-end; padding: 1.5rem;">
+        <span class="level-badge badge-master">Level 3 · Master Data &amp; AI Architect</span>
+      </div>
+    </div>
+
+    <!-- TAB 01 -->
+    <div class="tab-pane active" id="tab-01">
+      <div class="learning-section">
+        <h2><i data-lucide="zap" style="width:20px;height:20px;"></i> Capítulo 1 · Ingesta &amp; Streaming IIoT con Apache Kafka &amp; Sparkplug B</h2>
+        <p>En plantas industriales modernas y redes IoT de alta densidad, se generan millones de eventos por segundo procedentes de sensores de vibración, temperatura, variadores de frecuencia y PLCs. Para ingerir y desacoplar este volumen masivo de datos sin pérdida de mensajes, se utiliza **Apache Kafka** configurado con el protocolo **MQTT Sparkplug B**.</p>
+        
+        <div class="definition-box">
+          <div class="definition-term">¿Qué es una Arquitectura de Streaming Kappa?</div>
+          <div class="definition-desc">La arquitectura Kappa simplifica el procesamiento reemplazando la capa por lotes (Batch) tradicional por un único log distribuido e inmutable (Kafka), donde los datos históricos y en tiempo real son procesados por el mismo pipeline de streaming.</div>
+        </div>
+
+        <div class="ascii-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+<span style="color:var(--accent-cyan)">│                ARQUITECTURA DE INGESTA IIOT CON KAFKA                       │</span>
+│                                                                             │
+│  [ Sensores IIoT / PLCs ] ──► [ MQTT Broker ]                               │
+│                                    │ (MQTT Sparkplug B Engine)              │
+│                                    ▼                                        │
+│                        ┌──────────────────────┐                             │
+│                        │ Apache Kafka Cluster │                             │
+│                        │ Topic: iiot.telemetry│                             │
+│                        └──────────┬───────────┘                             │
+│                                   │                                         │
+│          ┌────────────────────────┴────────────────────────┐                │
+│          ▼                                                 ▼                │
+│  [ PySpark Stream Engine ]                     [ ClickHouse Engine ]        │
+│  (Window Aggregations & Anomaly)               (OLAP Real-Time Analytics)   │
+└─────────────────────────────────────────────────────────────────────────────┘
+        </div>
+
+        <h3><i data-lucide="code" style="width:16px;height:16px;color:var(--accent-amber);"></i> Configuración de Productor Kafka en Python (librería `confluent-kafka`)</h3>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">python (Kafka Producer IIoT Telemetry)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="kw">from</span> confluent_kafka <span class="kw">import</span> Producer
+<span class="kw">import</span> json, time, random
+
+conf = {
+    <span class="str">'bootstrap.servers'</span>: <span class="str">'kafka-cluster.internal:9092'</span>,
+    <span class="str">'client.id'</span>: <span class="str">'iiot-sensor-gateway-01'</span>,
+    <span class="str">'acks'</span>: <span class="str">'1'</span>, <span class="cmt"># Latencia ultrabaja asegurando recepción por el broker líder</span>
+    <span class="str">'compression.type'</span>: <span class="str">'lz4'</span>
+}
+
+producer = Producer(conf)
+
+<span class="kw">def</span> <span class="cmd">send_telemetry</span>(sensor_id, temp, vib):
+    payload = {
+        <span class="str">"timestamp"</span>: int(time.time() * <span class="num">1000</span>),
+        <span class="str">"sensor_id"</span>: sensor_id,
+        <span class="str">"temperature_c"</span>: temp,
+        <span class="str">"vibration_hz"</span>: vib,
+        <span class="str">"status"</span>: <span class="str">"NORMAL"</span> <span class="kw">if</span> temp &lt; <span class="num">85.0</span> <span class="kw">else</span> <span class="str">"WARNING"</span>
+    }
+    producer.produce(
+        <span class="str">'iiot.telemetry'</span>,
+        key=sensor_id.encode(<span class="str">'utf-8'</span>),
+        value=json.dumps(payload).encode(<span class="str">'utf-8'</span>)
+    )
+    producer.poll(<span class="num">0</span>)
+
+<span class="cmt"># Simulación de transmisión en tiempo real</span>
+send_telemetry(<span class="str">"TURBINE-04"</span>, <span class="num">78.4</span>, <span class="num">120.5</span>)
+producer.flush()</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 1</div>
+        <div class="quiz-question" id="q1-1">
+          <div class="q-text">1. En una arquitectura de streaming masiva para IIoT, ¿cuál es la función de particionar (Partitioning) los Topics en Apache Kafka?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',false)">A) Formatear los datos en HTML para que los sensores los visualicen</button>
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',true)">B) Permitir el procesamiento paralelo distribuido dividiendo los eventos entre múltiples consumidores del mismo Consumer Group</button>
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',false)">C) Eliminar automáticamente los logs después de 1 segundo</button>
+          </div>
+          <div class="q-explanation">Las particiones son la unidad básica de escalabilidad en Kafka. Al particionar por `sensor_id`, garantizamos el orden estricto de eventos por dispositivo mientras escalamos el consumo horizontalmente en paralelo.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-01" onchange="toggleModuleRead('tab-01')">
+          <label class="read-label" for="check-01">Marcar Capítulo 1 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-02', document.querySelectorAll('.nav-item')[1].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 02 -->
+    <div class="tab-pane" id="tab-02">
+      <div class="learning-section">
+        <h2><i data-lucide="database" style="width:20px;height:20px;"></i> Capítulo 2 · Almacenamiento OLAP de Ultra-Baja Latencia (ClickHouse &amp; TimescaleDB)</h2>
+        <p>Las bases de datos relacionales tradicionales como PostgreSQL o MySQL colapsan bajo cargas de inserción de 50,000 registros/segundo. **ClickHouse** es un motor columnar OLAP diseñado para ingerir y consultar petabytes de telemetría a sub-segundo.</p>
+
+        <div class="alert-box info">
+          <i data-lucide="info"></i>
+          <div class="alert-box-text">
+            <strong>¿Por qué ClickHouse en la Industria 4.0?</strong> Su motor de almacenamiento columnar comprime datos de series temporales hasta un 90% (usando códecs como `DoubleDelta` y `Gorilla`), permitiendo agregaciones vectorizadas SIMD instantáneas.
+          </div>
+        </div>
+
+        <h3>Creación de Tabla Optimizada `ReplacingMergeTree` en ClickHouse</h3>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">sql (ClickHouse Telemetry DDL)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="kw">CREATE TABLE</span> industrial.sensor_telemetry
+(
+    timestamp DateTime64(<span class="num">3</span>, <span class="str">'UTC'</span>),
+    sensor_id LowCardinality(String),
+    temperature_c Float32 CODEC(Gorilla, ZSTD),
+    vibration_hz Float32 CODEC(DoubleDelta, ZSTD),
+    pressure_bar Float32,
+    status Enum8(<span class="str">'NORMAL'</span> = <span class="num">1</span>, <span class="str">'WARNING'</span> = <span class="num">2</span>, <span class="str">'CRITICAL'</span> = <span class="num">3</span>)
+)
+<span class="kw">ENGINE</span> = ReplacingMergeTree(timestamp)
+<span class="kw">PRIMARY KEY</span> (sensor_id, timestamp)
+<span class="kw">ORDER BY</span> (sensor_id, timestamp);
+
+<span class="cmt">-- Consulta de Agregación en Tiempo Real sobre 100 Millones de Eventos</span>
+<span class="kw">SELECT</span> 
+    toStartOfMinute(timestamp) <span class="kw">AS</span> minute,
+    sensor_id,
+    avg(temperature_c) <span class="kw">AS</span> avg_temp,
+    max(vibration_hz) <span class="kw">AS</span> max_vibration
+<span class="kw">FROM</span> industrial.sensor_telemetry
+<span class="kw">WHERE</span> timestamp &gt;= now() - INTERVAL <span class="num">1</span> HOUR
+<span class="kw">GROUP BY</span> minute, sensor_id
+<span class="kw">ORDER BY</span> minute <span class="kw">DESC</span>;</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 2</div>
+        <div class="quiz-question" id="q2-1">
+          <div class="q-text">1. ¿Qué ventaja ofrece la estructura de almacenamiento columnar de ClickHouse sobre las bases de datos orientadas a filas?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',true)">A) Al ejecutar consultas como `AVG(temperature_c)`, solo lee del disco las columnas solicitadas en lugar de toda la fila</button>
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',false)">B) Permite guardar imágenes PNG en cada celda</button>
+          </div>
+          <div class="q-explanation">En bases de datos columnares, los datos de la misma columna se almacenan contiguos en disco. Esto maximiza la eficiencia de caché CPU, compresión de datos y evita lecturas de disco innecesarias.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-02" onchange="toggleModuleRead('tab-02')">
+          <label class="read-label" for="check-02">Marcar Capítulo 2 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-03', document.querySelectorAll('.nav-item')[2].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 03 -->
+    <div class="tab-pane" id="tab-03">
+      <div class="learning-section">
+        <h2><i data-lucide="line-chart" style="width:20px;height:20px;"></i> Capítulo 3 · PySpark Structured Streaming &amp; Anomaly Analytics</h2>
+        <p>Para analizar tendencias y detectar picos térmicos o variaciones armónicas en tiempo real a medida que fluyen los eventos por Kafka, se utilizan ventanas deslizantes (Sliding Windows) en **PySpark Structured Streaming**.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">python (PySpark Sliding Window Pipeline)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> from_json, col, window, avg, max
+
+spark = SparkSession.builder \
+    .appName(<span class="str">"IIoT-RealTime-Anomaly-Detector"</span>) \
+    .getOrCreate()
+
+<span class="cmt"># Lectura en directo desde Kafka Topic</span>
+kafka_stream = spark.readStream \
+    .format(<span class="str">"kafka"</span>) \
+    .option(<span class="str">"kafka.bootstrap.servers"</span>, <span class="str">"localhost:9092"</span>) \
+    .option(<span class="str">"subscribe"</span>, <span class="str">"iiot.telemetry"</span>) \
+    .load()
+
+<span class="cmt"># Definición de Ventana Deslizante de 5 minutos con paso de 1 minuto</span>
+windowed_analytics = telemetry_df \
+    .groupBy(
+        window(col(<span class="str">"timestamp"</span>), <span class="str">"5 minutes"</span>, <span class="str">"1 minute"</span>),
+        col(<span class="str">"sensor_id"</span>)
+    ) \
+    .agg(
+        avg(<span class="str">"temperature_c"</span>).alias(<span class="str">"avg_temp"</span>),
+        max(<span class="str">"vibration_hz"</span>).alias(<span class="str">"peak_vibration"</span>)
+    )
+
+query = windowed_analytics.writeStream \
+    .outputMode(<span class="str">"update"</span>) \
+    .format(<span class="str">"console"</span>) \
+    .start()</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 3</div>
+        <div class="quiz-question" id="q3-1">
+          <div class="q-text">1. ¿Cuál es la diferencia principal entre una Tumbling Window y una Sliding Window en PySpark Structured Streaming?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',true)">A) Tumbling Windows no se solapan entre sí, mientras que Sliding Windows tienen un intervalo de desplazamiento menor al tamaño de ventana</button>
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',false)">B) Tumbling Windows solo funcionan con bases de datos SQL</button>
+          </div>
+          <div class="q-explanation">Sliding Windows se solapan continuamente (ej. ventana de 5 min actualizándose cada 10 segundos), permitiendo una detección instantánea de picos antes de que se complete el bloque de tiempo.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-03" onchange="toggleModuleRead('tab-03')">
+          <label class="read-label" for="check-03">Marcar Capítulo 3 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-04', document.querySelectorAll('.nav-item')[3].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 04 -->
+    <div class="tab-pane" id="tab-04">
+      <div class="learning-section">
+        <h2><i data-lucide="bot" style="width:20px;height:20px;"></i> Capítulo 4 · RAG Industrial &amp; Vector Databases (Qdrant &amp; Milvus)</h2>
+        <p>Los modelos de lenguaje (LLMs) por sí solos no conocen la configuración específica ni los esquemas P&amp;ID de una planta industrial. Mediante **Retrieval-Augmented Generation (RAG)**, alimentamos al LLM con manuales de mantenimiento, registros de averías y datos de sensores indexados en una **Vector Database (Qdrant)**.</p>
+
+        <div class="ascii-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+<span style="color:var(--accent-purple)">│                 ARQUITECTURA RAG INDUSTRIAL HÍBRIDA                         │</span>
+│                                                                             │
+│  [ Manuales PDF / P&ID Specs ] ──► [ Text Chunking + BGE Embeddings ]       │
+│                                                │                            │
+│                                                ▼                            │
+│                                    ┌──────────────────────┐                 │
+│                                    │ Qdrant Vector Store  │                 │
+│                                    └──────────┬───────────┘                 │
+│                                               │ (Vector Similarity Search)  │
+│  [ Pregunta Operador ] ───────────────────────┼───────────────────────────┐  │
+│                                               ▼                           │  │
+│                                  [ RAG Context Assembly ]                 │  │
+│                                               │                           │  │
+│                                               ▼                           ▼  │
+│                                    [ LLM Agent (Llama 3 / Claude) ] ◄────────┘  │
+│                                               │                             │
+│                                               ▼                             │
+│                               [ Respuesta Técnica Precisa ]                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+        </div>
+
+        <h3>Script de Búsqueda Semántica RAG con Qdrant &amp; Python</h3>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">python (Qdrant Hybrid Search Engine)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="kw">from</span> qdrant_client <span class="kw">import</span> QdrantClient
+<span class="kw">from</span> sentence_transformers <span class="kw">import</span> SentenceTransformer
+
+client = QdrantClient(host=<span class="str">"qdrant.internal"</span>, port=<span class="num">6333</span>)
+model = SentenceTransformer(<span class="str">'BAAI/bge-small-en-v1.5'</span>)
+
+<span class="kw">def</span> <span class="cmd">query_industrial_docs</span>(user_query, machine_type=<span class="str">"TURBINE"</span>):
+    query_vector = model.encode(user_query).tolist()
+    
+    search_result = client.search(
+        collection_name=<span class="str">"industrial_manuals"</span>,
+        query_vector=query_vector,
+        query_filter={
+            <span class="str">"must"</span>: [{<span class="str">"key"</span>: <span class="str">"equipment"</span>, <span class="str">"match"</span>: {<span class="str">"value"</span>: machine_type}}]
+        },
+        limit=<span class="num">3</span>
+    )
+    <span class="kw">return</span> [hit.payload[<span class="str">"text_snippet"</span>] <span class="kw">for</span> hit <span class="kw">in</span> search_result]
+
+docs = query_industrial_docs(<span class="str">"Procedimiento de aislamiento por sobrecalentamiento en cojinetes"</span>)
+print(<span class="str">"[+] Contexto RAG Recuperado:"</span>, docs[<span class="num">0</span>])</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 4</div>
+        <div class="quiz-question" id="q4-1">
+          <div class="q-text">1. En un sistema RAG industrial, ¿por qué es fundamental aplicar filtros de metadatos (ej. `equipment: TURBINE-04`) junto con la búsqueda vectorial?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q4-1',true)">A) Para acotar la búsqueda semántica únicamente a los manuales y especificaciones del modelo de máquina relevante, evitando alucinaciones cruzadas</button>
+            <button class="q-option" onclick="checkAnswer(this,'q4-1',false)">B) Para comprimir el archivo PDF</button>
+          </div>
+          <div class="q-explanation">El filtrado híbrido por metadatos garantiza que el contexto entregado al LLM corresponda exactamente a la marca, modelo y revisión del equipo que presenta la falla.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-04" onchange="toggleModuleRead('tab-04')">
+          <label class="read-label" for="check-04">Marcar Capítulo 4 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-05', document.querySelectorAll('.nav-item')[4].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 05 -->
+    <div class="tab-pane" id="tab-05">
+      <div class="learning-section">
+        <h2><i data-lucide="workflow" style="width:20px;height:20px;"></i> Capítulo 5 · Multi-Agent Orchestration &amp; ReAct Loops (LangGraph)</h2>
+        <p>Los sistemas complejos de planta requieren múltiples agentes autónomos colaborando: un **Agente de Telemetría** que ejecuta consultas SQL en ClickHouse, un **Agente de Diagnóstico RAG** que analiza manuales técnicos y un **Agente de Protocolos de Seguridad** que valida normativas.</p>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="database"></i></div>
+            <div class="info-card-title">Telemetry Query Agent</div>
+            <div class="info-card-desc">Convierte lenguaje natural a consultas ClickHouse/TimescaleDB en tiempo real para verificar el estado de los sensores.</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="book-open"></i></div>
+            <div class="info-card-title">RAG Diagnostic Agent</div>
+            <div class="info-card-desc">Consulta vectores en Qdrant para obtener los pasos exactos de mantenimiento correctivo dictados por el fabricante.</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="shield-alert"></i></div>
+            <div class="info-card-title">Safety Enforcement Agent</div>
+            <div class="info-card-desc">Valida que ninguna recomendación técnica viole las normativas ISO 45001 ni sobrepase los límites de tolerancia física de la planta.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 5</div>
+        <div class="quiz-question" id="q5-1">
+          <div class="q-text">1. ¿En qué consiste el patrón de razonamiento ReAct (Reasoning + Acting) en Agentes LLM?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q5-1',true)">A) El agente alterna entre emitir un pensamiento (Thought), seleccionar una herramienta técnica (Action) y observar el resultado (Observation) antes de responder</button>
+            <button class="q-option" onclick="checkAnswer(this,'q5-1',false)">B) El agente responde inmediatamente utilizando únicamente su memoria preentrenada</button>
+          </div>
+          <div class="q-explanation">ReAct permite a los agentes razonar dinámicamente, ejecutar herramientas (como consultas SQL a ClickHouse o API calls) e inspeccionar los datos reales devueltos antes de dar una conclusión final.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-05" onchange="toggleModuleRead('tab-05')">
+          <label class="read-label" for="check-05">Marcar Capítulo 5 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-06', document.querySelectorAll('.nav-item')[5].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 06 -->
+    <div class="tab-pane" id="tab-06">
+      <div class="learning-section">
+        <h2><i data-lucide="play-circle" style="width:20px;height:20px;"></i> Capítulo 6 · Simulador Live Telemetry &amp; LLM Copilot Console</h2>
+        <p>Interactúa con la consola en tiempo real de ingestión de telemetría y diagnóstico por Agente LLM Industrial. Genera lecturas de sensores y consulta al copiloto neuronal.</p>
+
+        <div class="sim-panel">
+          <div class="sim-controls">
+            <button class="sim-btn active" id="btnStream" onclick="toggleStream()"><i data-lucide="play" style="width:14px;height:14px;"></i> Iniciar Stream Kafka</button>
+            <button class="sim-btn danger" onclick="triggerAnomaly()"><i data-lucide="alert-triangle" style="width:14px;height:14px;"></i> Inyectar Sobrecalentamiento</button>
+            <button class="sim-btn" onclick="consultAgent()"><i data-lucide="sparkles" style="width:14px;height:14px;color:var(--accent-purple);"></i> Ejecutar Agente LLM RAG</button>
+            <button class="sim-btn" onclick="clearTerm()"><i data-lucide="trash-2" style="width:14px;height:14px;"></i> Limpiar Consola</button>
+          </div>
+
+          <div class="telemetry-grid">
+            <div class="gauge-card">
+              <div class="gauge-title">Turbine Temp (°C)</div>
+              <div class="gauge-val" id="gTemp">68.4</div>
+              <div class="gauge-status" id="sTemp" style="color:var(--accent-green)">NORMAL</div>
+            </div>
+            <div class="gauge-card">
+              <div class="gauge-title">Vibration (Hz)</div>
+              <div class="gauge-val" id="gVib">110.2</div>
+              <div class="gauge-status" id="sVib" style="color:var(--accent-green)">STABLE</div>
+            </div>
+            <div class="gauge-card">
+              <div class="gauge-title">Boiler Press (Bar)</div>
+              <div class="gauge-val" id="gPress">12.5</div>
+              <div class="gauge-status" id="sPress" style="color:var(--accent-green)">OPTIMAL</div>
+            </div>
+          </div>
+
+          <div class="terminal-box" id="termBox">
+            <div class="term-line"><span class="term-time">[SYS]</span> <span class="term-tag">[KAFKA]</span> Cluster conectado a topic iiot.telemetry. Stream listo.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-06" onchange="toggleModuleRead('tab-06')">
+          <label class="read-label" for="check-06">Marcar Capítulo 6 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="finishCourse()">Finalizar Curso <i data-lucide="award" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  let completedModules = new Set();
+  const totalModules = 6;
+  let streamInterval = null;
+  let isStreaming = false;
+
+  function switchTab(tabId, btnElement) {
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    if (btnElement) {
+      btnElement.parentElement.classList.add('active');
+    } else {
+      const match = document.querySelector(`[data-tab="${tabId}"]`);
+      if (match) match.classList.add('active');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    closeSidebar();
+  }
+
+  function checkAnswer(btn, qId, isCorrect) {
+    const parent = document.getElementById(qId);
+    const options = parent.querySelectorAll('.q-option');
+    options.forEach(opt => opt.classList.add('disabled'));
+    if (isCorrect) {
+      btn.classList.add('correct');
+    } else {
+      btn.classList.add('incorrect');
+      options.forEach(opt => {
+        if (opt.getAttribute('onclick').includes('true')) opt.classList.add('correct');
+      });
+    }
+    const exp = parent.querySelector('.q-explanation');
+    if (exp) exp.style.display = 'block';
+  }
+
+  function toggleModuleRead(tabId) {
+    const check = document.getElementById(`check-${tabId.replace('tab-','')}`);
+    const navItem = document.querySelector(`[data-tab="${tabId}"]`);
+    if (check.checked) {
+      completedModules.add(tabId);
+      if (navItem) navItem.classList.add('completed');
+    } else {
+      completedModules.delete(tabId);
+      if (navItem) navItem.classList.remove('completed');
+    }
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const pct = Math.round((completedModules.size / totalModules) * 100);
+    document.getElementById('progressText').textContent = `${pct}%`;
+    document.getElementById('progressDetails').textContent = `${completedModules.size} de ${totalModules} módulos`;
+    const circle = document.getElementById('progressCircle');
+    const offset = 226 - (226 * pct / 100);
+    circle.style.strokeDashoffset = offset;
+  }
+
+  function copyCode(btn) {
+    const code = btn.parentElement.nextElementSibling.textContent;
+    navigator.clipboard.writeText(code);
+    btn.innerHTML = `<i data-lucide="check" style="width:12px;height:12px;"></i> Copiado`;
+    setTimeout(() => {
+      btn.innerHTML = `<i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar`;
+      lucide.createIcons();
+    }, 2000);
+  }
+
+  function toggleTheme() {
+    document.documentElement.classList.toggle('light');
+    const isLight = document.documentElement.classList.contains('light');
+    localStorage.setItem('preferredTheme', isLight ? 'light' : 'dark');
+    document.getElementById('themeIcon').setAttribute('data-lucide', isLight ? 'moon' : 'sun');
+    lucide.createIcons();
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('open');
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  }
+
+  function finishCourse() {
+    alert('¡Felicidades! Has completado el curso de Real-Time Big Data & LLM Agents para la Industria.');
+  }
+
+  // Interactive Live Simulator Logic
+  function toggleStream() {
+    const btn = document.getElementById('btnStream');
+    if (!isStreaming) {
+      isStreaming = true;
+      btn.classList.add('active');
+      btn.innerHTML = `<i data-lucide="pause" style="width:14px;height:14px;"></i> Pausar Stream`;
+      streamInterval = setInterval(generateStreamData, 1200);
+      logTerm('[KAFKA]', 'Stream en directo activado. Ingestando partición 0.');
+    } else {
+      isStreaming = false;
+      btn.classList.remove('active');
+      btn.innerHTML = `<i data-lucide="play" style="width:14px;height:14px;"></i> Iniciar Stream Kafka`;
+      clearInterval(streamInterval);
+      logTerm('[KAFKA]', 'Stream pausado.');
+    }
+    lucide.createIcons();
+  }
+
+  function generateStreamData() {
+    let t = parseFloat(document.getElementById('gTemp').textContent);
+    let v = parseFloat(document.getElementById('gVib').textContent);
+    let p = parseFloat(document.getElementById('gPress').textContent);
+
+    t += (Math.random() * 1.2 - 0.5);
+    v += (Math.random() * 2.0 - 0.9);
+    p += (Math.random() * 0.2 - 0.1);
+
+    document.getElementById('gTemp').textContent = t.toFixed(1);
+    document.getElementById('gVib').textContent = v.toFixed(1);
+    document.getElementById('gPress').textContent = p.toFixed(1);
+
+    const sTemp = document.getElementById('sTemp');
+    if (t > 90) {
+      sTemp.textContent = 'CRITICAL'; sTemp.style.color = 'var(--accent-red-neon)';
+    } else if (t > 80) {
+      sTemp.textContent = 'WARNING'; sTemp.style.color = 'var(--accent-amber)';
+    } else {
+      sTemp.textContent = 'NORMAL'; sTemp.style.color = 'var(--accent-green)';
+    }
+
+    logTerm('[KAFKA-MSG]', `TURBINE-04 | Temp: ${t.toFixed(1)}°C | Vib: ${v.toFixed(1)}Hz | Press: ${p.toFixed(1)}Bar`);
+  }
+
+  function triggerAnomaly() {
+    document.getElementById('gTemp').textContent = "98.7";
+    document.getElementById('gVib').textContent = "240.5";
+    document.getElementById('sTemp').textContent = "CRITICAL";
+    document.getElementById('sTemp').style.color = "var(--accent-red-neon)";
+    logTerm('[ANOMALY]', '!!! PICO ANÓMALO DETECTADO: Sobretemperatura en Cojinete Principal (98.7°C) !!!');
+  }
+
+  function consultAgent() {
+    logTerm('[LLM-REACT]', 'Thought: Detectado pico de temperatura. Consultando ClickHouse y Qdrant...');
+    setTimeout(() => {
+      logTerm('[CLICKHOUSE-SQL]', 'SELECT avg(temperature_c) FROM sensor_telemetry WHERE timestamp > now() - INTERVAL 5 MINUTE -> Avg: 94.2°C');
+    }, 600);
+    setTimeout(() => {
+      logTerm('[QDRANT-RAG]', 'Recuperado Manual TURBINE-04 Sec. 8.2: "Aislamiento térmico y purga de presión previa a enfriamiento."');
+    }, 1200);
+    setTimeout(() => {
+      logTerm('[LLM-AGENT-RESP]', 'DIAGNÓSTICO AGENTE: Reducir RPM de Turbina 04 a 1,200 RPM y activar bomba secundaria de refrigeración. Notificado a sistema SCADA.');
+    }, 1800);
+  }
+
+  function logTerm(tag, msg) {
+    const box = document.getElementById('termBox');
+    const time = new Date().toLocaleTimeString();
+    const line = document.createElement('div');
+    line.className = 'term-line';
+    line.innerHTML = `<span class="term-time">[${time}]</span> <span class="term-tag">${tag}</span> <span class="term-data">${msg}</span>`;
+    box.appendChild(line);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function clearTerm() {
+    document.getElementById('termBox').innerHTML = '<div class="term-line"><span class="term-time">[SYS]</span> Consola reiniciada.</div>';
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+  });
+</script>
+</body>
+</html>

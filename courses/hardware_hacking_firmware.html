@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="theme-color" content="#00D9FF">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hardware Hacking & Embedded Firmware Reverse Engineering | AutoNovations Academy</title>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+      if (savedTheme === 'light') { document.documentElement.classList.add('light'); }
+      else { document.documentElement.classList.remove('light'); }
+    })();
+  </script>
+  <meta name="description" content="Curso profesional de Hardware Hacking & Embedded Firmware Reverse Engineering. Aprende a auditar dispositivos IoT/Edge, lectura vía UART/JTAG, extracción SPI/NAND Flash, análisis de firmware con Ghidra, GDB y Bus Pirate.">
+  <meta name="keywords" content="Hardware Hacking, Embedded Firmware, Reverse Engineering, UART, JTAG, SWD, Ghidra, GDB, Bus Pirate, Logic Analyzer, Binwalk, OpenOCD, SPI Flash, IoT Security, AutoNovations Academy">
+  <meta name="author" content="AutoNovations Academy">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="../assets/js/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-darker: #050811; --bg-dark: #0a0f1d; --bg-card: #101728;
+      --bg-card-hover: #18233c; --border: #1e2c48; --border-focus: #00f0ff;
+      --accent-cyan: #00f0ff; --accent-cyan-dim: rgba(0,240,255,0.12);
+      --accent-green: #10b981; --accent-green-neon: #39ff14;
+      --accent-green-dim: rgba(16,185,129,0.15);
+      --accent-red: #ef4444; --accent-red-neon: #ff3366;
+      --accent-red-dim: rgba(239,68,68,0.15);
+      --accent-amber: #f59e0b; --accent-amber-dim: rgba(245,158,11,0.15);
+      --accent-purple: #a855f7; --accent-purple-dim: rgba(168,85,247,0.15);
+      --accent-blue: #3b82f6; --accent-blue-dim: rgba(59,130,246,0.12);
+      --text-primary: #f3f4f6; --text-secondary: #9ca3af; --text-muted: #6b7280;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
+      --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    html.light {
+      --bg-darker: #f3f4f6; --bg-dark: #ffffff; --bg-card: #ffffff;
+      --bg-card-hover: #f9fafb; --border: #e5e7eb; --border-focus: #2563eb;
+      --accent-cyan: #0284c7; --accent-cyan-dim: rgba(2,132,199,0.1);
+      --accent-green: #059669; --accent-green-neon: #10b981;
+      --accent-green-dim: rgba(5,150,105,0.1);
+      --accent-red: #dc2626; --accent-red-neon: #ef4444;
+      --accent-red-dim: rgba(220,38,38,0.1);
+      --accent-amber: #d97706; --accent-amber-dim: rgba(217,119,6,0.1);
+      --accent-purple: #7c3aed; --accent-purple-dim: rgba(124,58,237,0.1);
+      --accent-blue: #2563eb; --accent-blue-dim: rgba(37,99,235,0.1);
+      --text-primary: #111827; --text-secondary: #4b5563; --text-muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg-darker); color: var(--text-primary); font-family: var(--font-sans); line-height: 1.6; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-darker); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-sm); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+    .app-container { display: flex; min-height: 100vh; }
+    .sidebar { width: 290px; background-color: var(--bg-dark); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; padding: 1.5rem; transition: transform 0.3s; overflow-y: auto; }
+    .sidebar-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--accent-cyan); letter-spacing: 0.05em; margin-bottom: 0.5rem; text-transform: uppercase; text-decoration: none; }
+    .sidebar-subtitle { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.5rem; padding-left: 34px; }
+    .nav-section-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); padding: 0.75rem 0 0.4rem 0; border-top: 1px solid var(--border); margin-top: 0.5rem; }
+    .nav-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .nav-item button { width: 100%; background: none; border: none; outline: none; color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.8rem; font-weight: 500; text-align: left; padding: 8px 12px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: var(--transition); border: 1px solid transparent; }
+    .nav-item button:hover { background-color: var(--bg-card-hover); color: var(--text-primary); }
+    .nav-item.active button { background-color: var(--accent-cyan-dim); color: var(--accent-cyan); border: 1px solid rgba(0,240,255,0.25); }
+    .nav-item.completed button { color: var(--accent-green); }
+    .nav-check { display: none; color: var(--accent-green); margin-left: auto; }
+    .nav-item.completed .nav-check { display: inline-block; }
+    .nav-num { min-width: 20px; height: 20px; border-radius: 50%; background: var(--border); color: var(--text-muted); font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-item.active .nav-num { background: var(--accent-cyan); color: #06090f; }
+    .nav-item.completed .nav-num { background: var(--accent-green-dim); color: var(--accent-green); }
+    .progress-box { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 1.5rem; text-align: center; }
+    .progress-box-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .progress-circle-wrapper { position: relative; width: 90px; height: 90px; margin: 0 auto 8px; }
+    .progress-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .progress-bg-circle { fill: none; stroke: var(--border); stroke-width: 8; }
+    .progress-bar-circle { fill: none; stroke: var(--accent-cyan); stroke-width: 8; stroke-dasharray: 226; stroke-dashoffset: 226; transition: stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1); stroke-linecap: round; }
+    .progress-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--accent-cyan); }
+    .progress-details { font-size: 0.7rem; color: var(--text-muted); }
+    .main-content { margin-left: 290px; flex-grow: 1; padding: 2.5rem; max-width: calc(100% - 290px); min-height: 100vh; display: flex; flex-direction: column; transition: margin-left 0.3s, max-width 0.3s; }
+    .content-header { margin-bottom: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; }
+    .content-header h1 { font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 12px; }
+    .content-header p { color: var(--text-secondary); font-size: 0.92rem; }
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-left: 1rem; }
+    .theme-toggle-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 38px; height: 38px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+    .theme-toggle-btn:hover { border-color: var(--accent-cyan); }
+    .mobile-menu-btn { display: none; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 38px; height: 38px; border-radius: var(--radius-md); cursor: pointer; align-items: center; justify-content: center; transition: var(--transition); }
+    .tab-pane { display: none; animation: fadeIn 0.4s ease; }
+    .tab-pane.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .learning-section { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 1.75rem; }
+    .learning-section h2 { font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 1.25rem; color: var(--accent-cyan); border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+    .learning-section h3 { font-family: var(--font-display); font-size: 1.05rem; margin: 1.5rem 0 0.6rem 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+    .learning-section h4 { font-family: var(--font-display); font-size: 0.95rem; margin: 1.2rem 0 0.5rem 0; color: var(--accent-amber); }
+    .learning-section p { color: var(--text-secondary); font-size: 0.93rem; margin-bottom: 1rem; line-height: 1.75; }
+    .learning-section ul, .learning-section ol { margin-left: 1.5rem; margin-bottom: 1rem; color: var(--text-secondary); }
+    .learning-section li { margin-bottom: 5px; font-size: 0.93rem; line-height: 1.6; }
+    .definition-box { background-color: var(--bg-darker); border-left: 3px solid var(--accent-cyan); padding: 1rem 1.25rem; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin: 1rem 0; }
+    .definition-term { font-family: var(--font-display); font-weight: 700; color: var(--accent-cyan); font-size: 0.88rem; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .definition-desc { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.55; }
+    .alert-box { padding: 1rem 1.25rem; border-radius: var(--radius-lg); margin: 1.25rem 0; display: flex; gap: 12px; align-items: flex-start; border: 1px solid transparent; }
+    .alert-box.info { background-color: var(--accent-cyan-dim); border-color: rgba(0,240,255,0.2); }
+    .alert-box.info i { color: var(--accent-cyan); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.warn { background-color: var(--accent-amber-dim); border-color: rgba(245,158,11,0.25); }
+    .alert-box.warn i { color: var(--accent-amber); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.success { background-color: var(--accent-green-dim); border-color: rgba(16,185,129,0.25); }
+    .alert-box.success i { color: var(--accent-green); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.danger { background-color: var(--accent-red-dim); border-color: rgba(239,68,68,0.25); }
+    .alert-box.danger i { color: var(--accent-red); flex-shrink: 0; margin-top: 2px; }
+    .alert-box-text { font-size: 0.87rem; line-height: 1.65; color: var(--text-primary); }
+    .code-block { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); margin: 1rem 0; overflow: hidden; }
+    .code-block-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); }
+    .code-lang { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-family: var(--font-mono); }
+    .code-copy-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 3px 8px; border-radius: var(--radius-sm); font-size: 0.7rem; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 4px; }
+    .code-copy-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .code-block pre { padding: 1rem 1.25rem; overflow-x: auto; font-family: var(--font-mono); font-size: 0.83rem; line-height: 1.7; color: #e2e8f0; }
+    .code-block pre .cmd { color: var(--accent-cyan); }
+    .code-block pre .out { color: var(--accent-green); }
+    .code-block pre .cmt { color: var(--text-muted); font-style: italic; }
+    .code-block pre .kw { color: #c084fc; }
+    .code-block pre .str { color: #fbbf24; }
+    .code-block pre .num { color: #fb923c; }
+    .code-block pre .flag { color: var(--accent-amber); }
+    .quiz-section { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; margin-bottom: 1.75rem; }
+    .quiz-title-bar { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--accent-cyan); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .quiz-question { margin-bottom: 1.5rem; }
+    .q-text { font-size: 0.92rem; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+    .q-options { display: flex; flex-direction: column; gap: 7px; }
+    .q-option { background: var(--bg-darker); border: 1px solid var(--border); color: var(--text-secondary); padding: 9px 14px; border-radius: var(--radius-md); font-size: 0.85rem; cursor: pointer; text-align: left; transition: var(--transition); }
+    .q-option:hover { border-color: var(--accent-cyan); color: var(--text-primary); }
+    .q-option.correct { background-color: var(--accent-green-dim); border-color: var(--accent-green); color: var(--accent-green-neon); pointer-events: none; }
+    .q-option.incorrect { background-color: var(--accent-red-dim); border-color: var(--accent-red); color: var(--accent-red-neon); pointer-events: none; }
+    .q-option.disabled { pointer-events: none; opacity: 0.5; }
+    .q-explanation { font-size: 0.82rem; color: var(--text-secondary); margin-top: 8px; padding: 8px 12px; background: var(--bg-darker); border-radius: var(--radius-sm); display: none; border-left: 3px solid var(--accent-cyan); }
+    .module-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; flex-wrap: wrap; gap: 10px; }
+    .action-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; font-size: 0.87rem; display: flex; align-items: center; gap: 8px; transition: var(--transition); font-family: var(--font-sans); text-decoration: none; }
+    .action-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .action-btn.primary { background: var(--accent-cyan-dim); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .action-btn.primary:hover { background: var(--accent-cyan); color: #06090f; }
+    .action-btn:disabled { opacity: 0.4; pointer-events: none; }
+    .read-confirmation { display: flex; align-items: center; gap: 10px; background: var(--bg-darker); border: 1px solid var(--border); padding: 9px 14px; border-radius: var(--radius-md); }
+    .read-checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent-cyan); }
+    .read-label { font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-secondary); }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 1rem 0; }
+    .compare-table th { background: var(--bg-darker); color: var(--accent-cyan); padding: 10px 12px; text-align: left; font-family: var(--font-display); font-weight: 600; border: 1px solid var(--border); }
+    .compare-table td { padding: 9px 12px; border: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+    .compare-table tr:hover td { background: var(--bg-card-hover); }
+    .compare-table .highlight { color: var(--accent-cyan); font-weight: 600; }
+    .compare-table .good { color: var(--accent-green); }
+    .compare-table .bad { color: var(--accent-red); }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 1rem; margin: 1.25rem 0; }
+    .info-card { background: var(--bg-darker); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; border-top: 3px solid var(--accent-cyan); transition: var(--transition); }
+    .info-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+    .info-card-icon { color: var(--accent-cyan); margin-bottom: 10px; }
+    .info-card-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 5px; }
+    .info-card-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+    .level-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; padding: 3px 8px; border-radius: var(--radius-sm); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-master { background: var(--accent-purple-dim); color: var(--accent-purple); border: 1px solid rgba(168,85,247,0.3); }
+    .badge-danger { background: var(--accent-red-dim); color: var(--accent-red-neon); border: 1px solid rgba(239,68,68,0.3); }
+    .badge-success { background: var(--accent-green-dim); color: var(--accent-green-neon); border: 1px solid rgba(16,185,129,0.3); }
+    .ascii-diagram { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.8; color: var(--accent-cyan); margin: 1rem 0; overflow-x: auto; white-space: pre; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 99; backdrop-filter: blur(2px); }
+    .sidebar-overlay.open { display: block; }
+
+    /* Hardware Simulator Terminal Styles */
+    .sim-panel { background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-top: 1rem; }
+    .sim-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1.25rem; }
+    .sim-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 14px; border-radius: var(--radius-md); font-size: 0.8rem; font-family: var(--font-mono); cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 6px; }
+    .sim-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .sim-btn.danger { border-color: var(--accent-red); color: var(--accent-red); }
+    .sim-btn.danger:hover { background: var(--accent-red-dim); }
+    .sim-btn.active { background: var(--accent-cyan-dim); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+
+    .sim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
+    .sim-card { background: var(--bg-darker); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; }
+    .sim-card-title { font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-display); letter-spacing: 0.05em; }
+    .sim-card-val { font-family: var(--font-mono); font-size: 1.3rem; font-weight: 700; color: var(--accent-cyan); margin: 6px 0; }
+    .sim-card-status { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+
+    .terminal-box { background: #010408; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; font-family: var(--font-mono); font-size: 0.8rem; height: 260px; overflow-y: auto; color: #a5f3fc; }
+    .term-line { margin-bottom: 4px; display: flex; gap: 12px; }
+    .term-time { color: var(--text-muted); }
+    .term-tag { color: #f43f5e; font-weight: 700; }
+    .term-tag.normal { color: #38bdf8; }
+    .term-data { color: #fde047; }
+    .term-code { color: #a7f3d0; }
+
+    @media (max-width: 1024px) { .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); box-shadow: 4px 0 30px rgba(0,0,0,0.5); } .main-content { margin-left: 0; max-width: 100%; } .mobile-menu-btn { display: flex; } }
+    @media (max-width: 640px) { .main-content { padding: 1.25rem; } .content-header h1 { font-size: 1.3rem; } .module-actions { flex-direction: column; } }
+    code { color: var(--accent-cyan); font-family: var(--font-mono); font-size: 0.85em; background: var(--bg-darker); padding: 2px 6px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="app-container">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <a class="sidebar-brand" href="../index.html">
+      <i data-lucide="cpu" style="width:20px;height:20px;flex-shrink:0;color:var(--accent-cyan);"></i>
+      AutoNovations
+    </a>
+    <div class="sidebar-subtitle">Hardware Hacking &amp; Firmware RE</div>
+    <div class="progress-box">
+      <div class="progress-box-title">Progreso del Curso</div>
+      <div class="progress-circle-wrapper">
+        <svg class="progress-svg" viewBox="0 0 80 80">
+          <circle class="progress-bg-circle" cx="40" cy="40" r="36"/>
+          <circle class="progress-bar-circle" id="progressCircle" cx="40" cy="40" r="36"/>
+        </svg>
+        <div class="progress-text" id="progressText">0%</div>
+      </div>
+      <div class="progress-details" id="progressDetails">0 de 6 módulos</div>
+    </div>
+    <div class="nav-section-label">Módulos del Curso</div>
+    <ul class="nav-list" id="navList">
+      <li class="nav-item active" data-tab="tab-01"><button onclick="switchTab('tab-01',this)"><span class="nav-num">1</span>Reconocimiento PCB &amp; Capa Física<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-02"><button onclick="switchTab('tab-02',this)"><span class="nav-num">2</span>Interfaces UART, SPI, I2C &amp; JTAG<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-03"><button onclick="switchTab('tab-03',this)"><span class="nav-num">3</span>Extracción SPI Flash &amp; Bus Pirate<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-04"><button onclick="switchTab('tab-04',this)"><span class="nav-num">4</span>Ingeniería Inversa con Ghidra<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-05"><button onclick="switchTab('tab-05',this)"><span class="nav-num">5</span>Depuración JTAG, OpenOCD &amp; GDB<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-06"><button onclick="switchTab('tab-06',this)"><span class="nav-num">6</span>Simulador Live Hardware &amp; Dump<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="content-header">
+      <div>
+        <h1>
+          <i data-lucide="circuit-board" style="width:28px;height:28px;color:var(--accent-cyan);"></i>
+          Hardware Hacking &amp; Embedded Firmware RE
+        </h1>
+        <p>UART · JTAG/SWD · SPI Flash Dumping · Logic Analyzers · Bus Pirate · Ghidra · GDB · OpenOCD</p>
+      </div>
+      <div class="header-actions">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()" aria-label="Menú">
+          <i data-lucide="menu" style="width:18px;height:18px;"></i>
+        </button>
+        <button class="theme-toggle-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Cambiar tema">
+          <i data-lucide="sun" style="width:16px;height:16px;" id="themeIcon"></i>
+        </button>
+        <a href="../index.html" class="action-btn" style="text-decoration:none;">
+          <i data-lucide="home" style="width:14px;height:14px;"></i> Inicio
+        </a>
+      </div>
+    </div>
+
+    <!-- Cover Image Hero Preview -->
+    <div style="width:100%; height: 260px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 2rem; border: 1px solid var(--border); position: relative;">
+      <img src="../assets/images/courses/hardware_hacking_cover.png" alt="Hardware Hacking Cover" style="width: 100%; height: 100%; object-fit: cover;">
+      <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,8,17,0.2) 0%, rgba(5,8,17,0.88) 100%); display: flex; align-items: flex-end; padding: 1.5rem;">
+        <span class="level-badge badge-master">Level 3 · Hardware Security &amp; Reverse Engineering Master</span>
+      </div>
+    </div>
+
+    <!-- TAB 01 -->
+    <div class="tab-pane active" id="tab-01">
+      <div class="learning-section">
+        <h2><i data-lucide="microchip" style="width:20px;height:20px;"></i> Capítulo 1 · Reconocimiento de PCB &amp; Análisis de Capa Física</h2>
+        <p>El **Hardware Hacking** es la disciplina de auditar dispositivos embebidos e IoT mediante interacción directa con su placa de circuito impreso (PCB). A diferencia del pentesting de software tradicional, cuando se tiene acceso físico al dispositivo, las barreras lógicas pueden ser eludidas inspeccionando los componentes físicos y las señales electrónicas.</p>
+        
+        <div class="definition-box">
+          <div class="definition-term">¿Qué es una PCB Teardown Auditoría?</div>
+          <div class="definition-desc">Es la inspección sistemática de la arquitectura de la tarjeta de circuito: identificación de SoCs principales, memorias (NOR/NAND Flash, EEPROM, eMMC), controladores de energía (PMIC), cristal oscilador y puntos de prueba (Test Points / Pin Headers) para encontrar interfaces expuestas.</div>
+        </div>
+
+        <div class="ascii-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+│               ARQUITECTURA TÍPICA DE PLACA IOT / EDGE EMBEDDED              │
+│                                                                             │
+│ [ Power Supply ] ──► [ PMIC Regulator ] ──► [ SoC / MCU ARM/MIPS/RISC-V ]   │
+│                                                   │       │                 │
+│                                                   │       └──► [ JTAG/SWD ] │
+│                                                   │               Pines Debug│
+│                                                   ▼                         │
+│ [ SPI NOR Flash / eMMC ] ◄─────────────── [ SPI / Bus UART ]                │
+│ (Almacena Firmware Boot/FS)               (Consola Serie & Telemetría)       │
+└─────────────────────────────────────────────────────────────────────────────┘
+        </div>
+
+        <h3><i data-lucide="search" style="width:16px;height:16px;color:var(--accent-amber);"></i> Herramientas Esenciales del Laboratorio de Hardware Hacking</h3>
+        <table class="compare-table">
+          <thead><tr><th>Herramienta Hardware</th><th>Propósito Principal</th><th>Casos de Uso Prácticos</th></tr></thead>
+          <tbody>
+            <tr><td class="highlight">Multímetro Digital &amp; Osciloscopio</td><td>Medición de voltajes, prueba de continuidad e inspección de reloj.</td><td>Localizar masa (GND), VCC (3.3V/5V) y trazar pistas de datos ocultas.</td></tr>
+            <tr><td class="highlight">Analizador Lógico (24MHz - 500MHz)</td><td>Capturar señales lógicas de buses de datos y decodificar protocolos.</td><td>Decodificar tráfico UART, SPI e I2C para descubrir baud rates y paquetes.</td></tr>
+            <tr><td class="highlight">Bus Pirate v3.6 / v4 / v5</td><td>Interfaz multipropósito para hablar directamente con chips integrados.</td><td>Volcado de memorias SPI Flash de 8 pines (SOIC-8) sin desoldar.</td></tr>
+            <tr><td class="highlight">JTAGulator / FT2232H</td><td>Detección automática de patinajes y depuración JTAG/SWD.</td><td>Identificar pines de depuración JTAG en PCBs sin serigrafía explícita.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="alert-box warn">
+          <i data-lucide="alert-triangle"></i>
+          <div class="alert-box-text">
+            <strong>Precaución con Niveles de Voltaje (Logic Levels):</strong> La mayoría de los SoCs modernos operan a 3.3V o 1.8V TTL. Conectar un adaptador USB-Serial de 5V RS232 directamente a los pines UART del microcontrolador puede quemar la CPU permanentemente. Utiliza siempre un conversor de nivel lógico o adaptadores USB-FTDI configurados a 3.3V/1.8V.
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 1</div>
+        <div class="quiz-question" id="q1-1">
+          <div class="q-text">1. Durante la inspección de una PCB desconocida, ¿cuál es el primer paso antes de alimentar la placa o conectar interfaces de datos?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',false)">A) Conectar inmediatamente un analizador lógico a 5V</button>
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',true)">B) Identificar la tierra (GND) con multímetro en modo continuidad y verificar el voltaje de alimentación (VCC)</button>
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',false)">C) Flashear un nuevo firmware directamente en el chip sin respaldar nada</button>
+          </div>
+          <div class="q-explanation">En hardware hacking, identificar GND y VCC previene cortocircuitos y sobrevoltajes que podrían destruir el procesador o las memorias del dispositivo objetivo.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-01" onchange="toggleModuleRead('tab-01')">
+          <label class="read-label" for="check-01">Marcar Capítulo 1 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-02', document.querySelectorAll('.nav-item')[1].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 02 -->
+    <div class="tab-pane" id="tab-02">
+      <div class="learning-section">
+        <h2><i data-lucide="activity" style="width:20px;height:20px;"></i> Capítulo 2 · Interfaces Serie (UART, SPI, I2C &amp; JTAG/SWD)</h2>
+        <p>Las tarjetas embebidas utilizan protocolos de comunicación serie para comunicarse internamente con periféricos y permitir el diagnóstico de fábrica durante la etapa de manufactura.</p>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="terminal"></i></div>
+            <div class="info-card-title">UART (Asíncrono)</div>
+            <div class="info-card-desc">Usa 2 líneas principales: <code>TX</code> (Transmit) y <code>RX</code> (Receive). Es la puerta de entrada a consolas U-Boot y Shells de Linux sin contraseña.</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="cpu"></i></div>
+            <div class="info-card-title">SPI (Síncrono Súper Rápido)</div>
+            <div class="info-card-desc">Usa 4 líneas: <code>MISO</code>, <code>MOSI</code>, <code>CLK</code>, <code>CS</code>. Utilizado para transferir firmware entre la memoria Flash y el SoC.</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="git-commit"></i></div>
+            <div class="info-card-title">JTAG / SWD (Depuración)</div>
+            <div class="info-card-desc">Proporciona control total a nivel de registros de CPU, volcado de memoria RAM y pausa de ejecución en microcontroladores ARM/MIPS.</div>
+          </div>
+        </div>
+
+        <h3>Captura y Análisis de Señales con PulseView &amp; sigrok</h3>
+        <p>Para determinar la velocidad de baudios (Baud Rate) de una línea UART desconocida (ej. 115200, 57600, 9600, 38400), conectamos los canales de un analizador lógico de $10 USD y ejecutamos <code>sigrok-cli</code>:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">bash (sigrok UART Protocol Decoder)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="cmt"># 1. Capturar 5 segundos de señal en el canal 0 a una tasa de muestreo de 12MHz</span>
+<span class="cmd">sigrok-cli</span> --driver fx2lafw --config samplerate=12MHz --time 5s -o uart_capture.sr
+
+<span class="cmt"># 2. Decodificar la señal UART capturada probando baudrate de 115200</span>
+<span class="cmd">sigrok-cli</span> -i uart_capture.sr -P uart:baudrate=115200:rx=0 -B uart=ascii
+
+<span class="cmt"># 3. Conectarse a la consola serie interactiva en Linux</span>
+<span class="cmd">picocom</span> -b 115200 /dev/ttyUSB0</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 2</div>
+        <div class="quiz-question" id="q2-1">
+          <div class="q-text">1. ¿Qué diferencia principal existe entre la comunicación UART y SPI?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',true)">A) UART es asíncrono (no requiere línea de reloj compartida), mientras que SPI es síncrono y usa una línea de Clock (CLK)</button>
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',false)">B) UART transfiere archivos de video HD a 1Gbps</button>
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',false)">C) SPI solo funciona con fibra óptica</button>
+          </div>
+          <div class="q-explanation">UART depende de que ambos dispositivos acuerden previamente la misma tasa de baudios (Baud Rate) ya que no transmite un reloj físico. SPI transmite la señal de reloj explícita por la línea CLK.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-02" onchange="toggleModuleRead('tab-02')">
+          <label class="read-label" for="check-02">Marcar Capítulo 2 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-03', document.querySelectorAll('.nav-item')[2].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 03 -->
+    <div class="tab-pane" id="tab-03">
+      <div class="learning-section">
+        <h2><i data-lucide="hard-drive-download" style="width:20px;height:20px;"></i> Capítulo 3 · Extracción de Firmware &amp; SPI NOR Flash Dumping</h2>
+        <p>Cuando la interfaz UART o los gestores de arranque están bloqueados con contraseña, el método más robusto para extraer el firmware completo es leer la memoria Flash directamente.</p>
+
+        <div class="ascii-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                 CONEXIÓN CHIP-OFF / ISP SPI FLASH (SOIC-8)                  │
+│                                                                             │
+│     Pin 1 (/CS)  ┌───┬───┐  Pin 8 (VCC 3.3V)                                │
+│     Pin 2 (DO)   │ o │   │  Pin 7 (/HOLD) ──► 3.3V                         │
+│     Pin 3 (/WP)  │   │   │  Pin 6 (CLK) ────────► Bus Pirate SPI CLK        │
+│     Pin 4 (GND)  └───┴───┘  Pin 5 (DI)  ────────► Bus Pirate SPI MOSI       │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+        </div>
+
+        <h3>Extracción In-Circuit con `flashrom` y Bus Pirate</h3>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">bash (SPI Flash Extraction)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="cmt"># 1. Identificar el chip SPI conectado al Bus Pirate</span>
+<span class="cmd">sudo flashrom</span> -p buspirate_spi:dev=/dev/ttyUSB0
+
+<span class="cmt"># Salida esperada: Found Winbond flash chip "W25Q64.V" (8192 kB, SPI).</span>
+
+<span class="cmt"># 2. Volcar la memoria completa de 8MB a un archivo binario raw</span>
+<span class="cmd">sudo flashrom</span> -p buspirate_spi:dev=/dev/ttyUSB0 -r firmware_dump.bin
+
+<span class="cmt"># 3. Verificar la integridad realizando una segunda lectura y comparando hashes SHA256</span>
+<span class="cmd">sudo flashrom</span> -p buspirate_spi:dev=/dev/ttyUSB0 -r firmware_dump2.bin
+<span class="cmd">sha256sum</span> firmware_dump.bin firmware_dump2.bin</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 3</div>
+        <div class="quiz-question" id="q3-1">
+          <div class="q-text">1. ¿Por qué es fundamental calcular y comparar los checksums SHA256 de dos volcados de memoria independientes del mismo chip?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',true)">A) Para asegurar que el contacto físico de las pinzas SOIC no introdujo ruido de señal o corrupción de bits durante la lectura</button>
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',false)">B) Para descifrar automáticamente las claves WPA2 de la red WiFi</button>
+          </div>
+          <div class="q-explanation">Si la pinza de prueba SOIC-8 no hace buen contacto eléctrico en una patilla, el dump binario contendrá bytes erróneos (0xFF o 0x00). Si ambos hashes coinciden exactamente, el volcado es 100% fiel al hardware.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-03" onchange="toggleModuleRead('tab-03')">
+          <label class="read-label" for="check-03">Marcar Capítulo 3 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-04', document.querySelectorAll('.nav-item')[3].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 04 -->
+    <div class="tab-pane" id="tab-04">
+      <div class="learning-section">
+        <h2><i data-lucide="file-code" style="width:20px;height:20px;"></i> Capítulo 4 · Ingeniería Inversa de Firmware con Binwalk &amp; Ghidra</h2>
+        <p>Una vez obtenido el archivo <code>firmware_dump.bin</code>, el siguiente paso es extraer el sistema de archivos Linux (SquashFS / UBIFS) y descompilar los ejecutables de control en **Ghidra**.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">bash (Binwalk Extractor)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="cmt"># 1. Analizar firmas de compresión dentro del binario</span>
+<span class="cmd">binwalk</span> firmware_dump.bin
+
+<span class="cmt"># 2. Extraer automáticamente todos los sistemas de archivos detectados</span>
+<span class="cmd">binwalk</span> -e --rm firmware_dump.bin
+
+<span class="cmt"># 3. Navegar por el sistema de archivos raíz extraído</span>
+<span class="cmd">cd</span> _firmware_dump.bin.extracted/squashfs-root
+<span class="cmd">cat</span> etc/shadow
+<span class="cmd">grep</span> -rn "password" etc/ scripts/</code></pre>
+        </div>
+
+        <h3>Descompilación de Binarios ELF con Ghidra</h3>
+        <p>Al abrir ejecutables de servicio CGI en Ghidra (arquitecturas ARM v7 Little Endian o MIPS Big Endian), podemos localizar funciones vulnerables como <code>system()</code> o <code>strcpy()</code> invocadas sin validación de longitud de buffer.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">c (Ghidra Decompiler View Preview)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="cmt">/* Function: process_http_request (Vulnerable Code Identified in Ghidra) */</span>
+<span class="kw">void</span> <span class="cmd">process_http_request</span>(<span class="kw">char</span> *user_input) {
+    <span class="kw">char</span> cmd_buf[<span class="num">128</span>];
+    <span class="cmt">// VULNERABILIDAD CRÍTICA: Inyección de Comandos OS debido a sprintf insalubre</span>
+    <span class="cmd">sprintf</span>(cmd_buf, <span class="str">"ping -c 1 '%s'"</span>, user_input);
+    <span class="cmd">system</span>(cmd_buf); <span class="cmt">// Se puede pasar "; telnetd -p 4444 -l /bin/sh #"</span>
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 4</div>
+        <div class="quiz-question" id="q4-1">
+          <div class="q-text">1. ¿Qué información crucial suele encontrarse al extraer un archivo de sistema de archivos SquashFS de una cámara o router IoT?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q4-1',true)">A) Claves privadas RSA/ECC, hashes de contraseñas de root en /etc/shadow y scripts CGI con fallos de inyección de comandos</button>
+            <button class="q-option" onclick="checkAnswer(this,'q4-1',false)">B) Exclusivamente archivos de imagen PNG decorativos</button>
+          </div>
+          <div class="q-explanation">Muchos dispositivos embebidos reutilizan contraseñas maestras de fábrica en el firmware o almacenan llaves criptográficas estáticas utilizadas para autenticar actualizaciones Over-The-Air (OTA).</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-04" onchange="toggleModuleRead('tab-04')">
+          <label class="read-label" for="check-04">Marcar Capítulo 4 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-05', document.querySelectorAll('.nav-item')[4].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 05 -->
+    <div class="tab-pane" id="tab-05">
+      <div class="learning-section">
+        <h2><i data-lucide="bug" style="width:20px;height:20px;"></i> Capítulo 5 · Depuración en Tiempo Real con JTAG, OpenOCD &amp; GDB</h2>
+        <p>JTAG (Joint Test Action Group) proporciona acceso de bajo nivel al procesador, permitiendo colocar breakpoints en la memoria Flash/RAM, volcar el estado del procesador y alterar variables de ejecución en caliente.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">bash (OpenOCD & GDB Remote Debugging)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="cmt"># 1. Iniciar servidor OpenOCD para un SoC ARM Cortex-M4 con interfaz ST-Link o J-Link</span>
+<span class="cmd">openocd</span> -f interface/stlink.cfg -f target/stm32f4x.cfg
+
+<span class="cmt"># 2. Conectarse con GDB multiarquitectura (gdb-multiarch)</span>
+<span class="cmd">gdb-multiarch</span> ./vulnerable_elf
+
+<span class="cmt"># 3. Comandos interactivos de GDB para eludir validación de contraseña:</span>
+(gdb) <span class="cmd">target remote</span> localhost:3333
+(gdb) <span class="cmd">monitor reset halt</span>
+(gdb) <span class="cmd">break</span> check_admin_password
+(gdb) <span class="cmd">continue</span>
+<span class="cmt"># Al detenerse en el breakpoint, forzar retorno de éxito (r0 = 1):</span>
+(gdb) <span class="cmd">set</span> $r0 = 1
+(gdb) <span class="cmd">continue</span></code></pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 5</div>
+        <div class="quiz-question" id="q5-1">
+          <div class="q-text">1. En arquitecturas de 32 bits ARM (ARM32), ¿qué registro se utiliza típicamente para retornar el valor de éxito (0 o 1) de una función en C?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q5-1',true)">A) Registro R0</button>
+            <button class="q-option" onclick="checkAnswer(this,'q5-1',false)">B) Registro PC (Program Counter)</button>
+            <button class="q-option" onclick="checkAnswer(this,'q5-1',false)">C) Registro SP (Stack Pointer)</button>
+          </div>
+          <div class="q-explanation">Según el estándar ARM Calling Convention (AAPCS), el registro <code>R0</code> guarda el valor de retorno de las funciones. Al modificar <code>$r0 = 1</code> en GDB, alteramos la decisión lógica del programa de forma instantánea.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-05" onchange="toggleModuleRead('tab-05')">
+          <label class="read-label" for="check-05">Marcar Capítulo 5 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-06', document.querySelectorAll('.nav-item')[5].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- TAB 06 -->
+    <div class="tab-pane" id="tab-06">
+      <div class="learning-section">
+        <h2><i data-lucide="terminal" style="width:20px;height:20px;"></i> Capítulo 6 · Laboratorio Interactivo Live: Hardware Signal &amp; Firmware Dump Simulator</h2>
+        <p>Utiliza esta terminal interactiva para simular el escaneo de puertos serie UART, la decodificación de ondas lógicas con analizador, el volcado SPI Flash y la extracción de secretos de firmware en vivo.</p>
+
+        <div class="sim-panel">
+          <div class="sim-controls">
+            <button class="sim-btn active" id="btnScanUart" onclick="runSimAction('uart')"><i data-lucide="search" style="width:14px;height:14px;"></i> 1. Escanear UART (Baud Rate)</button>
+            <button class="sim-btn" id="btnDumpFlash" onclick="runSimAction('flash')"><i data-lucide="hard-drive" style="width:14px;height:14px;"></i> 2. SPI Flash Dump (buspirate)</button>
+            <button class="sim-btn" id="btnBinwalk" onclick="runSimAction('binwalk')"><i data-lucide="folder-search" style="width:14px;height:14px;"></i> 3. Binwalk SquashFS Extract</button>
+            <button class="sim-btn" id="btnGhidra" onclick="runSimAction('ghidra')"><i data-lucide="file-code" style="width:14px;height:14px;"></i> 4. Ghidra Decompile ARM</button>
+            <button class="sim-btn danger" id="btnClear" onclick="clearSimLog()"><i data-lucide="trash-2" style="width:14px;height:14px;"></i> Limpiar Terminal</button>
+          </div>
+
+          <div class="sim-grid">
+            <div class="sim-card">
+              <div class="sim-card-title">Interfaz de Hardware</div>
+              <div class="sim-card-val" id="simInterface">FT2232H / USB-Serial</div>
+              <div class="sim-card-status" style="color:var(--accent-green-neon);" id="simStatus">LISTO (3.3V TTL)</div>
+            </div>
+            <div class="sim-card">
+              <div class="sim-card-title">Chip Flash Detectado</div>
+              <div class="sim-card-val" id="simChip">Winbond W25Q128</div>
+              <div class="sim-card-status" style="color:var(--accent-cyan);" id="simCap">Capacidad: 16 MB (SPI)</div>
+            </div>
+            <div class="sim-card">
+              <div class="sim-card-title">Firmware Target Architecture</div>
+              <div class="sim-card-val" id="simArch">ARM Cortex-A7 (32-bit)</div>
+              <div class="sim-card-status" style="color:var(--accent-purple);" id="simFS">Sustema de Archivos: SquashFS</div>
+            </div>
+          </div>
+
+          <div class="terminal-box" id="termLog">
+            <div class="term-line"><span class="term-time">[00:00.00]</span><span class="term-tag normal">[SYSTEM]</span><span class="term-data">Laboratorio de Hardware Hacking inicializado. Selecciona una acción arriba.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="award" style="width:20px;height:20px;"></i> Evaluación Final del Curso</div>
+        <div class="quiz-question" id="q6-1">
+          <div class="q-text">1. ¿Cuál es el orden recomendado en una auditoría profesional de seguridad en hardware IoT?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q6-1',true)">A) Reconocimiento PCB ──► Descubrimiento de UART/JTAG ──► Volcado de SPI Flash ──► Binwalk/Ghidra RE ──► Exploitation / Patching</button>
+            <button class="q-option" onclick="checkAnswer(this,'q6-1',false)">B) Desoldar todos los componentes de la placa inmediatamente sin tomar fotos previas</button>
+          </div>
+          <div class="q-explanation">Seguir una metodología estructurada minimiza el riesgo de dañar físicamente el hardware original y garantiza que se mantenga una copia limpia de respaldo (dump original) del dispositivo.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-06" onchange="toggleModuleRead('tab-06')">
+          <label class="read-label" for="check-06">Marcar Capítulo 6 como completado</label>
+        </div>
+        <a href="../index.html" class="action-btn primary"><i data-lucide="check-circle" style="width:14px;height:14px;"></i> Finalizar Curso</a>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Dynamic Tab & Sidebar Switcher
+  function switchTab(tabId, btnElement) {
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    
+    const targetTab = document.getElementById(tabId);
+    if(targetTab) targetTab.classList.add('active');
+    
+    if(btnElement) {
+      const parentLi = btnElement.closest('.nav-item');
+      if(parentLi) parentLi.classList.add('active');
+    }
+    closeSidebar();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Sidebar Toggle logic
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('open');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  }
+
+  // Dark/Light Theme Switcher
+  function toggleTheme() {
+    const isLight = document.documentElement.classList.toggle('light');
+    localStorage.setItem('preferredTheme', isLight ? 'light' : 'dark');
+    const themeIcon = document.getElementById('themeIcon');
+    if(themeIcon) {
+      themeIcon.setAttribute('data-lucide', isLight ? 'moon' : 'sun');
+      if(window.lucide) lucide.createIcons();
+    }
+  }
+
+  // Quiz Checking System
+  function checkAnswer(btn, qId, isCorrect) {
+    const parentQ = document.getElementById(qId);
+    if(!parentQ) return;
+    
+    const options = parentQ.querySelectorAll('.q-option');
+    options.forEach(opt => opt.classList.add('disabled'));
+    
+    if(isCorrect) {
+      btn.classList.add('correct');
+    } else {
+      btn.classList.add('incorrect');
+      options.forEach(opt => {
+        if(opt.getAttribute('onclick').includes('true')) opt.classList.add('correct');
+      });
+    }
+    const exp = parentQ.querySelector('.q-explanation');
+    if(exp) exp.style.display = 'block';
+  }
+
+  // Code Copying
+  function copyCode(btn) {
+    const container = btn.closest('.code-block');
+    const code = container.querySelector('pre').innerText;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.innerHTML = '<i data-lucide="check" style="width:12px;height:12px;"></i> Copiado';
+      if(window.lucide) lucide.createIcons();
+      setTimeout(() => {
+        btn.innerHTML = '<i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar';
+        if(window.lucide) lucide.createIcons();
+      }, 2000);
+    });
+  }
+
+  // Module Progress Logic
+  const completedModules = new Set();
+  function toggleModuleRead(tabId) {
+    const check = document.querySelector(`#${tabId} .read-checkbox`);
+    const navLi = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
+    
+    if(check && check.checked) {
+      completedModules.add(tabId);
+      if(navLi) navLi.classList.add('completed');
+    } else {
+      completedModules.delete(tabId);
+      if(navLi) navLi.classList.remove('completed');
+    }
+    
+    const total = 6;
+    const count = completedModules.size;
+    const pct = Math.round((count / total) * 100);
+    
+    document.getElementById('progressText').innerText = pct + '%';
+    document.getElementById('progressDetails').innerText = `${count} de ${total} módulos`;
+    
+    const circle = document.getElementById('progressCircle');
+    const circumference = 226;
+    const offset = circumference - (pct / 100) * circumference;
+    circle.style.strokeDashoffset = offset;
+  }
+
+  // Interactive Live Simulator Logic
+  function getTimeStr() {
+    const d = new Date();
+    return `[${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}.${String(d.getMilliseconds()).padStart(2,'0').substring(0,2)}]`;
+  }
+
+  function appendLog(tag, data, isNormal=true) {
+    const box = document.getElementById('termLog');
+    const line = document.createElement('div');
+    line.className = 'term-line';
+    line.innerHTML = `<span class="term-time">${getTimeStr()}</span><span class="term-tag ${isNormal ? 'normal' : ''}">${tag}</span><span class="term-data">${data}</span>`;
+    box.appendChild(line);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function runSimAction(action) {
+    document.querySelectorAll('.sim-btn').forEach(b => b.classList.remove('active'));
+    
+    if(action === 'uart') {
+      document.getElementById('btnScanUart').classList.add('active');
+      appendLog('[UART-SCANNER]', 'Iniciando escaneo de frecuencia de baudios en canal TX0...', true);
+      setTimeout(() => {
+        appendLog('[PULSEVIEW]', 'Onda lógica analizada: Ancho de pulso 8.68 us detectado.', true);
+        appendLog('[UART-FOUND]', '✔ BAUD RATE DETECTADO: 115200 8N1. Consola U-Boot lista en /dev/ttyUSB0', true);
+        appendLog('[U-BOOT-CLI]', 'Hit any key to stop autoboot: 0 -> Entrando en consola U-Boot #', false);
+      }, 700);
+    } else if(action === 'flash') {
+      document.getElementById('btnDumpFlash').classList.add('active');
+      appendLog('[BUSPIRATE]', 'Estableciendo comunicación SPI a 8MHz con Winbond W25Q128...', true);
+      setTimeout(() => {
+        appendLog('[FLASHROM]', 'Lectura In-Circuit iniciada. Volcando 16,777,216 bytes...', true);
+        appendLog('[STATUS]', 'Progreso: [####################] 100% | Hash SHA256: 7f8a91b...3e2a', true);
+        appendLog('[SUCCESS]', '✔ Archivo saved: firmware_dump.bin (16 MB)', false);
+      }, 900);
+    } else if(action === 'binwalk') {
+      document.getElementById('btnBinwalk').classList.add('active');
+      appendLog('[BINWALK]', 'Escaneando firmware_dump.bin en busca de cabeceras compresas...', true);
+      setTimeout(() => {
+        appendLog('[HEADER-FOUND]', 'Offset 0x100000: TRX Header | Offset 0x180000: SquashFS file system, little endian', true);
+        appendLog('[EXTRACT]', 'Descomprimiendo sistema de archivos en _firmware_dump.bin.extracted/squashfs-root', true);
+        appendLog('[SECRET-FOUND]', 'ALERT: Clave RSA Privada encontrada en /etc/ssl/device_private.key', false);
+        appendLog('[SECRET-FOUND]', 'ALERT: Hash root hallado en /etc/shadow: $1$vX9z... (MD5-crypt)', false);
+      }, 1000);
+    } else if(action === 'ghidra') {
+      document.getElementById('btnGhidra').classList.add('active');
+      appendLog('[GHIDRA-ANALYSIS]', 'Importando /usr/sbin/httpd (ARM 32-bit ELF, Little Endian)...', true);
+      setTimeout(() => {
+        appendLog('[DECOMPILER]', 'Analizando función vuln_cgi_parse_query_params()...', true);
+        appendLog('[VULN-DETECTED]', 'CRITICAL: Stack Buffer Overflow en buffer "req_user" (Offset +0x40).', false);
+        appendLog('[EXPLOIT-HINT]', 'No stack canary detected. NX Bit disabled. ROP Chain posible para ejecución remota de comandos.', false);
+      }, 1100);
+    }
+  }
+
+  function clearSimLog() {
+    document.getElementById('termLog').innerHTML = `<div class="term-line"><span class="term-time">${getTimeStr()}</span><span class="term-tag normal">[SYSTEM]</span><span class="term-data">Terminal de diagnóstico limpia.</span></div>`;
+  }
+
+  // Initialize Lucide icons
+  document.addEventListener('DOMContentLoaded', () => {
+    if(window.lucide) lucide.createIcons();
+  });
+</script>
+</body>
+</html>
