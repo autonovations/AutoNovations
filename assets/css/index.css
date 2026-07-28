@@ -792,9 +792,38 @@ html.light .terminal-window .terminal-line.text-gray-500 {
 }
 
 /* =========================================================================
+   Screen Reader Accessibility Utility
+   ========================================================================= */
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border-width: 0 !important;
+}
+
+.focus\:not-sr-only:focus {
+    position: fixed !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 0.5rem 1rem !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    clip: auto !important;
+    white-space: normal !important;
+}
+
+/* =========================================================================
    Header Navbar Contrast & Readability Enhancements
    ========================================================================= */
 #navbar {
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
     backdrop-filter: blur(24px) !important;
     -webkit-backdrop-filter: blur(24px) !important;
     transition: background-color 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease, py 0.3s ease !important;
