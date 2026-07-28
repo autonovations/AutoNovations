@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="theme-color" content="#00D9FF">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blockchain, Web 3.0 & DePIN: Smart Contracts, IoT Autónomo y Ciberseguridad | AutoNovations Academy</title>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('preferredTheme') || 'dark';
+      if (savedTheme === 'light') { document.documentElement.classList.add('light'); }
+      else { document.documentElement.classList.remove('light'); }
+    })();
+  </script>
+  <meta name="description" content="Domina Blockchain, Web3, DePIN, Smart Contracts con Solidity/Hardhat/Foundry, IoT autónomo con pagos M2M, Identidad Descentralizada y Auditoría de Seguridad con Slither & Mythril.">
+  <meta name="keywords" content="Blockchain, Web3, DePIN, Smart Contracts, Solidity, Hardhat, Foundry, OpenZeppelin, IoT, DID, Ciberseguridad, Reentrancy, Slither, Mythril, AutoNovations Academy">
+  <meta name="author" content="AutoNovations Academy">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="../assets/js/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-darker: #050811; --bg-dark: #0a0f1d; --bg-card: #101728;
+      --bg-card-hover: #18233c; --border: #1e2c48; --border-focus: #00f0ff;
+      --accent-cyan: #00f0ff; --accent-cyan-dim: rgba(0,240,255,0.12);
+      --accent-green: #10b981; --accent-green-neon: #39ff14;
+      --accent-green-dim: rgba(16,185,129,0.15);
+      --accent-red: #ef4444; --accent-red-neon: #ff3366;
+      --accent-red-dim: rgba(239,68,68,0.15);
+      --accent-amber: #f59e0b; --accent-amber-dim: rgba(245,158,11,0.15);
+      --accent-purple: #a855f7; --accent-purple-dim: rgba(168,85,247,0.15);
+      --accent-blue: #3b82f6; --accent-blue-dim: rgba(59,130,246,0.12);
+      --text-primary: #f3f4f6; --text-secondary: #9ca3af; --text-muted: #6b7280;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
+      --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    html.light {
+      --bg-darker: #f3f4f6; --bg-dark: #ffffff; --bg-card: #ffffff;
+      --bg-card-hover: #f9fafb; --border: #e5e7eb; --border-focus: #2563eb;
+      --accent-cyan: #0284c7; --accent-cyan-dim: rgba(2,132,199,0.1);
+      --accent-green: #059669; --accent-green-neon: #10b981;
+      --accent-green-dim: rgba(5,150,105,0.1);
+      --accent-red: #dc2626; --accent-red-neon: #ef4444;
+      --accent-red-dim: rgba(220,38,38,0.1);
+      --accent-amber: #d97706; --accent-amber-dim: rgba(217,119,6,0.1);
+      --accent-purple: #7c3aed; --accent-purple-dim: rgba(124,58,237,0.1);
+      --accent-blue: #2563eb; --accent-blue-dim: rgba(37,99,235,0.1);
+      --text-primary: #111827; --text-secondary: #4b5563; --text-muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg-darker); color: var(--text-primary); font-family: var(--font-sans); line-height: 1.6; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-darker); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-sm); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+    .app-container { display: flex; min-height: 100vh; }
+    .sidebar { width: 290px; background-color: var(--bg-dark); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; padding: 1.5rem; transition: transform 0.3s; overflow-y: auto; }
+    .sidebar-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--accent-cyan); letter-spacing: 0.05em; margin-bottom: 0.5rem; text-transform: uppercase; text-decoration: none; }
+    .sidebar-subtitle { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.5rem; padding-left: 34px; }
+    .nav-section-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); padding: 0.75rem 0 0.4rem 0; border-top: 1px solid var(--border); margin-top: 0.5rem; }
+    .nav-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .nav-item button { width: 100%; background: none; border: none; outline: none; color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.8rem; font-weight: 500; text-align: left; padding: 8px 12px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: var(--transition); border: 1px solid transparent; }
+    .nav-item button:hover { background-color: var(--bg-card-hover); color: var(--text-primary); }
+    .nav-item.active button { background-color: var(--accent-purple-dim); color: var(--accent-purple); border: 1px solid rgba(168,85,247,0.25); }
+    .nav-item.completed button { color: var(--accent-green); }
+    .nav-check { display: none; color: var(--accent-green); margin-left: auto; }
+    .nav-item.completed .nav-check { display: inline-block; }
+    .nav-num { min-width: 20px; height: 20px; border-radius: 50%; background: var(--border); color: var(--text-muted); font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-item.active .nav-num { background: var(--accent-purple); color: #fff; }
+    .nav-item.completed .nav-num { background: var(--accent-green-dim); color: var(--accent-green); }
+    .progress-box { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 1.5rem; text-align: center; }
+    .progress-box-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .progress-circle-wrapper { position: relative; width: 90px; height: 90px; margin: 0 auto 8px; }
+    .progress-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .progress-bg-circle { fill: none; stroke: var(--border); stroke-width: 8; }
+    .progress-bar-circle { fill: none; stroke: var(--accent-purple); stroke-width: 8; stroke-dasharray: 226; stroke-dashoffset: 226; transition: stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1); stroke-linecap: round; }
+    .progress-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--accent-purple); }
+    .progress-details { font-size: 0.7rem; color: var(--text-muted); }
+    .main-content { margin-left: 290px; flex-grow: 1; padding: 2.5rem; max-width: calc(100% - 290px); min-height: 100vh; display: flex; flex-direction: column; transition: margin-left 0.3s, max-width 0.3s; }
+    .content-header { margin-bottom: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; }
+    .content-header h1 { font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 12px; }
+    .content-header p { color: var(--text-secondary); font-size: 0.92rem; }
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-left: 1rem; }
+    .theme-toggle-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 38px; height: 38px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+    .theme-toggle-btn:hover { border-color: var(--accent-purple); }
+    .mobile-menu-btn { display: none; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 38px; height: 38px; border-radius: var(--radius-md); cursor: pointer; align-items: center; justify-content: center; transition: var(--transition); }
+    .tab-pane { display: none; animation: fadeIn 0.4s ease; }
+    .tab-pane.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .learning-section { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 1.75rem; }
+    .learning-section h2 { font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 1.25rem; color: var(--accent-purple); border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+    .learning-section h3 { font-family: var(--font-display); font-size: 1.05rem; margin: 1.5rem 0 0.6rem 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+    .learning-section h4 { font-family: var(--font-display); font-size: 0.95rem; margin: 1.2rem 0 0.5rem 0; color: var(--accent-amber); }
+    .learning-section p { color: var(--text-secondary); font-size: 0.93rem; margin-bottom: 1rem; line-height: 1.75; }
+    .learning-section ul, .learning-section ol { margin-left: 1.5rem; margin-bottom: 1rem; color: var(--text-secondary); }
+    .learning-section li { margin-bottom: 5px; font-size: 0.93rem; line-height: 1.6; }
+    .definition-box { background-color: var(--bg-darker); border-left: 3px solid var(--accent-purple); padding: 1rem 1.25rem; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin: 1rem 0; }
+    .definition-term { font-family: var(--font-display); font-weight: 700; color: var(--accent-purple); font-size: 0.88rem; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .definition-desc { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.55; }
+    .definition-box.cyan { border-left-color: var(--accent-cyan); }
+    .definition-box.cyan .definition-term { color: var(--accent-cyan); }
+    .definition-box.amber { border-left-color: var(--accent-amber); }
+    .definition-box.amber .definition-term { color: var(--accent-amber); }
+    .alert-box { padding: 1rem 1.25rem; border-radius: var(--radius-lg); margin: 1.25rem 0; display: flex; gap: 12px; align-items: flex-start; border: 1px solid transparent; }
+    .alert-box.info { background-color: var(--accent-purple-dim); border-color: rgba(168,85,247,0.25); }
+    .alert-box.info i { color: var(--accent-purple); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.warn { background-color: var(--accent-amber-dim); border-color: rgba(245,158,11,0.25); }
+    .alert-box.warn i { color: var(--accent-amber); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.danger { background-color: var(--accent-red-dim); border-color: rgba(239,68,68,0.25); }
+    .alert-box.danger i { color: var(--accent-red); flex-shrink: 0; margin-top: 2px; }
+    .alert-box.success { background-color: var(--accent-green-dim); border-color: rgba(16,185,129,0.25); }
+    .alert-box.success i { color: var(--accent-green); flex-shrink: 0; margin-top: 2px; }
+    .code-block { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); margin: 1rem 0; overflow: hidden; }
+    .code-block-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); }
+    .code-lang { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-family: var(--font-mono); }
+    .code-copy-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 3px 8px; border-radius: var(--radius-sm); font-size: 0.7rem; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 4px; }
+    .code-copy-btn:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+    .code-block pre { padding: 1rem 1.25rem; overflow-x: auto; font-family: var(--font-mono); font-size: 0.83rem; line-height: 1.7; color: #e2e8f0; }
+    .code-block pre .cmd { color: var(--accent-cyan); }
+    .code-block pre .out { color: var(--accent-green); }
+    .code-block pre .cmt { color: var(--text-muted); font-style: italic; }
+    .code-block pre .kw { color: #c084fc; }
+    .code-block pre .str { color: #fbbf24; }
+    .code-block pre .num { color: #fb923c; }
+    .code-block pre .fn { color: #60a5fa; }
+    .code-block pre .type { color: #34d399; }
+    .quiz-section { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; margin-bottom: 1.75rem; }
+    .quiz-title-bar { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--accent-purple); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .quiz-question { margin-bottom: 1.5rem; }
+    .q-text { font-size: 0.92rem; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+    .q-options { display: flex; flex-direction: column; gap: 7px; }
+    .q-option { background: var(--bg-darker); border: 1px solid var(--border); color: var(--text-secondary); padding: 9px 14px; border-radius: var(--radius-md); font-size: 0.85rem; cursor: pointer; text-align: left; transition: var(--transition); }
+    .q-option:hover { border-color: var(--accent-purple); color: var(--text-primary); }
+    .q-option.correct { background-color: var(--accent-green-dim); border-color: var(--accent-green); color: var(--accent-green-neon); pointer-events: none; }
+    .q-option.incorrect { background-color: var(--accent-red-dim); border-color: var(--accent-red); color: var(--accent-red-neon); pointer-events: none; }
+    .q-option.disabled { pointer-events: none; opacity: 0.6; }
+    .q-explanation { font-size: 0.82rem; color: var(--text-secondary); margin-top: 8px; padding: 8px 12px; background: var(--bg-darker); border-radius: var(--radius-sm); display: none; border-left: 3px solid var(--accent-purple); }
+    .q-explanation.show { display: block; }
+    .module-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; flex-wrap: wrap; gap: 10px; }
+    .action-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; font-size: 0.87rem; display: flex; align-items: center; gap: 8px; transition: var(--transition); font-family: var(--font-sans); text-decoration: none; }
+    .action-btn:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+    .action-btn.primary { background: var(--accent-purple-dim); border-color: var(--accent-purple); color: var(--accent-purple); }
+    .action-btn.primary:hover { background: var(--accent-purple); color: #fff; }
+    .read-confirmation { display: flex; align-items: center; gap: 10px; background: var(--bg-darker); border: 1px solid var(--border); padding: 9px 14px; border-radius: var(--radius-md); }
+    .read-checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent-purple); }
+    .read-label { font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-secondary); }
+    .level-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; padding: 3px 8px; border-radius: var(--radius-sm); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-master { background: var(--accent-purple-dim); color: var(--accent-purple); border: 1px solid rgba(168,85,247,0.3); }
+    .badge-web3 { background: rgba(0,240,255,0.12); color: var(--accent-cyan); border: 1px solid rgba(0,240,255,0.3); }
+    .ascii-diagram { background: #020509; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.8; color: var(--accent-cyan); margin: 1rem 0; overflow-x: auto; white-space: pre; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 99; backdrop-filter: blur(2px); }
+    .sidebar-overlay.open { display: block; }
+
+    /* Blockchain Interactive Simulator */
+    .sim-container { background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-top: 1rem; }
+    .sim-toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1rem; align-items: center; }
+    .sim-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 14px; border-radius: var(--radius-md); font-size: 0.8rem; font-family: var(--font-mono); cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 6px; }
+    .sim-btn:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+    .sim-btn.active { background: var(--accent-purple-dim); border-color: var(--accent-purple); color: var(--accent-purple); }
+    .canvas-wrapper { position: relative; width: 100%; background: #02040a; border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; display: flex; justify-content: center; align-items: center; }
+    canvas { display: block; background: #010408; }
+    .telemetry-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .gauge-card { background: var(--bg-darker); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.85rem; text-align: center; }
+    .gauge-title { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-display); }
+    .gauge-val { font-family: var(--font-mono); font-size: 1.1rem; font-weight: 700; color: var(--accent-purple); margin: 4px 0; }
+
+    /* Certificate Modal */
+    .cert-card { background: linear-gradient(135deg, rgba(16,23,40,0.95), rgba(10,15,29,0.98)); border: 4px double var(--accent-purple); border-radius: var(--radius-lg); padding: 3rem; text-align: center; max-width: 750px; margin: 2rem auto; display: none; }
+    .cert-card.unlocked { display: block; }
+    .cert-icon { color: var(--accent-amber); font-size: 3rem; margin-bottom: 1rem; }
+
+    /* Grid 2-col for comparison */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+    .two-col .definition-box { margin: 0; }
+
+    /* Tech stack tags */
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.75rem 0; }
+    .tech-tag { display: inline-flex; align-items: center; gap: 5px; background: var(--accent-purple-dim); border: 1px solid rgba(168,85,247,0.25); color: var(--accent-purple); font-size: 0.75rem; font-family: var(--font-mono); padding: 4px 10px; border-radius: 20px; }
+    .tech-tag.cyan { background: var(--accent-cyan-dim); border-color: rgba(0,240,255,0.25); color: var(--accent-cyan); }
+    .tech-tag.amber { background: var(--accent-amber-dim); border-color: rgba(245,158,11,0.25); color: var(--accent-amber); }
+    .tech-tag.red { background: var(--accent-red-dim); border-color: rgba(239,68,68,0.25); color: var(--accent-red); }
+    .tech-tag.green { background: var(--accent-green-dim); border-color: rgba(16,185,129,0.25); color: var(--accent-green); }
+
+    @media (max-width: 1024px) { .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); } .main-content { margin-left: 0; max-width: 100%; } .mobile-menu-btn { display: flex; } .two-col { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) { .main-content { padding: 1.25rem; } .content-header h1 { font-size: 1.3rem; } }
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="app-container">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <a class="sidebar-brand" href="../index.html">
+      <i data-lucide="cpu" style="width:20px;height:20px;color:var(--accent-purple);"></i>
+      AutoNovations
+    </a>
+    <div class="sidebar-subtitle">Blockchain · Web3 · DePIN</div>
+    <div class="progress-box">
+      <div class="progress-box-title">Progreso del Curso</div>
+      <div class="progress-circle-wrapper">
+        <svg class="progress-svg" viewBox="0 0 80 80">
+          <circle class="progress-bg-circle" cx="40" cy="40" r="36"/>
+          <circle class="progress-bar-circle" id="progressCircle" cx="40" cy="40" r="36"/>
+        </svg>
+        <div class="progress-text" id="progressText">0%</div>
+      </div>
+      <div class="progress-details" id="progressDetails">0 de 6 módulos</div>
+    </div>
+    <div class="nav-section-label">Módulos del Curso</div>
+    <ul class="nav-list" id="navList">
+      <li class="nav-item active" data-tab="tab-01"><button onclick="switchTab('tab-01',this)"><span class="nav-num">1</span>Web3, Cripto &amp; Arquitectura EVM<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-02"><button onclick="switchTab('tab-02',this)"><span class="nav-num">2</span>Smart Contracts Avanzados<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-03"><button onclick="switchTab('tab-03',this)"><span class="nav-num">3</span>DePIN &amp; Economía M2M / IoT<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-04"><button onclick="switchTab('tab-04',this)"><span class="nav-num">4</span>DID &amp; Autenticación Criptográfica<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-05"><button onclick="switchTab('tab-05',this)"><span class="nav-num">5</span>Ciberseguridad &amp; Auditoría<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+      <li class="nav-item" data-tab="tab-06"><button onclick="switchTab('tab-06',this)"><span class="nav-num">6</span>Proyecto Integrador DePIN<i data-lucide="check-circle" class="nav-check" style="width:14px;height:14px;"></i></button></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="content-header">
+      <div>
+        <h1>
+          <i data-lucide="hexagon" style="width:28px;height:28px;color:var(--accent-purple);"></i>
+          Blockchain, Web 3.0 &amp; DePIN
+        </h1>
+        <p>Smart Contracts · Solidity/Hardhat/Foundry · IoT Autónomo M2M · DID · Auditoría de Seguridad</p>
+      </div>
+      <div class="header-actions">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()" aria-label="Menú">
+          <i data-lucide="menu" style="width:18px;height:18px;"></i>
+        </button>
+        <button class="theme-toggle-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Cambiar tema">
+          <i data-lucide="sun" style="width:16px;height:16px;" id="themeIcon"></i>
+        </button>
+        <a href="../index.html" class="action-btn" style="text-decoration:none;">
+          <i data-lucide="home" style="width:14px;height:14px;"></i> Inicio
+        </a>
+      </div>
+    </div>
+
+    <!-- Cover Image -->
+    <div style="width:100%; height: 280px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 2rem; border: 1px solid var(--border); position: relative;">
+      <img src="../assets/images/courses/blockchain_web3_depin_cover.png" alt="Blockchain Web3 DePIN Course Cover" style="width: 100%; height: 100%; object-fit: cover;">
+      <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,8,17,0.1) 0%, rgba(5,8,17,0.85) 100%); display: flex; align-items: flex-end; padding: 1.5rem; gap: 10px;">
+        <span class="level-badge badge-master">Level 4 · Blockchain & Web3 Expert</span>
+        <span class="level-badge badge-web3">DePIN Specialist</span>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 01 ==================== -->
+    <div class="tab-pane active" id="tab-01">
+      <div class="learning-section">
+        <h2><i data-lucide="globe" style="width:20px;height:20px;"></i> Capítulo 1 · Fundamentos de Web3, Criptografía Asimétrica y Arquitectura Blockchain</h2>
+        <p>La <strong>Web 3.0</strong> representa la evolución hacia una internet descentralizada donde los usuarios son propietarios de sus datos, identidades y activos digitales sin depender de intermediarios centralizados. El núcleo tecnológico son las <strong>blockchains públicas</strong> que garantizan inmutabilidad, transparencia y consenso distribuido.</p>
+
+        <div class="tag-row">
+          <span class="tech-tag cyan">Ethereum EVM</span>
+          <span class="tech-tag">Solana / Rust</span>
+          <span class="tech-tag cyan">ECDSA / secp256k1</span>
+          <span class="tech-tag">SHA-256 / Keccak-256</span>
+          <span class="tech-tag amber">Merkle Trees</span>
+          <span class="tech-tag">Proof of Stake</span>
+        </div>
+
+        <h3><i data-lucide="key" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Criptografía Asimétrica (ECDSA)</h3>
+        <p>Toda identidad en blockchain se construye sobre criptografía de curva elíptica. Una clave privada de 256 bits genera deterministamente la clave pública y la dirección Ethereum mediante la curva <strong>secp256k1</strong>.</p>
+
+        <div class="ascii-diagram">
+┌────────────────────────────────────────────────────────────────────────────┐
+<span style="color:var(--accent-purple)">│              PIPELINE DE IDENTIDAD BLOCKCHAIN (ECDSA secp256k1)           │</span>
+│                                                                            │
+│  [ Private Key 256-bit ] ──ECDSA──► [ Public Key (x,y) secp256k1 ]        │
+│            │                                   │                           │
+│   Nunca exponer                        Keccak-256 Hash                    │
+│                                               │                            │
+│                                    [ Address = últimos 20 bytes ]          │
+│                                    0x742d35Cc...bC4 → tu wallet            │
+│                                                                            │
+│  Firma Digital: sig = ECDSA.sign(message_hash, private_key)               │
+│  Verificación:  addr = ECDSA.recover(message_hash, signature)             │
+└────────────────────────────────────────────────────────────────────────────┘</div>
+
+        <h3><i data-lucide="layers" style="width:16px;height:16px;color:var(--accent-purple);"></i> EVM vs Solana: Comparativa de Arquitecturas</h3>
+
+        <div class="two-col">
+          <div class="definition-box cyan">
+            <div class="definition-term">Ethereum EVM (Solidity)</div>
+            <div class="definition-desc">Máquina virtual de stack 256-bit. EIP-1559 para gas. Lenguaje: Solidity / Vyper. Consenso: Proof of Stake (Gasper). ~12 segundos por bloque. Compatibilidad: L2 (Arbitrum, Optimism, zkSync).</div>
+          </div>
+          <div class="definition-box">
+            <div class="definition-term">Solana (Rust / SBF)</div>
+            <div class="definition-desc">Arquitectura de cuentas paralelas con eBPF bytecode. Proof of History + Tower BFT. ~400ms por bloque, ~65,000 TPS. Lenguaje: Rust con el framework Anchor. Costos mínimos.</div>
+          </div>
+        </div>
+
+        <h3><i data-lucide="git-branch" style="width:16px;height:16px;color:var(--accent-amber);"></i> Árboles de Merkle y Verificación de Integridad</h3>
+        <p>Los <strong>Merkle Trees</strong> permiten verificar la pertenencia de una transacción a un bloque sin descargar toda la blockchain. Cada nodo padre es el hash de sus dos hijos, formando una raíz criptográfica (<strong>Merkle Root</strong>) incluida en el bloque header.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">python — Merkle Tree simplificado</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="kw">import</span> hashlib
+
+<span class="kw">def</span> <span class="fn">sha256d</span>(data: str) -> str:
+    <span class="kw">return</span> hashlib.sha256(hashlib.sha256(data.encode()).digest()).hexdigest()
+
+<span class="kw">def</span> <span class="fn">merkle_root</span>(txids: list) -> str:
+    <span class="kw">if</span> len(txids) == <span class="num">1</span>:
+        <span class="kw">return</span> txids[<span class="num">0</span>]
+    <span class="kw">if</span> len(txids) % <span class="num">2</span> != <span class="num">0</span>:
+        txids.append(txids[-<span class="num">1</span>])  <span class="cmt"># duplicar último si cantidad impar</span>
+    pairs = [sha256d(txids[i] + txids[i+<span class="num">1</span>]) <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">0</span>, len(txids), <span class="num">2</span>)]
+    <span class="kw">return</span> merkle_root(pairs)
+
+txs = [<span class="str">"tx_a_hash"</span>, <span class="str">"tx_b_hash"</span>, <span class="str">"tx_c_hash"</span>, <span class="str">"tx_d_hash"</span>]
+print(<span class="str">f"Merkle Root: {merkle_root(txs)}"</span>)
+<span class="cmt"># → Merkle Root: 3c1e2f... (raíz del bloque)</span></code></pre>
+        </div>
+
+        <div class="alert-box info">
+          <i data-lucide="info" style="width:16px;height:16px;"></i>
+          <div><strong>Dato clave:</strong> La dirección Ethereum se deriva de los últimos 20 bytes del hash Keccak-256 de la clave pública. Nunca se almacena la clave privada en la blockchain.</div>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 1</div>
+        <div class="quiz-question" id="q1-1">
+          <div class="q-text">1. ¿Qué algoritmo de firma digital utiliza Ethereum para generar y verificar identidades de wallet?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',true)">A) ECDSA sobre la curva secp256k1</button>
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',false)">B) RSA-2048</button>
+            <button class="q-option" onclick="checkAnswer(this,'q1-1',false)">C) AES-256 simétrico</button>
+          </div>
+          <div class="q-explanation">ECDSA (Elliptic Curve Digital Signature Algorithm) con secp256k1 garantiza firmas cortas y verificación eficiente. RSA requeriría claves de miles de bits para seguridad equivalente.</div>
+        </div>
+        <div class="quiz-question" id="q1-2">
+          <div class="q-text">2. ¿Cuál es la principal ventaja de la arquitectura de cuentas paralelas de Solana vs el modelo EVM?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q1-2',false)">A) Usa Solidity para escribir contratos</button>
+            <button class="q-option" onclick="checkAnswer(this,'q1-2',true)">B) Permite procesar transacciones en paralelo con Proof of History, alcanzando ~65,000 TPS</button>
+            <button class="q-option" onclick="checkAnswer(this,'q1-2',false)">C) No soporta smart contracts</button>
+          </div>
+          <div class="q-explanation">Proof of History crea un reloj criptográfico que permite ordenar eventos sin consenso sincrónico, habilitando paralelismo masivo en el procesamiento de transacciones.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-01" onchange="toggleModuleRead('tab-01')">
+          <label class="read-label" for="check-01">Marcar Capítulo 1 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-02', document.querySelectorAll('.nav-item')[1].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 02 ==================== -->
+    <div class="tab-pane" id="tab-02">
+      <div class="learning-section">
+        <h2><i data-lucide="file-code" style="width:20px;height:20px;"></i> Capítulo 2 · Desarrollo de Smart Contracts Avanzados</h2>
+        <p>Un <strong>Smart Contract</strong> es código inmutable que se ejecuta en la EVM y se activa automáticamente cuando se cumplen condiciones predefinidas. Los contratos se despliegan en la blockchain y no pueden ser modificados (solo deprecados con patrones Proxy).</p>
+
+        <div class="tag-row">
+          <span class="tech-tag">Solidity 0.8.x</span>
+          <span class="tech-tag cyan">Hardhat</span>
+          <span class="tech-tag amber">Foundry (Forge)</span>
+          <span class="tech-tag">OpenZeppelin</span>
+          <span class="tech-tag green">ERC-20 / ERC-721</span>
+          <span class="tech-tag">Upgradeable Proxy</span>
+        </div>
+
+        <h3><i data-lucide="shield" style="width:16px;height:16px;color:var(--accent-purple);"></i> Contrato ERC-20 con OpenZeppelin</h3>
+        <p><strong>OpenZeppelin</strong> provee contratos auditados y estándares de la industria. Los tokens ERC-20 son fungibles y permiten transferencias, aprobaciones delegadas y emisión controlada.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">Solidity 0.8.20 — Token ERC-20 con Roles</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="cmt">// SPDX-License-Identifier: MIT</span>
+<span class="kw">pragma solidity</span> ^<span class="num">0.8.20</span>;
+
+<span class="kw">import</span> <span class="str">"@openzeppelin/contracts/token/ERC20/ERC20.sol"</span>;
+<span class="kw">import</span> <span class="str">"@openzeppelin/contracts/access/AccessControl.sol"</span>;
+<span class="kw">import</span> <span class="str">"@openzeppelin/contracts/security/Pausable.sol"</span>;
+
+<span class="kw">contract</span> <span class="type">AutoNovToken</span> <span class="kw">is</span> ERC20, AccessControl, Pausable {
+    bytes32 <span class="kw">public constant</span> MINTER_ROLE = keccak256(<span class="str">"MINTER_ROLE"</span>);
+    bytes32 <span class="kw">public constant</span> PAUSER_ROLE = keccak256(<span class="str">"PAUSER_ROLE"</span>);
+
+    <span class="kw">uint256 public constant</span> MAX_SUPPLY = <span class="num">1_000_000</span> * <span class="num">10</span>**<span class="num">18</span>; <span class="cmt">// 1M ANT</span>
+
+    <span class="kw">event</span> <span class="fn">TokensMinted</span>(address indexed to, uint256 amount, uint256 timestamp);
+
+    <span class="kw">constructor</span>(address admin) ERC20(<span class="str">"AutoNovToken"</span>, <span class="str">"ANT"</span>) {
+        _grantRole(DEFAULT_ADMIN_ROLE, admin);
+        _grantRole(MINTER_ROLE, admin);
+        _grantRole(PAUSER_ROLE, admin);
+        _mint(admin, <span class="num">100_000</span> * <span class="num">10</span>**<span class="num">18</span>); <span class="cmt">// Supply inicial</span>
+    }
+
+    <span class="kw">function</span> <span class="fn">mint</span>(address to, uint256 amount) <span class="kw">external</span> onlyRole(MINTER_ROLE) whenNotPaused {
+        <span class="kw">require</span>(totalSupply() + amount <= MAX_SUPPLY, <span class="str">"Max supply exceeded"</span>);
+        _mint(to, amount);
+        <span class="kw">emit</span> TokensMinted(to, amount, block.timestamp);
+    }
+
+    <span class="kw">function</span> <span class="fn">pause</span>() <span class="kw">external</span> onlyRole(PAUSER_ROLE) { _pause(); }
+    <span class="kw">function</span> <span class="fn">unpause</span>() <span class="kw">external</span> onlyRole(PAUSER_ROLE) { _unpause(); }
+
+    <span class="kw">function</span> <span class="fn">_update</span>(address from, address to, uint256 value) <span class="kw">internal override</span> whenNotPaused {
+        <span class="kw">super</span>._update(from, to, value);
+    }
+}</code></pre>
+        </div>
+
+        <h3><i data-lucide="zap" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Testing con Foundry (Forge)</h3>
+        <p><strong>Foundry</strong> es el toolchain más rápido para testing de contratos Solidity. Permite fuzzing, invariant testing y snapshots de gas con velocidad de compilación por Rust.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">Solidity — Test con Foundry (Forge)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="cmt">// SPDX-License-Identifier: MIT</span>
+<span class="kw">pragma solidity</span> ^<span class="num">0.8.20</span>;
+
+<span class="kw">import</span> <span class="str">"forge-std/Test.sol"</span>;
+<span class="kw">import</span> <span class="str">"../src/AutoNovToken.sol"</span>;
+
+<span class="kw">contract</span> <span class="type">AutoNovTokenTest</span> <span class="kw">is</span> Test {
+    AutoNovToken token;
+    address admin = address(<span class="num">0xAD</span>);
+    address user  = address(<span class="num">0xBE</span>);
+
+    <span class="kw">function</span> <span class="fn">setUp</span>() <span class="kw">public</span> {
+        vm.prank(admin);
+        token = <span class="kw">new</span> AutoNovToken(admin);
+    }
+
+    <span class="kw">function</span> <span class="fn">test_MintWithinMaxSupply</span>() <span class="kw">public</span> {
+        uint256 amount = <span class="num">500</span> ether;
+        vm.prank(admin);
+        token.mint(user, amount);
+        assertEq(token.balanceOf(user), amount);
+    }
+
+    <span class="cmt">/// @dev Fuzzing: asegura que ningún monto supera MAX_SUPPLY</span>
+    <span class="kw">function</span> <span class="fn">testFuzz_MintNeverExceedsMax</span>(uint128 randomAmt) <span class="kw">public</span> {
+        vm.assume(randomAmt > <span class="num">0</span>);
+        vm.prank(admin);
+        <span class="kw">try</span> token.mint(user, randomAmt) {
+            assertLe(token.totalSupply(), token.MAX_SUPPLY());
+        } <span class="kw">catch</span> {}
+    }
+}
+<span class="cmt">// $ forge test --match-path test/AutoNovTokenTest.sol -vv</span></code></pre>
+        </div>
+
+        <h3><i data-lucide="layers" style="width:16px;height:16px;color:var(--accent-amber);"></i> Patrón Proxy Upgradeable (UUPS)</h3>
+        <div class="definition-box amber">
+          <div class="definition-term">UUPS — Universal Upgradeable Proxy Standard (EIP-1822)</div>
+          <div class="definition-desc">Separa lógica de contrato (implementación) del almacenamiento de estado (proxy). El proxy delega todas las llamadas a la implementación actual mediante <code>delegatecall</code>. Permite actualizar la lógica sin perder el estado ni la dirección del contrato.</div>
+        </div>
+
+        <div class="ascii-diagram">
+┌─────────────────────────────────────────────────────────────────┐
+<span style="color:var(--accent-purple)">│              UUPS PROXY UPGRADE PATTERN                        │</span>
+│                                                                 │
+│  User → call() → [ Proxy Contract (storage + address) ]        │
+│                         │ delegatecall                          │
+│                  [ Implementation V1 (logic) ]                 │
+│                         │                                       │
+│               upgradeTo(V2_address)                            │
+│                         │                                       │
+│                  [ Implementation V2 (new logic) ]             │
+│                  (mismo storage, misma proxy addr)             │
+└─────────────────────────────────────────────────────────────────┘</div>
+
+        <div class="alert-box warn">
+          <i data-lucide="alert-triangle" style="width:16px;height:16px;"></i>
+          <div><strong>Collision de Storage:</strong> Al actualizar contratos mediante proxies, asegúrate de usar ERC-7201 (Namespaced Storage) para evitar colisiones de slots de almacenamiento entre versiones.</div>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 2</div>
+        <div class="quiz-question" id="q2-1">
+          <div class="q-text">1. ¿Cuál es la principal ventaja del patrón UUPS sobre un contrato monolítico no upgradeable?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',true)">A) Permite corregir bugs y agregar funcionalidades sin migrar el estado del contrato ni cambiar su dirección</button>
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',false)">B) Hace el contrato más rápido en gas</button>
+            <button class="q-option" onclick="checkAnswer(this,'q2-1',false)">C) Permite ejecutar Solidity en la EVM de Solana</button>
+          </div>
+          <div class="q-explanation">El patrón Proxy conserva el estado del contrato (balances, mappings) y su dirección pública mientras actualiza la lógica subyacente mediante delegatecall a una nueva implementación.</div>
+        </div>
+        <div class="quiz-question" id="q2-2">
+          <div class="q-text">2. En Foundry, ¿qué función permite ejecutar código como si fuera un address específico (simulación de identidad)?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q2-2',false)">A) impersonate(address)</button>
+            <button class="q-option" onclick="checkAnswer(this,'q2-2',true)">B) vm.prank(address)</button>
+            <button class="q-option" onclick="checkAnswer(this,'q2-2',false)">C) forge.setMsgSender()</button>
+          </div>
+          <div class="q-explanation">vm.prank() de Foundry establece msg.sender para la próxima llamada, permitiendo simular transacciones como cualquier cuenta (admin, usuario, atacante) en tests de seguridad.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-02" onchange="toggleModuleRead('tab-02')">
+          <label class="read-label" for="check-02">Marcar Capítulo 2 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-03', document.querySelectorAll('.nav-item')[2].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 03 ==================== -->
+    <div class="tab-pane" id="tab-03">
+      <div class="learning-section">
+        <h2><i data-lucide="radio" style="width:20px;height:20px;"></i> Capítulo 3 · DePIN &amp; Economía Machine-to-Machine (M2M)</h2>
+        <p><strong>DePIN (Decentralized Physical Infrastructure Networks)</strong> es un paradigma donde dispositivos IoT y hardware físico operan de forma autónoma en redes descentralizadas, ejecutan micropagos entre máquinas y monetizan datos de sensores directamente en blockchain sin intervención humana.</p>
+
+        <div class="tag-row">
+          <span class="tech-tag amber">Helium Network</span>
+          <span class="tech-tag cyan">IOTA Tangle</span>
+          <span class="tech-tag">Peaq Network</span>
+          <span class="tech-tag green">Micropagos M2M</span>
+          <span class="tech-tag">MQTT → Blockchain</span>
+          <span class="tech-tag">Edge Computing</span>
+          <span class="tech-tag amber">ESP32 / Raspberry Pi</span>
+        </div>
+
+        <h3><i data-lucide="cpu" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Arquitectura DePIN: Sensor → Contrato → Pago</h3>
+
+        <div class="ascii-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+<span style="color:var(--accent-purple)">│                    ARQUITECTURA DePIN AUTÓNOMA                             │</span>
+│                                                                             │
+│  [ Sensor IoT Edge ] ──MQTT──► [ Edge Gateway (RaspPi/ESP32) ]             │
+│         │                              │                                    │
+│  (temp, CO2, GPS, kWh)        Firma Criptográfica ECDSA                   │
+│                                        │                                    │
+│                               [ Ethereum / Polygon ]                       │
+│                                  DePIN Smart Contract                      │
+│                               ┌──────────────────────┐                    │
+│                               │ registerReading(data)│                    │
+│                               │ releaseMicropayment()│                    │
+│                               └──────────────────────┘                    │
+│                                        │                                    │
+│                               [ Wallet del Sensor ]                        │
+│                               0x1a2b...  ← recibe ETH/MATIC               │
+└─────────────────────────────────────────────────────────────────────────────┘</div>
+
+        <h3><i data-lucide="zap" style="width:16px;height:16px;color:var(--accent-green);"></i> Smart Contract DePIN: Pagos Autónomos por Telemetría</h3>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">Solidity 0.8.20 — DePIN Sensor Payment Contract</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="cmt">// SPDX-License-Identifier: MIT</span>
+<span class="kw">pragma solidity</span> ^<span class="num">0.8.20</span>;
+
+<span class="kw">contract</span> <span class="type">DePINSensorNetwork</span> {
+    <span class="kw">struct</span> SensorReading {
+        uint256 timestamp;
+        int256  temperature;  <span class="cmt">// x100 para evitar decimales</span>
+        uint256 co2Ppm;
+        bytes32 dataHash;     <span class="cmt">// IPFS hash del payload completo</span>
+    }
+
+    <span class="kw">mapping</span>(address => SensorReading[]) <span class="kw">public</span> sensorLogs;
+    <span class="kw">mapping</span>(address => bool) <span class="kw">public</span> registeredSensors;
+    
+    uint256 <span class="kw">public</span> rewardPerReading = <span class="num">0.0001</span> ether; <span class="cmt">// 0.1 mETH por lectura</span>
+    address <span class="kw">public immutable</span> owner;
+
+    <span class="kw">event</span> <span class="fn">SensorDataRecorded</span>(address indexed sensor, bytes32 dataHash, uint256 reward);
+    <span class="kw">event</span> <span class="fn">SensorRegistered</span>(address indexed sensor);
+
+    <span class="kw">modifier</span> <span class="fn">onlyRegistered</span>() {
+        <span class="kw">require</span>(registeredSensors[msg.sender], <span class="str">"Sensor not registered"</span>);
+        _;
+    }
+
+    <span class="kw">constructor</span>() <span class="kw">payable</span> { owner = msg.sender; }
+
+    <span class="kw">function</span> <span class="fn">registerSensor</span>(address sensor) <span class="kw">external</span> {
+        <span class="kw">require</span>(msg.sender == owner, <span class="str">"Only owner"</span>);
+        registeredSensors[sensor] = <span class="kw">true</span>;
+        <span class="kw">emit</span> SensorRegistered(sensor);
+    }
+
+    <span class="kw">function</span> <span class="fn">submitReading</span>(int256 temp, uint256 co2, bytes32 dataHash)
+        <span class="kw">external</span> onlyRegistered {
+        sensorLogs[msg.sender].push(SensorReading({
+            timestamp:   block.timestamp,
+            temperature: temp,
+            co2Ppm:      co2,
+            dataHash:    dataHash
+        }));
+        <span class="cmt">// Micropago automático al sensor</span>
+        <span class="kw">if</span> (address(this).balance >= rewardPerReading) {
+            payable(msg.sender).transfer(rewardPerReading);
+        }
+        <span class="kw">emit</span> SensorDataRecorded(msg.sender, dataHash, rewardPerReading);
+    }
+
+    <span class="kw">receive</span>() <span class="kw">external payable</span> {} <span class="cmt">// permite financiar el contrato</span>
+}</code></pre>
+        </div>
+
+        <h3><i data-lucide="wifi" style="width:16px;height:16px;color:var(--accent-amber);"></i> Integración Edge: ESP32 + Web3.py</h3>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">Python — ESP32 / Raspberry Pi → Ethereum via Web3.py</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="kw">from</span> web3 <span class="kw">import</span> Web3
+<span class="kw">import</span> hashlib, json, time
+
+<span class="cmt"># Conectar a nodo Ethereum (Polygon Amoy testnet)</span>
+w3 = Web3(Web3.HTTPProvider(<span class="str">"https://rpc-amoy.polygon.technology"</span>))
+SENSOR_PRIVATE_KEY = <span class="str">"0x..."</span>  <span class="cmt"># Almacenada en HSM / secure element</span>
+sensor_account = w3.eth.account.from_key(SENSOR_PRIVATE_KEY)
+
+CONTRACT_ADDRESS = <span class="str">"0xDePIN_CONTRACT_ADDR..."</span>
+ABI = json.load(open(<span class="str">"DePINSensorNetwork.abi.json"</span>))
+contract = w3.eth.contract(address=CONTRACT_ADDRESS, abi=ABI)
+
+<span class="kw">def</span> <span class="fn">read_sensors</span>():
+    <span class="cmt"># Simulación de lectura de sensores físicos</span>
+    <span class="kw">import</span> random
+    <span class="kw">return</span> {<span class="str">"temp"</span>: int(<span class="num">2385</span> + random.randint(-<span class="num">50</span>, <span class="num">50</span>)),  <span class="cmt"># 23.85°C</span>
+            <span class="str">"co2"</span>:  int(<span class="num">412</span> + random.randint(<span class="num">0</span>, <span class="num">30</span>))}
+
+<span class="kw">def</span> <span class="fn">submit_reading_to_chain</span>(data: dict):
+    payload_hash = <span class="str">"0x"</span> + hashlib.sha256(json.dumps(data).encode()).hexdigest()
+    tx = contract.functions.submitReading(
+        data[<span class="str">"temp"</span>], data[<span class="str">"co2"</span>], bytes.fromhex(payload_hash[<span class="num">2</span>:])
+    ).build_transaction({
+        <span class="str">"from"</span>:     sensor_account.address,
+        <span class="str">"nonce"</span>:    w3.eth.get_transaction_count(sensor_account.address),
+        <span class="str">"gas"</span>:      <span class="num">150_000</span>,
+        <span class="str">"maxFeePerGas"</span>: w3.to_wei(<span class="str">'30'</span>, <span class="str">'gwei'</span>),
+    })
+    signed = w3.eth.account.sign_transaction(tx, SENSOR_PRIVATE_KEY)
+    tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)
+    print(<span class="str">f"[+] TX enviada: {tx_hash.hex()} | Pago pendiente..."</span>)
+
+<span class="cmt"># Loop autónomo cada 30 segundos</span>
+<span class="kw">while</span> <span class="kw">True</span>:
+    submit_reading_to_chain(read_sensors())
+    time.sleep(<span class="num">30</span>)</code></pre>
+        </div>
+
+        <div class="alert-box success">
+          <i data-lucide="check-circle" style="width:16px;height:16px;"></i>
+          <div><strong>Redes DePIN Reales:</strong> Helium (cobertura LoRaWAN), Hivemapper (mapas descentralizados), Render Network (GPU descentralizada) y Peaq Network (DePIN para movilidad eléctrica y robótica) son proyectos DePIN con capitalización de mercado activa.</div>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 3</div>
+        <div class="quiz-question" id="q3-1">
+          <div class="q-text">1. ¿Qué característica fundamental distingue a DePIN de una solución IoT centralizada tradicional?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',true)">A) Los dispositivos se pagan entre sí automáticamente mediante smart contracts sin servidor central ni autoridad humana intermediaria</button>
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',false)">B) Los datos se almacenan en una base de datos SQL distribuida</button>
+            <button class="q-option" onclick="checkAnswer(this,'q3-1',false)">C) Utiliza WiFi en vez de LoRaWAN</button>
+          </div>
+          <div class="q-explanation">DePIN elimina el servidor centralizado: los smart contracts en blockchain ejecutan la lógica de pago, verificación y registro de datos de forma autónoma e inmutable.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-03" onchange="toggleModuleRead('tab-03')">
+          <label class="read-label" for="check-03">Marcar Capítulo 3 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-04', document.querySelectorAll('.nav-item')[3].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 04 ==================== -->
+    <div class="tab-pane" id="tab-04">
+      <div class="learning-section">
+        <h2><i data-lucide="fingerprint" style="width:20px;height:20px;"></i> Capítulo 4 · Identidad Descentralizada (DID) y Autenticación Criptográfica</h2>
+        <p>La <strong>Identidad Descentralizada (DID — W3C standard)</strong> permite que dispositivos, robots, vehículos y personas tengan identidades digitales verificables y auto-soberanas sin depender de proveedores centralizados como Google o Amazon IAM.</p>
+
+        <div class="tag-row">
+          <span class="tech-tag cyan">W3C DID Core</span>
+          <span class="tech-tag">Verifiable Credentials</span>
+          <span class="tech-tag amber">did:ethr</span>
+          <span class="tech-tag">did:web</span>
+          <span class="tech-tag green">ERC-725 / ERC-735</span>
+          <span class="tech-tag">SIWE (Sign-In with Ethereum)</span>
+          <span class="tech-tag">TPM / Secure Element</span>
+        </div>
+
+        <h3><i data-lucide="user-check" style="width:16px;height:16px;color:var(--accent-purple);"></i> Estructura de un DID Document</h3>
+        <div class="definition-box">
+          <div class="definition-term">DID (Decentralized Identifier)</div>
+          <div class="definition-desc">URI con formato: <code>did:method:specificIdentifier</code>. Ejemplo: <code>did:ethr:0x1234...abcd</code>. Se resuelve a un DID Document JSON-LD que contiene claves públicas, endpoints de servicio y mecanismos de autenticación.</div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">JSON-LD — DID Document para Sensor IoT</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code>{
+  <span class="str">"@context"</span>: [
+    <span class="str">"https://www.w3.org/ns/did/v1"</span>,
+    <span class="str">"https://w3id.org/security/suites/secp256k1-2020/v1"</span>
+  ],
+  <span class="str">"id"</span>: <span class="str">"did:ethr:polygon:0x1a2b3c4d...sensor_wallet"</span>,
+  <span class="str">"verificationMethod"</span>: [{
+    <span class="str">"id"</span>:           <span class="str">"did:ethr:polygon:0x1a2b...#controller"</span>,
+    <span class="str">"type"</span>:         <span class="str">"EcdsaSecp256k1VerificationKey2020"</span>,
+    <span class="str">"controller"</span>:   <span class="str">"did:ethr:polygon:0x1a2b..."</span>,
+    <span class="str">"publicKeyHex"</span>: <span class="str">"04a1b2c3d4..."</span>
+  }],
+  <span class="str">"authentication"</span>: [<span class="str">"did:ethr:polygon:0x1a2b...#controller"</span>],
+  <span class="str">"service"</span>: [{
+    <span class="str">"id"</span>:              <span class="str">"did:ethr:polygon:0x1a2b...#telemetry"</span>,
+    <span class="str">"type"</span>:            <span class="str">"DePINSensorEndpoint"</span>,
+    <span class="str">"serviceEndpoint"</span>: <span class="str">"https://sensor.autonovations.io/api/telemetry"</span>
+  }]
+}</code></pre>
+        </div>
+
+        <h3><i data-lucide="lock" style="width:16px;height:16px;color:var(--accent-cyan);"></i> SIWE: Sign-In with Ethereum para Hardware</h3>
+        <p><strong>Sign-In with Ethereum (EIP-4361)</strong> permite autenticación criptográfica usando wallets de dispositivos. En lugar de usuario/contraseña, el dispositivo firma un mensaje con su clave privada almacenada en el Secure Element o TPM chip.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">Python — SIWE: Verificación de Firma de Dispositivo</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="kw">from</span> eth_account <span class="kw">import</span> Account
+<span class="kw">from</span> eth_account.messages <span class="kw">import</span> encode_defunct
+<span class="kw">from</span> web3 <span class="kw">import</span> Web3
+
+<span class="kw">def</span> <span class="fn">create_siwe_message</span>(device_address: str, nonce: str) -> str:
+    <span class="kw">return</span> (
+        <span class="str">f"autonovations.io wants you to sign in with your Ethereum account:\n"</span>
+        <span class="str">f"{device_address}\n\n"</span>
+        <span class="str">f"Sensor DePIN authentication\n\n"</span>
+        <span class="str">f"URI: https://api.autonovations.io/depin\n"</span>
+        <span class="str">f"Version: 1\n"</span>
+        <span class="str">f"Chain ID: 137\n"</span>  <span class="cmt"># Polygon Mainnet</span>
+        <span class="str">f"Nonce: {nonce}\n"</span>
+        <span class="str">f"Issued At: 2026-07-28T10:00:00Z"</span>
+    )
+
+<span class="kw">def</span> <span class="fn">verify_device_signature</span>(message: str, signature: str) -> str:
+    msg = encode_defunct(text=message)
+    recovered = Account.recover_message(msg, signature=signature)
+    <span class="kw">return</span> Web3.to_checksum_address(recovered)
+
+<span class="cmt"># Servidor verifica que la dirección recuperada == DID registrado</span>
+message   = create_siwe_message(<span class="str">"0x1a2b...sensor"</span>, nonce=<span class="str">"abc123xyz"</span>)
+signature = <span class="str">"0x..."</span>  <span class="cmt"># Generada por el TPM del dispositivo IoT</span>
+verified_address = verify_device_signature(message, signature)
+print(<span class="str">f"[+] Dispositivo autenticado: {verified_address}"</span>)</code></pre>
+        </div>
+
+        <div class="alert-box info">
+          <i data-lucide="info" style="width:16px;height:16px;"></i>
+          <div><strong>Hardware Security:</strong> Para producción, almacena la clave privada del dispositivo IoT en un <strong>TPM 2.0</strong>, <strong>ATECC608B</strong> (Microchip) o un módulo <strong>SE050</strong> (NXP). Nunca en flash sin cifrar.</div>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 4</div>
+        <div class="quiz-question" id="q4-1">
+          <div class="q-text">1. ¿Qué problema resuelve SIWE (Sign-In with Ethereum) en sistemas DePIN con hardware IoT?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q4-1',true)">A) Autentica dispositivos criptográficamente usando su wallet Ethereum sin contraseñas ni servidores de identidad centralizados</button>
+            <button class="q-option" onclick="checkAnswer(this,'q4-1',false)">B) Cifra los datos del sensor con AES-128</button>
+            <button class="q-option" onclick="checkAnswer(this,'q4-1',false)">C) Comprime el payload MQTT para reducir latencia</button>
+          </div>
+          <div class="q-explanation">SIWE elimina servidores OAuth/IAM: el dispositivo firma un mensaje con su clave privada en el Secure Element, el servidor verifica la firma y autentica sin base de datos de contraseñas.</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-04" onchange="toggleModuleRead('tab-04')">
+          <label class="read-label" for="check-04">Marcar Capítulo 4 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-05', document.querySelectorAll('.nav-item')[4].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 05 ==================== -->
+    <div class="tab-pane" id="tab-05">
+      <div class="learning-section">
+        <h2><i data-lucide="shield-alert" style="width:20px;height:20px;"></i> Capítulo 5 · Ciberseguridad &amp; Auditoría de Smart Contracts</h2>
+        <p>La auditoría de seguridad de smart contracts es crítica: los exploits en DeFi han generado pérdidas superiores a <strong>$3 billones USD</strong> históricamente. Los vectores de ataque más comunes incluyen reentrancy, flash loans y errores de control de acceso.</p>
+
+        <div class="tag-row">
+          <span class="tech-tag red">Reentrancy Attack</span>
+          <span class="tech-tag red">Flash Loan Exploit</span>
+          <span class="tech-tag red">Integer Overflow</span>
+          <span class="tech-tag amber">Slither (Static Analysis)</span>
+          <span class="tech-tag amber">Mythril (Symbolic Exec.)</span>
+          <span class="tech-tag cyan">Echidna (Fuzzer)</span>
+          <span class="tech-tag green">Checks-Effects-Interactions</span>
+        </div>
+
+        <h3><i data-lucide="alert-triangle" style="width:16px;height:16px;color:var(--accent-red);"></i> Vector 1: Reentrancy Attack (El DAO Hack, $60M USD)</h3>
+        <p>Un contrato malicioso llama recursivamente a una función vulnerable antes de que el estado (balance) sea actualizado, drenando todos los fondos.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">Solidity — VULNERABLE vs SEGURO (Reentrancy)</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="cmt">// ❌ VULNERABLE — No actualiza balance antes de transferir</span>
+<span class="kw">contract</span> <span class="type">VulnerableVault</span> {
+    <span class="kw">mapping</span>(address => uint256) <span class="kw">public</span> balances;
+
+    <span class="kw">function</span> <span class="fn">withdraw</span>() <span class="kw">external</span> {
+        uint256 amount = balances[msg.sender];
+        <span class="kw">require</span>(amount > <span class="num">0</span>);
+        (bool ok,) = msg.sender.call{value: amount}(<span class="str">""</span>); <span class="cmt">// ← Callback al atacante</span>
+        <span class="kw">require</span>(ok);
+        balances[msg.sender] = <span class="num">0</span>; <span class="cmt">// ← Demasiado tarde: ya fue re-llamada</span>
+    }
+}
+
+<span class="cmt">// ✅ SEGURO — Patrón Checks-Effects-Interactions + ReentrancyGuard</span>
+<span class="kw">import</span> <span class="str">"@openzeppelin/contracts/security/ReentrancyGuard.sol"</span>;
+
+<span class="kw">contract</span> <span class="type">SecureVault</span> <span class="kw">is</span> ReentrancyGuard {
+    <span class="kw">mapping</span>(address => uint256) <span class="kw">public</span> balances;
+
+    <span class="kw">function</span> <span class="fn">withdraw</span>() <span class="kw">external</span> nonReentrant {
+        uint256 amount = balances[msg.sender];
+        <span class="kw">require</span>(amount > <span class="num">0</span>, <span class="str">"No balance"</span>);
+        balances[msg.sender] = <span class="num">0</span>; <span class="cmt">// ← EFFECTS primero</span>
+        (bool ok,) = msg.sender.call{value: amount}(<span class="str">""</span>); <span class="cmt">// ← INTERACTIONS después</span>
+        <span class="kw">require</span>(ok, <span class="str">"Transfer failed"</span>);
+    }
+}</code></pre>
+        </div>
+
+        <h3><i data-lucide="zap" style="width:16px;height:16px;color:var(--accent-amber);"></i> Vector 2: Flash Loan Exploit</h3>
+        <div class="definition-box amber">
+          <div class="definition-term">Flash Loan Attack</div>
+          <div class="definition-desc">El atacante toma prestados millones en una sola transacción sin colateral (flash loan de AAVE/Uniswap), manipula precios de oráculos en-chain, explota protocolos vulnerables, devuelve el préstamo y extrae la ganancia — todo en un único bloque atómico.</div>
+        </div>
+
+        <div class="alert-box danger">
+          <i data-lucide="x-octagon" style="width:16px;height:16px;"></i>
+          <div><strong>Casos reales:</strong> Beanstalk ($182M), Euler Finance ($197M), Compound ($150M). La mitigación principal es usar oráculos descentralizados como <strong>Chainlink</strong> en lugar de precios de liquidez en-chain manipulables.</div>
+        </div>
+
+        <h3><i data-lucide="search" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Herramientas de Auditoría: Slither + Mythril</h3>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">bash — Análisis Estático con Slither + Mythril</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="cmt"># ── Instalar herramientas de auditoría ──────────────────────────────────────</span>
+<span class="cmd">pip install slither-analyzer mythril</span>
+<span class="cmd">npm install -g @crytic/echidna</span>
+
+<span class="cmt"># ── Análisis estático con Slither (detecta: reentrancy, unused vars, etc.) ──</span>
+<span class="cmd">slither contracts/DePINSensorNetwork.sol \</span>
+<span class="cmd">  --detect reentrancy-eth,unprotected-upgrade,controlled-delegatecall \</span>
+<span class="cmd">  --json slither-report.json</span>
+
+<span class="out">[SLITHER] Detected: Reentrancy in withdraw() — HIGH severity</span>
+<span class="out">[SLITHER] External call before state update at line 34</span>
+
+<span class="cmt"># ── Ejecución simbólica con Mythril (detecta: integer overflow, access control) ──</span>
+<span class="cmd">myth analyze contracts/VulnerableVault.sol \</span>
+<span class="cmd">  --solv 0.8.20 \</span>
+<span class="cmd">  --execution-timeout 90 \</span>
+<span class="cmd">  -o markdown > mythril-report.md</span>
+
+<span class="out">[MYTHRIL] SWC-107: Reentrancy — withdraw() can be re-entered</span>
+<span class="out">[MYTHRIL] Path: call() at line 7 → fallback() → call() at line 7</span>
+
+<span class="cmt"># ── Fuzzing de invariantes con Echidna ──────────────────────────────────────</span>
+<span class="cmd">echidna contracts/SecureVault.sol \</span>
+<span class="cmd">  --contract SecureVault \</span>
+<span class="cmd">  --test-mode assertion \</span>
+<span class="cmd">  --corpus-dir ./echidna-corpus</span></code></pre>
+        </div>
+
+        <div class="ascii-diagram">
+┌──────────────────────────────────────────────────────────────────────────┐
+<span style="color:var(--accent-red)">│                    PROCESO DE AUDITORÍA DE SMART CONTRACTS              │</span>
+│                                                                          │
+│  1. Lectura Manual ──► Revisar lógica, roles, eventos, modifiers        │
+│  2. Slither         ──► Análisis estático automático (detectores)       │
+│  3. Mythril         ──► Ejecución simbólica (rutas de ataque)           │
+│  4. Echidna         ──► Fuzzing de invariantes del negocio              │
+│  5. Foundry Fuzz    ──► Fuzzing de propiedades individuales             │
+│  6. Peer Review     ──► Revisión por segundo auditor independiente      │
+│  7. Report + Fix    ──► Correcciones + re-auditoría final               │
+└──────────────────────────────────────────────────────────────────────────┘</div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title-bar"><i data-lucide="help-circle" style="width:20px;height:20px;"></i> Cuestionario — Capítulo 5</div>
+        <div class="quiz-question" id="q5-1">
+          <div class="q-text">1. ¿Cuál es el patrón correcto para mitigar ataques de reentrancy en Solidity?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q5-1',true)">A) Checks-Effects-Interactions: actualizar el estado ANTES de realizar llamadas externas + usar ReentrancyGuard</button>
+            <button class="q-option" onclick="checkAnswer(this,'q5-1',false)">B) Usar require() después de la transferencia</button>
+            <button class="q-option" onclick="checkAnswer(this,'q5-1',false)">C) Desactivar el compilador de Solidity</button>
+          </div>
+          <div class="q-explanation">CEI garantiza que si un contrato externo llama de vuelta (re-entra), el estado ya refleja que los fondos fueron retirados, haciendo inútil la re-entrada. ReentrancyGuard agrega un mutex a nivel de EVM.</div>
+        </div>
+        <div class="quiz-question" id="q5-2">
+          <div class="q-text">2. ¿Qué tipo de análisis realiza Mythril y qué categoría de vulnerabilidades detecta mejor?</div>
+          <div class="q-options">
+            <button class="q-option" onclick="checkAnswer(this,'q5-2',false)">A) Análisis sintáctico de imports de Solidity</button>
+            <button class="q-option" onclick="checkAnswer(this,'q5-2',true)">B) Ejecución simbólica del bytecode EVM, detectando reentrancy, overflow, acceso no autorizado y dependencia de timestamp</button>
+            <button class="q-option" onclick="checkAnswer(this,'q5-2',false)">C) Auditoría manual de comentarios en el código</button>
+          </div>
+          <div class="q-explanation">Mythril explora todas las rutas de ejecución posibles del bytecode EVM de forma simbólica, identificando estados que llevan a vulnerabilidades según el SWC Registry (Smart Contract Weakness Classification).</div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-05" onchange="toggleModuleRead('tab-05')">
+          <label class="read-label" for="check-05">Marcar Capítulo 5 como completado</label>
+        </div>
+        <button class="action-btn primary" onclick="switchTab('tab-06', document.querySelectorAll('.nav-item')[5].querySelector('button'))">Capítulo Siguiente <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 06 (Proyecto Final + Simulador) ==================== -->
+    <div class="tab-pane" id="tab-06">
+      <div class="learning-section">
+        <h2><i data-lucide="activity" style="width:20px;height:20px;"></i> Capítulo 6 · Proyecto Integrador: Red DePIN para Telemetría y Pagos Automáticos</h2>
+        <p>En este módulo construirás una <strong>red DePIN completa</strong> que integra sensores IoT con pagos autónomos en blockchain. El simulador interactivo muestra en tiempo real la propagación de transacciones entre nodos.</p>
+
+        <div class="tag-row">
+          <span class="tech-tag">Polygon Amoy Testnet</span>
+          <span class="tech-tag cyan">Hardhat Deploy</span>
+          <span class="tech-tag amber">IPFS / Filecoin</span>
+          <span class="tech-tag green">Chainlink Automation</span>
+          <span class="tech-tag">TheGraph (indexing)</span>
+          <span class="tech-tag">Grafana Dashboard</span>
+        </div>
+
+        <h3><i data-lucide="server" style="width:16px;height:16px;color:var(--accent-cyan);"></i> Arquitectura Completa del Proyecto Final</h3>
+        <div class="ascii-diagram">
+┌────────────────────────────────────────────────────────────────────────────┐
+<span style="color:var(--accent-purple)">│              PROYECTO FINAL: DePIN SENSOR NETWORK COMPLETO                │</span>
+│                                                                            │
+│  [IoT Sensors]──MQTT──►[Edge Node]──Web3.py──►[Polygon Amoy Testnet]      │
+│   Temp/CO2/GPS           ESP32                  DePINSensorNetwork.sol    │
+│                         Secure Element          ↓                         │
+│                         (ECDSA Sign)       Chainlink Automation           │
+│                                            (trigger pago diario)          │
+│                                                 ↓                         │
+│                                           IPFS/Filecoin                   │
+│                                           (raw sensor data)               │
+│                                                 ↓                         │
+│                                           TheGraph Subgraph               │
+│                                           (indexar eventos)               │
+│                                                 ↓                         │
+│                                           Grafana Dashboard               │
+│                                           (visualización tiempo real)     │
+└────────────────────────────────────────────────────────────────────────────┘</div>
+
+        <h3><i data-lucide="code" style="width:16px;height:16px;color:var(--accent-amber);"></i> Hardhat Deployment Script</h3>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">JavaScript — Hardhat Deploy + Verify Script</span>
+            <button class="code-copy-btn" onclick="copyCode(this)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar</button>
+          </div>
+          <pre><code><span class="cmt">// deploy/01_deploy_depin.js</span>
+<span class="kw">const</span> { ethers } = <span class="kw">require</span>(<span class="str">"hardhat"</span>);
+
+<span class="kw">async function</span> <span class="fn">main</span>() {
+  <span class="kw">const</span> [deployer] = <span class="kw">await</span> ethers.getSigners();
+  console.log(<span class="str">`[+] Deploying with: ${deployer.address}`</span>);
+
+  <span class="cmt">// Deploy DePIN Sensor Network con 0.5 ETH de fondos iniciales</span>
+  <span class="kw">const</span> DePIN = <span class="kw">await</span> ethers.getContractFactory(<span class="str">"DePINSensorNetwork"</span>);
+  <span class="kw">const</span> depin = <span class="kw">await</span> DePIN.deploy({
+    value: ethers.parseEther(<span class="str">"0.5"</span>)
+  });
+  <span class="kw">await</span> depin.waitForDeployment();
+  console.log(<span class="str">`[+] DePINSensorNetwork deployed: ${await depin.getAddress()}`</span>);
+
+  <span class="cmt">// Registrar sensores de prueba</span>
+  <span class="kw">const</span> sensors = [
+    <span class="str">"0xSensor1..."</span>, <span class="str">"0xSensor2..."</span>, <span class="str">"0xSensor3..."</span>
+  ];
+  <span class="kw">for</span> (<span class="kw">const</span> sensor <span class="kw">of</span> sensors) {
+    <span class="kw">await</span> depin.registerSensor(sensor);
+    console.log(<span class="str">`[+] Registered sensor: ${sensor}`</span>);
+  }
+
+  <span class="cmt">// Verificar en PolygonScan</span>
+  <span class="kw">await</span> hre.run(<span class="str">"verify:verify"</span>, {
+    address: <span class="kw">await</span> depin.getAddress(),
+    constructorArguments: []
+  });
+}
+
+main().catch(console.error);</code></pre>
+        </div>
+
+        <!-- Interactive DePIN Network Simulator -->
+        <h3><i data-lucide="zap" style="width:16px;height:16px;color:var(--accent-purple);"></i> Simulador Interactivo: Red DePIN en Tiempo Real</h3>
+        <p>Visualiza cómo los nodos IoT se registran, envían transacciones y reciben micropagos en la red blockchain descentralizada.</p>
+
+        <div class="sim-container">
+          <div class="sim-toolbar">
+            <button class="sim-btn active" id="btnRunSim" onclick="toggleSim()"><i data-lucide="play" style="width:14px;height:14px;"></i> Pausar / Reanudar</button>
+            <button class="sim-btn" onclick="addSensorNode()"><i data-lucide="plus-circle" style="width:14px;height:14px;"></i> Agregar Sensor</button>
+            <button class="sim-btn" onclick="triggerAttack()"><i data-lucide="shield-alert" style="width:14px;height:14px;"></i> Simular Ataque</button>
+            <button class="sim-btn" onclick="resetBlockchainSim()"><i data-lucide="rotate-ccw" style="width:14px;height:14px;"></i> Resetear Red</button>
+          </div>
+
+          <div class="canvas-wrapper">
+            <canvas id="depinCanvas" width="720" height="400"></canvas>
+          </div>
+
+          <div class="telemetry-grid">
+            <div class="gauge-card">
+              <div class="gauge-title">Nodos Activos</div>
+              <div class="gauge-val" id="valNodes" style="color:var(--accent-purple);">5</div>
+            </div>
+            <div class="gauge-card">
+              <div class="gauge-title">TX Confirmadas</div>
+              <div class="gauge-val" id="valTx" style="color:var(--accent-green);">0</div>
+            </div>
+            <div class="gauge-card">
+              <div class="gauge-title">Pagos (mETH)</div>
+              <div class="gauge-val" id="valPayments" style="color:var(--accent-cyan);">0.000</div>
+            </div>
+            <div class="gauge-card">
+              <div class="gauge-title">Estado Red</div>
+              <div class="gauge-val" id="valStatus" style="color:var(--accent-green);">ONLINE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="module-actions">
+        <div class="read-confirmation">
+          <input type="checkbox" class="read-checkbox" id="check-06" onchange="toggleModuleRead('tab-06')">
+          <label class="read-label" for="check-06">Marcar Proyecto Final como completado</label>
+        </div>
+      </div>
+
+      <!-- Certificate -->
+      <div class="cert-card" id="certCard">
+        <div class="cert-icon"><i data-lucide="award"></i></div>
+        <h2 style="font-family:var(--font-display); font-size:1.8rem; color:var(--accent-purple); margin-bottom:0.5rem;">¡Felicidades, Blockchain & DePIN Expert!</h2>
+        <p style="color:var(--text-secondary); margin-bottom:0.5rem;">Has completado exitosamente todos los módulos de</p>
+        <p style="color:var(--accent-cyan); font-weight:700; font-size:1.05rem; margin-bottom:1.5rem;">Blockchain, Web 3.0 &amp; DePIN: Smart Contracts, IoT Autónomo y Ciberseguridad</p>
+        <div class="tag-row" style="justify-content:center; margin-bottom: 1.5rem;">
+          <span class="tech-tag">Solidity Expert</span>
+          <span class="tech-tag cyan">DePIN Architect</span>
+          <span class="tech-tag amber">Smart Contract Auditor</span>
+          <span class="tech-tag green">Web3 Developer</span>
+        </div>
+        <button class="action-btn primary" style="margin:0 auto;" onclick="window.print()"><i data-lucide="printer"></i> Imprimir Certificado Oficial</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  let completedTabs = new Set();
+  let simActive = true;
+  let txCount = 0;
+  let totalPayments = 0;
+  let attackMode = false;
+
+  // ─── Sidebar & Theme ────────────────────────────────────────────────────────
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('open');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  }
+  function toggleTheme() {
+    const isLight = document.documentElement.classList.toggle('light');
+    localStorage.setItem('preferredTheme', isLight ? 'light' : 'dark');
+  }
+
+  // ─── Tab Navigation ──────────────────────────────────────────────────────────
+  function switchTab(tabId, btnEl) {
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    if (btnEl) btnEl.closest('.nav-item').classList.add('active');
+    closeSidebar();
+  }
+
+  // ─── Quiz Logic ──────────────────────────────────────────────────────────────
+  function checkAnswer(btn, qId, isCorrect) {
+    const parent = document.getElementById(qId);
+    parent.querySelectorAll('.q-option').forEach(b => {
+      b.classList.add('disabled');
+      b.style.pointerEvents = 'none';
+      b.style.opacity = '0.7';
+    });
+    if (isCorrect) {
+      btn.classList.add('correct');
+      btn.style.opacity = '1';
+    } else {
+      btn.classList.add('incorrect');
+      btn.style.opacity = '1';
+    }
+    const exp = parent.querySelector('.q-explanation');
+    if (exp) exp.classList.add('show');
+  }
+
+  // ─── Progress Tracking ───────────────────────────────────────────────────────
+  function toggleModuleRead(tabId) {
+    const check = document.getElementById('check-' + tabId.replace('tab-', ''));
+    if (check.checked) {
+      completedTabs.add(tabId);
+      document.querySelector(`[data-tab="${tabId}"]`).classList.add('completed');
+    } else {
+      completedTabs.delete(tabId);
+      document.querySelector(`[data-tab="${tabId}"]`).classList.remove('completed');
+    }
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const count = completedTabs.size;
+    const pct = Math.round((count / 6) * 100);
+    document.getElementById('progressText').textContent = pct + '%';
+    document.getElementById('progressDetails').textContent = `${count} de 6 módulos`;
+    const offset = 226 - (226 * pct) / 100;
+    document.getElementById('progressCircle').style.strokeDashoffset = offset;
+    if (count === 6) {
+      document.getElementById('certCard').classList.add('unlocked');
+    }
+  }
+
+  // ─── Code Copy ───────────────────────────────────────────────────────────────
+  function copyCode(btn) {
+    const code = btn.closest('.code-block').querySelector('pre').innerText;
+    navigator.clipboard.writeText(code);
+    btn.innerHTML = '<i data-lucide="check" style="width:12px;height:12px;"></i> Copiado';
+    setTimeout(() => {
+      btn.innerHTML = '<i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar';
+      lucide.createIcons();
+    }, 2000);
+  }
+
+  // ─── DePIN Network Blockchain Simulator ──────────────────────────────────────
+  const canvas = document.getElementById('depinCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const BLOCKCHAIN_COLOR   = '#a855f7';
+  const NODE_COLOR         = '#00f0ff';
+  const TX_COLOR           = '#10b981';
+  const ATTACK_COLOR       = '#ef4444';
+  const BORDER_COLOR       = '#1e2c48';
+
+  let nodes = [
+    { x: 120, y: 200, id: 'S1', type: 'sensor',     balance: 0,    status: 'idle' },
+    { x: 260, y: 100, id: 'S2', type: 'sensor',     balance: 0,    status: 'idle' },
+    { x: 260, y: 300, id: 'S3', type: 'sensor',     balance: 0,    status: 'idle' },
+    { x: 420, y: 200, id: 'SC', type: 'contract',   balance: 500,  status: 'online' },
+    { x: 600, y: 200, id: 'BC', type: 'blockchain', balance: 9999, status: 'mining' },
+  ];
+
+  let packets = [];
+  let blockPulse = 0;
+
+  function addSensorNode() {
+    const newId = 'S' + (nodes.filter(n => n.type === 'sensor').length + 1);
+    nodes.push({
+      x: 80 + Math.random() * 200,
+      y: 60 + Math.random() * 280,
+      id: newId, type: 'sensor', balance: 0, status: 'idle'
+    });
+    document.getElementById('valNodes').textContent = nodes.filter(n=>n.type==='sensor').length;
+  }
+
+  function triggerAttack() {
+    attackMode = true;
+    document.getElementById('valStatus').textContent = 'ATAQUE ⚠';
+    document.getElementById('valStatus').style.color = 'var(--accent-red)';
+    setTimeout(() => {
+      attackMode = false;
+      document.getElementById('valStatus').textContent = 'ONLINE';
+      document.getElementById('valStatus').style.color = 'var(--accent-green)';
+    }, 4000);
+  }
+
+  function resetBlockchainSim() {
+    nodes = [
+      { x: 120, y: 200, id: 'S1', type: 'sensor',     balance: 0,    status: 'idle' },
+      { x: 260, y: 100, id: 'S2', type: 'sensor',     balance: 0,    status: 'idle' },
+      { x: 260, y: 300, id: 'S3', type: 'sensor',     balance: 0,    status: 'idle' },
+      { x: 420, y: 200, id: 'SC', type: 'contract',   balance: 500,  status: 'online' },
+      { x: 600, y: 200, id: 'BC', type: 'blockchain', balance: 9999, status: 'mining' },
+    ];
+    packets = [];
+    txCount = 0; totalPayments = 0; attackMode = false;
+    document.getElementById('valTx').textContent = '0';
+    document.getElementById('valPayments').textContent = '0.000';
+    document.getElementById('valNodes').textContent = '3';
+    document.getElementById('valStatus').textContent = 'ONLINE';
+    document.getElementById('valStatus').style.color = 'var(--accent-green)';
+  }
+
+  function toggleSim() {
+    simActive = !simActive;
+    const btn = document.getElementById('btnRunSim');
+    btn.innerHTML = simActive
+      ? '<i data-lucide="pause" style="width:14px;height:14px;"></i> Pausar'
+      : '<i data-lucide="play" style="width:14px;height:14px;"></i> Reanudar';
+    lucide.createIcons();
+  }
+
+  function drawNode(node) {
+    const r = node.type === 'blockchain' ? 28 : node.type === 'contract' ? 22 : 16;
+    const color = attackMode && node.type !== 'blockchain'
+      ? ATTACK_COLOR
+      : node.type === 'blockchain' ? BLOCKCHAIN_COLOR
+      : node.type === 'contract'   ? '#f59e0b'
+      : NODE_COLOR;
+
+    // Glow
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 14;
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(10,15,29,0.9)';
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Pulse for blockchain node
+    if (node.type === 'blockchain') {
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, r + 6 + Math.sin(blockPulse) * 4, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(168,85,247,${0.15 + 0.1 * Math.sin(blockPulse)})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // Label
+    ctx.fillStyle = color;
+    ctx.font = `bold 10px 'Fira Code', monospace`;
+    ctx.textAlign = 'center';
+    ctx.fillText(node.id, node.x, node.y + 3.5);
+
+    // Type label below
+    ctx.fillStyle = '#6b7280';
+    ctx.font = '8px Inter, sans-serif';
+    ctx.fillText(node.type === 'blockchain' ? 'CHAIN' : node.type === 'contract' ? 'CONTRACT' : 'SENSOR', node.x, node.y + r + 13);
+  }
+
+  function drawEdge(from, to, color) {
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x, to.y);
+    ctx.strokeStyle = color || 'rgba(30,44,72,0.6)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 6]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  function renderSim() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Background grid
+    ctx.strokeStyle = 'rgba(30,44,72,0.25)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < canvas.width; x += 40) {
+      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x, canvas.height); ctx.stroke();
+    }
+    for (let y = 0; y < canvas.height; y += 40) {
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    }
+
+    const sc = nodes.find(n => n.id === 'SC');
+    const bc = nodes.find(n => n.id === 'BC');
+
+    // Draw edges: sensors → contract → blockchain
+    if (sc && bc) {
+      nodes.filter(n => n.type === 'sensor').forEach(s => {
+        drawEdge(s, sc, attackMode ? 'rgba(239,68,68,0.3)' : 'rgba(0,240,255,0.15)');
+      });
+      drawEdge(sc, bc, 'rgba(168,85,247,0.3)');
+    }
+
+    // Update & draw packets
+    packets = packets.filter(p => p.life > 0);
+    packets.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life--;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = 10;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+
+    // Draw nodes
+    nodes.forEach(drawNode);
+
+    // Block counter label
+    ctx.fillStyle = '#6b7280';
+    ctx.font = '10px Fira Code';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Block: ${Math.floor(txCount / 3) + 19804732}`, 10, 15);
+    ctx.fillText(`TXs: ${txCount}`, 10, 28);
+
+    blockPulse += 0.04;
+  }
+
+  // Spawn packets every ~1.5s
+  let spawnTimer = 0;
+  function spawnPackets() {
+    if (!simActive) return;
+    spawnTimer++;
+    if (spawnTimer % 60 !== 0) return;
+
+    const sc = nodes.find(n => n.id === 'SC');
+    const bc = nodes.find(n => n.id === 'BC');
+    if (!sc || !bc) return;
+
+    // Sensor → Contract
+    nodes.filter(n => n.type === 'sensor').forEach(sensor => {
+      if (Math.random() > 0.4) {
+        const dx = sc.x - sensor.x, dy = sc.y - sensor.y;
+        const len = Math.hypot(dx, dy);
+        const speed = 2.5;
+        packets.push({ x: sensor.x, y: sensor.y, vx: dx/len*speed, vy: dy/len*speed,
+          life: len / speed, color: attackMode ? ATTACK_COLOR : TX_COLOR });
+      }
+    });
+
+    // Contract → Blockchain
+    const dx = bc.x - sc.x, dy = bc.y - sc.y;
+    const len = Math.hypot(dx, dy);
+    packets.push({ x: sc.x, y: sc.y, vx: dx/len*3, vy: dy/len*3, life: len/3, color: BLOCKCHAIN_COLOR });
+
+    // Update metrics
+    if (!attackMode) {
+      txCount += Math.floor(Math.random() * 3) + 1;
+      totalPayments += 0.0001 * nodes.filter(n=>n.type==='sensor').length;
+      document.getElementById('valTx').textContent = txCount;
+      document.getElementById('valPayments').textContent = totalPayments.toFixed(3);
+    }
+  }
+
+  function animLoop() {
+    if (simActive) { spawnPackets(); renderSim(); }
+    else { renderSim(); }
+    requestAnimationFrame(animLoop);
+  }
+
+  // ─── Init ────────────────────────────────────────────────────────────────────
+  lucide.createIcons();
+  animLoop();
+</script>
+</body>
+</html>
